@@ -192,11 +192,14 @@ class TwigTweakExtension extends AbstractExtension {
   /**
    * Returns the render array for a single entity field.
    */
-  public static function drupalField(string $field_name, string $entity_type, string $id, $view_mode = 'full', string $langcode = NULL, bool $check_access = TRUE): array {
-    $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($id);
-    if ($entity) {
-      return \Drupal::service('twig_tweak.field_view_builder')
-        ->build($entity, $field_name, $view_mode, $langcode, $check_access);
+    public static function drupalField(string $field_name, string $entity_type, string $id = NULL, $view_mode = 'full', string $langcode = NULL, bool $check_access = TRUE): array {
+      if (!empty($id)) {
+        $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($id);
+        if ($entity) {
+          return \Drupal::service('twig_tweak.field_view_builder')
+            ->build($entity, $field_name, $view_mode, $langcode, $check_access);
+        }
+      return [];
     }
     return [];
   }
