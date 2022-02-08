@@ -2,26 +2,40 @@
 
 /**
  * @file
- * Install, uninstall and update hooks for Varbase Boostrap Paragraphs module.
+ * Entity update test module (entity_update_tests).
+ *
+ * This file provide install/uninstall/update tasks.
  */
+
+use Drupal\Core\Utility\UpdateException;
+use Drupal\entity_update\EntityUpdate;
+
 /**
- * Implements hook_update_N().
+ * Update 01 - Example for update an entity type 'entity_update_tests_cnt'.
  */
-function limestone_foundation_paragraphs_update_9305() {
+function limestone_foundation_paragraphs_update_9305()
+{
 
-  $entity_type_manager = \Drupal::entityTypeManager();
-  $entity_type_manager->clearCachedDefinitions();
+  // Entity checking process : Get current entities list.
+  $ids_old = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
 
-  $entity_type_ids = [];
-  $change_summary = \Drupal::service('entity.definition_update_manager')->getChangeSummary();
-  foreach ($change_summary as $entity_type_id => $change_list) {
-    $entity_type = $entity_type_manager->getDefinition($entity_type_id);
-    \Drupal::entityDefinitionUpdateManager()->installEntityType($entity_type);
-    $entity_type_ids[] = $entity_type_id;
+  // Get entity type.
+  $entity_type = \Drupal::entityTypeManager()->getStorage('entity_update_tests_cnt');
+  // Make Update Using safeUpdateMain methode.
+  if (!EntityUpdate::safeUpdateMain($entity_type->getEntityType())) {
+    // Your codes if update failed.
+    throw new UpdateException('Entity update failed.');
   }
 
+  // Entity checking process : Compare with new list entities list.
+  $ids_new = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
 
-  return t("Installed/Updated the entity type(s): @entity_type_ids", [
-    '@entity_type_ids' => implode(', ', $entity_type_ids),
-  ]);
+  // Compare two lists.
+  $result = array_diff($ids_old, $ids_new);
+  if (!empty($result)) {
+    // Your codes if update checking failed.
+    throw new UpdateException('Entity update checking failed.');
+  }
+
+  return "Entity update success";
 }

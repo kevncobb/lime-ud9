@@ -8,6 +8,7 @@ components:
   - vbp_text_and_image
 dependencies:
   - varbase_media:varbase_media
+  - entity_update:entity_update
 install:
   - text
   - options
