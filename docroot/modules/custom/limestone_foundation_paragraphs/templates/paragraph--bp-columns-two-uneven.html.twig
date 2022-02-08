@@ -51,17 +51,17 @@
 {% if content.bp_column_style_2|render %}
   {% set column_style_2 = content.bp_column_style_2['#items'].getString() %}
   {% set col_1 = [
-    'paragraph--style--75-25' == column_style_2 ? 'large-9',
-    'paragraph--style--66-33' == column_style_2 ? 'large-8',
-    'paragraph--style--25-75' == column_style_2 ? 'large-3',
-    'paragraph--style--33-66' == column_style_2 ? 'large-4',
+    'paragraph--style--75-25' == column_style_2 ? 'col-lg-9',
+    'paragraph--style--66-33' == column_style_2 ? 'col-lg-8',
+    'paragraph--style--25-75' == column_style_2 ? 'col-lg-3',
+    'paragraph--style--33-66' == column_style_2 ? 'col-lg-4',
   ]
   %}
   {% set col_2 = [
-    'paragraph--style--75-25' == column_style_2 ? 'large-3',
-    'paragraph--style--66-33' == column_style_2 ? 'large-4',
-    'paragraph--style--25-75' == column_style_2 ? 'large-9',
-    'paragraph--style--33-66' == column_style_2 ? 'large-8',
+    'paragraph--style--75-25' == column_style_2 ? 'col-lg-3',
+    'paragraph--style--66-33' == column_style_2 ? 'col-lg-4',
+    'paragraph--style--25-75' == column_style_2 ? 'col-lg-9',
+    'paragraph--style--33-66' == column_style_2 ? 'col-lg-8',
   ]
   %}
 {% endif %}
@@ -126,28 +126,28 @@ view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
 {% endif %}
 
 {# Prints div with classes, and content without Width and Background. #}
-<div{{ attributes.addClass(classes).setAttribute('id', paragraph_id) }} {% if VBP.background_image.url %} style="background-image:url({{- VBP.background_image.url -}});" {% endif %}>
-  {% if add_container %}<div class="grid-container">{% endif %}
-    <div>
-    <div class="{{- VBP.bp_width.value -}} grid-x" data-equalizer data-equalize-on="smedium">
-        {% if paragraph_title and paragraph_title_status %}<h2 class="text-center">{{- paragraph_title -}}</h2>{% endif %}
-        {% if key|first != '#' %}
-        {% for key, item in content.bp_column_content_2 %}
-          {% set attributes = attributes.removeClass('bg-edge2edge') %}
-          {% set column_style_field = content.bp_column_style_2|render %}
-          {% set col_classes= "" %}
-          {% if column_style_field %}
-            {% if loop.index  == 1 %}
+<div{{ attributes.addClass(classes).setAttribute('id', paragraph_id) }} {% if VBP.background_image.url %} style="background-image: url({{- VBP.background_image.url -}});" {% endif %}>
+  {% if add_container %}<div class="container">{% endif %}
+    <div class="row">
+      <div class="{{- VBP.bp_width.value -}}">
+        {% if paragraph_title and paragraph_title_status %}<h2 class="text-center">{% spaceless %}{{- paragraph_title|striptags -}}{% endspaceless %}</h2>{% endif %}
+        <div class="row">
+          {% for key, item in content.bp_column_content_2 if key|first != '#' %}
+            {% set attributes = attributes.removeClass('bg-edge2edge').removeAttribute('id') %}
+            {% set column_style_field = content.bp_column_style_2|render %}
+            {% set col_classes= "" %}
+            {% if column_style_field %}
+              {% if loop.index  == 1 %}
                 {% set col_classes = col_1 %}
-            {% endif %}
-            {% if loop.index  == 2 %}
+              {% endif %}
+              {% if loop.index  == 2 %}
                 {% set attributes = attributes.removeClass(col_1) %}
                 {% set col_classes = col_2 %}
+              {% endif %}
             {% endif %}
-          {% endif %}
-          <div{{ attributes.removeClass(classes).addClass(col_classes).addClass('cell') }}>{{ item }}</div>
-        {% endfor %}
-        {% endif %}
+            <div{{ attributes.removeClass(classes).addClass(col_classes).addClass('p-0') }}>{{ item }}</div>
+          {% endfor %}
+        </div>
       </div>
     </div>
     {% if add_container %}</div>{% endif %}
