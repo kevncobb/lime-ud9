@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - feedback.feedback_message_type.default_feedback
+    - field.field.feedback_message.default_feedback.body
+  module:
+    - text
+id: feedback_message.default_feedback.default
+targetEntityType: feedback_message
+bundle: default_feedback
+mode: default
+content:
+  body:
+    weight: 1
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
+  langcode:
+    type: language_select
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  path: true
+  user_id: true

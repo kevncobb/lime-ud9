@@ -1,0 +1,18 @@
+form.search-form {
+  .js-form-type-search {
+    width: 80%;
+    display: inline-block;
+    input {
+      height: 63px;
+      font-size: 25px;
+    }
+    label {
+      padding-bottom: 1rem;
+      display: block;
+    }
+  }
+  input.form-search {
+    margin-bottom: 0;
+    margin-top: -10px;
+  }
+}

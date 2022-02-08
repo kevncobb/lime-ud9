@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * @file
+ * Installation file for Advanced Varnish Cache.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function adv_varnish_requirements($phase) {
+  $requirements = [];
+  /** @var \Drupal\Core\Extension\ModuleExtensionList $adv_varnish */
+  $adv_varnish = \Drupal::service('extension.list.module')->getAllAvailableInfo()['adv_varnish'];
+  $big_pipe_requirements = [
+    'title' => $adv_varnish['name'],
+    'value' => $adv_varnish['version'],
+    'description' => t('Advanced varnish cache is not compatible with module BigPipe. Please disable module BigPipe and try again.'),
+    'severity' => REQUIREMENT_ERROR,
+  ];
+  $big_pipe_status = \Drupal::moduleHandler()->moduleExists('big_pipe');
+
+  if (($phase == 'install' || $phase == 'runtime') && $big_pipe_status) {
+    $requirements['adv_varnish_big_pipe_requirement'] = $big_pipe_requirements;
+  }
+
+  return $requirements;
+}

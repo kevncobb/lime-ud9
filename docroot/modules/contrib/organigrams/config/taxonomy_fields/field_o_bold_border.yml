@@ -1,0 +1,13 @@
+field_name: field_o_bold_border
+label: 'Bold border'
+description: 'Add an extra border to emphasize this organigram item.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+widget_type: boolean_checkbox
+weight: 17

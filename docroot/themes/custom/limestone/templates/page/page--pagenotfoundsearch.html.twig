@@ -1,0 +1,228 @@
+{#
+/**
+ * @file
+ * Zurb Foundations's theme implementation to display a single page.
+ *
+ * Available variables:
+ *
+ * General utility variables:
+ * - base_path: The base URL path of the Drupal installation. Will usually be
+ *   "/" unless you have installed Drupal in a sub-directory.
+ * - is_front: A flag indicating if the current page is the front page.
+ * - logged_in: A flag indicating if the user is registered and signed in.
+ * - is_admin: A flag indicating if the user has permission to access
+ *   administration pages.
+ *
+ * Site identity:
+ * - front_page: The URL of the front page. Use this instead of base_path when
+ *   linking to the front page. This includes the language domain or prefix.
+ * - logo: The url of the logo image, as defined in theme settings.
+ * - linked_logo: The logo image, linked to <front>.
+ * - site_name: The name of the site. This is empty when displaying the site
+ *   name has been disabled in the theme settings.
+ * - linked_site_name: The name of the site that also links to <front>.
+ * - site_slogan: The slogan of the site. This is empty when displaying the site
+ *   slogan has been disabled in theme settings.
+ * - hide_site_name: A flag indicating if the site name has been toggled off on
+ *   the theme settings page. If hidden, the "visually-hidden" class is added
+ *   to make the site name visually hidden, but still accessible.
+ * - hide_site_slogan: A flag indicating if the site slogan has been toggled off
+ *   on the theme settings page. If hidden, the "visually-hidden" class is
+ *   added to make the site slogan visually hidden, but still accessible.
+ *
+ * Page content (in order of occurrence in the default page.html.twig):
+ * - messages: Status and error messages. Should be displayed prominently.
+ * - node: Fully loaded node, if there is an automatically-loaded node
+ *   associated with the page and the node ID is the second argument in the
+ *   page's path (e.g. node/12345 and node/12345/revisions, but not
+ *   comment/reply/12345).
+ *
+ * Regions:
+ * - page.meta_header
+ * - page.header
+ * - page.help
+ * - page.highlighted
+ * - page.content
+ * - page.sidebar_first
+ * - page.sidebar_second
+ * - page.footer_first
+ * - page.footer_middle
+ * - page.footer_last
+ *
+ * @see template_preprocess_page()
+ * @see bartik_preprocess_page()
+ * @see html.html.twig
+ */
+#}
+
+<div class="off-canvas-wrapper">
+    <div class="inner-wrap off-canvas-wrapper-inner" id="inner-wrap" data-off-canvas-wrapper>
+        <aside id="top-off-canvas-search" class="off-canvas position-top" role="complementary" data-off-canvas>
+            {{ page.top_off_canvas }}
+        </aside>
+        <aside id="left-off-canvas-menu" class="off-canvas left-off-canvas-menu position-left" role="complementary"
+               data-off-canvas>
+            {{ page.left_off_canvas }}
+        </aside>
+        <aside id="right-off-canvas-menu" class="off-canvas right-off-canvas-menu position-right" role="complementary"
+               data-off-canvas>
+            {{ page.right_off_canvas }}
+        </aside>
+
+        <div class="off-canvas-content" data-off-canvas-content>
+            {% if page.top_bar %}
+                <div class="top-bar">
+                    <div class="small-12 grid-container">
+                        <div class="grid-x grid-margin-x">
+                            {{ page.top_bar }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <header class="site-header" role="banner" aria-label="{{ 'Site header'|t }}">
+                <div class="grid-container">
+                    <div class="grid-x grid-margin-x">
+                        {{ page.header }}
+                    </div>
+                </div>
+            </header>
+            <div class="main-menu-region">
+                {{ page.main_menu_region }}
+            </div>
+            {% if node.title.value %}
+                <div class="sub-page-header" role="heading">
+                    {{ drupal_field('field_header_background_image', 'node') }}
+                    {{ title_prefix }}
+                    <h1 class="sub-header-title grid-container">{{ title }}</h1>
+                    {{ title_suffix }}
+                </div>
+            {% endif %}
+            {% if messages and not zurb_foundation_messages_modal %}
+                <div class="l-messages grid-container">
+                    <div class="large-12 cell">
+                        {{ messages }}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if page.help %}
+                <div class="l-help grid-container">
+                    <div class="large-12 cell">
+                        {{ page.help }}
+                    </div>
+                </div>
+            {% endif %}
+
+
+            {% if page.sidebar_first %}
+                <div class="grid-container spacing-xs">
+                    <div class="grid-x grid-margin-x">
+                        <div id="sidebar-first" class="{{ sidebar_first_grid }} cell sidebar ">
+                            {{ page.sidebar_first }}
+                        </div>
+                        <main id="main" class="{{ main_grid }} cell" role="main">
+                            {% if page.highlighted %}
+                                {% spaceless %}
+                                    {{ page.highlighted }}
+                                {% endspaceless %}
+                            {% endif %}
+                            <a id="main-content"></a>
+                            <section>
+                                {{ page.content }}
+                            </section>
+                        </main>
+                        {% if page.sidebar_second %}
+                            <div id="sidebar-second" class="{{ sidebar_sec_grid }} cell sidebar">
+                                {{ page.sidebar_second }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% elseif page.sidebar_second %}
+                <div class="grid-container spacing-xs">
+                    <div class="grid-x grid-margin-x">
+                        {% if page.sidebar_first %}
+                            <div id="sidebar-first" class="{{ sidebar_first_grid }} cell sidebar ">
+                                {{ page.sidebar_first }}
+                            </div>
+                        {% endif %}
+                        <main id="main" class="{{ main_grid }} cell" role="main">
+                            {% if page.highlighted %}
+                                {% spaceless %}
+                                    {{ page.highlighted }}
+                                {% endspaceless %}
+                            {% endif %}
+                            <a id="main-content"></a>
+                            <section>
+                                {{ page.content }}
+                            </section>
+                        </main>
+                        <div id="sidebar-second" class="{{ sidebar_sec_grid }} cell sidebar">
+                            {{ page.sidebar_second }}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+              {{ attach_library('limestone/error') }}
+                <main id="main" class="{{ main_grid }} cell" role="main">
+                  <div class="position-relative" style="z-index: 0; transition: all 0.25s ease-in">
+                    <div class="position-absolute overflow-hidden fill" style="height: 370px;top: 0 !important;left: 0 !important;width: 100%;">
+                      <img alt="horizon" class="js-plaxify position-absolute" data-invert="true" data-xrange="0" data-yrange="20" height="415" width="940" style="z-index: 1; width: 110%; height: 425px; top: -20px; left: -20px;" src="/themes/custom/limestone/images/page-not-found/horizon.jpg">
+                    </div>
+                    <div class="grid-container position-relative d-block my-0 mx-auto overflow-hidden" style="width: 940px; height: 370px; clear: both">
+                      <img alt="404 “This is not the web page you are looking for”" class="js-plaxify position-absolute" data-xrange="20" data-yrange="10" height="249" width="271" style="z-index: 10; top: 72px; left: 72px;" src="/themes/custom/limestone/images/page-not-found/404-message.png">
+                      <img alt="The Child" class="js-plaxify position-absolute" data-xrange="18" data-yrange="10" height="76" width="100" style="z-index: 9; top: 223px; left: 460px;" src="/themes/custom/limestone/images/page-not-found/baby-yoda1.png">
+                      <img alt="Bernie-Wan" class="js-plaxify position-absolute" data-xrange="10" data-yrange="10" height="230" width="188" style="z-index: 9; top: 94px; left: 356px;" src="/themes/custom/limestone/images/page-not-found/bernie-wan-base.png">
+                      <img alt="Bernie-Wan hand" class="js-plaxify position-absolute" data-invert="true" data-xrange="10" data-yrange="5" height="28" width="31" style="z-index: 9; top: 184px; left: 392px;" src="/themes/custom/limestone/images/page-not-found/bernie-wan-hand.png">
+                      <img alt="speeder" class="js-plaxify position-absolute" data-xrange="10" data-yrange="10" height="156" width="440" style="z-index: 8; top: 150px; left: 432px;" src="/themes/custom/limestone/images/page-not-found/speeder.png">
+                      <img alt="Bernie Shadow" class="js-plaxify position-absolute" data-xrange="10" data-yrange="10" height="49" width="166" style="z-index: 7; top: 297px; left: 371px;" src="/themes/custom/limestone/images/page-not-found/bernie-shadow.png">
+                      <img alt="speeder shadow" class="js-plaxify position-absolute" data-xrange="10" data-yrange="10" height="75" width="430" style="z-index: 6; top: 263px; left: 442px;" src="/themes/custom/limestone/images/page-not-found/speeder-shadow.png">
+                      <img alt="hut" class="js-plaxify position-absolute" data-invert="true" data-xrange="50" data-yrange="20" height="123" width="304" style="z-index: 5; top: 73px; left: 467px;" src="/themes/custom/limestone/images/page-not-found/hut.png">
+                      <img alt="far away hut" class="js-plaxify position-absolute" data-invert="true" data-xrange="75" data-yrange="30" height="50" width="116" style="z-index: 4; top: 113px; left: 762px;" src="/themes/custom/limestone/images/page-not-found/far-hut.png">
+                    </div>
+                  </div>
+                    {% if page.highlighted %}
+                        {% spaceless %}
+                            {{ page.highlighted }}
+                        {% endspaceless %}
+                    {% endif %}
+                    <a id="main-content"></a>
+                    <section class="grid-container spacing-xs">
+                      <h4 class="text-align-center">Bernie has searched for your page below.</h4>
+                        {{ page.content|without('node.field_lp_paragraphs') }}
+                    </section>
+                    <section>
+                        {{ drupal_field('field_lp_paragraphs', 'node') }}
+                    </section>
+                </main>
+            {% endif %}
+
+          <div class="lc-footer">
+            <div class="lc-footer-layer" data-speed="-2" id="layer2"></div>
+            <div class="lc-footer-layer" data-speed="10" id="layer3"></div>
+            <div class="lc-footer-layer" data-speed="17" id="layer4"></div>
+            <div class="lc-footer-layer" data-speed="25" id="layer5"></div>
+            <img alt="campus skyline" id="mobileLayer" src="/themes/custom/limestone/images/lc-footer-background.png">
+          </div>
+          {% if page.footer %}
+            <footer class="site-footer">
+              <div class="grid-container">
+                <div id="footer" class="large-12 cell">
+                  {{ page.footer }}
+                </div>
+              </div>
+            </footer>
+          {% endif %}
+          {% if page.lower_footer %}
+            <div class="lower-footer-region">
+              {{ page.lower_footer }}
+            </div>
+          {% endif %}
+          {% if page.bottom_bar %}
+            <div class="bottom-bar panel">
+              {{ page.bottom_bar }}
+            </div>
+          {% endif %}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,18 @@
+@media (min-width: 992px) {
+  .fibonacci-main {
+    width: 68%;
+    float: left;
+    padding-right: 5%;
+  }
+  .fibonacci-aside {
+    width: 32%;
+    float: left;
+    padding-left: 5%;
+    border-left: solid 1px #55555530;
+  }
+  .fibonacci-aside-left {
+    width: 32%;
+    float: left;
+    padding-right: 3%;
+  }
+}

@@ -1,0 +1,14 @@
+name: 'Localization Client Interface'
+description: 'On-page tool for easier interface translation.'
+type: module
+# Disabled for now.
+core: 8.x
+configure: l01n_client_ui.settings
+dependencies:
+  - drupal:locale
+package: Multilingual
+
+# Information added by Drupal.org packaging script on 2020-09-16
+version: '8.x-1.0-alpha2'
+project: 'l10n_client'
+datestamp: 1600272138

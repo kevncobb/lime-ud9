@@ -1,0 +1,15 @@
+feedback.feedback_message_type.*:
+  type: config_entity
+  label: 'Feedback message type config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    success_message:
+      type: text
+      label: 'Success message'
+    uuid:
+      type: string

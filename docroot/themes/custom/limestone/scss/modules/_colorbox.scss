@@ -1,0 +1,55 @@
+//caption
+#cboxTitle {
+  bottom: 0;
+  font-size: 0.7rem;
+  font-family: $body-font-family;
+  @include breakpoint(smedium) {
+    bottom: -28px;
+    font-size: 1rem;
+  }
+}
+//1 of max
+#cboxCurrent {
+  //bottom: -28px;
+}
+#cboxMiddleLeft {
+  width: 14px;
+  background: url(/themes/custom/limestone/images/colorbox-controls.png) repeat-y -175px 0;
+}
+#cboxMiddleRight {
+  width: 14px;
+  background: url(/themes/custom/limestone/images/colorbox-controls.png) repeat-y -211px 0;
+}
+#cboxTopLeft {
+  width: 14px;
+  height: 14px;
+  background: url(/themes/custom/limestone/images/colorbox-controls.png) no-repeat 0 0;
+}
+#cboxTopCenter {
+  height: 14px;
+  background: url(/themes/custom/limestone/images/colorbox-border.png) repeat-x top left;
+}
+#cboxTopRight {
+  width: 14px;
+  height: 14px;
+  background: url(/themes/custom/limestone/images/colorbox-controls.png) no-repeat -36px 0;
+}
+#cboxBottomLeft {
+  width: 14px;
+  height: 43px;
+  background: url(/themes/custom/limestone/images/colorbox-controls.png) no-repeat 0 -33px;
+}
+#cboxBottomCenter {
+  height: 43px;
+  background: url(/themes/custom/limestone/images/colorbox-border.png) repeat-x bottom left;
+}
+#cboxBottomRight {
+  width: 14px;
+  height: 43px;
+  background: url(/themes/custom/limestone/images/colorbox-controls.png) no-repeat -36px -33px;
+}
+
+.field-node--field-generic-info {
+  font-size: 1.4rem;
+  line-height: 1.8;
+}

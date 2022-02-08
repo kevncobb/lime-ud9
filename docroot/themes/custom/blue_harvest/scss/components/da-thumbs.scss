@@ -1,0 +1,259 @@
+// blue_harvest header styling.
+// -----------------------------------------------------------------------------
+@import "../../node_modules/bootstrap/scss/functions";  // Bootstrap functions.
+@import "../../node_modules/bootstrap/scss/mixins";     // Bootstrap mixins.
+@import "../variables";                   // blue_harvest variables.
+@import "../mixins";                      // blue_harvest mixins.
+// -----------------------------------------------------------------------------
+
+/* Insert your blue_harvest header custom SASS styling. */
+
+.da-thumbs {
+  list-style: none;
+  max-width: 1000px;
+  position: relative;
+  margin: 10px auto;
+  padding: 0;
+  float: left;
+  width: 100%;
+  ul {
+    width: 100%;
+  }
+  li {
+    float: left;
+    margin: 3px;
+    width: 47%;
+    background: #fff;
+    padding: 5px 1%;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    h4 {
+      text-align: center;
+      overflow: hidden;
+      margin: 0;
+      padding: 3px 0;
+      position: absolute;
+      bottom: 4px;
+      width: 95.7%;
+      background: rgba($limestone-blue, 0.5);
+      color: #fff;
+      transition: 400ms;
+      font-weight: 400;
+      font-size: 19px;
+    }
+    div.da-thumbs-block {
+      position: absolute;
+      background: #333;
+      background: rgba($limestone-blue, 0.7);
+      width: 100%;
+      height: 100%;
+      span.text {
+        display: block;
+        padding: 6px 0;
+        margin: 21px 20px 20px 20px;
+        font-size: 0.6rem;
+        text-transform: none;
+        font-weight: normal;
+        color: rgba(255, 255, 255, 0.9);
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 -10px 0 rgba(255, 255, 255, 0.3);
+        @media (min-width: map-get($grid-breakpoints, "md")) {
+          font-size: 0.8rem;
+          padding: 10px 0;
+          margin: 30px 20px 20px 20px;
+        }
+        @media (min-width: map-get($grid-breakpoints, "xl")) {
+          font-size: 1rem;
+        }
+      }
+    }
+    a, a img {
+      display: block;
+      position: relative;
+      width: 100%;
+      margin: 0;
+    }
+    a {
+      overflow: hidden;
+      width: 100%;
+      &:focus {
+        div.da-thumbs-block {
+          left: 0 !important;
+          top: 0 !important;
+        }
+      }
+    }
+  }
+  li.third {
+    margin: auto;
+    @media (min-width: map-get($grid-breakpoints, "md")) {
+      @include make-col(6);
+      &:nth-child(even) {
+        @include make-col(6);
+      }
+      &:nth-child:last-child {
+        margin: 0 auto;
+        float: none;
+      }
+    }
+    @media (min-width: map-get($grid-breakpoints, "lg")) {
+      @include make-col(4);
+      &:nth-child(even) {
+        @include make-col(4);
+      }
+      &:nth-child(3n+3) {
+        @include make-col(4);
+      }
+    }
+    h4 {
+      width: 93.7%;
+    }
+    h2 {
+      color: white;
+      background: rgb(34, 71, 130);
+      padding: 1em;
+      position: relative;
+      top: -7px;
+      font-size: 1.3rem;
+      font-weight: 400;
+      height: 4em;
+      @media (min-width: map-get($grid-breakpoints, "sm")) {
+        height: 5em;
+        font-size: 1rem;
+      }
+      @media (min-width: map-get($grid-breakpoints, "md")) {
+        height: 4em;
+      }
+      @media (min-width: map-get($grid-breakpoints, "lg")) {
+        height: 5em;
+      }
+      @media (min-width: map-get($grid-breakpoints, "xl")) {
+        height: 4em;
+      }
+      @media (min-width: map-get($grid-breakpoints, "xxl")) {
+        font-size: 1.2rem;
+      }
+    }
+  }
+  li:hover, li:focus {
+    h4 {
+      display: none;
+    }
+  }
+}
+
+.pulse_circ {
+  position: absolute;
+  bottom: 7%;
+  right: 7%;
+  width: 50px;
+  height: 50px;
+  .pulse {
+    display: block;
+    background: rgba(255, 255, 255, 0.2);
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    position: absolute;
+    top: 12px;
+    left: 19px;
+    z-index: 7;
+    -webkit-transition-property: all;
+    -moz-transition-property: all;
+    -o-transition-property: all;
+    transition-property: all;
+    -webkit-transition-duration: .3s;
+    -moz-transition-duration: .3s;
+    -o-transition-duration: .3s;
+    transition-duration: .3s;
+    @media (min-width: map-get($grid-breakpoints, "md")) {
+      //@include font-size(1);
+    }
+    @media (min-width: map-get($grid-breakpoints, "xl")) {
+      width: 49px;
+      height: 49px;
+      top: 5px;
+      left: 17px;
+    }
+  }
+  .view {
+    display: block;
+    background: $limestone-yellow;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    color: $limestone-blue;
+    font-size: 16px;
+    font-family: "mr-eaves-xl-modern-narrow";
+    line-height: 47px;
+    font-weight: 400;
+    text-transform: uppercase;
+    position: absolute;
+    top: 10px;
+    right: -9px;
+    z-index: 8;
+    text-align: center;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    -ms-transition: all 0.3s;
+    transition: all 0.3s;
+    @media (min-width: map-get($grid-breakpoints, "xl")) {
+      top: 4px;
+      right: -17px;
+      width: 50px;
+      height: 50px;
+      line-height: 53px;
+    }
+  }
+}
+
+.pulse_circ_large {
+  position: absolute;
+  bottom: 8%;
+  right: 9%;
+  width: 70px;
+  height: 70px;
+}
+
+.pulse_large {
+  display: block;
+  background: rgba(255, 255, 255, 0.2);
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  width: 68px;
+  height: 68px;
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  z-index: 7;
+  opacity: 0;
+  -webkit-transition-property: all;
+  -moz-transition-property: all;
+  -o-transition-property: all;
+  transition-property: all;
+  -webkit-transition-duration: .3s;
+  -moz-transition-duration: .3s;
+  -o-transition-duration: .3s;
+  transition-duration: .3s;
+}
+
+.pulse_circ:hover .pulse, .pulse_circ_large:hover .pulse_large {
+  cursor: pointer;
+  opacity: 1;
+  -webkit-transform: scale(1.35);
+  -moz-transform: scale(1.35);
+  -ms-transform: scale(1.35);
+  -o-transform: scale(1.35);
+  transform: scale(1.35);
+  -webkit-transition-timing-function: cubic-bezier(ease-in);
+  -moz-transition-timing-function: cubic-bezier(ease-in);
+  -o-transition-timing-function: cubic-bezier(ease-in);
+  transition-timing-function: cubic-bezier(ease-in);
+}

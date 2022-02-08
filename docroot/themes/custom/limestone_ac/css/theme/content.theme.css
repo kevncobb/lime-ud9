@@ -1,0 +1,171 @@
+@media (min-width: 480px) {
+  .styled-list.col-2 {
+    column-count: 2;
+  }
+}
+@media (min-width: 768px) {
+  .col-2-groupings .view-content > div {
+    float: left;
+    width: 50%;
+  }
+  .col-2-groupings .view-content > div:nth-child(2),
+  .col-2-groupings .view-content > div:nth-child(3),
+  .col-2-groupings .view-content > div:nth-child(4),
+  .col-2-groupings .view-content > div:nth-child(5) {
+    padding-left: 5%;
+  }
+}
+@media (min-width: 480px) {
+  .left {
+    float: left;
+  }
+}
+@media (min-width: 480px) {
+  .right {
+    float: right;
+  }
+}
+.spacing-sm {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+.spacing-md {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+.padding-xs-horizontal,
+.spacing-sides-xs {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+@media (min-width: 480px) {
+  .col-3 {
+    column-count: 2;
+  }
+}
+@media (min-width: 768px) {
+  .col-3 {
+    column-count: 3;
+  }
+}
+@media (min-width: 480px) {
+  .col-4 {
+    column-count: 2;
+  }
+}
+@media (min-width: 768px) {
+  .col-4 {
+    column-count: 4;
+  }
+}
+.margin-bottom-0 {
+  margin-bottom: 0;
+}
+.margin-bottom,
+.margin-bottom-1 {
+  margin-bottom: 1rem;
+}
+@media (min-width: 480px) {
+  .split-col > li,
+  .split-col > div {
+    width: 50%;
+    float: left;
+  }
+}
+.catalog-version {
+  position: relative;
+  top: 0;
+  right: 0;
+}
+@media (min-width: 992px) {
+  .catalog-version {
+    width: 32%;
+    float: right;
+    margin-top: 25px;
+  }
+}
+.node--type-landing-page .bs-region--main {
+  width: auto;
+}
+.degree-plan-wrapper {
+  margin: 5px 0 0 0;
+}
+.degree-plan-wrapper a.degree-plan-header {
+  color: white;
+  background: #0038a5;
+  text-transform: uppercase;
+  padding: 15px;
+  font-weight: 100;
+  margin: 3rem 0;
+  font-size: 2.5rem;
+  margin-bottom: -3rem;
+  display: block;
+  position: relative;
+  z-index: 2;
+}
+.degree-plan-wrapper a.degree-plan-header:focus,
+.degree-plan-wrapper a.degree-plan-header:hover {
+  cursor: pointer;
+}
+.degree-plan-wrapper a.degree-plan-header:after {
+  content: "Click for full view";
+  font-size: 1.2rem;
+  display: block;
+  clear: both;
+  padding-left: 1px;
+  text-transform: none;
+}
+.field--name-field-degree-plan-legend {
+  font-size: 1.4rem;
+  background-color: #d9edf7;
+  color: #31708f;
+  padding: 15px;
+  margin: 25px 0 12px;
+  border: 1px solid #bce8f1;
+  border-radius: 4px;
+}
+.field--name-field-notes {
+  font-size: 1.4rem;
+  background-color: #dff0d8;
+  color: #3c763d;
+  padding: 15px;
+  margin-bottom: 25px;
+  border: 1px solid #d6e9c6;
+  border-radius: 4px;
+}
+.paragraph--type-a-year-of-a-4-year-degree-plan .field--name-field-year {
+  margin: 5px 0 0 0;
+}
+.paragraph--type-a-year-of-a-4-year-degree-plan .field--name-field-semester {
+  margin: 0 0 8px;
+  font-size: 14px;
+  padding: 10px 15px;
+}
+.paragraph--type-a-year-of-a-4-year-degree-plan .field--name-field-total-credit-hours {
+  font-size: 1.3rem;
+  margin-left: 12px;
+  margin-bottom: 5px;
+  border-top: thin solid #a6a6a69c;
+  padding-top: 5px;
+}
+a[target=_blank].catalog-link::after {
+  font-size: 1.5rem;
+  left: 0.3rem;
+  top: 0;
+}
+a[target=_blank]::after {
+  content: "\ea7e";
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 0.68rem;
+  position: relative;
+  left: 0.2rem;
+  top: -1px;
+}

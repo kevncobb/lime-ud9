@@ -1,0 +1,8 @@
+views_slideshow_cycle2.settings:
+  path: '/admin/config/media/views_slideshow_cycle2'
+  defaults:
+    _form: '\Drupal\views_slideshow_cycle2\Form\SettingsForm'
+    _title: Cycle2 settings
+  requirements:
+    _permission: 'administer views'
+  

@@ -1,0 +1,38 @@
+//
+// lime_doc Variables ovarrides.
+// --------------------------------------------------
+
+
+// #############################################################################
+// Bootstrap library standard variables.
+// #############################################################################
+// All variables which are used in the default bootstrap library.
+// You can change them in lime_doc for the bootstrap-variables.sass
+//
+@import "bootstrap-variables"; // Bootstrap custom variables ovarrides in lime_doc.
+
+
+// #############################################################################
+// Barrio custom variables.
+// #############################################################################
+// All needed custom variables for Bootstrap Barrio theme.
+// You can change them in lime_doc in the bootstrap-variables.sass
+//
+@import "barrio-variables"; // Barrio custom variables ovarrides in lime_doc.
+
+
+// #############################################################################
+// Vartheme BS4 custom variables
+// #############################################################################
+// All needed custom Vartheme bs4 variables
+// You can change them in lime_doc in the vartheme_bs4-variables.sass
+//
+@import "vartheme_bs4-variables"; // Vartheme BS4 custom variables ovarrides in lime_doc.
+
+
+// #############################################################################
+// lime_doc custom needed variables
+// #############################################################################
+// Add custom needed lime_doc variables.
+// In the generated lime_doc not in Vartheme BS4 base theme.
+//

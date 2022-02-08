@@ -1,0 +1,15 @@
+name: 'Limestone Landing'
+description: 'Provides the basis for Landing Pages, which are built to include appealing stacked components that are visually separate.'
+type: module
+package: Varbase
+core_version_requirement: ^8 || ^9 || ^10
+project: limestone_landing
+dependencies:
+  - limestone_foundation_paragraphs:limestone_foundation_paragraphs
+install:
+  - user
+  - node
+  - menu_ui
+  - varbase_seo
+  - paragraphs_features
+  - paragraphs_asymmetric_translation_widgets

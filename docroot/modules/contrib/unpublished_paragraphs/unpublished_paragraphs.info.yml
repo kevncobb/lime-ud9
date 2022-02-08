@@ -1,0 +1,11 @@
+name: 'Unpublished Paragraphs'
+type: module
+description: 'Toggles visibility of unpublished paragraphs for users with the proper permission.'
+core: 8.x
+core_version_requirement: ^8 || ^9
+package: 'Paragraphs'
+
+# Information added by Drupal.org packaging script on 2020-05-13
+version: '8.x-1.2'
+project: 'unpublished_paragraphs'
+datestamp: 1589414271

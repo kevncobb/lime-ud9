@@ -1,0 +1,8 @@
+field_name: organigrams_node_width
+type: textfield
+label: 'Item width'
+default: 120
+description: 'Specify the width in pixels of the items in this organigram.'
+field_group: 'Item settings'
+field_group_weight: 2
+weight: 1

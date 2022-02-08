@@ -1,0 +1,177 @@
+// Views component style.
+// -----------------------------------------------------------------------------
+@import "../../node_modules/bootstrap/scss/functions";  // Bootstrap functions.
+@import "../../node_modules/bootstrap/scss/mixins";     // Bootstrap mixins.
+@import "../variables";                   // blue_harvest variables.
+@import "../mixins";                      // blue_harvest mixins.
+// -----------------------------------------------------------------------------
+
+.views-displays {
+
+  // Views Tabs styles.
+  .tabs {
+    .open>a {
+      border-radius: $border-radius-lg $border-radius-lg 0 0;
+
+      &:hover,
+      &:focus {
+        color: $link-color;
+      }
+    }
+
+    // Tabs action list styles.
+    .action-list {
+      padding: 0;
+    }
+  }
+
+  .secondary .form-submit {
+    @include font-size($font-size-sm);
+  }
+}
+
+// Contextual filter options styles.
+.views-filterable-options .filterable-option:nth-of-type(even) .form-type-checkbox {
+  background-color: #F9F9F9;
+}
+
+// Views action dropbutton styles.
+.views-ui-display-tab-actions {
+  .dropbutton {
+    .form-submit {
+      color: $link-hover-color;
+
+      &:hover,
+      &:focus {
+        color: $link-color;
+      }
+    }
+  }
+}
+
+
+// Events
+.upcoming-events-row {
+  margin: 0;
+  clear: both;
+  padding: 14px 0;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  &:first-child {
+    padding-top: 0;
+  }
+  .upcoming-events-block {
+    .date-box {
+      float: left;
+      padding: 14px 5px;
+      background-color: $limestone-yellow;
+      color: $limestone-blue;
+      margin-right: 8px;
+      min-width: 60px;
+      .month {
+        font-family: $header-font-family;
+        font-variant-numeric: lining-nums;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-size: 12px;
+        line-height: 30px;
+        text-transform: uppercase;
+        text-align: center;
+        display: block;
+      }
+      .day {
+        font-family: $header-font-family;
+        font-variant-numeric: lining-nums;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-size: 27px;
+        line-height: 30px;
+        text-align: center;
+        display: block;
+      }
+    }
+    .time {
+      font-family: $header-font-family;
+      font-variant-numeric: lining-nums;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-weight: 900;
+      line-height: 1.5;
+      margin-bottom: -4px;
+      color: #000;
+      font-size: 15px;
+    }
+    .event-title {
+      font-size: 14px;
+      margin-bottom: 15px;
+      line-height: 23px;
+    }
+  }
+}
+
+.events-listing {
+  .views-row {
+    .layout--onecol.grid-margin-x {
+      margin: 0;
+    }
+  }
+}
+.addtocal-form {
+  .addtocal {
+    font-size: 1rem;
+    color: $limestone-blue-body;
+  }
+}
+.flip-time-title {
+  .fc-event > .fc-content {
+    display: flex;
+    font-size: 12px;
+    line-height: 23px;
+    font-weight: 100;
+    .fc-time {
+      order: 2;
+      font-weight: bold;
+      padding-left: 4px;
+    }
+    .fc-title {
+      order: 1;
+    }
+  }
+}
+.full-calendar {
+  .fc-event > .fc-content {
+    display: flex;
+    font-size: 12px;
+    line-height: 23px;
+    font-weight: 100;
+    .fc-time {
+      //order: 2;
+      font-weight: bold;
+      padding-right: 4px;
+    }
+    .fc-title {
+      //order: 1;
+    }
+  }
+  .views-exposed-form .js-form-item.js-form-type-checkbox {
+    float: none;
+    text-align: center;
+    padding: 0;
+    margin: -9px -40% 10px;
+    background-color: #f7efba;
+    text-transform: uppercase;
+  }
+  .js-form-type-checkbox input {
+    width: 18px;
+    height: 18px;
+    top: 18px;
+    border-radius: 0px;
+    border: 1px solid #333;
+  }
+  .js-form-type-checkbox input+label {
+    font-size: large;
+    font-family: "futura-pt","Arial Narrow",sans-serif;
+    font-weight: 900;
+    line-height: 2.8rem;
+  }
+}

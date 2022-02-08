@@ -1,0 +1,11 @@
+addtocal:
+  version: VERSION
+  js:
+    addtocal.js: {}
+  css:
+    theme:
+      addtocal.css: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal

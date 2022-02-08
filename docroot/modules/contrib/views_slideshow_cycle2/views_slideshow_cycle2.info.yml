@@ -1,0 +1,14 @@
+name: Views Slideshow Cycle2
+type: module
+description: 'Adds a responsive rotating slideshow mode to Views Slideshow.'
+package: Views
+core_version_requirement: ^8 || ^9 || ^10
+configure: views_slideshow_cycle2.settings
+dependencies:
+  - views_slideshow:views_slideshow
+
+# Information added by Drupal.org packaging script on 2018-05-02
+version: '8.x-1.x-dev'
+core: '8.x'
+project: 'views_slideshow_cycle2'
+datestamp: 1525254492

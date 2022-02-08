@@ -1,0 +1,12 @@
+name: SendGrid API
+type: module
+description: Provides configuration and dependencies for connecting to SendGrid API.
+core_version_requirement: ^8.8 || ^9
+php: 7.3
+dependencies:
+  - drupal:key
+
+# Information added by Drupal.org packaging script on 2020-07-06
+version: '1.x-dev'
+project: 'sendgrid_api'
+datestamp: 1594032624

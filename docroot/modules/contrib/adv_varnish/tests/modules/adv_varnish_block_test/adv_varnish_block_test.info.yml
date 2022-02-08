@@ -1,0 +1,11 @@
+name: Advanced Varnish cache - Block test
+type: module
+description: Provides test block and additional data for testing.
+# version: VERSION
+core: 8.x
+core_version_requirement: ^8 || ^9
+
+# Information added by Drupal.org packaging script on 2020-11-27
+version: '8.x-3.2'
+project: 'adv_varnish'
+datestamp: 1606467948

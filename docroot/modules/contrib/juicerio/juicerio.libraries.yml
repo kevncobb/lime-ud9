@@ -1,0 +1,21 @@
+juicerio.styles:
+    css:
+      component:
+        //assets.juicer.io/embed.css: { type: external }
+juicer.juicerio:
+  js:
+    //assets.juicer.io/embed-no-jquery.js: { type: external, minified: true }
+juicerio.embed:
+  js:
+    //assets.juicer.io/embed.js: { type: external, minified: true }
+juicerio.embed_no_jquery:
+  js:
+    //assets.juicer.io/embed-no-jquery.js: { type: external, minified: true }
+  dependencies:
+    - core/jquery
+juicerio.embed_no_jquery_no_slick:
+  js:
+    //assets.juicer.io/embed-no-jquery-no-slick.js: { type: external, minified: true }
+  dependencies:
+    - core/jquery
+    - slick/slick

@@ -1,0 +1,13 @@
+name: Filebrowser
+description: 'Provides FTP-like browsing capabilities.'
+core: 8.x
+package: Filebrowser
+type: module
+configure: filebrowser.settings
+dependencies:
+  - drupal:node
+
+# Information added by Drupal.org packaging script on 2019-11-10
+version: '8.x-2.0+12-dev'
+project: 'filebrowser'
+datestamp: 1573414387

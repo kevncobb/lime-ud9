@@ -1,0 +1,23 @@
+/**
+ * Styles for the feedback form.
+ */
+#block-feedbackblock:hover {
+  height: 550px;
+}
+#block-feedbackblock {
+  padding: 3px;
+  height: 27px;
+  max-width: 300px;
+  position: fixed;
+  bottom: 60px;
+  right: 20px;
+  overflow: hidden;
+  z-index: 10;
+  -webkit-transition: height 1s; /* Safari */
+  transition: height 1s;
+}
+
+#block-feedbackblock header {
+  text-align: center;
+  font-weight: normal;
+}

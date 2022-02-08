@@ -1,0 +1,35 @@
+{
+    "name": "drupal/views_slideshow_cycle2",
+    "description": "Cycle plugin for Views Slideshow.",
+    "type": "drupal-module",
+    "license": "GPL-2.0+",
+    "homepage": "https://www.drupal.org/project/views_slideshow",
+    "authors": [
+        {
+            "name": "Karel Majzlik",
+            "email": "majzlik@cngroup.dk",
+            "homepage": "https://www.drupal.org/user/122194"
+        }
+    ],
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/views_slideshow_cycle2",
+        "source": "https://cgit.drupalcode.org/views_slideshow_cycle2"
+    },
+    "require": {
+        "drupal/views_slideshow": "^4.6",
+        "bower-asset/jquery-cycle2": "^2.1"
+    },
+    "extra": {
+        "drush": {
+            "services": {
+                "drush.services.yml": "^9"
+            }
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ]
+}

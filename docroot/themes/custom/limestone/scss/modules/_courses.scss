@@ -1,0 +1,43 @@
+.course-schedule {
+  caption.grouped-course {
+    background-color: #d4e9ff;
+    a {
+      text-decoration: underline;
+      color: $header-color;
+    }
+  }
+  table {
+    padding-bottom: 3rem;
+  }
+  form.views-exposed-form.bef-exposed-form {
+    background-color: $light-gray;
+    float: left;
+    width: 100%;
+    margin-bottom: 1rem;
+    @include breakpoint(medium) {
+      .js-form-item.js-form-type-select {
+        width: 50%;
+        display: inline-block;
+        float: left;
+      }
+    }
+    .js-form-item.js-form-type-select.js-form-item-field-course-discipline-target-id {
+      //padding-top: 0;
+    }
+    #edit-actions {
+      float: left;
+      padding: 2rem 1rem 1rem;
+      input.form-submit {
+        margin: 0;
+        position: relative;
+        top: 4px;
+        width: 200px;
+      }
+    }
+  }
+}
+.courses-taught {
+  .h6 {
+    font-size: 110%;
+  }
+}

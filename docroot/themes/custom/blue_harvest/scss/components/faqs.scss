@@ -1,0 +1,417 @@
+// blue_harvest header styling.
+// -----------------------------------------------------------------------------
+@import "../../node_modules/bootstrap/scss/functions";  // Bootstrap functions.
+@import "../../node_modules/bootstrap/scss/mixins";     // Bootstrap mixins.
+@import "../variables";                   // blue_harvest variables.
+@import "../mixins";                      // blue_harvest mixins.
+// -----------------------------------------------------------------------------
+
+.above-faq {
+  margin-bottom: -80px;
+  margin-top: -60px;
+  h3 {
+    line-height: 29px;
+  }
+}
+
+@media screen and (min-width: 780px) {
+  .faqs {
+    .smaller {
+      font-size: 89%;
+      line-height: 20px;
+    }
+  }
+}
+
+.faqs {
+  //min-height: 353px;
+  height: 100%;
+  //float: left;
+  margin-top: 80px;
+  z-index: 10;
+  position: relative;
+  background-color: #fff;
+}
+
+.faq-cell {
+  cursor: pointer;
+  margin: 0 0 1px 0;
+  overflow: hidden;
+  position: relative;
+  height: 160px;
+  //float: left;
+  -webkit-box-shadow: inset 0px 0px 30px 0px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: inset 0px 0px 30px 0px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: inset 0px 0px 30px 0px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: inset 0px 0px 30px 0px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: inset 0px 0px 30px 0px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: inset 0px 0px 30px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0px 0px 30px 0px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: inset 0px 0px 30px 0px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: inset 0px 0px 30px 0px rgba(0, 0, 0, 0.2);
+  button {
+    font-weight: 400;
+    font-size: 1.2rem;
+    > div {
+      position: relative;
+      top: -1rem;
+    }
+  }
+  span {
+    background: #000;
+    bottom: -33px;
+    color: #FFF;
+    display: block;
+    font-size: 15px;
+    height: 33px;
+    line-height: 33px;
+    position: absolute;
+    text-align: center;
+    text-transform: uppercase;
+    width: 100%;
+    transition: bottom 0.3s ease-in-out;
+    -moz-transition: bottom 0.3s ease-in-out;
+    -webkit-transition: bottom 0.3s ease-in-out;
+  }
+
+  div.cell-answer {
+    display: none;
+  }
+  button {
+    height: 100%;
+    width: 100%;
+    background-color: transparent;
+  }
+  button > h6 {
+    width: 100%;
+    color: #FFF;
+    text-shadow: black 2px 1px 2px;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 22px;
+    margin: 0;
+    padding: 1.3rem 0.9rem;
+    height: 100px;
+  }
+  p {
+    font-size: 15px;
+    line-height: 15px;
+    margin: 0;
+    padding: 15px;
+    text-align: right;
+  }
+  &.cell-yellow {
+    button {
+      color: $limestone-blue-body;
+    }
+  }
+}
+
+
+
+
+.faq-cell:focus span, .faq-cell:hover span {
+  bottom: 0;
+}
+
+.faq-cell:hover button {
+  color: #FFF;
+}
+
+.cell-full {
+  height: 351px;
+}
+
+.cell-full button {
+  height: 266px;
+}
+
+/*.cell_full span { margin: 318px 0 0 0; }*/
+.cell-half {
+  height: 175px;
+}
+
+.cell-half button {
+  height: 90px;
+}
+
+/*.cell-half span { margin: 142px 0 0 0; }*/
+.cell-quarter {
+  height: 87px;
+}
+
+.cell-quarter button {
+  height: 20px;
+}
+
+.cell-quarter p {
+  padding: 0 15px 0 0;
+}
+@media screen and (min-width: 767px) {
+  .faq-cell {
+    //width: 50%;
+  }
+  .cell-quarter {
+    height: 175px;
+  }
+  .cell-full {
+    height: 175px;
+  }
+}
+@media screen and (min-width: 1100px) {
+  .faq-cell {
+    //width: 33.3%;
+  }
+}
+@media screen and (min-width: 1450px) {
+  .faq-cell {
+    //width: 25%;
+  }
+}
+@media screen and (min-width: 1600px) {
+  .faq-cell {
+    //width: 20%;
+  }
+}
+
+
+/*.cell-quarter span { margin: 54px 0 0 0; }*/
+.faq-details {
+  height: 100%;
+  width: 100%;
+  padding: 13px 0;
+  position: fixed;
+  top: 65%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 112;
+  @media screen and (min-width: 767px) {
+    //top: 70%;
+  }
+  @media screen and (min-width: 1450px) {
+    //top: 75%;
+  }
+  @media screen and (min-width: 1600px) {
+    top: 75%;
+  }
+  a {
+    color: #fff;
+  }
+  .wrap {
+    //height: 352px;
+    margin: 0 auto;
+    max-width: 840px;
+    color: #fff;
+    top: 0;
+    bottom: 0;
+    overflow: visible;
+  }
+  .close {
+    color: #fff;
+    float: right;
+    height: 32px;
+    width: 32px;
+    font-size: 1.7em;
+    text-decoration: none;
+  }
+  h2 {
+    color: #FFF;
+    font-size: 29px;
+    font-style: normal;
+    line-height: 35px;
+    margin: 0;
+    padding: 25px 0 20px 0;
+    text-transform: none;
+    float: left;
+  }
+  div {
+    overflow: hidden;
+    p, ul li {
+      color: #EEE;
+      color: rgba(255, 255, 255, 0.95);
+      font-size: 17px;
+      line-height: 24px;
+      margin: 0 0 25px 0;
+      a {
+        color: #fff;
+        text-decoration: underline;
+      }
+    }
+  }
+  hr {
+    margin: 0 0 20px 0;
+  }
+  label {
+    color: #FFF;
+    float: right;
+    font-family: futura-pt;
+    font-size: 14px;
+    line-height: 20px;
+  }
+}
+
+.cell-green {
+  background-color: #5F7B2B;
+  border-color: #5F7B2B;
+}
+
+.cell-blue {
+  background-color: #415A8C;
+  border-color: #415A8C;
+}
+.cell-twitter-blue {
+  background-color: $twitter-blue;
+  border-color: $twitter-blue;
+}
+.cell-red {
+  background-color: #A84026;
+  border-color: #A84026;
+}
+
+.cell-orange {
+  background-color: #CA661D;
+  border-color: #CA661D;
+}
+
+.cell-yellow {
+  background-color: #FFCF01;
+  border-color: #FFCF01;
+  button { color: $limestone-blue-body; }
+}
+
+.cell-gray {
+  background-color: #666;
+  border-color: #666;
+}
+
+.cell-purple {
+  background-color: #5C4973;
+  border-color: #5C4973;
+}
+
+.cell-black {
+  background-color: #222222;
+  border-color: #CCC;
+}
+
+.cell-green:hover {
+  background-color: #47670D;
+  border-color: #47670D;
+}
+
+.cell-blue:hover {
+  background-color: #375286;
+  border-color: #375286;
+}
+
+.cell-red:hover {
+  background-color: #822D18;
+  border-color: #822D18;
+}
+
+.cell-orange:hover {
+  background-color: #DE6E1C;
+  border-color: #DE6E1C;
+}
+
+.cell-yellow:hover {
+  background-color: #deb400;
+  border-color: #deb400;
+}
+
+.cell-gray:hover {
+  background-color: #555;
+  border-color: #555;
+}
+
+.cell-purple:hover {
+  background-color: #503C69;
+  border-color: #503C69;
+}
+
+.faq-details.cell-green {
+  background-color: #47670D;
+}
+
+.faq-details.cell-blue {
+  background-color: #375286;
+}
+
+.faq-details.cell-red {
+  background-color: #822D18;
+}
+
+.faq-details.cell-orange {
+  background-color: #DE6E1C;
+}
+
+.faq-details.cell-yellow {
+  background-color: #deb400;
+}
+
+.faq-details.cell-gray {
+  background-color: #555;
+}
+
+.faq-details.cell-purple {
+  background-color: #503C69;
+}
+
+
+
+@media screen and (max-width: 860px) {
+  .faqs {
+    .faq-details {
+      .answer {
+        padding: 0 0.7em;
+      }
+    }
+    h2 {
+      font-size: 29px;
+      line-height: 24px;
+      padding: 10px 5px 20px 5px;
+    }
+  }
+}
+
+@media screen and (max-width: 780px) {
+  .faqs {
+    .faq-details {
+      h2 {
+        font-size: 20px;
+        padding-left: 1em;
+        padding-right: 1em;
+      }
+      .answer {
+        p {
+          font-size: 15px;
+          line-height: 21px;
+          padding: 0 1em;
+        }
+        p.smaller {
+          font-size: 14px;
+          line-height: 16px;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .faqs {
+    .faq-details {
+      h2 {
+        font-size: 16px;
+        padding: 0 1em;
+      }
+      .answer {
+        p {
+          font-size: 12px;
+          line-height: 15px;
+          padding: 0 1em;
+        }
+      }
+    }
+  }
+}

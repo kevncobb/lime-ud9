@@ -1,0 +1,4 @@
+feedback:
+  css:
+    theme:
+      css/feedback.css: {}

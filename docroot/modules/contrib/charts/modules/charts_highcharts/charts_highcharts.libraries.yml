@@ -1,0 +1,37 @@
+charts_highcharts:
+  version: VERSION
+  js:
+    js/charts_highcharts.js: { weight: -1 }
+  dependencies:
+      - charts/global
+      - core/jquery
+      - core/jquery.once
+
+highcharts:
+  remote: https://code.highcharts.com/highcharts.js
+  version: VERSION
+  license:
+      name: Non-commercial
+      url: https://creativecommons.org/licenses/by-nc/3.0/
+      gpl-compatible: false
+  js:
+    /libraries/highcharts/highcharts.js: {}
+    /libraries/highcharts_more/highcharts-more.js: {}
+    /libraries/highcharts_accessibility/accessibility.js: {}
+    /libraries/highcharts_3d/highcharts-3d.js: {}
+  dependencies:
+      - charts_highcharts/charts_highcharts
+
+highcharts_exporting:
+  remote: https://code.highcharts.com/highcharts.js
+  version: VERSION
+  license:
+    name: Non-commercial
+    url: https://creativecommons.org/licenses/by-nc/3.0/
+    gpl-compatible: false
+  js:
+    /libraries/highcharts_exporting/exporting.js: {}
+    /libraries/highcharts_export-data/export-data.js: {}
+  dependencies:
+    - charts_highcharts/charts_highcharts
+    - charts_highcharts/highcharts

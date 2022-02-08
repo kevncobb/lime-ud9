@@ -1,0 +1,43 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - feedback.feedback_message_type.default_feedback
+    - field.field.feedback_message.default_feedback.body
+  module:
+    - text
+    - user
+id: feedback_message.default_feedback.default
+targetEntityType: feedback_message
+bundle: default_feedback
+mode: default
+content:
+  body:
+    weight: 2
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  link:
+    label: inline
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+    type: uri_link
+  path:
+    type: uri_link
+    weight: 1
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  user_id:
+    label: inline
+    type: author
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden: {  }

@@ -1,0 +1,19 @@
+@import url(//fonts.googleapis.com/earlyaccess/droidarabickufi.css);
+.font-size-lg {
+  font-size: 1.375rem;
+}
+
+.font-size-sm {
+  font-size: 0.9625rem;
+}
+
+/* Insert your Bootstrap (RTL) overrides for bootstrap-rtl library. */
+/* Default Droid Arabi Kufi front by google api fornts. */
+/* Justify content center. */
+[dir="rtl"] .justify-content-center.nav-pills > li + li {
+  margin-left: inherit;
+}
+
+body {
+  font-family: "Droid Arabic Kufi", sans-serif;
+}

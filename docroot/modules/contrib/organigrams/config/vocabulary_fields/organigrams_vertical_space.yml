@@ -1,0 +1,8 @@
+field_name: organigrams_vertical_space
+type: textfield
+label: 'Vertical space'
+default: 20
+description: 'Specify the vertical space in pixels between the items in this organigram.'
+field_group: 'Item settings'
+field_group_weight: 2
+weight: 6

@@ -1,0 +1,16 @@
+# Feedback message menu items definition
+entity.feedback_message.collection:
+  title: 'Feedback messages'
+  route_name: entity.feedback_message.collection
+  description: 'List Feedback message entities'
+  parent: system.admin_content
+  weight: 100
+
+# Feedback message type menu items definition
+entity.feedback_message_type.collection:
+  title: 'Feedback types'
+  route_name: entity.feedback_message_type.collection
+  description: 'List Feedback message type (bundles)'
+  parent: system.admin_structure
+  weight: 0
+

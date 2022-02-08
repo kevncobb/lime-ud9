@@ -1,0 +1,125 @@
+.font-size-lg {
+  font-size: 1.375rem;
+}
+
+.font-size-sm {
+  font-size: 0.9625rem;
+}
+
+.navbar-nav.ml-auto .dropdown-menu {
+  right: 0;
+  left: auto;
+  -webkit-transform: translateX(33%);
+  -o-transform: translateX(33%);
+  transform: translateX(33%);
+}
+
+[dir="rtl"] .navbar-nav.ml-auto .dropdown-menu {
+  right: auto;
+  left: 0;
+}
+
+@media (min-width: 576px) {
+  .navbar-nav.ml-sm-auto .dropdown-menu {
+    right: 0;
+    left: auto;
+    -webkit-transform: translateX(33%);
+    -o-transform: translateX(33%);
+    transform: translateX(33%);
+  }
+  [dir="rtl"] .navbar-nav.ml-sm-auto .dropdown-menu {
+    right: auto;
+    left: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .navbar-nav.ml-md-auto .dropdown-menu {
+    right: 0;
+    left: auto;
+    -webkit-transform: translateX(33%);
+    -o-transform: translateX(33%);
+    transform: translateX(33%);
+  }
+  [dir="rtl"] .navbar-nav.ml-md-auto .dropdown-menu {
+    right: auto;
+    left: 0;
+  }
+}
+
+@media (min-width: 992px) {
+  .navbar-nav.ml-lg-auto .dropdown-menu {
+    right: 0;
+    left: auto;
+    -webkit-transform: translateX(33%);
+    -o-transform: translateX(33%);
+    transform: translateX(33%);
+  }
+  [dir="rtl"] .navbar-nav.ml-lg-auto .dropdown-menu {
+    right: auto;
+    left: 0;
+  }
+}
+
+@media (min-width: 1200px) {
+  .navbar-nav.ml-xl-auto .dropdown-menu {
+    right: 0;
+    left: auto;
+    -webkit-transform: translateX(33%);
+    -o-transform: translateX(33%);
+    transform: translateX(33%);
+  }
+  [dir="rtl"] .navbar-nav.ml-xl-auto .dropdown-menu {
+    right: auto;
+    left: 0;
+  }
+}
+
+@media (min-width: 1600px) {
+  .navbar-nav.ml-xxl-auto .dropdown-menu {
+    right: 0;
+    left: auto;
+    -webkit-transform: translateX(33%);
+    -o-transform: translateX(33%);
+    transform: translateX(33%);
+  }
+  [dir="rtl"] .navbar-nav.ml-xxl-auto .dropdown-menu {
+    right: auto;
+    left: 0;
+  }
+}
+
+#navbar-main {
+  z-index: 1;
+}
+
+@media screen and (min-width: 980px) {
+  .nav-item .nav-link {
+    position: relative;
+    -webkit-transition: color 0.325s ease;
+    -o-transition: color 0.325s ease;
+    transition: color 0.325s ease;
+  }
+  .nav-item .nav-link::after {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    display: block;
+    width: 0;
+    height: 2px;
+    content: "";
+    -webkit-transition: width 0.325s ease;
+    -o-transition: width 0.325s ease;
+    transition: width 0.325s ease;
+    border: none;
+    background: #0038a5;
+  }
+  .nav-item .nav-link:focus,
+  .nav-item .nav-link:hover {
+    color: #0038a5;
+  }
+  .nav-item .nav-link:focus::after,
+  .nav-item .nav-link:hover::after {
+    width: 100% !important;
+  }
+}

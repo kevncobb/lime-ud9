@@ -1,0 +1,120 @@
+fibonacci:
+  label: Fibonacci Layout
+  category: 'Limestone Layouts'
+  path: layouts/fibonacci
+  icon: fibonacci.png
+  css: ../../css/blue_harvest.css
+  template: panels-fibonacci
+  regions:
+    top:
+      label: Top Content
+    main:
+      label: Main Content
+    aside:
+      label: Aside Content
+    penultimate:
+      label: Penultimate Content
+    bottom:
+      label: Bottom Content
+
+fibonacci_reversed:
+  label: Fibonacci Reversed
+  category: 'Limestone Layouts'
+  path: layouts/fibonacci_reversed
+  icon: fibonacci-reversed.png
+  css: ../../css/blue_harvest.css
+  template: panels-fibonacci-reversed
+  regions:
+    top:
+      label: Top Content
+    main:
+      label: Main Content
+    aside:
+      label: Aside Content
+    penultimate:
+      label: Penultimate Content
+    bottom:
+      label: Bottom Content
+
+rule_of_thirds:
+  label: Rule of Thirds Layout
+  category: 'Limestone Layouts'
+  path: layouts/rule_of_thirds
+  icon: thirds.jpg
+  css: ../../css/blue_harvest.css
+  template: panels-rule-of-thirds
+  regions:
+    top:
+      label: Top Content
+    main:
+      label: Main Content
+    right:
+      label: Aside Right
+    penultimate:
+      label: Penultimate Content
+    bottom:
+      label: Bottom Content
+rule_of_thirds_full:
+  label: Rule of Thirds Layout Full
+  category: 'Limestone Layouts'
+  path: layouts/rule_of_thirds_full
+  icon: thirds.jpg
+  css: ../../css/blue_harvest.css
+  template: panels-rule-of-thirds-full
+  regions:
+    top:
+      label: Top Content
+    main:
+      label: Main Content
+    right:
+      label: Aside Right
+    penultimate:
+      label: Penultimate Content
+    bottom:
+      label: Bottom Content
+
+card:
+  label: Card
+  category: 'Limestone Layouts'
+  path: layouts/card
+  icon: card.jpg
+  css: ../../css/blue_harvest.css
+  template: panels-card
+  regions:
+    image:
+      label: Image
+    category:
+      label: Category
+    main:
+      label: Main Content
+    links:
+      label: Links
+
+counselor:
+  label: Counselor
+  category: 'Limestone Layouts'
+  path: layouts/counselor
+  icon: card.jpg
+  css: ../../css/blue_harvest.css
+  template: panels-counselor
+  regions:
+    top:
+      label: Top Content
+    aside:
+      label: Aside Content
+    penultimate:
+      label: Penultimate Content
+    bottom:
+      label: Bottom Content
+    image:
+      label: Image
+    from:
+      label: From
+    email:
+      label: Email
+    degree:
+      label: Undergrad Degree
+    area:
+      label: Service Area
+    body:
+      label: Body

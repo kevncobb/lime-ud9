@@ -1,0 +1,19 @@
+imports:
+  - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8-all-deprecations.yml" }
+
+parameters:
+  autoload_paths:
+    - 'web/core'
+    - 'web/core/modules'
+    - 'web/modules'
+    - 'web/profiles'
+
+  file_extensions:
+    - module
+    - theme
+    - install
+    - profile
+    - inc
+    - engine
+
+services: ~

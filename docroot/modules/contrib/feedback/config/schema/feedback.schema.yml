@@ -1,0 +1,13 @@
+block.settings.*:
+  type: block_settings
+  label: 'Block settings'
+  mapping:
+    feedback_type:
+      type: string
+      label: 'Feedback type'
+    feedback_help:
+      type: text
+      label: 'Help'
+    feedback_submit:
+      type: label
+      label: 'Submit button'

@@ -1,0 +1,7 @@
+unpublished-toggle:
+  version: VERSION
+  css:
+    component:
+      unpublished-toggle.css: { weight: -200, scope: footer }
+  js:
+    unpublished-toggle.js: {}

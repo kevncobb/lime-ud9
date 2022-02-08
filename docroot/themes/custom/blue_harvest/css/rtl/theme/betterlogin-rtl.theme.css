@@ -1,0 +1,15 @@
+.font-size-lg {
+  font-size: 1.375rem;
+}
+
+.font-size-sm {
+  font-size: 0.9625rem;
+}
+
+#auth-box .user-login-form {
+  text-align: right;
+}
+
+#auth-box .user-login-form .option {
+  padding-right: 0;
+}

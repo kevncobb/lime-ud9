@@ -1,0 +1,116 @@
+core: 8.x
+type: theme
+base theme: vartheme
+
+name: 'Limestone AC Theme (LESS)'
+description: 'Uses the Bootstrap framework LESS source files and must be compiled (not for beginners).'
+package: 'Varbase'
+
+regions:
+  navigation: 'Navigation'
+  navigation_collapsible: 'Navigation (Collapsible)'
+  sub_menu: 'Sub Menu'
+  hero_slider: 'Media Hero Slider'
+  header: 'Top Bar'
+  highlighted: 'Highlighted'
+  help: 'Help'
+  content: 'Content'
+  catalog_version: 'Catalog Version'
+  sidebar_first: 'Primary'
+  sidebar_second: 'Secondary'
+  footer: 'Footer'
+  page_top: 'Page top'
+  page_bottom: 'Page bottom'
+
+libraries:
+# Bootstrap styles and scripts libraries.
+  - limestone_ac/bootstrap-styles
+  - limestone_ac/bootstrap-scripts
+
+# limestone_ac custom Vartheme styles and scripts libraries.
+  - limestone_ac/vartheme-styles
+
+# limestone_ac global styles and scripts libraries.
+  - limestone_ac/global-styles
+  - limestone_ac/global-scripts
+
+# limestone_ac Varbase Bootstrap Paragraphs colors theme.
+  - limestone_ac/vbp-colors
+
+# limestone_ac Better Login theme.
+  - limestone_ac/betterlogin
+
+# limestone_ac Print Styling.
+  - limestone_ac/print-styling
+
+# OPTIONALLY: You can choose to remove Vartheme base theme stylesheets and/or
+# Javascript files.
+libraries-override:
+# Comment lines to keep using libraries from vartheme.
+  bootstrap_library/bootstrap-cdn: false
+  bootstrap_library/bootstrap: false
+  bootstrap_library/bootstrap-dev: false
+  vartheme/bootstrap-styles: false
+  vartheme/bootstrap-scripts: false
+  vartheme/global-styles: false
+  vartheme/global-scripts: false
+
+# Comment lines to use (RTL) libraries from vartheme.
+  vartheme/bootstrap-styles-rtl: false
+  vartheme/global-styles-rtl: false
+# Comment lines to use (RTL) libraries from limestone_ac.
+  limestone_ac/bootstrap-styles-rtl: false
+  limestone_ac/vartheme-styles-rtl: false
+  limestone_ac/global-styles-rtl: false
+
+# limestone_ac Varbase Bootstrap Paragraphs colors theme.
+  varbase_bootstrap_paragraphs/vbp-colors: limestone_ac/vbp-colors
+  vartheme/vbp-colors: limestone_ac/vbp-colors
+#  vartheme/betterlogin: limestone_ac/betterlogin
+
+# Uncomment lines to replace, exclude css and js files from vartheme.
+# You will need to copy less/css files from Vartheme to use theme for the
+# overriden library.
+# ------------------------------------------------------------------------------
+#  vartheme/bs-callouts: limestone_ac/bs-callouts
+#  vartheme/card: limestone_ac/card
+#  vartheme/outside-in: limestone_ac/outside-in
+#  vartheme/edge2edge: limestone_ac/edge2edge
+#  vartheme/equal-height: limestone_ac/equal-height
+  vartheme/navbar-admin: limestone_ac/navbar-admin
+# ------------------------------------------------------------------------------
+#  vartheme/ajax: limestone_ac/ajax
+#  vartheme/alert: limestone_ac/alert
+  vartheme/field: limestone_ac/field
+#  vartheme/file: limestone_ac/file
+#  vartheme/filter: limestone_ac/filter
+  vartheme/form: limestone_ac/form
+  vartheme/accordion: limestone_ac/accordion
+#  vartheme/icon: limestone_ac/icon
+  vartheme/navbar: limestone_ac/navbar
+#  vartheme/node: limestone_ac/node
+#  vartheme/panel: limestone_ac/panel
+#  vartheme/progress-bar: limestone_ac/progress-bar
+#  vartheme/table-drag: limestone_ac/table-drag
+#  vartheme/tabs: limestone_ac/tabs
+#  vartheme/toolbar: limestone_ac/toolbar
+#  vartheme/autocomplete: limestone_ac/autocomplete
+
+#  Uncomment the following if you want to keep bootstrap/framework
+#    and you want to extend it.
+#libraries-extend:
+#  bootstrap/framework:
+#    - vartheme/framework
+#    - limestone_ac/framework
+
+ckeditor_stylesheets:
+  - css/base/bootstrap.base.css
+  - css/base/vartheme.base.css
+  - css/base/limestone_ac.base.css
+  - css/theme/content.theme.css
+  - css/component/alert.component.css
+  - css/component/icon.component.css
+  - css/component/node.component.css
+  - css/component/bs-callouts.component.css
+  - css/layout/edge2edge.layout.css
+  - css/layout/layouts.css

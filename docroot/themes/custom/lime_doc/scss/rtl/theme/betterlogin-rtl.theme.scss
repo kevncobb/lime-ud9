@@ -1,0 +1,17 @@
+// lime_doc Better Login styling (RTL).
+// -----------------------------------------------------------------------------
+@import "../../../node_modules/bootstrap/scss/functions";  // Bootstrap functions.
+@import "../../../node_modules/bootstrap/scss/mixins";     // Bootstrap mixins.
+@import "../../variables";                // lime_doc variables.
+@import "../../mixins";                   // lime_doc mixins.
+// -----------------------------------------------------------------------------
+
+#auth-box {
+  .user-login-form {
+    text-align: right;
+
+    .option {
+      padding-right: 0;
+    }
+  }
+}

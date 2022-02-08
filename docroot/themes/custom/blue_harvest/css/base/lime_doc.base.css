@@ -1,0 +1,219 @@
+/* Insert your blue_harvest base overrides over Vartheme BS4 and Bootstrap */
+.col-sm-8.bs-region.bs-region--left {
+  font-size: 1.1rem;
+}
+
+p + div.media.media--type-file {
+  margin-top: -1rem;
+}
+
+.navbar-brand {
+  display: block;
+  max-width: 300px;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.navbar-dark .navbar-nav .nav-link:focus,
+.navbar-dark .navbar-nav .nav-link:hover {
+  color: white;
+}
+
+.navbar-collapse.collapse.show .row {
+  margin: 0 !important;
+}
+
+@media screen and (min-width: 992px) {
+  #navbar-main {
+    font-size: 0.88rem;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  #navbar-main {
+    font-size: 1rem;
+  }
+}
+
+button.search-button {
+  margin-right: -15px;
+  margin-left: 15px;
+}
+
+.highlighted {
+  background-color: #dee2e6;
+}
+
+.alert-wrapper .alert {
+  margin-bottom: 0;
+}
+
+h1.title {
+  margin-bottom: 0;
+  padding: 1rem 0.4rem 0.9rem;
+}
+
+.bar-header {
+  margin: 0 0 3rem;
+  padding: 15px;
+  text-transform: uppercase;
+  color: white;
+  background: #0038a5;
+  font-weight: 100;
+}
+
+.view-gray-background .view-content {
+  padding-bottom: 1rem;
+  background-color: #e9ecef;
+}
+
+.group-headers-bar h3 {
+  max-width: 750px;
+  margin-top: 1rem;
+  padding: 7px 15px;
+  text-transform: uppercase;
+  color: white;
+  background: #435f7b;
+  font-size: 1.4rem;
+  font-weight: 300;
+}
+
+.page-node-type-landing-page-lb .book-navigation {
+  display: none !important;
+}
+
+.field--name-field-media-file {
+  width: 100%;
+  max-width: 600px;
+}
+
+.file-link {
+  padding: 4px 0;
+  padding: 4px 0;
+}
+
+.file-icon {
+  font-size: 1rem;
+}
+
+.file.file--mime-application-pdf.file--application-pdf {
+  padding-left: 0 !important;
+  background-image: none !important;
+}
+
+button.moderation-sidebar-link[value="Publish"] {
+  border-color: #4caf50 !important;
+  background-color: #4caf50 !important;
+}
+
+button.moderation-sidebar-link[value="Send to review"] {
+  border-color: #ffae00 !important;
+  background-color: #ffae00 !important;
+}
+
+button.moderation-sidebar-link[value="Reject Review"] {
+  border-color: #e28007 !important;
+  background-color: #e28007 !important;
+}
+
+#searchModal {
+  background-color: rgba(16, 16, 16, 0.67) !important;
+}
+
+#searchModal .modal-content {
+  border: none;
+  background-color: transparent;
+}
+
+#searchModal .modal-content button.close {
+  position: absolute;
+  top: 0rem;
+  right: 0;
+  color: white;
+}
+
+#searchModal .content.container-inline {
+  width: 100%;
+}
+
+#searchModal fieldset.form-type-search {
+  width: 75%;
+  margin-left: 7px;
+}
+
+@media screen and (min-width: 465px) {
+  #searchModal .modal-content button.close {
+    top: -1rem;
+  }
+  #searchModal fieldset.form-type-search {
+    width: 80%;
+    margin-left: 15px;
+  }
+  #searchModal fieldset.form-type-search input.form-control {
+    height: 60px;
+    padding-top: 4px;
+    font-size: 20px;
+  }
+  #searchModal button.js-form-submit {
+    height: 60px;
+    margin-left: 2px;
+  }
+}
+
+.field--name-field-comments.comment-wrapper h2.title {
+  margin: 2rem 0 0.5rem !important;
+  padding: 15px;
+  text-transform: uppercase;
+  color: #2f3b44;
+  background: #dee2e5;
+  font-size: 1rem;
+}
+
+.field--name-field-comments.comment-wrapper h2.title.comment-form__title {
+  margin: 1rem 0 0 !important;
+  padding: 15px;
+  text-transform: uppercase;
+  color: #f7f7f7;
+  background: #5dab60;
+  font-size: 1rem;
+}
+
+.field--name-field-comments.comment-wrapper fieldset.js-form-type-textarea label {
+  display: none;
+}
+
+.field--name-field-comments.comment-wrapper .js-filter-wrapper.js-form-wrapper.form-group {
+  font-size: 0.8rem;
+}
+
+.comment {
+  margin: 0 -0.1rem 1rem;
+  padding: 0.5rem;
+  border: thin solid #f1f0f0;
+  border-radius: 0.5rem;
+  background-color: #fdfdfd;
+}
+
+.comment .field--name-user-picture img {
+  max-width: 30px;
+  border-radius: 50%;
+}
+
+.field--name-user-picture {
+  float: left;
+}
+
+.field--name-username {
+  float: left;
+  margin-left: 5px;
+  font-weight: bold;
+  line-height: 30px;
+}
+
+.field--name-comment-post-date {
+  color: #636363;
+  font-size: 0.8rem;
+  font-style: italic;
+}

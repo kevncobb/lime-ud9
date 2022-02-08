@@ -1,0 +1,14 @@
+sendgrid_api.settings:
+  type: config_object
+  label: 'SendGrid API settings'
+  mapping:
+    api_key:
+      type: string
+      label: 'Name of a key holding API key details.'
+    http_client_shim:
+      type: boolean
+      label: 'Whether to use experimental Guzzle shim'
+
+monitoring.settings.sendgrid_key:*:
+  type: monitoring.settings_base
+  label: 'SendGrid sensor settings'

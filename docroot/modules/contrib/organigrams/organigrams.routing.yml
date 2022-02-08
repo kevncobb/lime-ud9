@@ -1,0 +1,24 @@
+entity.vocabulary.add_organigram_form:
+  path: 'admin/structure/taxonomy/add/organigram'
+  defaults:
+    _controller: '\Drupal\organigrams\Controller\OrganigramsController::addForm'
+    _title: 'Add organigram'
+  requirements:
+    _entity_create_access: 'taxonomy_term'
+    _permission: 'create organigrams'
+organigrams.import_form:
+  path: '/admin/structure/taxonomy/import/d7-organigram'
+  defaults:
+    _form: '\Drupal\organigrams\Form\OrganigramsImportD7Form'
+    _title: 'Import Drupal 7 Organigram'
+  requirements:
+    _entity_create_access: 'taxonomy_term'
+    _permission: 'import organigrams'
+organigrams.view:
+  path: '/organigram/{taxonomy_vocabulary}'
+  defaults:
+    _controller: '\Drupal\organigrams\Controller\OrganigramsController::viewOrganigram'
+    _title_callback: '\Drupal\taxonomy\Controller\TaxonomyController::vocabularyTitle'
+  requirements:
+    _permission: 'view organigrams'
+    _custom_access: '\Drupal\organigrams\Controller\OrganigramsController::viewOrganigramAccess'

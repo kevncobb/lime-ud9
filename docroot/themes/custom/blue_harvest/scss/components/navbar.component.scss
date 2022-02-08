@@ -1,0 +1,67 @@
+// Navbar component style.
+// -----------------------------------------------------------------------------
+@import "../../node_modules/bootstrap/scss/functions";  // Bootstrap functions.
+@import "../../node_modules/bootstrap/scss/mixins";     // Bootstrap mixins.
+@import "../variables";                   // blue_harvest variables.
+@import "../mixins";                      // blue_harvest mixins.
+// -----------------------------------------------------------------------------
+
+
+@each $breakpoint in map-keys($grid-breakpoints) {
+  @include media-breakpoint-up($breakpoint) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+
+    .navbar-nav {
+      &.ml#{$infix}-auto {
+        .dropdown-menu {
+          left: auto;
+          right: 0;
+          transform: translateX(33%);
+        }
+      }
+    }
+
+    [dir="rtl"] {
+      .navbar-nav {
+        &.ml#{$infix}-auto {
+          .dropdown-menu {
+            right: auto;
+            left: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+#navbar-main {
+  z-index: 1;
+}
+@media screen and (min-width: 980px) {
+  .nav-item {
+    .nav-link {
+      position: relative;
+      -webkit-transition: color 0.325s ease;
+      transition: color 0.325s ease;
+      &::after {
+        width: 0px;
+        height: 2px;
+        display: block;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        background: $blue;
+        content: '';
+        -webkit-transition: width 0.325s ease;
+        transition: width 0.325s ease;
+        border: none;
+      }
+      &:focus, &:hover {
+        color: $blue;
+        &::after {
+          width: 100% !important;
+        }
+      }
+    }
+  }
+}

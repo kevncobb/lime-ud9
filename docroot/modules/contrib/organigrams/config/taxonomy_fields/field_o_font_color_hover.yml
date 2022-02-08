@@ -1,0 +1,8 @@
+field_name: field_o_font_color_hover
+label: 'Font color hover'
+description: 'Specify the font color of this organigram item when hovering over it if it has a URL.'
+required: false
+translatable: false
+default_value: {  }
+widget_type: text_textfield
+weight: 19

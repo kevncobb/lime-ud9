@@ -1,0 +1,8 @@
+field_name: organigrams_center
+type: checkbox
+label: 'Center on page'
+default: 0
+description: 'Aligns the organigram on the center of the page.'
+field_group: 'Organigram settings'
+field_group_weight: 1
+weight: 3

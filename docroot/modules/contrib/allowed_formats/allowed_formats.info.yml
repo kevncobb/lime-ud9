@@ -1,0 +1,12 @@
+name: Allowed Formats
+description: Limit which text formats are available for each field instance.
+type: module
+core_version_requirement: ^8.8 || ^9
+dependencies:
+  - drupal:field
+  - drupal:filter
+
+# Information added by Drupal.org packaging script on 2022-01-29
+version: '8.x-1.4'
+project: 'allowed_formats'
+datestamp: 1643490595

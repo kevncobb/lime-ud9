@@ -1,0 +1,23 @@
+.background-style {
+  &.background-center {
+    background-position: center;
+  }
+  &.background-top {
+    background-position: top;
+  }
+  &.background-bottom {
+    background-position: bottom;
+  }
+  &.background-fixed {
+    background-attachment: fixed;
+    background-position: center center;
+  }
+  .sub-header-title {
+    color: white;
+  }
+}
+
+.paragraph-border-sm {
+  border-top: solid 8px $limestone-blue;
+  border-bottom: solid 8px $limestone-blue;
+}

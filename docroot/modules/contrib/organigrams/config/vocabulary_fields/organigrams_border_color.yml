@@ -1,0 +1,7 @@
+field_name: organigrams_border_color
+type: textfield
+label: 'Border color'
+description: 'Specify the border color of the items in this organigram.'
+field_group: 'Item settings'
+field_group_weight: 2
+weight: 8

@@ -1,0 +1,8 @@
+name: Features UI
+type: module
+description: 'Provides the user interface for Features.'
+package: Development
+core_version_requirement: ^8.8 || ^9
+configure: features.assignment
+dependencies:
+  - features:features

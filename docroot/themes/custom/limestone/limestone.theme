@@ -1,0 +1,245 @@
+<?php
+use Drupal\block\Entity\Block;
+
+// Add your custom theme override functions here.
+
+/**
+ * Implements hook_preprocess_block()
+ */
+function limestone_preprocess_block(&$variables) {
+  if(isset($variables['attributes']['id'])) {
+    $variables['content']['#attributes']['block'] = $variables['attributes']['id'];
+  }
+}
+
+/**
+ * Implements template_preprocess_field().
+ */
+function limestone_preprocess_field(&$variables, $hook) {
+  $variables['nodenid'] = \Drupal::routeMatch()->getRawParameter('node');
+}
+
+/**
+ * Implements template_preprocess_html().
+ *
+ * Adds additional classes
+ */
+function limestone_preprocess_html(&$variables) {
+
+}
+
+/**
+ * Implements template_preprocess_node
+ *
+ * Add template suggestions and classes
+ */
+function limestone_preprocess_node(&$variables) {
+  $nid = $variables['node']->id();
+  // attach da-thumbs library to undergrad landing page
+  if($nid === 2525){
+    $variables['#attached']['library'][] = 'limestone/da-thumbs';
+  }
+}
+
+/**
+ * Implements template_preprocess_page
+ *
+ * Add convenience variables and template suggestions
+ */
+function limestone_preprocess_page(&$variables) {
+  $site_name = isset($variables['site_name']) ? $variables['site_name'] : \Drupal::config('system.site')->get('name');
+
+  $variables['logo_img'] = '';
+
+  $logo = theme_get_setting('logo.url');
+
+  if (!empty($logo)) {
+    $elements = [
+      '#theme' => 'image',
+      '#uri' => $logo,
+      '#attributes' => [
+        'alt' => strip_tags($site_name) . ' ' . t('logo'),
+        'title' => strip_tags($site_name) . ' ' . t('Home'),
+        'class' => ['logo'],
+      ]
+    ];
+
+    $variables['logo_img'] = $elements;
+  }
+
+  $title = strip_tags($site_name) . ' ' . t('Home');
+  $url = \Drupal\Core\Url::fromRoute('<front>');
+  $url->setOption('attributes', ['title' => $title]);
+
+  if (theme_get_setting('zurb_foundation_page_site_logo')) {
+    $variables['linked_logo'] = '';
+    if (!empty($variables['logo_img'])) {
+      $variables['linked_logo'] = Link::fromTextAndUrl($variables['logo_img'], $url)->toString();
+    }
+  }
+
+  if (theme_get_setting('zurb_foundation_page_site_name')) {
+    $variables['linked_site_name'] = '';
+    if (!empty($site_name)) {
+      $variables['linked_site_name'] = Link::fromTextAndUrl($site_name, $url)->toString();
+    }
+  }
+
+  // Convenience variables
+  if (isset($variables['page']['sidebar_first'])) {
+    $left = $variables['page']['sidebar_first'];
+  }
+  if (isset($variables['page']['sidebar_second'])) {
+    $right = $variables['page']['sidebar_second'];
+  }
+
+  // Dynamic sidebars
+  if (!empty($left) && !empty($right)) {
+    $variables['main_grid'] = 'medium-6 medium-push-3';
+    $variables['sidebar_first_grid'] = 'medium-4 medium-pull-5';
+    $variables['sidebar_sec_grid'] = 'medium-4';
+  }
+  elseif (empty($left) && !empty($right)) {
+    $variables['main_grid'] = 'medium-8';
+    $variables['sidebar_first_grid'] = '';
+    $variables['sidebar_sec_grid'] = 'medium-4';
+  }
+  elseif (!empty($left) && empty($right)) {
+    $variables['main_grid'] = 'medium-8 medium-push-4';
+    $variables['sidebar_first_grid'] = 'medium-3 medium-pull-8';
+    $variables['sidebar_sec_grid'] = '';
+  }
+  else {
+    $variables['main_grid'] = 'large-12';
+    $variables['sidebar_first_grid'] = '';
+    $variables['sidebar_sec_grid'] = '';
+  }
+
+  // Add classes to highlighted region.
+  if (!empty($variables['page']['highlighted'])) {
+    $variables['page']['highlighted']['#attributes']['class'][] = 'region-highlighted';
+    $variables['page']['highlighted']['#attributes']['class'][] = 'panel';
+    $variables['page']['highlighted']['#attributes']['class'][] = 'callout';
+  }
+
+  // Check to see if the Meta Header should be in the Grid.
+  $variables['meta_header_grid'] = theme_get_setting('zurb_foundation_meta_header_grid');
+
+  // Make sure site_name is always set, in case there's only a default.
+  $variables['site_name'] = $site_name;
+
+  // Variable to disable hard-coded login elements.
+  $variables['show_account_info'] = theme_get_setting('zurb_foundation_page_account_info');
+
+
+
+
+  /*
+   // How to make a field available in page.html.twig
+  if ( $variables['node'] ) {
+      $node = $variables['node'];
+      // Get Sub Header value and make available for page.html.twig
+
+      $field_header_background_image = $node->get('field_header_background_image')->processed;
+      $variables['field_header_background_image'] = $field_header_background_image;
+
+  }
+*/
+
+  if(isset($variables['node'])) {
+
+    $variables['title'] = $variables['node']->title->value;
+    //$variables['code_name'] = $variables['node']->field_code_name->value;
+  }else{
+    $variables['title'] = $variables['page']['#title'];
+    //$variables['code_name'] = $variables['page']['#field_code_name'];
+  }
+  /*
+  if($variables['is_front']){
+      $variables['#attached']['library'][] = 'lc/custom-library';
+  }
+  */
+}
+/**
+ * Implements template_preprocess_views_view().
+ */
+function limestone_preprocess_views_view(&$variables) {}
+
+
+use Drupal\taxonomy\Entity\Term;
+function limestone_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  // Add content type suggestions.
+  if ($node = \Drupal::request()->attributes->get('node')) {
+    array_splice($suggestions, 1, 0, 'page__node__' . $node->getType());
+  }
+  if (\Drupal::routeMatch()->getRouteName() == 'entity.taxonomy_term.canonical' && $tid = \Drupal::routeMatch()->getRawParameter('taxonomy_term')) {
+    $term = Term::load($tid);
+    $suggestions[] = 'page__taxonomy__' . $term->getVocabularyId();
+  }
+}
+
+/**
+ * Implements hook__suggestions_HOOK_alter().
+ */
+function limestone_theme_suggestions_block_alter(array &$suggestions, array $variables) {
+  if (!empty($variables['elements']['#id'])) {
+    $block = Block::load($variables['elements']['#id']);
+    if ($block !== null) {
+      $block_type = $variables['elements']['#base_plugin_id'];
+      $suggestions[] = 'block__' . $block_type . '__' . $block->getRegion();
+      $suggestions[] = 'block__' . $block->getRegion() . '__' . $variables['elements']['#id'];
+    }
+  }
+  return $suggestions;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function limestone_theme_suggestions_image_formatter_alter(array &$suggestions, array $variables) {
+  $entity = $variables['item']->getEntity();
+  $field_name = $variables['item']->getParent()->getName();
+  $suggestions[] = 'image_formatter__' . $entity->getEntityTypeId() . '__' . $entity->bundle() . '__' . $field_name;
+}
+
+function limestone_preprocess_media(&$variables) {
+  $media = $variables['media'];
+  $name = $media->getName();
+  if (!empty($name)) {
+    $mediaArray = $media->toArray();
+    if (!empty($mediaArray['field_media_file'][0]['target_id'])) {
+      $fileId = $mediaArray['field_media_file'][0]['target_id'];
+      $file = \Drupal\file\Entity\File::load($fileId);
+      $file->setFilename($name);
+    }
+  }
+}
+
+
+function limestone_theme_suggestions_field_alter(&$suggestions, $variables) {
+  $suggestions[] = 'field__node__' .
+    $variables['element']['#field_name'] . '__' .
+    $variables['element']['#bundle'] . '__' .
+    $variables['element']['#view_mode'];
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter() for taxonomies.
+ *
+ * {@inheritdoc}
+ */
+function limestone_theme_suggestions_taxonomy_term_alter(&$suggestions, $vars, $hook) {
+  $suggestions[] = 'taxonomy_term__' . $vars['elements']['#view_mode'];
+}
+
+
+function limestone_theme_suggestions_menu_alter(&$suggestions, array $variables) {
+  // Remove the block and replace dashes with underscores in the block ID to
+  // use for the hook name.
+}
+
+function limestone_theme_suggestions_views_view_list_alter (&$suggestions, $vars) {
+  return [
+    'views_view_list__' . $vars['view']->id()
+  ];
+}

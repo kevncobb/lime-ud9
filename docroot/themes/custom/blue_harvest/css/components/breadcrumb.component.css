@@ -1,0 +1,16 @@
+.font-size-lg {
+  font-size: 1.375rem;
+}
+
+.font-size-sm {
+  font-size: 0.9625rem;
+}
+
+.breadcrumb {
+  font-size: 0.9625rem;
+}
+
+.region-breadcrumb {
+  width: 100%;
+  padding: 0 0.9375rem 0.25rem;
+}

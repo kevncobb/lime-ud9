@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - feedback.feedback_message_type.default_feedback
+    - field.storage.feedback_message.body
+  module:
+    - text
+id: feedback_message.default_feedback.body
+field_name: body
+entity_type: feedback_message
+bundle: default_feedback
+label: Message
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

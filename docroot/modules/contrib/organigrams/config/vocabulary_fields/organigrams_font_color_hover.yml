@@ -1,0 +1,7 @@
+field_name: organigrams_font_color_hover
+type: textfield
+label: 'Font color hover'
+description: 'Specify the font color of the items in this organigram on hover if they have a URL.'
+field_group: 'Font settings'
+field_group_weight: 3
+weight: 2

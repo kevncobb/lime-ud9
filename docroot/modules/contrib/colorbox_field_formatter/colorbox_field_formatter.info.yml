@@ -1,0 +1,12 @@
+name: Colorbox Field Formatter
+type: module
+description: A field formatter for various field types like text, computed, entityreference or image to format those field in display styles or views as links to a colorbox.
+package: Media
+core_version_requirement: ^8.8 || ^9
+dependencies:
+  - colorbox:colorbox
+
+# Information added by Drupal.org packaging script on 2021-01-28
+version: '2.0.2'
+project: 'colorbox_field_formatter'
+datestamp: 1611835845

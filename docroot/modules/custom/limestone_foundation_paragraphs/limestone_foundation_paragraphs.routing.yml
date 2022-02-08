@@ -1,0 +1,7 @@
+limestone_foundation_paragraphs.settings:
+  path: '/admin/config/limestoned8/limestone-foundation-paragraphs'
+  defaults:
+    _form: '\Drupal\limestone_foundation_paragraphs\Form\LimestoneFoundationParagraphsSettingsForm'
+    _title: 'Limestone Zurb Foundation Paragraphs settings'
+  requirements:
+    _permission: 'administer Foundation paragraphs settings'

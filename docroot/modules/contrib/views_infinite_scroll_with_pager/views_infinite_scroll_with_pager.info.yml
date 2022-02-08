@@ -1,0 +1,14 @@
+name: 'Views Infinite Scroll With Pager'
+type: module
+description: 'Adds pager to Views Infinite Scroll'
+package: Views
+
+dependencies:
+  - views_infinite_scroll:views_infinite_scroll
+
+core_version_requirement: ^8.8 || ^9
+
+# Information added by Drupal.org packaging script on 2020-07-20
+version: '8.x-1.0'
+project: 'views_infinite_scroll_with_pager'
+datestamp: 1595229079

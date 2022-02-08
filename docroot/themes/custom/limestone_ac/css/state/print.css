@@ -1,0 +1,467 @@
+ul.styled-list,
+div.styled-list {
+  margin: 0;
+  padding: 0;
+}
+ul.styled-list li,
+div.styled-list li,
+ul.styled-list div.field--item,
+div.styled-list div.field--item {
+  list-style-type: none;
+  margin: 0;
+  border-bottom: solid 1px #f5f5f6;
+  padding: 15px 5px;
+  font-size: 1.5em;
+}
+ul.styled-list-small {
+  margin: 0;
+  padding: 0;
+}
+ul.styled-list-small li,
+ul.styled-list-small div.field--item {
+  font-size: 1em;
+  padding: 7px 2px;
+  list-style-type: none;
+  margin-left: 0;
+}
+ul.styled-list-small li.col-md-6 {
+  margin-left: 0;
+}
+ul.styled-list-small div.field--name-taxonomy-term-title {
+  margin-left: 0;
+}
+ul.styled-list-xs {
+  margin: 0;
+  padding: 0;
+}
+ul.styled-list-xs li,
+ul.styled-list-xs div.field--item {
+  font-size: 1.5rem;
+  padding: 2px 2px;
+  list-style-type: none;
+  margin-left: 4px;
+}
+.description {
+  font-size: 16px;
+  color: #555555;
+}
+h1 {
+  color: #0038a5;
+}
+h2.block-title {
+  font-size: 23px;
+  margin-top: 12.5px;
+  margin-bottom: 12.5px;
+}
+ul.styled-list-small .pdf-profile-row {
+  border-bottom: thin dashed #000;
+}
+ul.styled-list-small .pdf-profile-row .field,
+ul.styled-list-small .pdf-profile-row .field.field--name-field-job-title {
+  padding: 0 0 10px 0;
+  margin: 0 0 -5px 0;
+  background-color: white;
+}
+ul.styled-list-small .pdf-profile-row span span span {
+  padding: 0 0 5px 0;
+  background-color: white;
+  margin: 0 0 -5px 0;
+}
+ul.styled-list-small .pdf-profile-row span span span:before {
+  content: "(";
+  margin-right: -3px;
+}
+ul.styled-list-small .pdf-profile-row span span span:after {
+  content: ")";
+}
+ul.styled-list-small .field--name-field-degrees-and-schools {
+  font-size: 16px !important;
+  color: #555555;
+}
+.book-nav h2 {
+  display: none;
+}
+.logo img {
+  width: 300px;
+}
+.logo {
+  width: 300px;
+}
+.header-wrapper {
+  background-color: #0038a5;
+}
+.navbar-default {
+  background-color: transparent;
+  border: none;
+}
+.navbar-default .navbar-nav > li > a {
+  color: white;
+}
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+  color: #ffe865;
+}
+.navbar-default .navbar-nav > .active > a {
+  color: #ffe865 !important;
+}
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+  color: #ffe865 !important;
+}
+.sub_menu {
+  padding-bottom: 2rem;
+}
+.sub_menu .caret {
+  top: 47%;
+  position: absolute;
+  right: 1px;
+}
+.region-sub-menu {
+  background-color: #f4f5f7;
+}
+.region-sub-menu ul.menu.navbar-nav > li {
+  text-transform: uppercase;
+}
+.region-sub-menu ul.nav li.dropdown:hover ul.dropdown-menu {
+  display: block;
+}
+.bar-header {
+  color: white;
+  background: #0038a5;
+  text-transform: uppercase;
+  padding: 15px;
+  font-weight: 100;
+  margin: 3rem 0;
+  display: inline-block;
+  width: 100%;
+}
+.bar-header.no-margin-bottom {
+  margin-bottom: 0;
+}
+.bar-header.gray {
+  background: #8e8e8ec9;
+}
+.bar-header-groupings .view-content > div {
+  float: left;
+  width: 100%;
+}
+.bar-header-groupings .view-content h3 {
+  color: white;
+  background: #0038a5;
+  text-transform: uppercase;
+  padding: 15px;
+  font-weight: 100;
+  margin: 3rem 0;
+  clear: both;
+}
+.bar-header-groupings .view-content h3 a {
+  color: white;
+  text-decoration: none;
+}
+.hide-header-groupings .view-content > h3 {
+  display: none;
+}
+ul.menu--site-version > .active > a {
+  background-color: transparent !important;
+}
+.view-header h1 + #block-customprintblock {
+  position: relative;
+  right: 0;
+  top: 15px;
+}
+.view-header #block-customprintblock {
+  float: right;
+  padding-right: 15px;
+  display: none;
+}
+@media screen and (min-width: 768px) {
+  .view-header #block-customprintblock {
+    display: block;
+  }
+}
+.view-header #block-customprintblock .block-title {
+  font-size: 0px;
+  position: absolute;
+  left: 999999999em;
+}
+.view-programs.view-id-programs input[type="radio"],
+.view-programs.view-id-programs input[type="checkbox"] {
+  margin-right: 5px;
+}
+.view-programs.view-id-programs .view-filters {
+  margin-top: 15px;
+}
+@media (min-width: 480px) {
+  .styled-list.col-2 {
+    column-count: 2;
+  }
+}
+@media (min-width: 768px) {
+  .col-2-groupings .view-content > div {
+    float: left;
+    width: 50%;
+  }
+  .col-2-groupings .view-content > div:nth-child(2),
+  .col-2-groupings .view-content > div:nth-child(3),
+  .col-2-groupings .view-content > div:nth-child(4),
+  .col-2-groupings .view-content > div:nth-child(5) {
+    padding-left: 5%;
+  }
+}
+@media (min-width: 480px) {
+  .left {
+    float: left;
+  }
+}
+@media (min-width: 480px) {
+  .right {
+    float: right;
+  }
+}
+.spacing-sm {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+.spacing-md {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+.padding-xs-horizontal,
+.spacing-sides-xs {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+@media (min-width: 480px) {
+  .col-3 {
+    column-count: 2;
+  }
+}
+@media (min-width: 768px) {
+  .col-3 {
+    column-count: 3;
+  }
+}
+@media (min-width: 480px) {
+  .col-4 {
+    column-count: 2;
+  }
+}
+@media (min-width: 768px) {
+  .col-4 {
+    column-count: 4;
+  }
+}
+.margin-bottom-0 {
+  margin-bottom: 0;
+}
+.margin-bottom,
+.margin-bottom-1 {
+  margin-bottom: 1rem;
+}
+@media (min-width: 480px) {
+  .split-col > li,
+  .split-col > div {
+    width: 50%;
+    float: left;
+  }
+}
+.catalog-version {
+  position: relative;
+  top: 0;
+  right: 0;
+}
+@media (min-width: 992px) {
+  .catalog-version {
+    width: 32%;
+    float: right;
+    margin-top: 25px;
+  }
+}
+.node--type-landing-page .bs-region--main {
+  width: auto;
+}
+.degree-plan-wrapper {
+  margin: 5px 0 0 0;
+}
+.degree-plan-wrapper a.degree-plan-header {
+  color: white;
+  background: #0038a5;
+  text-transform: uppercase;
+  padding: 15px;
+  font-weight: 100;
+  margin: 3rem 0;
+  font-size: 2.5rem;
+  margin-bottom: -3rem;
+  display: block;
+  position: relative;
+  z-index: 2;
+}
+.degree-plan-wrapper a.degree-plan-header:focus,
+.degree-plan-wrapper a.degree-plan-header:hover {
+  cursor: pointer;
+}
+.degree-plan-wrapper a.degree-plan-header:after {
+  content: "Click for full view";
+  font-size: 1.2rem;
+  display: block;
+  clear: both;
+  padding-left: 1px;
+  text-transform: none;
+}
+.field--name-field-degree-plan-legend {
+  font-size: 1.4rem;
+  background-color: #d9edf7;
+  color: #31708f;
+  padding: 15px;
+  margin: 25px 0 12px;
+  border: 1px solid #bce8f1;
+  border-radius: 4px;
+}
+.field--name-field-notes {
+  font-size: 1.4rem;
+  background-color: #dff0d8;
+  color: #3c763d;
+  padding: 15px;
+  margin-bottom: 25px;
+  border: 1px solid #d6e9c6;
+  border-radius: 4px;
+}
+.paragraph--type-a-year-of-a-4-year-degree-plan .field--name-field-year {
+  margin: 5px 0 0 0;
+}
+.paragraph--type-a-year-of-a-4-year-degree-plan .field--name-field-semester {
+  margin: 0 0 8px;
+  font-size: 14px;
+  padding: 10px 15px;
+}
+.paragraph--type-a-year-of-a-4-year-degree-plan .field--name-field-total-credit-hours {
+  font-size: 1.3rem;
+  margin-left: 12px;
+  margin-bottom: 5px;
+  border-top: thin solid #a6a6a69c;
+  padding-top: 5px;
+}
+a[target=_blank].catalog-link::after {
+  font-size: 1.5rem;
+  left: 0.3rem;
+  top: 0;
+}
+a[target=_blank]::after {
+  content: "\ea7e";
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 0.68rem;
+  position: relative;
+  left: 0.2rem;
+  top: -1px;
+}
+.header-wrapper,
+.sub_menu,
+.page-header,
+.footer-wrapper,
+.field--name-dynamic-block-fieldnode-print {
+  display: none;
+}
+.print-hide,
+#block-customprintblock,
+ol.breadcrumb {
+  display: none;
+}
+.view-content {
+  display: block;
+}
+.fibonacci-aside .field-label-above {
+  display: none;
+}
+#views-exposed-form-programs-block-2,
+.tabs {
+  display: none;
+}
+#pf-body #pf-header-img {
+  max-height: 125px;
+}
+.paragraph--type-course-for-4-year-degree-plan .col-xs-10 {
+  width: 83.33333333%;
+  float: left;
+}
+.paragraph--type-course-for-4-year-degree-plan .col-xs-2 {
+  width: 16.66666667%;
+  float: left;
+}
+body {
+  font-size: 1.5rem;
+}
+h1 {
+  border-bottom: thin solid gray;
+}
+.bar-header {
+  text-transform: uppercase;
+  padding: 15px;
+  font-weight: 100;
+  margin: 3rem 0;
+  -webkit-print-color-adjust: exact !important;
+  box-shadow: inset #0138a5 190px 190px 250px !important;
+  color: #efefef !important;
+  font-size: 1.5rem;
+}
+.bar-header strong {
+  -webkit-print-color-adjust: exact !important;
+  box-shadow: inset #0138a5 190px 190px 250px !important;
+  color: #efefef !important;
+}
+.field--name-field-program-type-term,
+.course-discipline {
+  font-size: 1.3rem;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  -webkit-print-color-adjust: exact !important;
+}
+#pf-body h2 {
+  font-size: 2rem;
+}
+ul.styled-list-xs li,
+ul.styled-list-xs div.field--item {
+  font-size: 1rem;
+  padding: 0;
+}
+.field--name-field-total-credit-hours {
+  float: left;
+  width: 100%;
+  margin-top: 5px;
+  padding: 0;
+}
+.field--name-field-total-credit-hours .field--label {
+  display: inline-block;
+  float: left;
+  margin-right: 10px;
+}
+.field--name-field-total-credit-hours .field--label:after {
+  content: ": ";
+}
+table > tbody > tr:nth-of-type(odd) {
+  background-color: #f9f9f9;
+}
+table > tbody > tr > td {
+  padding: 8px;
+  line-height: 1.42857143;
+  vertical-align: top;
+  border-top: 1px solid #dddddd;
+}
+.inline {
+  display: inline;
+}
+#pf-content .node--type-profile .pull-right {
+  margin: 0;
+}

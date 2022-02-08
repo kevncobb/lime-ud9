@@ -1,0 +1,7 @@
+field_name: organigrams_line_color
+type: textfield
+label: 'Line color'
+description: 'Specify the connection lines color in this organigram.'
+field_group: 'Organigram settings'
+field_group_weight: 1
+weight: 5

@@ -1,0 +1,10 @@
+# Put overrides to your pantheon.upstream.yml file here.
+# For more information, see: https://pantheon.io/docs/pantheon-yml/
+api_version: 1
+# Serve docroot from nested "web" directory
+web_docroot: true
+enforce_https: transitional
+php_version: 8.0
+database:
+  version: 10.4
+drush_version: 10

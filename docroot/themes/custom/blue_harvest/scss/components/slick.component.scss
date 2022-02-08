@@ -1,0 +1,97 @@
+// Icons component style.
+// -----------------------------------------------------------------------------
+@import "../../node_modules/bootstrap/scss/functions";  // Bootstrap functions.
+@import "../../node_modules/bootstrap/scss/mixins";     // Bootstrap mixins.
+@import "../variables";                   // blue_harvest variables.
+@import "../mixins";                      // blue_harvest mixins.
+// -----------------------------------------------------------------------------
+
+.facts-and-stats-view {
+  .slide__media {
+    //width: 50%;
+  }
+  .slide__caption {
+    cursor: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    -o-user-select: text;
+    -webkit-user-select: text;
+    user-select: text;
+    position: absolute;
+    top: 5%;
+    right: 5%;
+    left: auto;
+    width: 40%;
+    height: 90%;
+    color: white;
+    background-color: rgba(0, 56, 165, 0.9);
+    .slide__description {
+      position: absolute;
+      top: 50%;
+      right: 52%;
+      transform: translate(50%,-50%);
+      width: 80%;
+      .topic_link {
+        background: #ff6d2c;
+      }
+    }
+  }
+  .caption-top {
+    .slide__caption {
+      width: 80%;
+      height: 39%;
+      left: 10%;
+      top: 4%;
+      bottom: auto;
+    }
+  }
+  .caption-bottom {
+    .slide__caption {
+      width: 90%;
+      height: 35%;
+      left: 5%;
+      top: auto;
+      bottom: 4%;
+    }
+  }
+  .caption-left {
+    .slide__caption {
+      right: auto;
+      left: 5%;
+    }
+  }
+  .caption-bottom-left {
+    .slide__caption {
+      width: 60%;
+      height: 30%;
+      left: 5%;
+      top: auto;
+      bottom: 4%;
+    }
+  }
+  .caption-top-left {
+    .slide__caption {
+      width: 70%;
+      bottom: auto;
+      top: 5%;
+    }
+  }
+  .caption-top-right {
+    .slide__caption {
+      width: 70%;
+      bottom: auto;
+      top: 5%;
+      left: auto;
+      right: 5%;
+    }
+  }
+  .caption-orange {
+    .slide__caption {
+      background-color: rgba(255, 109, 44, 0.9);
+      .topic_link {
+        background: $blue;
+      }
+    }
+  }
+}
+

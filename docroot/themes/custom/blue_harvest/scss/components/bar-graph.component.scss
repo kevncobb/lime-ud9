@@ -1,0 +1,510 @@
+/* ==========================================================================
+	Home Pillars
+============================================================================= */
+
+// -----------------------------------------------------------------------------
+@import "../../node_modules/bootstrap/scss/functions";  // Bootstrap functions.
+@import "../../node_modules/bootstrap/scss/mixins";     // Bootstrap mixins.
+@import "../variables";                   // lime_doc variables.
+@import "../mixins";                      // lime_doc mixins.
+// -----------------------------------------------------------------------------
+
+/* ==========================================================================
+   Bar Graph
+============================================================================= */
+.bar_graph {
+  position: relative;
+  color: #222;
+  padding: 0 0 20px;
+  &:first-child {
+    padding-top: 40px;
+  }
+  + {
+    .bar_graph {
+      .bar_graph_container {
+        border-top: none;
+      }
+    }
+  }
+}
+.bar_graph.theme_dark {
+  background: #222;
+  color: #ffffff;
+  padding: 60px 0 80px;
+  .bar_graph_container {
+    border-top: none;
+    padding-top: 0;
+  }
+  .bar_graph_heading {
+    margin-bottom: 5px;
+  }
+  .bar_graph_button_link {
+    &:hover {
+      background: #ffffff;
+      color: #222;
+    }
+  }
+  .bar_graph_fullwidth {
+    margin-top: 40px;
+  }
+}
+.bar_graph.theme_gray {
+  background: #F2F2F3;
+}
+.page_layout_home {
+  .bar_graph {
+    z-index: 2;
+  }
+}
+.bar_graph_container {
+  position: relative;
+  border-top: 4px solid #F2F2F3;
+  padding-top: 46px;
+}
+.bar_graph_heading {
+  font-size: 14px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
+  line-height: 1.5;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  margin-top: 0;
+}
+.bar_graph_title {
+  font-size: 26px;
+  font-size: 1.625rem;
+  font-weight: 900;
+  line-height: 1.2;
+  margin-bottom: 10px;
+  margin-top: 0;
+}
+.bar_graph_summary {
+  width: 100%;
+}
+.bar_graph_description {
+  margin-top: 0px;
+  p {
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+.bar_graph_description_text {
+  font-size: 18px;
+  font-size: 1.125rem;
+  font-weight: 300;
+  line-height: 1.5;
+  margin-top: 53px;
+}
+.bar_graph_button {
+  width: 100%;
+  margin-top: 32px;
+}
+.bar_graph_button_link {
+  font-size: 14px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
+  line-height: 1.5;
+  text-transform: uppercase;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  cursor: pointer;
+  padding: 7px 22px 8px;
+  -webkit-transition: background .25s, border .25s, color .25s, -webkit-box-shadow .25s, -webkit-transform .25s;
+  transition: background .25s, border .25s, color .25s, -webkit-box-shadow .25s, -webkit-transform .25s;
+  transition: background .25s, border .25s, box-shadow .25s, color .25s, transform .25s;
+  transition: background .25s, border .25s, box-shadow .25s, color .25s, transform .25s, -webkit-box-shadow .25s, -webkit-transform .25s;
+  background: $blue;
+  color: #ffffff;
+  display: inline-block;
+  &:focus {
+    background: #000000;
+    color: #ffffff;
+  }
+  &:hover {
+    background: #000000;
+    color: #ffffff;
+  }
+}
+.large {
+  .bar_graph_button_link {
+    padding: 11px 32px 12px;
+  }
+  .bar_graph.color_purple {
+    .bar_graph_button_link {
+      padding: 11px 32px 12px;
+    }
+  }
+  .bar_graph.color_orange {
+    .bar_graph_button_link {
+      padding: 11px 32px 12px;
+    }
+  }
+  .bar_graph.color_blue {
+    .bar_graph_button_link {
+      padding: 11px 32px 12px;
+    }
+  }
+  .bar_graph.color_green {
+    .bar_graph_button_link {
+      padding: 11px 32px 12px;
+    }
+  }
+  .bar_graph.color_yellow {
+    .bar_graph_button_link {
+      padding: 11px 32px 12px;
+    }
+  }
+}
+.bar_graph.color_purple {
+  .bar_graph_button_link {
+    font-size: 14px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    letter-spacing: 0.0625rem;
+    line-height: 1.5;
+    text-transform: uppercase;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    cursor: pointer;
+    padding: 7px 22px 8px;
+    -webkit-transition: background .25s, border .25s, color .25s, -webkit-box-shadow .25s, -webkit-transform .25s;
+    transition: background .25s, border .25s, color .25s, -webkit-box-shadow .25s, -webkit-transform .25s;
+    transition: background .25s, border .25s, box-shadow .25s, color .25s, transform .25s;
+    transition: background .25s, border .25s, box-shadow .25s, color .25s, transform .25s, -webkit-box-shadow .25s, -webkit-transform .25s;
+    background: #4B2E84;
+    color: #ffffff;
+    &:focus {
+      background: #000000;
+      color: #ffffff;
+    }
+    &:hover {
+      background: #000000;
+      color: #ffffff;
+    }
+  }
+  .bar_graph_value {
+    background: #4B2E84;
+  }
+  .bar_graph_value_label.small_value {
+    color: #4B2E84;
+  }
+}
+.bar_graph.color_orange {
+  .bar_graph_button_link {
+    font-size: 14px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    letter-spacing: 0.0625rem;
+    line-height: 1.5;
+    text-transform: uppercase;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    cursor: pointer;
+    padding: 7px 22px 8px;
+    -webkit-transition: background .25s, border .25s, color .25s, -webkit-box-shadow .25s, -webkit-transform .25s;
+    transition: background .25s, border .25s, color .25s, -webkit-box-shadow .25s, -webkit-transform .25s;
+    transition: background .25s, border .25s, box-shadow .25s, color .25s, transform .25s;
+    transition: background .25s, border .25s, box-shadow .25s, color .25s, transform .25s, -webkit-box-shadow .25s, -webkit-transform .25s;
+    background: #FF5E00;
+    color: #000000;
+    &:focus {
+      background: #000000;
+      color: #ffffff;
+    }
+    &:hover {
+      background: #000000;
+      color: #ffffff;
+    }
+  }
+  .bar_graph_value {
+    background: #FF5E00;
+  }
+  .bar_graph_value_label.small_value {
+    color: #FF5E00;
+  }
+}
+.bar_graph.color_blue {
+  .bar_graph_button_link {
+    font-size: 14px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    letter-spacing: 0.0625rem;
+    line-height: 1.5;
+    text-transform: uppercase;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    cursor: pointer;
+    padding: 7px 22px 8px;
+    -webkit-transition: background .25s, border .25s, color .25s, -webkit-box-shadow .25s, -webkit-transform .25s;
+    transition: background .25s, border .25s, color .25s, -webkit-box-shadow .25s, -webkit-transform .25s;
+    transition: background .25s, border .25s, box-shadow .25s, color .25s, transform .25s;
+    transition: background .25s, border .25s, box-shadow .25s, color .25s, transform .25s, -webkit-box-shadow .25s, -webkit-transform .25s;
+    background: $blue;
+    color: #fff;
+    &:focus {
+      background: #000000;
+      color: #ffffff;
+    }
+    &:hover {
+      background: #000000;
+      color: #ffffff;
+    }
+  }
+  .bar_graph_value {
+    background: $blue;
+  }
+  .bar_graph_value_label.small_value {
+    color: $blue;
+  }
+}
+.bar_graph.color_green {
+  .bar_graph_button_link {
+    font-size: 14px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    letter-spacing: 0.0625rem;
+    line-height: 1.5;
+    text-transform: uppercase;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    cursor: pointer;
+    padding: 7px 22px 8px;
+    -webkit-transition: background .25s, border .25s, color .25s, -webkit-box-shadow .25s, -webkit-transform .25s;
+    transition: background .25s, border .25s, color .25s, -webkit-box-shadow .25s, -webkit-transform .25s;
+    transition: background .25s, border .25s, box-shadow .25s, color .25s, transform .25s;
+    transition: background .25s, border .25s, box-shadow .25s, color .25s, transform .25s, -webkit-box-shadow .25s, -webkit-transform .25s;
+    background: #78BE20;
+    color: #000000;
+    &:focus {
+      background: #000000;
+      color: #ffffff;
+    }
+    &:hover {
+      background: #000000;
+      color: #ffffff;
+    }
+  }
+  .bar_graph_value {
+    background: #78BE20;
+  }
+  .bar_graph_value_label.small_value {
+    color: #78BE20;
+  }
+}
+.bar_graph.color_yellow {
+  .bar_graph_button_link {
+    font-size: 14px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    letter-spacing: 0.0625rem;
+    line-height: 1.5;
+    text-transform: uppercase;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    cursor: pointer;
+    padding: 7px 22px 8px;
+    -webkit-transition: background .25s, border .25s, color .25s, -webkit-box-shadow .25s, -webkit-transform .25s;
+    transition: background .25s, border .25s, color .25s, -webkit-box-shadow .25s, -webkit-transform .25s;
+    transition: background .25s, border .25s, box-shadow .25s, color .25s, transform .25s;
+    transition: background .25s, border .25s, box-shadow .25s, color .25s, transform .25s, -webkit-box-shadow .25s, -webkit-transform .25s;
+    background: #FFD900;
+    color: #000000;
+    &:focus {
+      background: #000000;
+      color: #ffffff;
+    }
+    &:hover {
+      background: #000000;
+      color: #ffffff;
+    }
+  }
+  .bar_graph_value {
+    background: #FFD900;
+  }
+  .bar_graph_value_label {
+    color: #222;
+  }
+  .bar_graph_value_label.small_value {
+    color: #222;
+  }
+}
+.bar_graph_button_link_label {
+  display: block;
+  text-align: center;
+}
+.bar_graph_summary_label {
+  font-size: 22px;
+  font-size: 1.375rem;
+  font-weight: 300;
+  line-height: 1.25;
+}
+.bar_graph_nominator {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: absolute;
+  top: 0;
+  left: 35px;
+  color: #A7A9AC;
+  font-size: 20px;
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+.bar_graph_fullwidth {
+  background: #ffffff url("/themes/custom/blue_harvest/images/bargraph_bg.png") repeat-x;
+  background-size: auto 100%;
+  border: 4px solid #ffffff;
+  border-radius: 100px;
+  -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  margin-top: 40px;
+  overflow: hidden;
+}
+.bar_graph_value {
+  height: 60px;
+  width: 0;
+  position: relative;
+  background: #4B2E84;
+  border-top-left-radius: 60px;
+  border-bottom-left-radius: 60px;
+  -webkit-transition: width 1.5s;
+  transition: width 1.5s;
+  vertical-align: top;
+}
+.bar_graph_value_label {
+  font-size: 26px;
+  font-size: 1.625rem;
+  font-weight: 900;
+  line-height: 1.2;
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  color: #ffffff;
+  font-size: 18px;
+  font-size: 1.125rem;
+  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
+  line-height: 1;
+  opacity: 0;
+  padding: 0 10px;
+  -webkit-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+  -webkit-transition: opacity .5s .65s;
+  transition: opacity .5s .65s;
+}
+.evaluated {
+  .bar_graph_value_label {
+    opacity: 1;
+  }
+}
+.bar_graph_value_label.small_value {
+  right: auto;
+  left: 100%;
+  background: #ffffff;
+  background: -webkit-gradient(linear, left top, right top, from(white), color-stop(64%, white), to(rgba(255, 255, 255, 0)));
+  background: linear-gradient(90deg, white 0%, white 64%, rgba(255, 255, 255, 0) 100%);
+  padding: 22px 100px 22px 20px;
+  -webkit-transition: opacity 0.5s 0.125s;
+  transition: opacity 0.5s 0.125s;
+}
+.bar_graph_value_number {
+  display: none;
+}
+.bar_graph_labels {
+  height: 26px;
+  position: relative;
+  margin-top: 12px;
+}
+.bar_graph_denominator {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: absolute;
+  top: 0;
+  right: 15px;
+  color: #A7A9AC;
+  font-size: 20px;
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+@media screen and (min-width: 500px) {
+  .bar_graph {
+    padding-bottom: 40px;
+  }
+  .bar_graph_value {
+    height: 100px;
+    border-top-left-radius: 100px;
+    border-bottom-left-radius: 100px;
+  }
+  .bar_graph_value_label.small_value {
+    padding-top: 38px;
+    padding-bottom: 38px;
+  }
+  .bar_graph_value_label {
+    font-size: 26px;
+    font-size: 1.625rem;
+  }
+}
+@media screen and (min-width: 740px) {
+  .bar_graph.theme_dark {
+    padding: 90px 0 110px;
+    .bar_graph_heading {
+      margin-bottom: 21px;
+    }
+    .bar_graph_fullwidth {
+      margin-top: 70px;
+    }
+  }
+  .bar_graph_title {
+    font-size: 40px;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .bar_graph_description_text {
+    font-size: 20px;
+    font-size: 1.25rem;
+  }
+  .bar_graph_summary_label {
+    font-size: 30px;
+    font-size: 1.875rem;
+  }
+  .bar_graph_value_label {
+    font-size: 40px;
+    font-size: 2.5rem;
+    font-weight: 700;
+  }
+}
+@media screen and (max-width: 499px) {
+  .bar_graph_info {
+    text-align: center;
+  }
+}
+@media screen and (min-width: 980px) {
+  .bar_graph_summary {
+    width: 70%;
+  }
+  .bar_graph_button {
+    width: 30%;
+    margin-top: 10px;
+    text-align: right;
+  }
+  .bar_graph_inner {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+}
+@media only screen and (min-width: 800px) {
+  .bar_graph_fullwidth {
+    margin: 40px -15px 0 -15px;
+  }
+}

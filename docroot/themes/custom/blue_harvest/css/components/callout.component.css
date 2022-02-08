@@ -1,0 +1,305 @@
+@charset "UTF-8";
+.font-size-lg {
+  font-size: 1.375rem;
+}
+
+.font-size-sm {
+  font-size: 0.9625rem;
+}
+
+p.lc-callout,
+blockquote.lc-callout {
+  /* IE6-9 */
+  position: relative;
+  z-index: 1;
+  padding: 1.5em 1em;
+  text-align: center;
+  /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#00ffffff',GradientType=1 );
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#00ffffff',GradientType=1 );
+  color: #0038a5;
+  border: none;
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f7f7f7+20,f7f7f7+50,f7f7f7+80&amp;0+0,0.8+15,1+19,1+81,0.8+85,0+100 */
+  /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, rgba(255, 255, 255, 0)), color-stop(15%, white), color-stop(19%, white), color-stop(20%, white), color-stop(50%, white), color-stop(80%, white), color-stop(81%, white), color-stop(85%, white), color-stop(100%, rgba(255, 255, 255, 0)));
+  /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0) 0%, white 15%, white 19%, white 20%, white 50%, white 80%, white 81%, white 85%, rgba(255, 255, 255, 0) 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(left, rgba(255, 255, 255, 0) 0%, white 15%, white 19%, white 20%, white 50%, white 80%, white 81%, white 85%, rgba(255, 255, 255, 0) 100%);
+  /* Opera 11.10+ */
+  /* IE10+ */
+  background: -webkit-gradient(linear, left top, right top, from(rgba(255, 255, 255, 0)), color-stop(15%, white), color-stop(19%, white), color-stop(20%, white), color-stop(50%, white), color-stop(80%, white), color-stop(81%, white), color-stop(85%, white), to(rgba(255, 255, 255, 0)));
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, white 15%, white 19%, white 20%, white 50%, white 80%, white 81%, white 85%, rgba(255, 255, 255, 0) 100%);
+  font-family: futura-pt, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-size: 130%;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+p.lc-callout:before,
+p.lc-callout:after,
+blockquote.lc-callout:before,
+blockquote.lc-callout:after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  content: "";
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e4076', endColorstr='#1972d7', GradientType=1 );
+  background: rgba(73, 80, 87, 0);
+  background: -webkit-gradient(left top, right top, color-stop(0%, rgba(73, 80, 87, 0)), color-stop(14%, rgba(73, 80, 87, 0.5)), color-stop(32%, rgba(73, 80, 87, 0.8)), color-stop(52%, rgba(73, 80, 87, 0.8)), color-stop(71%, rgba(73, 80, 87, 0.8)), color-stop(85%, rgba(73, 80, 87, 0.5)), color-stop(100%, rgba(73, 80, 87, 0)));
+  background: -webkit-linear-gradient(left, rgba(73, 80, 87, 0) 0%, rgba(73, 80, 87, 0.5) 14%, rgba(73, 80, 87, 0.8) 32%, rgba(73, 80, 87, 0.8) 52%, rgba(73, 80, 87, 0.8) 71%, rgba(73, 80, 87, 0.5) 85%, rgba(73, 80, 87, 0) 100%);
+  background: -o-linear-gradient(left, rgba(73, 80, 87, 0) 0%, rgba(73, 80, 87, 0.5) 14%, rgba(73, 80, 87, 0.8) 32%, rgba(73, 80, 87, 0.8) 52%, rgba(73, 80, 87, 0.8) 71%, rgba(73, 80, 87, 0.5) 85%, rgba(73, 80, 87, 0) 100%);
+  background: -webkit-gradient(linear, left top, right top, from(rgba(73, 80, 87, 0)), color-stop(14%, rgba(73, 80, 87, 0.5)), color-stop(32%, rgba(73, 80, 87, 0.8)), color-stop(52%, rgba(73, 80, 87, 0.8)), color-stop(71%, rgba(73, 80, 87, 0.8)), color-stop(85%, rgba(73, 80, 87, 0.5)), to(rgba(73, 80, 87, 0)));
+  background: linear-gradient(to right, rgba(73, 80, 87, 0) 0%, rgba(73, 80, 87, 0.5) 14%, rgba(73, 80, 87, 0.8) 32%, rgba(73, 80, 87, 0.8) 52%, rgba(73, 80, 87, 0.8) 71%, rgba(73, 80, 87, 0.5) 85%, rgba(73, 80, 87, 0) 100%);
+}
+
+p.lc-callout:after,
+blockquote.lc-callout:after {
+  top: auto;
+  bottom: 0;
+}
+
+p.lc-callout span.watermark,
+blockquote.lc-callout span.watermark {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: -70px;
+  width: 130px;
+  height: 133px;
+  margin-top: -65px;
+  opacity: 0.2;
+  background-image: url("/themes/custom/limestone/images/lc-sprite.svg");
+  background-position: -7px -1px;
+  -webkit-background-size: 1035px 1035px;
+  background-size: 1035px;
+}
+
+p.lc-callout span.watermark.right,
+blockquote.lc-callout span.watermark.right {
+  right: -70px;
+  left: auto;
+}
+
+p.lc-callout span.author,
+blockquote.lc-callout span.author {
+  display: block;
+  padding-top: 1rem;
+  text-align: right;
+}
+
+.bg-blue p.lc-callout,
+.bg-blue blockquote.lc-callout {
+  color: #fff;
+  background: none;
+}
+
+.bg-blue p.lc-callout::before,
+.bg-blue p.lc-callout::after,
+.bg-blue blockquote.lc-callout::before,
+.bg-blue blockquote.lc-callout::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  content: "";
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1e4076',endColorstr='#1972d7',GradientType=1);
+  background: rgba(220, 220, 220, 0);
+  background: -webkit-gradient(left top, right top, color-stop(0%, rgba(220, 220, 220, 0)), color-stop(14%, rgba(220, 220, 220, 0.5)), color-stop(32%, rgba(220, 220, 220, 0.8)), color-stop(52%, rgba(220, 220, 220, 0.8)), color-stop(71%, rgba(220, 220, 220, 0.8)), color-stop(85%, rgba(220, 220, 220, 0.5)), color-stop(100%, rgba(220, 220, 220, 0)));
+  background: -webkit-gradient(linear, left top, right top, from(rgba(220, 220, 220, 0)), color-stop(14%, rgba(220, 220, 220, 0.5)), color-stop(32%, rgba(220, 220, 220, 0.8)), color-stop(52%, rgba(220, 220, 220, 0.8)), color-stop(71%, rgba(220, 220, 220, 0.8)), color-stop(85%, rgba(220, 220, 220, 0.5)), to(rgba(220, 220, 220, 0)));
+  background: -webkit-linear-gradient(left, rgba(220, 220, 220, 0) 0%, rgba(220, 220, 220, 0.5) 14%, rgba(220, 220, 220, 0.8) 32%, rgba(220, 220, 220, 0.8) 52%, rgba(220, 220, 220, 0.8) 71%, rgba(220, 220, 220, 0.5) 85%, rgba(220, 220, 220, 0) 100%);
+  background: -o-linear-gradient(left, rgba(220, 220, 220, 0) 0%, rgba(220, 220, 220, 0.5) 14%, rgba(220, 220, 220, 0.8) 32%, rgba(220, 220, 220, 0.8) 52%, rgba(220, 220, 220, 0.8) 71%, rgba(220, 220, 220, 0.5) 85%, rgba(220, 220, 220, 0) 100%);
+  background: linear-gradient(to right, rgba(220, 220, 220, 0) 0%, rgba(220, 220, 220, 0.5) 14%, rgba(220, 220, 220, 0.8) 32%, rgba(220, 220, 220, 0.8) 52%, rgba(220, 220, 220, 0.8) 71%, rgba(220, 220, 220, 0.5) 85%, rgba(220, 220, 220, 0) 100%);
+}
+
+.bg-blue p.lc-callout:after,
+.bg-blue blockquote.lc-callout:after {
+  top: auto;
+  bottom: 0;
+}
+
+.bg-blue p.lc-callout span.watermark,
+.bg-blue blockquote.lc-callout span.watermark {
+  position: absolute;
+  z-index: -1;
+  top: 45%;
+  left: -89px;
+  width: 150px;
+  height: 162px;
+  margin-top: -65px;
+  opacity: 0.2;
+  background-image: url(/themes/custom/limestone/images/lc-sprite.svg);
+  background-position: -7px -1px;
+  -webkit-background-size: 1250px 1250px;
+  background-size: 1250px;
+}
+
+.info-box {
+  position: relative;
+  float: left;
+  width: 100%;
+  margin-top: 20px;
+  margin-right: 50px;
+  margin-bottom: 50px;
+  margin-left: 0;
+  padding: 30px 30px 30px;
+  border-top: 6px solid rgba(27, 75, 170, 0.62);
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+@media (min-width: 768px) {
+  .info-box {
+    margin-left: 0;
+  }
+}
+
+@media (min-width: 992px) {
+  .info-box {
+    width: 310px;
+    margin-left: -50px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .info-box {
+    margin-left: -150px;
+  }
+}
+
+.pull-quote {
+  float: right;
+  max-width: 50%;
+  margin: 10px 0 0 20px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #0038a5;
+  background: -webkit-gradient(linear, left top, left bottom, from(#767676), to(#0038a5));
+  background: -webkit-linear-gradient(#767676, #0038a5);
+  background: -o-linear-gradient(#767676, #0038a5);
+  background: linear-gradient(#767676, #0038a5);
+  -webkit-background-clip: text;
+  font-family: "futura-pt", "Arial Narrow", sans-serif;
+  font-size: 1.125rem;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 2em;
+
+  -webkit-text-fill-color: transparent;
+}
+
+.pull-quote:before {
+  content: "";
+}
+
+.pull-quote:after {
+  content: "";
+}
+
+@media (min-width: 768px) {
+  .pull-quote {
+    max-width: calc(50% - 5%);
+    margin-right: -15%;
+    font-size: 1.375rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .pull-quote {
+    max-width: calc(50% + 5%);
+    margin-right: -25%;
+    font-size: 1.875rem;
+  }
+}
+
+.callout {
+  position: relative;
+  margin: 0 0 1rem 0;
+  padding: 1rem;
+  color: #0a0a0a;
+  border: 1px solid rgba(10, 10, 10, 0.25);
+  border-radius: 0;
+  background-color: #fff;
+}
+
+.callout.primary {
+  background-color: #cbddff;
+}
+
+.callout.success {
+  background-color: #ecf5da;
+}
+
+.callout.secondary {
+  background-color: #eaeaea;
+}
+
+.callout.warning {
+  background-color: #ffef86;
+}
+
+.callout.alert {
+  background-color: #f7e4e1;
+}
+
+.callout table tbody {
+  border: none;
+  background-color: transparent;
+}
+
+.callout table tbody tr:nth-child(even) {
+  background-color: transparent;
+}
+
+.blockquote-container.blockquote-left {
+  float: left;
+  width: 35%;
+  margin-right: 1rem;
+}
+
+@media (max-width: 991.98px) {
+  .blockquote-container.blockquote-left {
+    float: none;
+    width: 100%;
+    margin: 0;
+  }
+}
+
+.blockquote-container.blockquote-right {
+  float: right;
+  width: 35%;
+  margin-left: 1rem;
+}
+
+.blockquote-container .callout .blockquote-title {
+  margin-left: 1rem;
+}
+
+.blockquote-container .callout blockquote {
+  quotes: "“" "”" "‘" "’  ";
+  border-left: none;
+}
+
+.blockquote-container .callout blockquote:before {
+  content: open-quote;
+  vertical-align: -0.4em;
+  color: #495057;
+  font-size: 4em;
+  line-height: 0.1em;
+}
+
+.blockquote-container .callout blockquote:after {
+  content: close-quote;
+  vertical-align: -0.6em;
+  color: #495057;
+  font-size: 4em;
+  line-height: 0.1em;
+}
+
+.blockquote-container .callout blockquote .blockquote-content {
+  display: inline;
+  color: #000;
+}

@@ -1,0 +1,392 @@
+.font-size-lg {
+  font-size: 1.375rem;
+}
+
+.font-size-sm {
+  font-size: 0.9625rem;
+}
+
+.above-faq {
+  margin-top: -60px;
+  margin-bottom: -80px;
+}
+
+.above-faq h3 {
+  line-height: 29px;
+}
+
+@media screen and (min-width: 780px) {
+  .faqs .smaller {
+    font-size: 89%;
+    line-height: 20px;
+  }
+}
+
+.faqs {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  margin-top: 80px;
+  background-color: #fff;
+}
+
+.faq-cell {
+  position: relative;
+  overflow: hidden;
+  height: 160px;
+  margin: 0 0 1px 0;
+  cursor: pointer;
+  -webkit-box-shadow: inset 0 0 30px 0 rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: inset 0 0 30px 0 rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: inset 0 0 30px 0 rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: inset 0 0 30px 0 rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: inset 0 0 30px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 0 30px 0 rgba(0, 0, 0, 0.2);
+}
+
+.faq-cell button {
+  font-size: 1.2rem;
+  font-weight: 400;
+}
+
+.faq-cell button > div {
+  position: relative;
+  top: -1rem;
+}
+
+.faq-cell span {
+  position: absolute;
+  bottom: -33px;
+  display: block;
+  width: 100%;
+  height: 33px;
+  -webkit-transition: bottom 0.3s ease-in-out;
+  -moz-transition: bottom 0.3s ease-in-out;
+  -o-transition: bottom 0.3s ease-in-out;
+  transition: bottom 0.3s ease-in-out;
+  text-align: center;
+  text-transform: uppercase;
+  color: #fff;
+  background: #000;
+  font-size: 15px;
+  line-height: 33px;
+}
+
+.faq-cell div.cell-answer {
+  display: none;
+}
+
+.faq-cell button {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+}
+
+.faq-cell button > h6 {
+  width: 100%;
+  height: 100px;
+  margin: 0;
+  padding: 1.3rem 0.9rem;
+  color: #fff;
+  text-shadow: black 2px 1px 2px;
+  font-size: 18px;
+  font-weight: 300;
+  font-style: normal;
+  line-height: 22px;
+}
+
+.faq-cell p {
+  margin: 0;
+  padding: 15px;
+  text-align: right;
+  font-size: 15px;
+  line-height: 15px;
+}
+
+.faq-cell.cell-yellow button {
+  color: #2556a3;
+}
+
+.faq-cell:focus span,
+.faq-cell:hover span {
+  bottom: 0;
+}
+
+.faq-cell:hover button {
+  color: #fff;
+}
+
+.cell-full {
+  height: 351px;
+}
+
+.cell-full button {
+  height: 266px;
+}
+
+/*.cell_full span { margin: 318px 0 0 0; }*/
+.cell-half {
+  height: 175px;
+}
+
+.cell-half button {
+  height: 90px;
+}
+
+/*.cell-half span { margin: 142px 0 0 0; }*/
+.cell-quarter {
+  height: 87px;
+}
+
+.cell-quarter button {
+  height: 20px;
+}
+
+.cell-quarter p {
+  padding: 0 15px 0 0;
+}
+
+@media screen and (min-width: 767px) {
+  .cell-quarter {
+    height: 175px;
+  }
+  .cell-full {
+    height: 175px;
+  }
+}
+
+/*.cell-quarter span { margin: 54px 0 0 0; }*/
+.faq-details {
+  position: fixed;
+  z-index: 112;
+  top: 65%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  padding: 13px 0;
+  -webkit-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+@media screen and (min-width: 1600px) {
+  .faq-details {
+    top: 75%;
+  }
+}
+
+.faq-details a {
+  color: #fff;
+}
+
+.faq-details .wrap {
+  top: 0;
+  bottom: 0;
+  overflow: visible;
+  max-width: 840px;
+  margin: 0 auto;
+  color: #fff;
+}
+
+.faq-details .close {
+  float: right;
+  width: 32px;
+  height: 32px;
+  text-decoration: none;
+  color: #fff;
+  font-size: 1.7em;
+}
+
+.faq-details h2 {
+  float: left;
+  margin: 0;
+  padding: 25px 0 20px 0;
+  text-transform: none;
+  color: #fff;
+  font-size: 29px;
+  font-style: normal;
+  line-height: 35px;
+}
+
+.faq-details div {
+  overflow: hidden;
+}
+
+.faq-details div p,
+.faq-details div ul li {
+  margin: 0 0 25px 0;
+  color: #eee;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 17px;
+  line-height: 24px;
+}
+
+.faq-details div p a,
+.faq-details div ul li a {
+  text-decoration: underline;
+  color: #fff;
+}
+
+.faq-details hr {
+  margin: 0 0 20px 0;
+}
+
+.faq-details label {
+  float: right;
+  color: #fff;
+  font-family: futura-pt;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.cell-green {
+  border-color: #5f7b2b;
+  background-color: #5f7b2b;
+}
+
+.cell-blue {
+  border-color: #415a8c;
+  background-color: #415a8c;
+}
+
+.cell-twitter-blue {
+  border-color: #0d91e2;
+  background-color: #0d91e2;
+}
+
+.cell-red {
+  border-color: #a84026;
+  background-color: #a84026;
+}
+
+.cell-orange {
+  border-color: #ca661d;
+  background-color: #ca661d;
+}
+
+.cell-yellow {
+  border-color: #ffcf01;
+  background-color: #ffcf01;
+}
+
+.cell-yellow button {
+  color: #2556a3;
+}
+
+.cell-gray {
+  border-color: #666;
+  background-color: #666;
+}
+
+.cell-purple {
+  border-color: #5c4973;
+  background-color: #5c4973;
+}
+
+.cell-black {
+  border-color: #ccc;
+  background-color: #222;
+}
+
+.cell-green:hover {
+  border-color: #47670d;
+  background-color: #47670d;
+}
+
+.cell-blue:hover {
+  border-color: #375286;
+  background-color: #375286;
+}
+
+.cell-red:hover {
+  border-color: #822d18;
+  background-color: #822d18;
+}
+
+.cell-orange:hover {
+  border-color: #de6e1c;
+  background-color: #de6e1c;
+}
+
+.cell-yellow:hover {
+  border-color: #deb400;
+  background-color: #deb400;
+}
+
+.cell-gray:hover {
+  border-color: #555;
+  background-color: #555;
+}
+
+.cell-purple:hover {
+  border-color: #503c69;
+  background-color: #503c69;
+}
+
+.faq-details.cell-green {
+  background-color: #47670d;
+}
+
+.faq-details.cell-blue {
+  background-color: #375286;
+}
+
+.faq-details.cell-red {
+  background-color: #822d18;
+}
+
+.faq-details.cell-orange {
+  background-color: #de6e1c;
+}
+
+.faq-details.cell-yellow {
+  background-color: #deb400;
+}
+
+.faq-details.cell-gray {
+  background-color: #555;
+}
+
+.faq-details.cell-purple {
+  background-color: #503c69;
+}
+
+@media screen and (max-width: 860px) {
+  .faqs .faq-details .answer {
+    padding: 0 0.7em;
+  }
+  .faqs h2 {
+    padding: 10px 5px 20px 5px;
+    font-size: 29px;
+    line-height: 24px;
+  }
+}
+
+@media screen and (max-width: 780px) {
+  .faqs .faq-details h2 {
+    padding-right: 1em;
+    padding-left: 1em;
+    font-size: 20px;
+  }
+  .faqs .faq-details .answer p {
+    padding: 0 1em;
+    font-size: 15px;
+    line-height: 21px;
+  }
+  .faqs .faq-details .answer p.smaller {
+    font-size: 14px;
+    line-height: 16px;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .faqs .faq-details h2 {
+    padding: 0 1em;
+    font-size: 16px;
+  }
+  .faqs .faq-details .answer p {
+    padding: 0 1em;
+    font-size: 12px;
+    line-height: 15px;
+  }
+}

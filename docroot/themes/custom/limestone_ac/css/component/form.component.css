@@ -1,0 +1,236 @@
+table .checkbox.form-no-label,
+table .radio.form-no-label {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+.select-wrapper {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+}
+.form-inline .select-wrapper {
+  width: auto;
+}
+.input-group .select-wrapper {
+  display: table-cell;
+}
+.input-group .select-wrapper:first-child .form-control:first-child {
+  border-bottom-left-radius: 4px;
+  border-top-left-radius: 4px;
+}
+.input-group .select-wrapper:last-child .form-control:first-child {
+  border-bottom-right-radius: 4px;
+  border-top-right-radius: 4px;
+}
+.select-wrapper select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  line-height: 1;
+  padding-right: 2em;
+}
+.select-wrapper select::-ms-expand {
+  opacity: 0;
+}
+.select-wrapper:after {
+  color: #0038a5;
+  content: '▼';
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  margin-top: -0.5em;
+  padding-right: .5em;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  z-index: 10;
+}
+.has-glyphicons .select-wrapper:after {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: '\e114';
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+}
+.has-error .select-wrapper:after {
+  color: #a94442;
+}
+.has-success .select-wrapper:after {
+  color: #3c763d;
+}
+.has-warning .select-wrapper:after {
+  color: #8a6d3b;
+}
+.form-required:after {
+  background-image: url(../../images/required.svg);
+  background-size: 10px 7px;
+  content: "";
+  display: inline-block;
+  line-height: 1;
+  height: 7px;
+  width: 10px;
+}
+.form-actions .btn,
+.form-actions .btn-group {
+  margin-right: 10px;
+}
+.form-actions .btn-group .btn {
+  margin-right: 0;
+}
+.view-course-glossary .attachment-before {
+  padding: 0 10px 10px 6px;
+}
+#views-exposed-form-course-listing-page-3 {
+  width: 100%;
+}
+@media screen and (min-width: 768px) {
+  #views-exposed-form-course-listing-page-3 {
+    width: auto;
+  }
+}
+.not-chosen .chosen-container-single {
+  border: 1px solid #aaa;
+}
+.not-chosen .chosen-container-single .chosen-single {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+.not-chosen .chosen-container-single .chosen-single div b {
+  background: none;
+}
+.not-chosen .chosen-container-single .chosen-single .chosen-drop {
+  left: -1px;
+  width: 101%;
+}
+.form-type-checkbox.js-form-type-checkbox label {
+  padding: 0.5rem 1rem;
+  margin-left: 3px;
+  line-height: 1rem;
+}
+.form-type-checkbox.js-form-type-checkbox label input:not(#edit-persistent-login) {
+  margin-right: 5px;
+  top: 0;
+}
+.form-item {
+  padding-right: 2rem;
+}
+.chosen-drop {
+  left: 0;
+}
+.views-field-field-online-evening-term ul {
+  padding: 0;
+  margin: 0;
+}
+.views-field-field-online-evening-term ul li {
+  list-style-type: none;
+  list-style-image: none;
+}
+.view-course-listing.view-display-id-page_3 tr th:nth-child(2),
+.view-course-listing.view-display-id-page_3 tr td:nth-child(2) {
+  display: none;
+}
+@media screen and (min-width: 768px) {
+  .view-course-listing.view-display-id-page_3 tr th:nth-child(2),
+  .view-course-listing.view-display-id-page_3 tr td:nth-child(2) {
+    display: table-cell;
+  }
+}
+.view-course-listing.view-display-id-page_1 .bef-exposed-form .form--inline > .form-item {
+  float: left;
+  padding: 7px 4px;
+  background-color: #f3f3f3;
+  margin: 8px 0px 5px;
+}
+.view-course-listing.view-display-id-page_1 .bef-exposed-form .form--inline > .form-item.form-type-checkbox {
+  float: right;
+}
+.view-course-listing.view-display-id-page_1 .bef-exposed-form .form--inline > .form-item.form-type-checkbox:last-child {
+  clear: both;
+}
+.view-course-listing.view-display-id-page_1 .bef-exposed-form .form--inline > .form-item.form-type-checkbox.form-item-field-honors-indicator-value,
+.view-course-listing.view-display-id-page_1 .bef-exposed-form .form--inline > .form-item.form-type-checkbox .form-item-field-may-be-offered-as-an-honor-value {
+  float: left;
+}
+.view-course-listing.view-display-id-page_1 .form-item-field-course-discipline-target-id {
+  background: none;
+  margin: 1px;
+}
+.fibonacci-aside-left .filter-header .bef-exposed-form .form--inline > .form-item,
+.fibonacci-aside .filter-header .bef-exposed-form .form--inline > .form-item,
+.view-course-schedule .filter-header .bef-exposed-form .form--inline > .form-item,
+.fibonacci-aside-left .view-filters .bef-exposed-form .form--inline > .form-item,
+.fibonacci-aside .view-filters .bef-exposed-form .form--inline > .form-item,
+.view-course-schedule .view-filters .bef-exposed-form .form--inline > .form-item {
+  padding: 14px 15px;
+  background-color: rgba(243, 243, 243, 0.88);
+  margin: 8px 3px 5px;
+  color: #444444;
+  line-height: 3.5rem;
+}
+.fibonacci-aside-left .filter-header .block-title,
+.fibonacci-aside .filter-header .block-title,
+.view-course-schedule .filter-header .block-title,
+.fibonacci-aside-left .view-filters .block-title,
+.fibonacci-aside .view-filters .block-title,
+.view-course-schedule .view-filters .block-title {
+  font-size: 3rem;
+  color: white;
+  background: #0038a5;
+  text-transform: uppercase;
+  padding: 15px;
+  font-weight: 100;
+  margin: 3rem 0 0 !important;
+}
+.fibonacci-aside-left form,
+.fibonacci-aside form,
+.view-course-schedule form {
+  padding: 10px;
+  background-color: rgba(243, 243, 243, 0.88);
+}
+.fibonacci-aside-left form .form-type-textfield .form-control,
+.fibonacci-aside form .form-type-textfield .form-control,
+.view-course-schedule form .form-type-textfield .form-control,
+.fibonacci-aside-left form .form-type-select .form-control,
+.fibonacci-aside form .form-type-select .form-control,
+.view-course-schedule form .form-type-select .form-control {
+  max-width: 237px;
+}
+.fibonacci-aside-left form .form-type-textfield input::placeholder,
+.fibonacci-aside form .form-type-textfield input::placeholder,
+.view-course-schedule form .form-type-textfield input::placeholder,
+.fibonacci-aside-left form .form-type-select input::placeholder,
+.fibonacci-aside form .form-type-select input::placeholder,
+.view-course-schedule form .form-type-select input::placeholder {
+  color: #a5a5a5;
+  font-size: 80%;
+}
+.fibonacci-aside-left .bef-exposed-form .form--inline > .form-item,
+.fibonacci-aside .bef-exposed-form .form--inline > .form-item,
+.view-course-schedule .bef-exposed-form .form--inline > .form-item {
+  padding: 9px 10px;
+  margin: 0px 3px 0px;
+  color: #444444;
+  line-height: 2.5rem;
+}
+.fibonacci-aside-left .bef-exposed-form .form--inline > .form-item label,
+.fibonacci-aside .bef-exposed-form .form--inline > .form-item label,
+.view-course-schedule .bef-exposed-form .form--inline > .form-item label {
+  display: block;
+}
+.fibonacci-aside-left .form-actions,
+.fibonacci-aside .form-actions,
+.view-course-schedule .form-actions {
+  clear: none;
+  float: right;
+  margin-top: 20px;
+}
+.fibonacci-aside-left .form-actions button.btn-info,
+.fibonacci-aside .form-actions button.btn-info,
+.view-course-schedule .form-actions button.btn-info {
+  margin: 9px 3px;
+  font-size: 3rem;
+  background-color: #7b972f;
+  border-color: #6b8429;
+}

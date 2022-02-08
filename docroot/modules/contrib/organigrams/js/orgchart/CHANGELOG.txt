@@ -1,0 +1,84 @@
+CHANGELOG
+=========
+
+J. van Loenen
+2013-02-23 New: Lines breaks on \n sequences.
+2013-02-28 New: redrawChart().
+2013-03-12 New: drawChart() will reset first: you can add/move nodes and
+           redraw on an existing chart.
+2013-03-13 New: drawChart - Fit argument.
+2013-04-19 Fixed: Event coordinates in IE.
+2013-08-23 New: Images on nodes.
+2013-10-21 Fixed: Shift bugs on multiple left/right-nodes.
+2013-10-21 New: Retina support.
+2013-10-23 Fixed: Textbreaks didn't split correctly sometimes.
+2013-11-07 Fixed: Center-parent bug if no room and only one usib.
+2013-11-07 Fixed: Shift bug on a single u-node fixed.
+2013-11-21 Fixed: Several placement bugs.
+2013-11-22 New: setNodeStyle().
+2014-01-09 Fixed: Line bug if low node defined first and other have only left
+           or right siblings.
+2014-01-09 Fixed: Image-not-found images wrong placed.
+2015-11-20 Fixed: Overlapping nodes on using r-siblings only.
+2015-11-23 Fixed: Wrong positioning on some complex examples.
+
+P. Scheffer
+2016-04-07 New: Added options to set width and height of the organigram.
+2016-04-07 New: Node placement takes the organigram width into account.
+2016-04-07 New: Changed linebreak from \n to [br].
+2016-04-07 Fixed: Wrong horizontal offset in multiple l-siblings below each
+           other.
+2016-04-12 Fixed: Division by zero on auto calculating width and usibs per
+           line.
+2016-04-12 New: Organigram is responsive if width is set to parent and
+           drawChart is called on window resize.
+2016-04-13 New: Added line connection between multi-row usibs.
+2016-04-13 Fixed: Blurry lines (also on resize).
+2016-04-13 Fixed: Cursor stays pointer when moving to fast off canvas.
+2016-04-16 Fixed: Added docs everywhere and removed unused vars and functions.
+2016-04-19 Fixed: Line blurring (anti aliasing) when centering on canvas.
+2016-04-19 New: Added lineheight option for the text in nodes.
+2016-04-19 New: Change background and text color on node with URL hover.
+2016-04-20 New: Made hover colors configurable.
+2016-04-25 Fixed: Removed padding from node texts to prevent unexpected
+           linebreaks when hovering.
+
+J. van Loenen
+2016-04-26 Fixed: Incorrect placement of a series of l-nodes if hSpace is
+           bigger than hShift in setSize().
+2016-04-26 Fixed: Incorrect shift of upper l-nodes.
+2016-04-29 Fixed: Keep left siblings as close to the parent as possible.
+2016-04-29 Fixed: Layout of complex trees looks much better.
+
+P. Scheffer
+2016-04-30 New: Backwards compatibility. Old scripts should not break now.
+2016-04-30 Fixed: Position of next root node when width is set to auto or
+           parent.
+
+J. van Loenen
+2016-05-02 Fixed: Possible overlap nodes and lines.
+
+P. Scheffer
+2016-05-03 Fixed: Responsive bug when usibs with children were divided over
+           multiple rows.
+2016-05-03 Fixed: Re-added and fixed text padding.
+2016-05-03 New: Made new line symbol configurable.
+2016-05-09 Fixed: Shift usibs to the left if there is space after the tree
+           has been hshifted to fix connection line overlapping.
+
+J. van Loenen
+2016-05-13 Fixed: Better placement overall.
+2016-05-13 Fixed: Backwards compatibility, fixed linebreaks.
+2016-05-13 Fixed: Wrong canvas size if chart is both set to fit and center.
+
+P. Scheffer
+2016-05-15 New: Added configuration option for box background gradient color.
+2016-05-21 Fixed: Detached usibs when divided over multiple lines.
+2016-05-21 New: Added resize eventlistener and made sure the canvas keeps the
+           width of the most right node after resizing.
+2016-06-13 Fixed: Weird positioning on mouseout after resizing.
+2016-06-23 Fixed: Wrong positioning of next root node if there are more than 2
+           root nodes.
+2016-06-23 New: Show horizontal scrollbar if the canvas is wider than its
+           parent element.
+2020-01-14 Fixed: Removed unused vars vShiftTree and overlapBoxInTree.

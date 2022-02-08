@@ -1,0 +1,18 @@
+fibonacci:
+  label: Fibonacci Layout
+  category: 'Limestone Layouts'
+  path: layouts/fibonacci
+  icon: fibonacci.png
+  css: ../../css/limestone.css
+  template: panels-fibonacci
+  regions:
+    top:
+      label: Top Content
+    main:
+      label: Main Content
+    aside:
+      label: Aside Content
+    penultimate:
+      label: Penultimate Content
+    bottom:
+      label: Bottom Content

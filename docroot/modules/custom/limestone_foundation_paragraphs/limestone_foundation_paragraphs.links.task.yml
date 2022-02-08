@@ -1,0 +1,4 @@
+limestone_foundation_paragraphs.settings:
+  title: 'Limestone Foundation Paragraphs settings'
+  route_name: varbase_core.settings_index
+  base_route: limestone_foundation_paragraphs.settings

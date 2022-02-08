@@ -1,0 +1,140 @@
+// VARTHEME_SUBTHEME header styling.
+// -----------------------------------------------------------------------------
+@import "../../bootstrap/less/variables.less";  // Bootstrap variables.
+@import "../../bootstrap/less/mixins.less";     // Bootstrap mixins.
+@import "../variables.less";                    // VARTHEME_SUBTHEME variables.
+@import "../mixins.less";                       // VARTHEME_SUBTHEME mixins.
+// -----------------------------------------------------------------------------
+
+// Insert your VARTHEME_SUBTHEME header custom LESS styling.
+
+.logo img {
+  width: 300px;
+}
+
+.logo {
+  width: 300px;
+}
+
+.header-wrapper {
+  background-color: @brand-primary;
+}
+
+.navbar-default {
+  background-color: transparent;
+  border: none;
+  .navbar-nav > li > a {
+    color: white;
+    &:hover, &:focus {
+      color: @yellow;
+    }
+  }
+  .navbar-nav > .active {
+    > a {
+      color: @yellow !important;
+      &:hover, &:focus {
+        color: @yellow !important;
+      }
+    }
+  }
+}
+.sub_menu {
+  padding-bottom: 2rem;
+  .caret {
+    top: 47%;
+    position: absolute;
+    right: 1px;
+  }
+}
+.region-sub-menu {
+  background-color: @gray-lightest;
+  ul.menu.navbar-nav {
+    > li {
+      text-transform: uppercase;
+    }
+  }
+  ul.nav li.dropdown:hover ul.dropdown-menu {
+    display: block;
+  }
+}
+
+.bar-header {
+  color: white;
+  background: @brand-primary;
+  text-transform: uppercase;
+  padding: 15px;
+  font-weight: 100;
+  margin: 3rem 0;
+  display: inline-block;
+  width: 100%;
+  &.no-margin-bottom {
+    margin-bottom: 0;
+  }
+  &.gray {
+    background: #8e8e8ec9;
+  }
+}
+
+.bar-header-groupings {
+  .view-content > div {
+    float: left;
+    width: 100%;
+  }
+  .view-content h3 {
+    color: white;
+    background: @brand-primary;
+    text-transform: uppercase;
+    padding: 15px;
+    font-weight: 100;
+    margin: 3rem 0;
+    clear: both;
+    a {
+      color: white;
+      text-decoration: none;
+    }
+  }
+}
+
+.hide-header-groupings {
+  .view-content > h3 {
+    display: none;
+  }
+}
+
+ul.menu--site-version {
+  > .active > a {
+    background-color: transparent !important;
+  }
+}
+
+.view-header {
+  h1 + #block-customprintblock {
+    position: relative;
+    right: 0;
+    top: 15px;
+  }
+  #block-customprintblock {
+    float: right;
+    padding-right: 15px;
+    display: none;
+    @media @tablet {
+      display: block;
+    }
+    .block-title {
+      font-size: 0px;
+      position: absolute;
+      left: 999999999em;
+    }
+  }
+}
+
+
+.view-programs.view-id-programs {
+  input[type="radio"], input[type="checkbox"] {
+    margin-right: 5px;
+  }
+  .view-filters {
+    margin-top: 15px;
+  }
+}
+

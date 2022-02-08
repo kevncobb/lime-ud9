@@ -1,0 +1,35 @@
+limestone.small:
+  label: small
+  mediaQuery: ''
+  weight: 0
+  multipliers:
+    - 1x
+    - 2x
+limestone.medium:
+  label: medium
+  mediaQuery: 'all and (min-width: 640px)'
+  weight: 1
+  multipliers:
+    - 1x
+    - 2x
+limestone.large:
+  label: large
+  mediaQuery: 'all and (min-width: 1024px)'
+  weight: 2
+  multipliers:
+    - 1x
+    - 2x
+limestone.xlarge:
+  label: xlarge
+  mediaQuery: 'all and (min-width: 1200px)'
+  weight: 3
+  multipliers:
+    - 1x
+    - 2x
+limestone.xxlarge:
+  label: xxlarge
+  mediaQuery: 'all and (min-width: 1440px)'
+  weight: 4
+  multipliers:
+    - 1x
+    - 2x

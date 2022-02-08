@@ -1,0 +1,55 @@
+# Limestone Foundation Paragraphs default base styling.
+vbp-default:
+  css:
+    base:
+      css/base/vbp-default.base.css: {}
+  dependencies:
+    - core/jquery
+    
+# Limestone Foundation Paragraphs default admin styling.
+vbp-default-admin:
+  css:
+    base:
+      css/base/vbp-default.admin.css: {}
+  js:
+    js/vbp-scripts.admin.js: {}
+
+# Limestone Foundation Paragraphs colors theme.
+vbp-colors:
+  css:
+    theme:
+      css/theme/vbp-colors.theme.css: {}
+
+# ------------------------------------------------------------------------------
+# Libraries for Limestone Foundation Paraghraph types.
+# ------------------------------------------------------------------------------
+
+# Limestone Foundation Paragraphs accordion component.
+vbp-accordion:
+  css:
+    component:
+      css/component/vbp-accordion.component.css: {}
+
+# Limestone Foundation Paragraphs carousel component.
+vbp-carousel:
+  css:
+    component:
+      css/component/vbp-carousel.component.css: {}
+
+# Limestone Foundation Paragraphs image component.
+vbp-image:
+  css:
+    component:
+      css/component/vbp-image.component.css: {}
+
+# Limestone Foundation Paragraphs modal component.
+vbp-modal:
+  css:
+    component:
+      css/component/vbp-modal.component.css: {}
+
+# Limestone Foundation Paragraphs tabs component.
+vbp-tabs:
+  css:
+    component:
+      css/component/vbp-tabs.component.css: {}

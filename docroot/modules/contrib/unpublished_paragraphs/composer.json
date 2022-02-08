@@ -1,0 +1,12 @@
+{
+    "name": "drupal/unpublished_paragraphs",
+    "type": "drupal-module",
+    "license": "GPL-2.0+",
+    "description": "Toggles visibility of unpublished paragraphs for users with the proper permission.",
+    "homepage": "https://www.drupal.org/project/unpublished_paragraphs",
+    "minimum-stability": "dev",
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/unpublished_paragraphs",
+        "source": "http://cgit.drupalcode.org/unpublished_paragraphs"
+    }
+}

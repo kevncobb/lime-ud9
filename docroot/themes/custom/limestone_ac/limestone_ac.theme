@@ -1,0 +1,74 @@
+<?php
+
+/**
+ * @file
+ * VARTHEME_SUBTHEME.
+ *
+ * Have custom alteration over the theme layer.
+ */
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function limestone_ac_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  if ($node = \Drupal::routeMatch()->getParameter('node')) {
+    if(is_numeric($node)) {
+      $node = \Drupal\node\Entity\Node::load($node);
+    }
+    if($node instanceof \Drupal\node\NodeInterface) {
+      array_splice($suggestions, 1, 0, 'page__' . $node->bundle());
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function limestone_ac_preprocess_page(&$variables) {
+  $variables['logo_print'] = \Drupal::request()->getBaseUrl() . '/' . drupal_get_path('theme', 'limestone_ac') . '/logo-print.png';
+}
+
+
+/**
+ * Implements hook__suggestions_HOOK_alter().
+ */
+function limestone_ac_theme_suggestions_block_alter(array &$suggestions, array $variables) {
+  // Add theme suggestions to blocks based on region.
+  if (!empty($variables['elements']['#id'])) {
+    $block = Drupal\block\Entity\Block::load($variables['elements']['#id']);
+    $suggestions[] = 'block__' . $block->getRegion();
+    $suggestions[] = 'block__' . $block->getRegion() . '__' . $variables['elements']['#id'];
+  }
+  return $suggestions;
+}
+
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_views_pre_render().
+ */
+function limestone_ac_views_pre_render(Drupal\views\ViewExecutable $view) {
+  $unique_uuids = $new_view_result = [];
+  $new_row_index = 0;
+
+  // Loop through results and filter out duplicate results.
+  foreach ($view->result as $row) {
+    // Use UUID so this works for all entities
+    $uuid = $row->_entity->uuid();
+
+    if (!in_array($uuid, $unique_uuids)) {
+      $row->index = $new_row_index;
+      $new_view_result[] = $row;
+      $unique_uuids[] = $uuid;
+      $new_row_index++;
+    }
+  }
+
+  // Replace $view->result with new array. Apparently views requires sequentially keyed
+  // array of results instead of skipping keys (e.g. 0, 2, 4, etc), so we can't just
+  // unset the duplicates.
+  $view->result = $new_view_result;
+
+  // Update the view index to match the new number of rows.
+  $view->total_rows = $new_row_index;
+}

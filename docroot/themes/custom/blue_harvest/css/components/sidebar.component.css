@@ -1,0 +1,48 @@
+.font-size-lg {
+  font-size: 1.375rem;
+}
+
+.font-size-sm {
+  font-size: 0.9625rem;
+}
+
+.sidebar .block {
+  margin: 0 0 1rem;
+  padding: 1rem 1rem;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.sidebar .block .content {
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.sidebar h2 {
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.3125rem;
+  border-bottom: 1px solid #dee2e6;
+  text-shadow: 0 1px 0 #fff;
+  font-size: calc(1.2625rem + 0.15vw);
+  line-height: 1.2;
+}
+
+@media (min-width: 1200px) {
+  .sidebar h2 {
+    font-size: 1.375rem;
+  }
+}
+
+.sidebar tbody {
+  border: none;
+}
+
+.sidebar tr.even,
+.sidebar tr.odd {
+  border-bottom: 1px solid #dee2e6;
+  background: none;
+}
+
+.sidebar nav ul.nav {
+  margin: -1rem;
+}

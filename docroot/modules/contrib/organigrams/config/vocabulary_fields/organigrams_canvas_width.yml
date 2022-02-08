@@ -1,0 +1,8 @@
+field_name: organigrams_canvas_width
+type: textfield
+label: 'Organigram width'
+default: auto
+description: 'Specify the width in pixels of the organigram.<br />Other available options:<br /><ul><li><b>auto</b>: Calculate the width by the number of items</li><li><b>parent</b>: Adjust the width to the parent element of the organigram.</li></ul>'
+field_group: 'Organigram settings'
+field_group_weight: 1
+weight: 1

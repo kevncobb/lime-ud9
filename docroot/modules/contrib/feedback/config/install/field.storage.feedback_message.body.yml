@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - feedback
+    - text
+id: feedback_message.body
+field_name: body
+entity_type: feedback_message
+type: text_long
+settings: {  }
+module: text
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

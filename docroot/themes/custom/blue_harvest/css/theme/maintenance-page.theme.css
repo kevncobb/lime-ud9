@@ -1,0 +1,12 @@
+.font-size-lg {
+  font-size: 1.375rem;
+}
+
+.font-size-sm {
+  font-size: 0.9625rem;
+}
+
+/* Insert your blue_harvest maintenance page custom SASS styling. */
+.maintenance-page footer .footer-credits {
+  font-size: 0.75rem;
+}

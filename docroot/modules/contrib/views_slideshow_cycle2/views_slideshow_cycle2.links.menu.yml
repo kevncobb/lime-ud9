@@ -1,0 +1,5 @@
+views_slideshow_cycle2.settings:
+  title: 'Cycle2 settings'
+  description: 'Configure Views Slideshow Cycle2 settings.'
+  parent: system.admin_config_media
+  route_name: views_slideshow_cycle2.settings

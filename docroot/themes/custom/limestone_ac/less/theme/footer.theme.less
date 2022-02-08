@@ -1,0 +1,38 @@
+// VARTHEME_SUBTHEME footer styling.
+// -----------------------------------------------------------------------------
+@import "../../bootstrap/less/variables.less";  // Bootstrap variables.
+@import "../../bootstrap/less/mixins.less";     // Bootstrap mixins.
+@import "../variables.less";                    // VARTHEME_SUBTHEME variables.
+@import "../mixins.less";                       // VARTHEME_SUBTHEME mixins.
+// -----------------------------------------------------------------------------
+
+// Insert your VARTHEME_SUBTHEME footer custom LESS styling.
+
+.footer-wrapper {
+  background-color: @footer-wrapper-bg;
+
+  .footer {
+    border: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 45px;
+
+    section[id$="-copyright"] {
+      float: left;
+      padding: 5px 0 5px 30px;
+      font-size: 12px;
+
+      > div {
+        padding: 14px 0 10px 0;
+        }
+      }
+
+    ul.nav {
+      padding: 17px 0 17px 0;
+
+      li > a {
+        padding: 5px 15px;
+      }
+    }
+  }
+}

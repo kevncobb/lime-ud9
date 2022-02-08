@@ -1,0 +1,13 @@
+field_name: organigrams_vertical_alignment
+type: select
+label: 'Vertical alignment'
+options:
+  -
+    'Top'
+  -
+    'Center'
+default: 1
+description: Specify the vertical text alignment of the items in this organigram.
+field_group: 'Font settings'
+field_group_weight: 3
+weight: 6

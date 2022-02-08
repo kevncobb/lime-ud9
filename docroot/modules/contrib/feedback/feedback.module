@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @file
+ * Contains feedback.module..
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function feedback_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the feedback module.
+    case 'help.page.feedback':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function feedback_theme() {
+  $theme = [];
+  $theme['feedback_message'] = [
+    'render element' => 'elements',
+    'file' => 'feedback_message.page.inc',
+    'template' => 'feedback_message',
+  ];
+  $theme['feedback_message_content_add_list'] = [
+    'render element' => 'content',
+    'variables' => ['content' => NULL],
+    'file' => 'feedback_message.page.inc',
+  ];
+  return $theme;
+}

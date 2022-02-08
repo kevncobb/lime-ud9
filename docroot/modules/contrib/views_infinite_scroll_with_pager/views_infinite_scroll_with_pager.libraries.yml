@@ -1,0 +1,11 @@
+views-infinite-scroll-with-pager:
+  version: VERSION
+  js:
+    js/infinite-scroll-with-pager.js : {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - core/drupal.debounce
+    - views/views.ajax
+    - views_infinite_scroll/views-infinite-scroll

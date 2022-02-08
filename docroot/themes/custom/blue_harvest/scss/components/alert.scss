@@ -1,0 +1,105 @@
+@import "../../node_modules/bootstrap/scss/functions";  // Bootstrap functions.
+@import "../../node_modules/bootstrap/scss/mixins";     // Bootstrap mixins.
+@import "../variables";                   // blue_harvest variables.
+@import "../mixins";                      // blue_harvest mixins.
+
+.alert-section {
+  font-size: 1.1rem;
+  text-align: center;
+  display: none;
+  p {
+    margin: 0;
+  }
+  .purple {
+    background-color: #9a5ab8;
+    color: #FFF;
+    a, [class^="icon-"], [class*=" icon-"] {
+      color: #FFF;
+      &:focus, &:hover {
+        color: #efefef !important;
+        text-decoration: none;
+      }
+    }
+  }
+  .notice {
+    background-color: #ffef86;
+    color: #6b450b;
+    a, [class^="icon-"], [class*=" icon-"] {
+      color: #6b450b;
+      &:focus, &:hover {
+        color: smart-scale(#6b450b, 25%, 25%) !important;
+        text-decoration: none;
+      }
+    }
+  }
+  .alert {
+    background-color: #d74141;
+    color: white;
+    a, [class^="icon-"], [class*=" icon-"] {
+      color: white;
+      &:focus, &:hover {
+        color: #ddd;
+        text-decoration: none;
+      }
+    }
+  }
+  .closings {
+    background-color: #ea6969;
+    color: white;
+    a, [class^="icon-"], [class*=" icon-"] {
+      color: white;
+      &:focus, &:hover {
+        color: #ddd;
+        text-decoration: none;
+      }
+    }
+  }
+  [class^="icon-"], [class*=" icon-"] {
+    font-size: 1.5rem;
+    padding-right: 5px;
+  }
+  #alert--icon {
+    margin: auto;
+  }
+  a.close {
+    display: none;
+    &.close-alert-no-1 {
+      display: block;
+      text-decoration: none;
+      font-size: 1.5rem;
+      line-height: 20px;
+      width: 22px;
+      @media (min-width: map-get($grid-breakpoints, "md")) {
+        line-height: initial;
+      }
+    }
+  }
+  .grid-container > .grid-x {
+    div:nth-child(2) {
+      order: 2;
+    }
+    div:nth-child(3) {
+      order: 3;
+    }
+    div:nth-child(4) {
+      order: 1;
+    }
+    @media (min-width: map-get($grid-breakpoints, "md")) {
+      div:nth-child(2), div:nth-child(3), div:nth-child(4) {
+        order: initial;
+      }
+    }
+  }
+}
+.top-menu-alert-icon {
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+  a {
+    font-size: 1.1rem;
+    padding: 0.5rem 0.3rem 0.35rem !important;
+    background-color: #e43434 !important;
+    color: $black !important;
+  }
+}

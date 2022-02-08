@@ -1,0 +1,13 @@
+name: 'Domain Path Redirect'
+type: module
+description: 'Allows users to create redirects per domain'
+core: '8.x'
+
+dependencies:
+  - domain:domain
+  - redirect:redirect
+
+# Information added by Drupal.org packaging script on 2020-06-19
+version: '8.x-1.2'
+project: 'domain_path_redirect'
+datestamp: 1592552780

@@ -1,0 +1,17 @@
+.font-size-lg {
+  font-size: 1.375rem;
+}
+
+.font-size-sm {
+  font-size: 0.9625rem;
+}
+
+.book-navigation .menu {
+  border-top: 1px solid #dee2e6;
+}
+
+.book-navigation .book-pager {
+  margin: 0;
+  border-top: 1px solid #dee2e6;
+  border-bottom: 1px solid #dee2e6;
+}

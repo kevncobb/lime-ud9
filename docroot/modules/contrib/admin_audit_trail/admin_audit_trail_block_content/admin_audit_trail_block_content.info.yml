@@ -1,0 +1,12 @@
+name: "Admin Audit Trail Block Content"
+description: "Logs block content CUD events performed by the user."
+type: module
+core_version_requirement: ^8 || ^9
+package: Administration
+dependencies:
+  - admin_audit_trail:admin_audit_trail
+
+# Information added by Drupal.org packaging script on 2021-08-28
+version: '1.0.0-beta1'
+project: 'admin_audit_trail'
+datestamp: 1630159922

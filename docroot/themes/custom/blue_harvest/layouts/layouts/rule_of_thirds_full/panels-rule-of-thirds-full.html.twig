@@ -1,0 +1,35 @@
+{#
+/**
+ * @file
+ * Template for a one column panel layout.
+ *
+ * This template provides a very simple "one column" panel display layout.
+ *
+ * Variables:
+ * - $id: An optional CSS id to use for the layout.
+ * - $content: An array of content, each item in the array is keyed to one
+ *   panel of the layout. This layout supports the following sections:
+ *   - content.middle: The only panel in the layout.
+ */
+#}
+<div class="thirds" {% if css_id %}{{ css_id }}{% endif %}>
+  <div class="thirds-top">
+    {{ content.top }}
+  </div>
+  <div class="grid-container">
+    <div class="grid-x grid-margin-x">
+      <div class="thirds-main cell medium-8">
+        {{ content.main }}
+      </div>
+      <div class="thirds-right cell medium-4">
+        {{ content.right }}
+      </div>
+    </div>
+  </div>
+  <div class="thirds-penultimate">
+    {{ content.penultimate }}
+  </div>
+  <div class="thirds-bottom">
+    {{ content.bottom }}
+  </div>
+</div>

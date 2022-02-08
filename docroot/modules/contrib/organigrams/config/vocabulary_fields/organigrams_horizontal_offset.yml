@@ -1,0 +1,8 @@
+field_name: organigrams_horizontal_offset
+type: textfield
+label: 'Horizontal offset'
+default: 30
+description: 'Specify the horizontal offset in pixels between the l and r items in this organigram.'
+field_group: 'Item settings'
+field_group_weight: 2
+weight: 7

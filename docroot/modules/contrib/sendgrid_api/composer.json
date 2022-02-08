@@ -1,0 +1,11 @@
+{
+  "name": "drupal/sendgrid_api",
+  "description": "Provides configuration and dependencies for connecting to SendGrid API.",
+  "type": "drupal-module",
+  "require": {
+    "php": ">=7.3.0",
+    "drupal/core": ">=8.8 || >= 9.0",
+    "drupal/key": "^1.14",
+    "sendgrid/sendgrid": "^7.6"
+  }
+}

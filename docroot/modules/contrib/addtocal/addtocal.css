@@ -1,0 +1,60 @@
+.addtocal-container {
+  position: relative;
+  float: right;
+  margin: -5px;
+  margin-bottom: 5px;
+}
+
+.addtocal-container .addtocal {
+  padding: 5px;
+  background: #efefef;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border: 1px solid #cdcdcd;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.addtocal-container .addtocal + div {
+  background: #efefef;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border: 1px solid #cdcdcd;
+  padding: 5px;
+  list-style-type: none;
+  margin-left: 0px !important;
+  margin-bottom: 0px;
+  position: absolute;
+  display: none;
+  min-width: 150px;
+  z-index: 50;
+}
+
+.addtocal-container .addtocal + div .form-type-radio,
+.addtocal-container .addtocal + div .js-form-type-radio {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+  padding: 5px;
+}
+
+.addtocal-container .addtocal + div .form-type-radio:hover,
+.addtocal-container .addtocal + div .js-form-type-radio:hover {
+  text-decoration: none;
+  background: #cdcdcd;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+}
+
+.addtocal-container .addtocal + div .form-type-radio input,
+.addtocal-container .addtocal + div .js-form-type-radio input {
+  display: none;
+}
+
+.addtocal-form .addtocal-submit {
+  display: none;
+}

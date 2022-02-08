@@ -1,0 +1,12 @@
+name: 'Hotkeys for Save'
+description: 'Allows to use hotkeys Ctrl+S (Win) and Cmd+S (Mac) instead of clicking on Save buttons.'
+package: 'Hotkeys for Save'
+
+type: module
+# core: 8.x
+
+# Information added by Drupal.org packaging script on 2018-05-15
+version: '8.x-1.0'
+core: '8.x'
+project: 'hotkeys_for_save'
+datestamp: 1526348890

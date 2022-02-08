@@ -1,0 +1,18 @@
+services:
+  sendgrid_api.api_key:
+    class: 'Drupal\sendgrid_api\SendGridApiKey'
+    arguments: ['@config.factory', '@key.repository']
+
+  sendgrid_api.client.factory:
+    class: 'Drupal\sendgrid_api\SendGridFactory'
+    arguments: ['@sendgrid_api.api_key', '@config.factory', '@http_client']
+
+  sendgrid_api.client:
+    class: 'Drupal\sendgrid_api\SendGrid'
+    factory: ['@sendgrid_api.client.factory', 'createInstance']
+
+  sendgrid_api.invalidator:
+    class: Drupal\sendgrid_api\Cache\SendGridApiCacheTagInvalidator
+    arguments: ['@?monitoring.sensor_manager']
+    tags:
+      - { name: cache_tags_invalidator }

@@ -1,0 +1,124 @@
+<?php
+
+/**
+ * @file
+ * gin_toolbar.module
+ */
+
+/**
+ * Implements hook_preprocess_HOOK() for html.
+ */
+function gin_toolbar_preprocess_html(&$variables) {
+  // Get theme darkmode config.
+  $darkmode = theme_get_setting('enable_darkmode', 'gin');
+
+  // Check if darkmode is enabled.
+  if ($darkmode === TRUE) {
+    $variables['attributes']['class'][] = 'gin--dark-mode';
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for page_attachments.
+ */
+function gin_toolbar_page_attachments_alter(&$page) {
+  // Is User logged in?
+  $logged_in = \Drupal::currentUser()->isAuthenticated();
+
+  if ($logged_in) {
+    // Get theme configs.
+    $darkmode = theme_get_setting('enable_darkmode', 'gin');
+    $darkmode_class = 'gin--dark-mode';
+    $preset_accent_color = theme_get_setting('preset_accent_color', 'gin');
+    $accent_color = theme_get_setting('accent_color', 'gin');
+    $preset_focus_color = theme_get_setting('preset_focus_color', 'gin');
+    $focus_color = theme_get_setting('focus_color', 'gin');
+    $classic_toolbar = theme_get_setting('classic_toolbar', 'gin');
+
+    if ($classic_toolbar) {
+      // Attach the classic toolbar styles.
+      $page['#attached']['library'][] = 'gin/gin_classic_toolbar';
+    }
+    else {
+      // Attach toolbar styles.
+      $page['#attached']['library'][] = 'gin/gin_toolbar';
+    }
+
+    // Attach accent overrides CSS.
+    $page['#attached']['library'][] = 'gin/gin_accent';
+
+    // Expose settings to JS.
+    $page['#attached']['drupalSettings']['gin']['darkmode'] = $darkmode;
+    $page['#attached']['drupalSettings']['gin']['darkmode_class'] = $darkmode_class;
+    $page['#attached']['drupalSettings']['gin']['preset_accent_color'] = $preset_accent_color;
+    $page['#attached']['drupalSettings']['gin']['accent_color'] = $accent_color;
+    $page['#attached']['drupalSettings']['gin']['preset_focus_color'] = $preset_focus_color;
+    $page['#attached']['drupalSettings']['gin']['focus_color'] = $focus_color;
+  }
+}
+
+/**
+ * Toolbar alter().
+ */
+function gin_toolbar_theme_registry_alter(&$theme_registry) {
+  $classic_toolbar = theme_get_setting('classic_toolbar', 'gin');
+
+  if (!$classic_toolbar) {
+    $theme_registry['toolbar']['path'] = drupal_get_path('module', 'gin_toolbar') . '/templates';
+    $theme_registry['menu__toolbar']['path'] = drupal_get_path('module', 'gin_toolbar') . '/templates';
+  }
+}
+
+/**
+ * Implements hook_preprocess_menu().
+ */
+function gin_toolbar_preprocess_menu(&$variables) {
+  if ($variables['menu_name'] == 'admin') {
+    $moduleHandler = \Drupal::service('module_handler');
+
+    // Check if the admin_toolbar module is installed.
+    foreach ($variables['items'] as $key => $item) {
+      $gin_id = str_replace('.', '-', $key);
+
+      $variables['items'][$key]['gin_id'] = $gin_id;
+
+      if ($moduleHandler->moduleExists('admin_toolbar')) {
+        $variables['items'][$key]['gin_admin_toolbar_module'] = TRUE;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_ckeditor_css_alter().
+ */
+function gin_toolbar_ckeditor_css_alter(array &$css) {
+  // Get theme darkmode config.
+  $darkmode = theme_get_setting('enable_darkmode', 'gin');
+
+  if ($darkmode) {
+    $css[] = drupal_get_path('theme', 'gin') . '/dist/css/gin_ckeditor.css';
+  }
+}
+
+/**
+ * Increases or decreases the brightness of a color.
+ */
+function _gin_toolbar_adjust_brightness($hexCode, $adjustPercent) {
+  $hexCode = ltrim($hexCode, '#');
+
+  if (strlen($hexCode) == 3) {
+    $hexCode = $hexCode[0] . $hexCode[0] . $hexCode[1] . $hexCode[1] . $hexCode[2] . $hexCode[2];
+  }
+
+  $hexCode = array_map('hexdec', str_split($hexCode, 2));
+
+  foreach ($hexCode as & $color) {
+    $adjustableLimit = $adjustPercent < 0 ? $color : 255 - $color;
+    $adjustAmount = ceil($adjustableLimit * $adjustPercent);
+
+    $color = str_pad(dechex($color + $adjustAmount), 2, '0', STR_PAD_LEFT);
+  }
+
+  return '#' . implode($hexCode);
+}

@@ -1,0 +1,7 @@
+field_name: organigrams_line_height
+type: textfield
+label: 'Line height'
+description: Specify the line height in pixels for the text in the items in this organigram.'
+field_group: 'Font settings'
+field_group_weight: 3
+weight: 5

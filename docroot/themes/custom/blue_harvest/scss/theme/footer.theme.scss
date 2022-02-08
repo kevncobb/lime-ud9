@@ -1,0 +1,289 @@
+// blue_harvest footer styling.
+// -----------------------------------------------------------------------------
+@import "../../node_modules/bootstrap/scss/functions";  // Bootstrap functions.
+@import "../../node_modules/bootstrap/scss/mixins";     // Bootstrap mixins.
+@import "../variables";                   // blue_harvest variables.
+@import "../mixins";                      // blue_harvest mixins.
+// -----------------------------------------------------------------------------
+
+/* Insert your blue_harvest footer custom SASS styling. */
+
+.footer-wrapper {
+  background-color: $footer-wrapper-bg;
+  color: white;
+  .footer_copyright {
+    display: inline-block;
+    padding-right: 1rem;
+    border-right: thin solid white;
+  }
+  .footer {
+    border: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    //margin-top: ($spacer * 5);
+
+    section.region-footer {
+      display: flex;
+      flex-flow: column;
+      justify-content: center;
+
+      @media screen and (min-width: map-get($grid-breakpoints, "lg")) {
+        flex-flow: row;
+      }
+
+      div[id$="-copyright"] {
+        flex-flow: column;
+        display: flex;
+        justify-content: center;
+        @include padding($spacer $spacer 0 $spacer);
+        @include font-size(0.75rem);
+      }
+
+      .menu--footer {
+        padding: $spacer 0;
+        @include font-size(0.75rem);
+        display: flex;
+        flex-flow: column;
+        justify-content: center;
+
+        ul.nav {
+          display: flex;
+          flex-flow: row;
+          justify-content: center;
+          flex-wrap: wrap;
+          @include padding($spacer $spacer 0 $spacer);
+
+          li {
+            @include padding(0 $spacer);
+            a {
+              color: white;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+// Non-modular or client styles for .l-footer region.
+footer.site-footer {
+  background-color: #243056;
+  position: relative;
+  color: $light-gray;
+  padding-top: 2rem;
+
+  img {
+    margin-bottom: 0;
+  }
+  @include media-breakpoint-up(sm) {
+    margin-top: 2px;
+    &::before {
+      content: '';
+      background-image: url("/themes/custom/limestone/images/lc-footer-layer1.png");
+      z-index: 8;
+      width: 100%;
+      display: block;
+      position: absolute;
+      bottom: 100%;
+      height: 530px;
+      left: 0;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: bottom right;
+    }
+  }
+  h2, h3, h4, h5, h6 {
+    color: white;
+  }
+  h2 {
+    font-size: 1.9rem;
+    text-transform: uppercase;
+    padding-left: 0.2rem;
+    color: #fefefe;
+    margin-bottom: 10px;
+    position: relative;
+    &::before{
+      position: absolute;
+      bottom: -4px;
+      content: "";
+      height: 3px;
+      width: 7rem;
+      background-color: #fbea65;
+      transform: skewX(-35deg) skewY(0);
+      -ms-transform: skewX(-35deg) skewY(0);
+      transform: skew(-35deg,0);
+      left: 2px;
+    }
+    &::after {
+      position: absolute;
+      bottom: 4px;
+      content: "";
+      height: 3px;
+    }
+  }
+  a {
+    color: white;
+    &:hover, &:focus {
+      color: $limestone-yellow;
+      text-decoration: underline;
+    }
+  }
+  .text-align-right {
+    h2 {
+      &::before {
+        left: auto;
+        right: 2px;
+      }
+    }
+  }
+  .medium-align-right {
+    @include media-breakpoint-up(md) {
+      h2 {
+        &::before {
+          left: auto;
+          right: 2px;
+        }
+      }
+    }
+  }
+  ul {
+    margin-left: 0.25rem;
+  }
+  li {
+    list-style-type: none;
+    &:before {
+      //content: "\f078";
+      font-family: 'icomoon' !important;
+      speak: none;
+      font-style: normal;
+      font-weight: normal;
+      font-variant: normal;
+      text-transform: none;
+      line-height: 1;
+      font-size: 8px;
+      opacity: 0.5;
+      /* Better Font Rendering =========== */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      display: inline-block;
+      -webkit-transform: rotate(-90deg);
+      -moz-transform: rotate(-90deg);
+      -o-transform: rotate(-90deg);
+      -ms-transform: rotate(-90deg);
+      transform: rotate(-90deg);
+      position: relative;
+      bottom: 0px;
+      left: -1px;
+    }
+  }
+}
+.footer-social-icons, .main-social-icons {
+  //padding-left: 0.5rem;
+  a {
+    color: white;
+    padding: 0;
+    text-decoration: none;
+    &:hover, &:focus {
+      svg path {
+        color: $limestone-yellow !important;
+        fill: $limestone-yellow;
+      }
+    }
+  }
+}
+.bottom-bar {
+  background-color: $black;
+  font-family: $header-font-family;
+  color: $white;
+  a {
+    color: $white;
+    padding: 0 0.4rem;
+    &:focus, &:hover {
+      color: $limestone-yellow;
+      text-decoration: underline;
+    }
+    [class^="icon-"], [class*=" icon-"] {
+      font-size: 12px;
+    }
+  }
+}
+
+.lower-footer-region {
+  img {
+    max-width: 175px;
+    margin-bottom: 0;
+  }
+  figcaption {
+    font-size: 1.2rem;
+    padding-top: 0.2rem;
+    margin: 0;
+    color: $limestone-blue;
+  }
+}
+
+
+.lc-footer {
+  position: relative;
+  width: 100%;
+  z-index: 8;
+  overflow: hidden;
+  .lc-footer-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: none;
+  }
+  #layer2 {
+    z-index: 9;
+    bottom: -50px;
+    background-image: url("/themes/custom/limestone/images/lc-footer-layer2.png");
+  }
+  #layer3 {
+    z-index: 8;
+    bottom: 30px;
+    background-image: url("/themes/custom/limestone/images/lc-footer-layer3.png");
+  }
+  #layer4 {
+    z-index: 7;
+    bottom: 90px;
+    background-image: url("/themes/custom/limestone/images/lc-footer-layer4.png");
+    opacity: .05;
+    filter: invert(1);
+  }
+  #layer5 {
+    z-index: 6;
+    bottom: 265px;
+    background-image: url("/themes/custom/limestone/images/lc-footer-layer5.png");
+  }
+  #mobileLayer {
+    display: block;
+    margin-bottom: 0;
+  }
+  @include media-breakpoint-up(sm) {
+    height: 530px;
+    background: rgb(134,192,233);
+    background: linear-gradient(180deg,#86C0E9 0%,#ffffff 100%);
+    .lc-footer-layer {
+      display: block;
+    }
+    #mobileLayer {
+      display: none;
+    }
+  }
+  @media screen and (min-width: 2200px) {
+    #layer2 {
+      bottom: -16px;
+    }
+    #layer3 {
+      bottom: 60px;
+    }
+    #layer4 {
+      bottom: 90px;
+    }
+    #layer5 {
+      bottom: 282px;
+    }
+  }
+}

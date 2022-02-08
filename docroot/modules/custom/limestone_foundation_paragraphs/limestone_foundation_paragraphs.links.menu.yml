@@ -1,0 +1,5 @@
+limestone_foundation_paragraphs.settings:
+  title: 'Limestone Foundation Paragraphs settings'
+  description: 'Configuring Limestone Foundation Paragraphs.'
+  parent: varbase_core.settings_index
+  route_name: limestone_foundation_paragraphs.settings

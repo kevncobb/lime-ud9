@@ -1,0 +1,313 @@
+.font-size-lg {
+  font-size: 1.375rem;
+}
+
+.font-size-sm {
+  font-size: 0.9625rem;
+}
+
+.ec-map {
+  position: relative;
+  width: 320px;
+  height: 205px;
+  margin: 0 auto;
+  padding: 0;
+  background: url("/themes/custom/limestone/images/sc-map.png");
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  -webkit-background-size: 75% 75%;
+  background-size: 75%;
+}
+
+.ec-map li.map-location {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  list-style-type: none;
+  list-style-image: none;
+}
+
+.ec-map li.map-location.active address {
+  z-index: 10;
+  -webkit-transition: opacity 200ms;
+  -o-transition: opacity 200ms;
+  transition: opacity 200ms;
+  opacity: 1;
+}
+
+.ec-map li.map-location.active .map-pin {
+  -webkit-transition: opacity 200ms;
+  -o-transition: opacity 200ms;
+  transition: opacity 200ms;
+  opacity: 0;
+}
+
+.ec-map li.map-location.active .map-pin.active {
+  -webkit-transition: opacity 200ms;
+  -o-transition: opacity 200ms;
+  transition: opacity 200ms;
+  opacity: 1;
+}
+
+.ec-map li.map-location address {
+  position: absolute;
+  z-index: -1;
+  bottom: 5%;
+  left: 0;
+  opacity: 0;
+  font-size: 0.7rem;
+  line-height: 1em;
+}
+
+.ec-map li.map-location address img {
+  max-width: 131px;
+  margin-top: 5px;
+}
+
+.ec-map li.map-location .map-pin {
+  position: absolute;
+  z-index: 9;
+  width: 16px;
+  height: 21px;
+  cursor: pointer;
+  text-indent: -99999em;
+  background-image: url("/themes/custom/limestone/images/pin-white.png");
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  -webkit-background-size: 12px 16px;
+  background-size: 12px 16px;
+}
+
+.ec-map li.map-location .map-pin.active {
+  z-index: 8;
+  opacity: 1;
+  background-image: url("/themes/custom/limestone/images/pin-highlight.png");
+}
+
+.ec-map li.map-location .map-pin.gaffney {
+  top: 11%;
+  left: 51%;
+}
+
+.ec-map li.map-location .map-pin.greenville {
+  top: 15%;
+  left: 40%;
+}
+
+.ec-map li.map-location .map-pin.columbia {
+  top: 40%;
+  left: 62%;
+}
+
+.ec-map li.map-location .map-pin.aiken {
+  top: 53%;
+  left: 48%;
+}
+
+.ec-map li.map-location .map-pin.midstate {
+  top: 35%;
+  left: 79%;
+}
+
+.ec-map li.map-location .map-pin.lowcountry {
+  top: 79%;
+  left: 63%;
+}
+
+.ec-map li.map-location .map-pin.charleston {
+  top: 72%;
+  left: 74%;
+}
+
+.ec-map li.map-location .map-pin.kingstree {
+  top: 49%;
+  left: 78%;
+}
+
+.ec-map .campus-name {
+  display: inline-block;
+  margin-bottom: 2px;
+  color: #0038a5;
+  font-style: normal;
+}
+
+@media (min-width: 576px) {
+  .ec-map {
+    width: 420px;
+    height: 264px;
+    -webkit-background-size: 82% 82%;
+    background-size: 82%;
+  }
+  .ec-map li.map-location .map-pin {
+    -webkit-background-size: 20px 26px;
+    background-size: 20px 26px;
+  }
+  .ec-map li.map-location .map-pin.gaffney {
+    top: 2%;
+    left: 46%;
+  }
+  .ec-map li.map-location .map-pin.greenville {
+    top: 6%;
+    left: 34.5%;
+  }
+  .ec-map li.map-location .map-pin.columbia {
+    top: 32%;
+    left: 57%;
+  }
+  .ec-map li.map-location .map-pin.aiken {
+    top: 47%;
+    left: 43%;
+  }
+  .ec-map li.map-location .map-pin.midstate {
+    top: 28%;
+    left: 76%;
+  }
+  .ec-map li.map-location .map-pin.lowcountry {
+    top: 76%;
+    left: 58%;
+  }
+  .ec-map li.map-location .map-pin.charleston {
+    top: 70%;
+    left: 71%;
+  }
+  .ec-map li.map-location .map-pin.kingstree {
+    top: 42%;
+    left: 75%;
+  }
+  .ec-map li.map-location address {
+    bottom: 1%;
+    left: 0;
+    padding: 10px 10px 0 0;
+    font-size: 0.8rem;
+    line-height: 1.3em;
+  }
+  .ec-map li.map-location address img {
+    max-width: 150px;
+    margin-top: 5px;
+  }
+  .ec-map li.map-location address a {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+}
+
+@media (min-width: 768px) {
+  .ec-map {
+    width: 320px;
+    height: 205px;
+  }
+  .ec-map li.map-location address {
+    bottom: 5%;
+    left: 0;
+    font-size: 0.7rem;
+    line-height: 1em;
+  }
+  .ec-map li.map-location address img {
+    max-width: 131px;
+    margin-top: 5px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .ec-map {
+    width: 420px;
+    height: 264px;
+    -webkit-background-size: 82% 82%;
+    background-size: 82%;
+  }
+  .ec-map li.map-location .map-pin {
+    -webkit-background-size: 20px 26px;
+    background-size: 20px 26px;
+  }
+  .ec-map li.map-location .map-pin.gaffney {
+    top: 2%;
+    left: 46%;
+  }
+  .ec-map li.map-location .map-pin.greenville {
+    top: 6%;
+    left: 34.5%;
+  }
+  .ec-map li.map-location .map-pin.columbia {
+    top: 32%;
+    left: 57%;
+  }
+  .ec-map li.map-location .map-pin.aiken {
+    top: 47%;
+    left: 43%;
+  }
+  .ec-map li.map-location .map-pin.midstate {
+    top: 28%;
+    left: 76%;
+  }
+  .ec-map li.map-location .map-pin.lowcountry {
+    top: 76%;
+    left: 58%;
+  }
+  .ec-map li.map-location .map-pin.charleston {
+    top: 70%;
+    left: 71%;
+  }
+  .ec-map li.map-location .map-pin.kingstree {
+    top: 42%;
+    left: 75%;
+  }
+  .ec-map li.map-location address {
+    bottom: 5%;
+    left: 0;
+    font-size: 0.9rem;
+    line-height: 1.1em;
+  }
+  .ec-map li.map-location address img {
+    max-width: 150px;
+    margin-top: 5px;
+  }
+}
+
+.ec-map-colorbox {
+  max-width: 780px;
+  height: 565px;
+  background-color: white;
+}
+
+.ec-map-colorbox a.modalCloseImg {
+  position: absolute;
+  z-index: 3200;
+  top: -15px;
+  right: -18px;
+  display: inline;
+  /* adjust url as required */
+  width: 25px;
+  height: 29px;
+  cursor: pointer;
+  background: url("/sites/default/files/buttons/x.png") no-repeat;
+}
+
+.ec-map-colorbox h4 {
+  margin: 0.2em 0;
+}
+
+.ec-map-colorbox .simplemodal-data {
+  display: block;
+  float: left;
+  width: 100%;
+  height: 100%;
+}
+
+.ec-map-colorbox .ec-map-more-header {
+  display: block;
+  float: left;
+  width: 100%;
+  padding: 5px 10px;
+}
+
+.ec-map-colorbox .g-map {
+  float: left;
+  width: 100%;
+  height: 100%;
+  max-height: 418px;
+}
+
+.ec-map-colorbox iframe {
+  width: 100%;
+  height: 100%;
+}

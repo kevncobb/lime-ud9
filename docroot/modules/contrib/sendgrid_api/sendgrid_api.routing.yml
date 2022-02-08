@@ -1,0 +1,7 @@
+sendgrid_api.configuration_form:
+  path: '/admin/config/services/sendgrid'
+  defaults:
+    _form: '\Drupal\sendgrid_api\Form\SendGridConfigurationForm'
+    _title: 'SendGrid API Configuration'
+  requirements:
+    _permission: 'administer sendgrid_api'

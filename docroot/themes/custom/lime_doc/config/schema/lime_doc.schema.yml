@@ -1,0 +1,4 @@
+# Schema for the configuration files of the lime_doc.
+lime_doc.settings:
+  type: bootstrap_barrio.settings
+  label: 'lime_doc settings'

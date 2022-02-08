@@ -1,0 +1,14 @@
+{
+  "name": "drupal/feedback",
+  "type": "drupal-module",
+  "description": "Collect page feedback",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://www.drupal.org/project/feedback",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "http://drupal.org/project/issues/feedback",
+    "source": "http://cgit.drupalcode.org/feedback"
+  },
+  "require": { }
+}

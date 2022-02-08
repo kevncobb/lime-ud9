@@ -1,0 +1,4 @@
+services:
+  feedback.lazy_builders:
+    class: Drupal\feedback\FeedbackLazyBuilders
+    arguments: ['@entity_type.bundle.info', '@entity_type.manager', '@entity.form_builder', '@current_user', '@module_handler', '@renderer']

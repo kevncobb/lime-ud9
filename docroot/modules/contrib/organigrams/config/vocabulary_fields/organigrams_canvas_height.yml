@@ -1,0 +1,8 @@
+field_name: organigrams_canvas_height
+type: textfield
+label: 'Organigram height'
+default: auto
+description: 'Specify the height in pixels of the organigram. The same options as width are available here.'
+field_group: 'Organigram settings'
+field_group_weight: 1
+weight: 2

@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * @file
+ * Contains Drupal\juicerio\juicerio.install.
+ */
+
+/**
+ * Implements hook_uninstall().
+ *
+ * Remove the values that we have saved in configuration.
+ */
+function juicerio_uninstall() {
+  \Drupal::configFactory()->getEditable('juicerio.settings')->delete();
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Renames settings config to correct key.
+ */
+function juicerio_update_8001() {
+  \Drupal::configFactory()->rename('juicer.settings', 'juicerio.settings');
+}
+
+/**
+ * Due to support alternate libraries, add in the default Javascript embed.
+ */
+function juicerio_update_8002() {
+  $config_factory = \Drupal::configFactory();
+  $config = $config_factory->getEditable('juicerio.settings');
+  $config->set('juicer_js_embed', 'juicerio.embed_no_jquery');
+  $config->save(TRUE);
+}

@@ -1,0 +1,50 @@
+.view-videos.grid-x {
+  form.views-exposed-form {
+    padding: 0 1rem;
+    //@extend .grid-x;
+    //@extend .grid-margin-x;
+    .js-form-type-select {
+      //@extend .cell;
+      //@extend .large-6;
+    }
+    fieldset {
+      background-color: $lighter-gray;
+      legend {
+        float: left;
+        width: 100%;
+      }
+    }
+  }
+    > .small-12.views-row {
+    margin: 0 auto;
+    .layout--onecol {
+      position: relative;
+    }
+  }
+  .js-form-item.js-form-type-select {
+    width: 380px;
+  }
+  .form-radios {
+    padding: 0 1rem;
+    label {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+.js-form-item-field-categories-target-id {
+  padding: 0 1rem;
+}
+//
+.media.media--type-remote-video.media--view-mode-original .col-sm-12 {
+  margin: 0 0 1rem 0;
+}
+.video-player-icon.js-video-player-icon {
+  padding-right: 4%;
+}
+
+.hide-video-title {
+  .video-title {
+    @extend .show-for-sr;
+  }
+}

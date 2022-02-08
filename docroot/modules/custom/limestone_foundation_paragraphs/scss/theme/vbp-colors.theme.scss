@@ -1,0 +1,407 @@
+// Limestone Foundation Paragraphs colors theme.
+// -----------------------------------------------------------------------------
+//@import "../../../bootstrap/less/variables.less";  // Bootstrap variables.
+//@import "../../../bootstrap/less/mixins.less";     // Bootstrap mixins.
+// -----------------------------------------------------------------------------
+
+// Add display so color shows.
+.paragraph.paragraph--color {
+  display: table;
+}
+
+// Adds padding to fill in color.
+.paragraph.paragraph--color>.paragraph__column {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+// Fills color on colorless .paragraph__column after color .paragraph__column.
+.paragraph.paragraph--color+.paragraph>.paragraph__column {
+  padding-top: 0;
+}
+
+// Background colours;
+// -----------------------------------------------------------------------------
+// vbp_color_01: Blue
+// vbp_color_02: Madison
+// vbp_color_03: Dark Gray
+// vbp_color_04: Light Gray
+// vbp_color_05: Red
+
+$vbp_color_01: #0678be; // Blue
+$vbp_color_02: #2c3e50; // Madison
+$vbp_color_03: #a4a4a4; // Dark Gray
+$vbp_color_04: #e4e4e0; // Light Gray
+$vbp_color_05: #cc3c2d; // Red
+$body-blue: #2556a3;
+$bg-blue: #0038a5;
+$bg-yellow: #fbea65;
+$bg-orange: #ec8a22;
+$bg-dark-khaki: #e2b565;
+// Foreground colours:
+// -----------------------------------------------------------------------------
+// vbp_foreground_color_01: White for background vbp_color_01 color
+// vbp_foreground_color_02: White for background vbp_color_02 color.
+// vbp_foreground_color_03: White for background vbp_color_03 color.
+// vbp_foreground_color_04: Black for background vbp_color_04 color.
+// vbp_foreground_color_05: White for background vbp_color_05 color.
+
+$vbp_foreground_color_01: #ffffff; // White
+$vbp_foreground_color_02: #ffffff; // White
+$vbp_foreground_color_03: #ffffff; // White
+$vbp_foreground_color_04: #000000; // Black
+$vbp_foreground_color_05: #ffffff; // White
+
+.vbp_color_01 {
+  background-color: $vbp_color_01;
+  color: $vbp_foreground_color_01;
+  width: 100%;
+
+  a,
+  h1,
+  .h1,
+  h2,
+  .h2,
+  h3,
+  .h3,
+  h4,
+  .h4,
+  h5,
+  .h5,
+  h6,
+  .h6 {
+    color: $vbp_foreground_color_01;
+
+    &:hover,
+    &:focus,
+    &:active,
+    &.is-active {
+      color: $vbp_foreground_color_01;
+    }
+  }
+}
+
+.vbp_color_02 {
+  background-color: $vbp_color_02;
+  color: $vbp_foreground_color_02;
+  width: 100%;
+
+  a,
+  h1,
+  .h1,
+  h2,
+  .h2,
+  h3,
+  .h3,
+  h4,
+  .h4,
+  h5,
+  .h5,
+  h6,
+  .h6 {
+    color: $vbp_foreground_color_02;
+
+    &:hover,
+    &:focus,
+    &:active,
+    &.is-active {
+      color: $vbp_foreground_color_02;
+    }
+  }
+}
+
+.vbp_color_03 {
+  background-color: $vbp_color_03;
+  color: $vbp_foreground_color_03;
+  width: 100%;
+
+  a,
+  h1,
+  .h1,
+  h2,
+  .h2,
+  h3,
+  .h3,
+  h4,
+  .h4,
+  h5,
+  .h5,
+  h6,
+  .h6 {
+    color: $vbp_foreground_color_03;
+
+    &:hover,
+    &:focus,
+    &:active,
+    &.is-active {
+      color: $vbp_foreground_color_03;
+    }
+  }
+}
+
+.vbp_color_04 {
+  background-color: $vbp_color_04;
+  color: $vbp_foreground_color_04;
+  width: 100%;
+
+  a,
+  h1,
+  .h1,
+  h2,
+  .h2,
+  h3,
+  .h3,
+  h4,
+  .h4,
+  h5,
+  .h5,
+  h6,
+  .h6 {
+    color: $bg-blue;
+
+    &:hover,
+    &:focus,
+    &:active,
+    &.is-active {
+      color: $bg-blue;
+    }
+  }
+}
+
+.vbp_color_05 {
+  background-color: $vbp_color_05;
+  color: $vbp_foreground_color_05;
+  width: 100%;
+
+  a,
+  h1,
+  .h1,
+  h2,
+  .h2,
+  h3,
+  .h3,
+  h4,
+  .h4,
+  h5,
+  .h5,
+  h6,
+  .h6 {
+    color: $vbp_foreground_color_05;
+
+    &:hover,
+    &:focus,
+    &:active,
+    &.is-active {
+      color: $vbp_foreground_color_05;
+    }
+  }
+}
+
+.bg-blue {
+  background-color: $bg-blue;
+  color: $vbp_foreground_color_05;
+  width: 100%;
+
+  a,
+  h1,
+  .h1,
+  h2,
+  .h2,
+  h3,
+  .h3,
+  h4,
+  .h4,
+  h5,
+  .h5,
+  h6,
+  .h6 {
+    color: $vbp_foreground_color_05;
+  }
+
+  .bg-white {
+
+    a,
+    h1,
+    .h1,
+    h2,
+    .h2,
+    h3,
+    .h3,
+    h4,
+    .h4,
+    h5,
+    .h5,
+    h6,
+    .h6 {
+      color: $vbp_foreground_color_01;
+    }
+  }
+
+  a {
+
+    &:hover,
+    &:focus,
+    &:active,
+    &.is-active {
+      color: $vbp_foreground_color_05;
+    }
+  }
+}
+
+.bg-yellow {
+  background-color: $bg-yellow;
+  color: $body-blue;
+  width: 100%;
+
+  a,
+  h1,
+  .h1,
+  h2,
+  .h2,
+  h3,
+  .h3,
+  h4,
+  .h4,
+  h5,
+  .h5,
+  h6,
+  .h6 {
+    color: $body-blue;
+
+    &:hover,
+    &:focus,
+    &:active,
+    &.is-active {
+      color: $body-blue;
+    }
+  }
+}
+
+.bg-orange {
+  background-color: $bg-orange;
+  color: $vbp_foreground_color_05;
+  width: 100%;
+
+  a,
+  h1,
+  .h1,
+  h2,
+  .h2,
+  h3,
+  .h3,
+  h4,
+  .h4,
+  h5,
+  .h5,
+  h6,
+  .h6 {
+    color: $vbp_foreground_color_05;
+
+    &:hover,
+    &:focus,
+    &:active,
+    &.is-active {
+      color: $vbp_foreground_color_05;
+    }
+  }
+}
+
+.bg-dark-khaki {
+  background-color: $bg-dark-khaki;
+  color: $vbp_foreground_color_05;
+  width: 100%;
+
+  a,
+  h1,
+  .h1,
+  h2,
+  .h2,
+  h3,
+  .h3,
+  h4,
+  .h4,
+  h5,
+  .h5,
+  h6,
+  .h6 {
+    color: $vbp_foreground_color_05;
+
+    &:hover,
+    &:focus,
+    &:active,
+    &.is-active {
+      color: $vbp_foreground_color_05;
+    }
+  }
+}
+
+.bg-edge2edge.paragraph--type--bp-columns-two-uneven.container-white {
+  >.grid-container {
+    background-color: rgba(255, 255, 255, 0.75);
+    padding: 2rem 1.5rem 1.5rem;
+  }
+
+  >h1,
+  >h2,
+  >h3,
+  >h4,
+  >h5,
+  >h6 {
+    color: $bg-blue;
+  }
+}
+[data-overlay] {
+  position: relative;
+}
+[data-overlay]:before {
+  position: absolute;
+  content: '';
+  background: #0e0e0e;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 0.98;
+}
+[data-overlay] *:not(.container):not(.background-image-holder) {
+  z-index: 2;
+}
+[data-overlay].image--light:before {
+  background: #fff;
+}
+[data-overlay].bg--primary:before {
+  background: $vbp_color_01;
+}
+[data-overlay="1"]:before {
+  opacity: 0.1;
+}
+[data-overlay="2"]:before {
+  opacity: 0.2;
+}
+[data-overlay="3"]:before {
+  opacity: 0.3;
+}
+[data-overlay="4"]:before {
+  opacity: 0.4;
+}
+[data-overlay="5"]:before {
+  opacity: 0.5;
+}
+[data-overlay="6"]:before {
+  opacity: 0.6;
+}
+[data-overlay="7"]:before {
+  opacity: 0.7;
+}
+[data-overlay="8"]:before {
+  opacity: 0.8;
+}
+[data-overlay="9"]:before {
+  opacity: 0.9;
+}
+[data-overlay="10"]:before {
+  opacity: 1;
+}
+[data-overlay="0"]:before {
+  opacity: 0;
+}

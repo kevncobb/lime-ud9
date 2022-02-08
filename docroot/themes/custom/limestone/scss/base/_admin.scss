@@ -1,0 +1,63 @@
+// Place any Drupal-related quirks here.
+/*
+ * zurb_foundation.scss - Contains all Drupal-specific SASS for this theme.
+ *
+*/
+
+#toolbar-bar {
+  z-index: 1001 !important;
+}
+
+.ipe-block-plugin {
+  h5 {
+    font-weight: normal;
+  }
+}
+
+body.adminimal-admin-toolbar.toolbar-tray-open.toolbar-horizontal {
+  .right-off-canvas-menu {
+    position: absolute;
+  }
+}
+
+html.login-screen {
+  display: table;
+  height: 100%;
+  position: absolute;
+  overflow-x: hidden;
+  width: 100%;
+  //background-color: $limestone-blue;
+  //background-image: url("/themes/custom/limestone/images/WD_HDR.png");
+  //background-size: cover;
+  //color: $light-gray;
+  body {
+    display: table-cell;
+    vertical-align: middle;
+    background: transparent;
+    #auth_box h1#the_logo {
+      padding: 0;
+    }
+    main {
+      padding: 7rem 0;
+      background-color: #efefef;
+      label {
+        //color: #ffffff;
+        font-size: 1.2rem;
+      }
+    }
+  }
+}
+
+#auth_box {
+  width: 90%;
+  max-width: 500px;
+  input[type="text"], input[type="password"] {
+    width: 100%;
+  }
+}
+a.tabledrag-handle .handle {
+  width: 14px;
+  height: 14px;
+  margin: 0.5em 0.5em 0 0.8em;
+  background: url(/core/themes/stable/images/core/icons/787878/move.svg) no-repeat 2px -1px;
+}

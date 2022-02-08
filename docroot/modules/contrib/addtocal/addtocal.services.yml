@@ -1,0 +1,4 @@
+services:
+  plugin.manager.addtocal.type:
+    class: Drupal\addtocal\AddToCalTypeManager
+    parent: default_plugin_manager

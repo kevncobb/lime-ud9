@@ -1,0 +1,12 @@
+type: module
+name: 'Embed Block'
+description: 'Allows embedding blocks into content by using a text filter.'
+core_version_requirement: ^8 || ^9
+
+dependencies:
+  - drupal:filter
+
+# Information added by Drupal.org packaging script on 2020-02-14
+version: '8.x-1.x-dev'
+project: 'embed_block'
+datestamp: 1581684717

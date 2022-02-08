@@ -1,0 +1,14 @@
+# Schema for the configuration files of the Juicer module.
+juicerio.settings:
+  type: config_object
+  label: 'Juicer settings'
+  mapping:
+    juicer_feed_id:
+      type: text
+      label: 'Juicer Username'
+    juicer_blocks:
+      type: text
+      label: 'Number of Juicer feed blocks'
+    juicer_js_embed:
+      type: text
+      label: 'Javascript library of Juicer to attach'

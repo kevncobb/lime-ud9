@@ -1,0 +1,8 @@
+field_name: field_o_image_url
+label: 'Image URL'
+description: 'Specify the URL of an image for this organigram item.'
+required: false
+translatable: false
+default_value: {  }
+widget_type: text_textfield
+weight: 20

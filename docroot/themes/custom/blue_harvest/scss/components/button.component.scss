@@ -1,0 +1,495 @@
+// Field component style.
+// -----------------------------------------------------------------------------
+@import "../../node_modules/bootstrap/scss/functions";  // Bootstrap functions.
+@import "../../node_modules/bootstrap/scss/mixins";     // Bootstrap mixins.
+@import "../variables";                   // blue_harvest variables.
+@import "../mixins";                      // blue_harvest mixins.
+// -----------------------------------------------------------------------------
+
+.button {
+
+  text-decoration: none !important;
+  font-size: 1.3rem;
+  background-color: $limestone-blue;
+  color: white;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  padding: 1rem;
+  line-height: 4rem;
+  &:hover, &:focus {
+    color: white !important;
+    background: smart-scale($limestone-blue, 10%, 10%) !important;
+  }
+  [class^="icon-"], [class*=" icon-"] {
+    position: relative;
+    padding-right: 5px;
+    bottom: -0.2rem;
+    font-size: 1.5rem;
+    line-height: 1rem;
+
+  }
+  &.modal-button {
+    &::after {
+      content: "\e91d" !important;
+      position: relative;
+      padding-left: 5px;
+      bottom: 0.2rem;
+      font-size: 0.7rem;
+      line-height: 1rem;
+      font-family: "icomoon" !important;
+      speak: none;
+      font-style: normal;
+      font-weight: normal;
+      font-variant: normal;
+      text-transform: none;
+      line-height: 1;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  }
+  &.larger [class^="icon-"], &.larger [class*=" icon-"] {
+    padding-right: 1rem;
+    bottom: -0.2rem;
+    font-size: 1.6rem;
+  }
+  $button-background: $primary;
+  &.hollow {
+    &:focus, &:hover {
+      background-color: $button-background;
+      color: white;
+    }
+  }
+  &.red, &.alert {
+    background-color: $red;
+    &:hover, &:focus {
+      color: white !important;
+      background: smart-scale($red, 20%, 20%) !important;
+    }
+  }
+  &.warning {
+    background-color: $warning-color;
+    &:hover, &:focus {
+      color: white !important;
+      background: smart-scale($warning-color, 20%, 20%) !important;
+    }
+  }
+  &.yellow {
+    background-color: $limestone-yellow;
+    color: $limestone-blue !important;
+    &:hover, &:focus {
+      color: $limestone-blue !important;
+      background: smart-scale($limestone-yellow, 20%, 20%) !important;
+    }
+  }
+  &.green, &.success {
+    background-color: $success-color;
+    &:hover, &:focus {
+      color: white !important;
+      background: smart-scale($success-color, 20%, 20%) !important;
+    }
+  }
+  &.teal {
+    background-color: $teal;
+    &:hover, &:focus {
+      color: white !important;
+      background: smart-scale($teal, 20%, 20%) !important;
+    }
+  }
+  &.twitter-blue {
+    background-color: $twitter-blue;
+    &:hover, &:focus {
+      color: white !important;
+      background: smart-scale($twitter-blue, 20%, 20%) !important;
+    }
+  }
+  &.purple {
+    background-color: $purple;
+    &:hover, &:focus {
+      color: white !important;
+      background: smart-scale($purple, 20%, 20%) !important;
+    }
+  }
+  &.orange {
+    background-color: $orange;&:hover, &:focus {
+    color: white !important;
+    background: smart-scale($orange, 20%, 20%) !important;
+  }
+  }
+  &.category {
+    background-color: $category;
+    font-family: $body-font-family;
+    &:hover, &:focus {
+      color: white !important;
+      background: smart-scale($category, 20%, 20%) !important;
+    }
+    color: white;
+  }
+  .icon-clone {
+    font-size: 14px;
+  }
+}
+.button.clear {
+  &:hover, &:focus {
+    background: transparent !important;
+  }
+}
+.field-item-button {
+  a {
+    @extend .button;
+  }
+}
+.field-item-hollow-button {
+  a {
+    @extend .button;
+    @extend .hollow;
+  }
+}
+
+.fibonacci-aside .button {
+  max-width: 300px;
+}
+.bg-blue a.lc-btn::before {
+  background-color: #1550c3;
+}
+a.lc-btn, .lc-btn a:first-child {
+  padding: 8px 17px !important;
+  text-transform: uppercase;
+  background-color: #f1f1f1;
+  font-family: $header-font-family;
+  font-weight: 600;
+  color: $limestone-blue !important;
+  display: inline-block;
+  position: relative;
+  background-image: none;
+  border-bottom: none;
+  margin-bottom: 20px;
+  margin-right: 50px;
+  z-index: 1;
+  line-height: 1.9rem;
+  font-size: 1.1rem;
+  text-decoration: none !important;
+
+  &:hover, &:focus {
+    color: $category !important;
+    &::before {
+      background-color: $limestone-light-blue;
+    }
+    &::after {
+      right: -33px;
+      transition: right 100ms ease-in-out;
+    }
+  }
+/*
+  &::before {
+    content: "";
+    width: 44px;
+    right: -44px;
+    top: 0;
+    bottom: 0;
+    position: absolute;
+    background-color: $limestone-blue;
+    border-left: 5px solid rgba(0, 0, 0, 0.3);
+  }
+
+  &::after {
+    content: "\f078" !important;
+    position: absolute !important;
+    color: white;
+    transform: rotate(-90deg) !important;
+    font-size: 16px !important;
+    top: 30% !important;
+    left: auto !important;
+    right: -31px !important;
+    margin-top: 0 !important;
+    font-family: "icomoon" !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+*/
+  &.larger {
+    padding: 14px 20px;
+    font-size: 20px;
+
+    &::after {
+      font-size: 20px;
+    }
+
+    &.back {
+      margin-left: 50px;
+      margin-right: 0;
+    }
+  }
+
+  &.blue {
+    background-color: rgba($limestone-blue, 0.9);
+    color: white !important;
+
+    &:focus, &:hover {
+      color: #fff5a9 !important;
+      background-color: $limestone-blue;
+      &::before {
+        background-color: $limestone-blue;
+      }
+    }
+  }
+
+  &.back {
+    margin-left: 50px;
+    margin-right: 0;
+    &::before {
+      content: "";
+      width: 44px;
+      right: auto;
+      left: -44px;
+      background: none;
+      top: 0;
+      bottom: 0;
+      position: absolute;
+      background-color: $limestone-blue;
+      border-right: 5px solid rgba(0, 0, 0, 0.3);
+      border-left: none;
+      height: auto;
+    }
+
+    &::after {
+      right: auto !important;
+      left: -35px !important;
+      background-size: 444px;
+      position: absolute;
+      top: 8px !important;
+      height: 25px;
+      width: 17px;
+      transition: right 100ms ease-in-out;
+      bottom: auto;
+      transform: rotate(90deg) !important;
+    }
+  }
+}
+
+
+.button-icon {
+  -webkit-box-shadow: 3px 3px 0px -1px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 3px 3px 0px -1px rgba(0, 0, 0, 0.15);
+  box-shadow: 3px 3px 0px -1px rgba(0, 0, 0, 0.15);
+  border-radius: 5px;
+  padding-right: 25px;
+  padding-left: 0;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-bottom: 1rem;
+  border: thin solid rgba(112, 112, 112, 0.3);
+  color: $limestone-blue-body !important;
+  background-color: $gray-100;
+  line-height: 25px;
+  font-size: 25px;
+  display: inline-block;
+  font-family: $header-font-family;
+  font-weight: bold;
+  transition: 100ms;
+  text-decoration: none;
+
+  &:hover, &:focus {
+    background-color: $gray-500;
+    color: $limestone-blue !important;
+    -webkit-box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.15);
+    transition: 100ms;
+
+    [class^="icon-"], [class*=" icon-"] {
+      color: $limestone-blue;
+      //background-color: $limestone-blue-body;
+      transition: 100ms;
+    }
+  }
+
+  [class^="icon-"], [class*=" icon-"], [class^="menu-icon-"], [class*=" menu-icon-"] {
+    color: $limestone-blue-body;
+    padding: 19px;
+    bottom: -4px;
+    left: 0px;
+    font-size: 28px;
+    border-radius: 6px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    //background-color: $light-gray;
+    line-height: 1rem;
+    position: relative;
+  }
+}
+
+a.cta-button, a.cta-btn {
+  display: inline-block;
+  font-family: $header-font-family;
+  $cta-button-color: $primary-color;
+  background: $cta-button-color;
+  color: white;
+  font-weight: bold;
+  font-size: 2rem;
+  text-decoration: none;
+  margin: 0 0 0.5em 0;
+  padding: 0.5em 2em;
+  &:hover, &:focus {
+    background: smart-scale($cta-button-color, 15%, 15%) !important;
+    color: white !important;
+  }
+  &.secondary {
+    $cta-button-color: $secondary-color;
+    background: $cta-button-color;
+    &:hover, &:focus {
+      background: smart-scale($cta-button-color, 10%, 10%) !important;
+      color: white !important;
+    }
+  }
+  &.success {
+    $cta-button-color: $success-color;
+    background: $cta-button-color;
+    &:hover, &:focus {
+      background: smart-scale($cta-button-color, 10%, 10%) !important;
+      color: white !important;
+    }
+  }
+  &.warning {
+    $cta-button-color: $warning-color;
+    background: $cta-button-color;
+    &:hover, &:focus {
+      background: smart-scale($cta-button-color, 10%, 10%) !important;
+      color: white !important;
+    }
+  }
+  &.alert {
+    $cta-button-color: $alert-color;
+    background: $cta-button-color;
+    &:hover, &:focus {
+      background: smart-scale($cta-button-color, 10%, 10%) !important;
+      color: white !important;
+    }
+  }
+  &.orange {
+    $cta-button-color: $orange;
+    background: $cta-button-color;
+    &:hover, &:focus {
+      background: smart-scale($cta-button-color, 10%, 10%) !important;
+      color: white !important;
+    }
+  }
+  &.twitter-blue {
+    $cta-button-color: $twitter-blue;
+    background: $cta-button-color;
+    &:hover, &:focus {
+      background: smart-scale($cta-button-color, 10%, 10%) !important;
+      color: white !important;
+    }
+  }
+  &.teal {
+    $cta-button-color: $teal;
+    background: $cta-button-color;
+    &:hover, &:focus {
+      background: smart-scale($cta-button-color, 10%, 10%) !important;
+      color: white !important;
+    }
+  }
+  &.warning {
+    color: $limestone-blue-body;
+    &:hover, &:focus {
+      color: $limestone-blue-body !important;
+    }
+  }
+}
+
+.btn-group, .btn-group-vertical {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.btn-group {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  @media (min-width: map-get($grid-breakpoints, "lg")) {
+    display: block;
+  }
+  &.btn-group-justified {
+    display: table;
+    width: 100%;
+    max-width: 1200px;
+    margin: 10px auto 0 auto;
+    table-layout: fixed;
+    border-collapse: separate;
+    .btn-wrapper {
+      border-spacing: 20px;
+      vertical-align: top;
+      width: 100%;
+      margin: 10px 0 0 2%;
+      float: none;
+      margin-top: 20px;
+      display: table-row;
+      @media (min-width: map-get($grid-breakpoints, "md")) {
+        display: table-cell;
+      }
+      &:first-child {
+        margin-top: 0;
+      }
+      @media (min-width: map-get($grid-breakpoints, "md")) {
+        &:first-child {
+          margin-top: 20px;
+        }
+      }
+      .btn-container {
+        display: table;
+        width: 100%;
+        a {
+          display: table-cell;
+          width: 100%;
+          vertical-align: middle;
+          white-space: normal;
+          padding: 0 10px !important;
+          height: 85px !important;
+          line-height: normal;
+          font-size: 18px;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+  &.mobileStack {
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    //margin-bottom: 30px;
+    margin-top: 0;
+    padding-top: 0;
+    .btn-wrapper {
+      border-spacing: 1px;
+      display: table-cell;
+      .btn-container a {
+        height: 75px !important;
+      }
+    }
+    @media (min-width: map-get($grid-breakpoints, "md")) {
+      max-width: 950px;
+      padding-top: 0;
+      .btn-wrapper {
+        border-spacing: 15px;
+      }
+    }
+    @media (min-width: map-get($grid-breakpoints, "xl")) {
+      max-width: 950px;
+      padding-top: 2rem;
+      .btn-wrapper {
+        border-spacing: 15px;
+      }
+    }
+  }
+}
+
+.field-paragraph--bp-modal-button-text {
+  display: inherit;
+}

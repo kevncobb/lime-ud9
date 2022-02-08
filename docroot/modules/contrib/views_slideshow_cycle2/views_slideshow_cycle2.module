@@ -1,0 +1,216 @@
+<?php
+
+/**
+ * @file
+ * Views Slideshow: cycle is typically used for field views.
+ */
+
+use Drupal\Core\Url;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Link;
+
+/**
+ * Implements hook_help().
+ */
+function views_slideshow_cycle2_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.views_slideshow_cycle2':
+      if (\Drupal::moduleHandler()->moduleExists('advanced_help')) {
+        $output = '<p>' . Link::fromTextAndUrl(t('Click here to view the documentation for Views Slideshow Cycle.'), Url::fromRoute('advanced_help.module_index', ['module' => 'views_slideshow_cycle2'])->toString()) . '</p>';
+      }
+      else {
+        $output = '<p>' . t('Views Slideshow Cycle help can be found by installing and enabling the @advanced_help', ['@advanced_help' => Link::fromTextAndUrl(t('Advanced Help module'), Url::fromUri('http://drupal.org/project/advanced_help'))->toString()]) . '</p>';
+      }
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function views_slideshow_cycle2_theme($existing, $type, $theme, $path) {
+  return [
+    'views_slideshow_cycle2' => [
+      'variables' => [
+        'view' => NULL,
+        'settings' => [],
+        'rows' => [],
+        'title' => '',
+      ],
+      'template' => 'views-slideshow-cycle2',
+      'file' => 'views_slideshow_cycle2.theme.inc',
+    ],
+    'views_slideshow_cycle2_main_frame' => [
+      'variables' => [
+        'view' => NULL,
+        'settings' => NULL,
+        'rows' => NULL,
+        'settings' => [],
+      ],
+      'template' => 'views-slideshow-cycle2-main-frame',
+      'file' => 'views_slideshow_cycle2.theme.inc',
+    ],
+    'views_slideshow_cycle2_main_frame_row' => [
+      'variables' => [
+        'items' => NULL,
+        'count' => NULL,
+        'view' => NULL,
+        'settings' => [],
+      ],
+      'template' => 'views-slideshow-cycle2-main-frame-row',
+      'file' => 'views_slideshow_cycle2.theme.inc',
+    ],
+    'views_slideshow_cycle2_main_frame_row_item' => [
+      'variables' => [
+        'item' => NULL,
+        'item_count' => NULL,
+        'count' => NULL,
+        'view' => NULL,
+        'length' => NULL,
+        'settings' => [],
+      ],
+      'template' => 'views-slideshow-cycle2-main-frame-row-item',
+      'file' => 'views_slideshow_cycle2.theme.inc',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_views_slideshow_pager_fields().
+ *
+ * As it is a preprocess function, store it with other functions in theme.inc.
+ */
+function views_slideshow_cycle2_preprocess_views_slideshow_pager_fields(&$vars) {
+  \Drupal::moduleHandler()->loadInclude('views_slideshow_cycle2', 'inc', 'views_slideshow_cycle2.theme');
+  _views_slideshow_cycle2_preprocess_views_slideshow_pager_fields($vars);
+}
+
+/**
+ * Implements hook_preprocess_views_slideshow_slide_counter().
+ *
+ * As it is a preprocess function, store it with other functions in theme.inc.
+ */
+function views_slideshow_cycle2_preprocess_views_slideshow_slide_counter(&$vars) {
+  \Drupal::moduleHandler()->loadInclude('views_slideshow_cycle2', 'inc', 'views_slideshow_cycle2.theme');
+  _views_slideshow_cycle2_preprocess_views_slideshow_slide_counter($vars);
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function views_slideshow_cycle2_theme_suggestions_views_view_slideshow_alter(array &$suggestions, array $variables) {
+  $options = $variables['view']->style_plugin->options;
+  if ($options['slideshow_type'] == 'views_slideshow_cycle2') {
+    $suggestions[] = 'views_slideshow_cycle2';
+  }
+}
+
+/**
+ * @param $vars
+ */
+function views_slideshow_cycle2_preprocess_views_slideshow_cycle2(&$variables) {
+
+  $variables['attributes']['class'][] = 'cycle-slideshow';
+  $variables['attributes']['data-cycle-slides'] = '> .views-slideshow-slide';
+  $options = $variables['view']->style_plugin->options;
+  $variables['settings'] = $cycle_options = $options['views_slideshow_cycle2'];
+
+  $variables['settings'] = $options['views_slideshow_cycle2'];
+
+  $variables['slideshow'] = [
+    '#theme' => 'views_slideshow_cycle2_main_frame',
+    '#view' => $variables['view'],
+    '#settings' => $variables['settings'],
+    '#rows' => $variables['rows'],
+  ];
+
+  if ($cycle_options['main']['paused']) {
+    $variables['attributes']['data-cycle-paused'] = 'true';
+  }
+  if ($cycle_options['main']['random']) {
+    $variables['attributes']['data-cycle-random'] = 'true';
+  }
+  if ($cycle_options['main']['reverse']) {
+    $variables['attributes']['data-cycle-reverse'] = 'true';
+  }
+  if ($cycle_options['main']['swipe']) {
+    $variables['attributes']['data-cycle-swipe'] = 'true';
+    if ($cycle_options['main']['swipe-fx'] === 'none') {
+      $variables['attributes']['data-cycle-swipe-fx'] = $cycle_options['main']['swipe-fx'];
+    }
+  }
+
+
+  $variables['attributes']['data-cycle-fx'] = $cycle_options['transition']['fx'];
+  if ($cycle_options['transition']['advanced']) {
+    if ($cycle_options['transition']['timeout']) {
+      $variables['attributes']['data-cycle-timeout'] = $cycle_options['transition']['timeout'];
+    }
+    if ($cycle_options['transition']['speed']) {
+      $variables['attributes']['data-cycle-speed'] = $cycle_options['transition']['speed'];
+    }
+    if ($cycle_options['transition']['manual-speed']) {
+      $variables['attributes']['data-cycle-manual-speed'] = $cycle_options['transition']['manual-speed'];
+    }
+  }
+
+  switch ($cycle_options['pager']['type']) {
+    case 'default':
+      $variables['pager'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => ['class' =>['cycle-pager']],
+      ];
+      break;
+    case 'custom':
+      if ($cycle_options['pager']['pager']) {
+        $variables['attributes']['data-cycle-pager'] = $cycle_options['pager']['pager'];
+      } else {
+        $variables['pager'] = [
+          '#type' => 'html_tag',
+          '#tag' => 'div',
+          '#attributes' => ['class' =>['cycle-pager']],
+        ];
+      }
+      if ($cycle_options['pager']['pager-template']) {
+        $variables['attributes']['data-cycle-pager-template'] = $cycle_options['pager']['pager-template'];
+      }
+      if ($cycle_options['pager']['pager-event']) {
+        $variables['attributes']['data-cycle-pager-event'] = $cycle_options['pager']['pager-event'];
+      }
+      break;
+  }
+
+  switch ($cycle_options['controls']['type']) {
+    case 'default':
+      $variables['controls']['prev'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => ['class' => ['cycle-prev', 'cycle-control']],
+      ];
+      $variables['controls']['next'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => ['class' => ['cycle-next', 'cycle-control']],
+      ];
+      break;
+    case 'custom':
+      $variables['controls']['prev'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => ['class' => ['cycle-prev', 'cycle-control']],
+      ];
+      $variables['controls']['next'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => ['class' => ['cycle-next', 'cycle-control']],
+      ];
+      if ($cycle_options['controls']['use_text']) {
+        $variables['controls']['prev']['#value'] = t($cycle_options['controls']['prev_text']);
+        $variables['controls']['next']['#value'] = t($cycle_options['controls']['next_text']);
+      }
+      break;
+  }
+
+  $variables['#cache']['max-age'] = 0;
+}

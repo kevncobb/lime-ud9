@@ -1,0 +1,52 @@
+.degree-header {
+  .cover-image {
+    position: absolute;
+  }
+  table {
+    position: relative;
+    z-index: 9;
+    border-color: transparent;
+    background-color: transparent;
+    tbody {
+      background-color: transparent;
+      border: none;
+      tr {
+        background-color: transparent;
+      }
+    }
+    .splash-header-title, .splash-header-subtitle {
+      position: static;
+      transform: initial;
+      margin-bottom: 0;
+    }
+    .splash-header-subtitle {
+      font-size: 1.2rem;
+      @include breakpoint(medium) {
+        font-size: 2rem;
+      }
+      @include breakpoint(large) {
+        font-size: 2.5rem;
+      }
+    }
+  }
+}
+.degree-header.youtube-section {
+  height: 64vw;
+  max-height: 64vh;
+  &.taller {
+    height: 80vw;
+    max-height: 80vh;
+  }
+}
+.degree-related-news {
+  padding: 1.5rem;
+  background-color: white;
+  border: thin solid #ececec;
+  margin-top: 1rem;
+}
+
+.degrees-with-cip {
+  .views-field-field-cip-code {
+    width: 15%;
+  }
+}

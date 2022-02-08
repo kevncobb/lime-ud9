@@ -1,0 +1,38 @@
+//
+// blue_harvest Variables ovarrides.
+// --------------------------------------------------
+
+
+// #############################################################################
+// Bootstrap library standard variables.
+// #############################################################################
+// All variables which are used in the default bootstrap library.
+// You can change them in blue_harvest for the bootstrap-variables.sass
+//
+@import "bootstrap-variables"; // Bootstrap custom variables ovarrides in blue_harvest.
+
+
+// #############################################################################
+// Barrio custom variables.
+// #############################################################################
+// All needed custom variables for Bootstrap Barrio theme.
+// You can change them in blue_harvest in the bootstrap-variables.sass
+//
+@import "barrio-variables"; // Barrio custom variables ovarrides in blue_harvest.
+
+
+// #############################################################################
+// Vartheme BS4 custom variables
+// #############################################################################
+// All needed custom Vartheme bs4 variables
+// You can change them in blue_harvest in the vartheme_bs4-variables.sass
+//
+@import "vartheme_bs4-variables"; // Vartheme BS4 custom variables ovarrides in blue_harvest.
+
+
+// #############################################################################
+// blue_harvest custom needed variables
+// #############################################################################
+// Add custom needed blue_harvest variables.
+// In the generated blue_harvest not in Vartheme BS4 base theme.
+//

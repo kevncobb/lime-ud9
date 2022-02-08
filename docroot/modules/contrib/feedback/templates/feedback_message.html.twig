@@ -1,0 +1,22 @@
+{#
+/**
+ * @file feedback_message.html.twig
+ * Default theme implementation to present Feedback message data.
+ *
+ * This template is used when viewing Feedback message pages.
+ *
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_feedback_message()
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes.addClass('feedback_message') }}>
+  {% if content %}
+    {{- content -}}
+  {% endif %}
+</div>

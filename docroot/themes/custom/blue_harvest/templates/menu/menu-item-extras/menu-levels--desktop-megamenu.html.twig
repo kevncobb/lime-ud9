@@ -1,0 +1,28 @@
+{% import _self as menu %}
+
+{{ menu.menu_links(items, attributes, 0) }}
+
+{% macro menu_links(items, attributes, menu_level) %}
+{% if items %}
+  {% if menu_level == 0 %}
+    <div{{ attributes.addClass('dropdown-menu mega-container') }} aria-labelledby="navbarDropdown">
+  {% else %}
+    <div class="dropdown-menu">
+  {% endif %}
+    {% for key, item in items if key|first != '#' %}
+      {% set menu_item_classes = [
+        'menu-item',
+        item.is_expanded ? 'menu-item--expanded',
+        item.is_collapsed ? 'menu-item--collapsed',
+        item.in_active_trail ? 'menu-item--active-trail',
+      ] %}
+
+        {% set rendered_content = item.content|without('')|render %}
+        {% if rendered_content %}
+          {{ rendered_content }}
+        {% endif %}
+
+    {% endfor %}
+  </div>
+      {% endif %}
+{% endmacro %}

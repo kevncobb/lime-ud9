@@ -1,0 +1,11 @@
+views.style.chart:
+  type: views_style
+  label: 'Chart'
+  mapping:
+    chart_settings:
+      type: charts_config
+      label: 'Settings'
+
+views.display.chart_extension:
+  type: views_display
+  label: 'Attachment display options'

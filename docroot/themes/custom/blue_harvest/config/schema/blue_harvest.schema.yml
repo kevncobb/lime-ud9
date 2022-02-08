@@ -1,0 +1,4 @@
+# Schema for the configuration files of the blue_harvest.
+blue_harvest.settings:
+  type: bootstrap_barrio.settings
+  label: 'blue_harvest settings'

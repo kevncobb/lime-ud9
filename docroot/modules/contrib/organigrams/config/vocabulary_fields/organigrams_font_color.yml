@@ -1,0 +1,7 @@
+field_name: organigrams_font_color
+type: textfield
+label: 'Font color'
+description: 'Specify the font color of the items in this organigram.'
+field_group: 'Font settings'
+field_group_weight: 3
+weight: 1

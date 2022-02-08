@@ -1,0 +1,54 @@
+name: ZURB Foundation Limestone Theme
+type: theme
+description: "Custom sub-theme, inherits from the Foundation base theme read <a href=\"http://foundation.zurb.com/docs/index.php\">framework documentation</a>"
+core_version_requirement: ^8 || ^9 || ^10
+base theme: zurb_foundation
+
+# Image appears on admin/appearance
+# screenshot: images/screenshot.jpg
+
+# Uncomment these lines and change "limestone" to your theme name if you
+# need to add custom CSS or JS
+libraries:
+ - limestone/global
+ # limestone Print Styling.
+ - limestone/print-styling
+# Regions are output in the page.html.twig
+
+regions:
+  top_off_canvas: 'Top off canvas'
+  alert: 'Site Alert'
+  top_bar: 'Top Bar'
+  header: Header
+  main_menu_region: 'Main Menu Region'
+  help: Help
+  page_top: 'Page top'
+  page_bottom: 'Page bottom'
+  highlighted: Highlighted
+  content: Content
+  sidebar_first: 'Left Sidebar'
+  sidebar_second: 'Right Sidebar'
+  footer: 'Footer'
+  bottom_bar: 'Bottom Bar'
+  lower_footer: 'Lower Footer'
+  left_off_canvas: 'Left off canvas'
+  right_off_canvas: 'Right off canvas'
+  blocks: 'Blocks used in Paragraphs'
+regions_hidden:
+  page_top: 'Page Top'
+  page_bottom: 'Page bottom'
+
+# Hidden regions
+# regions_hidden[]: Page top
+# regions_hidden[]: Page bottom
+
+features:
+  - logo
+  - name
+  - slogan
+  - favicon
+  - comment_user_picture
+  - node_user_picture
+
+ckeditor_stylesheets:
+  - css/limestone.css

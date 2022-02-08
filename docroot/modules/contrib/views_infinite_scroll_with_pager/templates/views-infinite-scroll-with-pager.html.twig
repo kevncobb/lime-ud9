@@ -1,0 +1,20 @@
+{#
+/**
+ * @file
+ * The views infinite scroll pager template.
+ */
+#}
+{# Classic pager #}
+{% if items %}
+  <div {{ pager_attributes }}>
+    {% include '@system/pager.html.twig' %}
+  </div>
+{% endif %}
+{# Infinite scroll button #}
+{% if items.more %}
+<ul{{ attributes }}>
+  <li class="pager__item">
+    <a class="button" id="load-more" href="{{ items.more.href }}" title="{{ 'Go to next page'|t }}" rel="next">{{ options.button_text }}</a>
+  </li>
+</ul>
+{% endif %}

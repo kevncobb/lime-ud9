@@ -1,0 +1,7 @@
+field_name: organigrams_font_name
+type: textfield
+label: 'Font name'
+description: 'Specify the font name of the items in this organigram.'
+field_group: 'Font settings'
+field_group_weight: 3
+weight: 3

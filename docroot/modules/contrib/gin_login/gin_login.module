@@ -1,0 +1,223 @@
+<?php
+
+/**
+ * @file
+ * gin_login.module
+ */
+
+use Drupal\Core\Url;
+use Drupal\user\UserInterface;
+
+/**
+ * Page_attachments_alter()
+ */
+function gin_login_page_attachments_alter(&$page) {
+  // Get path.
+  $route = \Drupal::routeMatch()->getRouteName();
+
+  if (
+    $route == 'user.login' ||
+    $route == 'user.pass' ||
+    $route == 'user.register'
+  ) {
+    // Get theme configs.
+    $darkmode = theme_get_setting('enable_darkmode', 'gin');
+    $preset_accent_color = theme_get_setting('preset_accent_color', 'gin');
+    $accent_color = theme_get_setting('accent_color', 'gin');
+    $preset_focus_color = theme_get_setting('preset_focus_color', 'gin');
+    $focus_color = theme_get_setting('focus_color', 'gin');
+
+    // Define darkmode class
+    $darkmode_class = 'gin--dark-mode';
+
+    // Attach Gin styles.
+    $page['#attached']['library'][] = 'gin/gin';
+
+    // Attach accent overrides CSS.
+    $page['#attached']['library'][] = 'gin/gin_accent';
+
+    // Check if path is available and we're at user level.
+    $page['#attached']['library'][] = 'gin_login/gin_login';
+
+    // Expose settings to JS.
+    $page['#attached']['drupalSettings']['gin']['darkmode'] = $darkmode;
+    $page['#attached']['drupalSettings']['gin']['darkmode_class'] = $darkmode_class;
+    $page['#attached']['drupalSettings']['gin']['preset_accent_color'] = $preset_accent_color;
+    $page['#attached']['drupalSettings']['gin']['accent_color'] = $accent_color;
+    $page['#attached']['drupalSettings']['gin']['preset_focus_color'] = $preset_focus_color;
+    $page['#attached']['drupalSettings']['gin']['focus_color'] = $focus_color;
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for html.
+ */
+function gin_login_preprocess_html(&$variables) {
+  // Get theme darkmode config.
+  $darkmode = theme_get_setting('enable_darkmode', 'gin');
+
+  // We need to check both because of backwards compatibility.
+  if ($darkmode === TRUE || $darkmode === 1) {
+    $variables['attributes']['class'][] = 'gin--dark-mode';
+  }
+}
+
+/**
+ * Page title alter()
+ */
+function gin_login_theme_suggestions_page_title_alter(array &$suggestions, array $variables) {
+  // Get path.
+  $route = \Drupal::routeMatch()->getRouteName();
+
+  // Chek if path is available and we're at user level.
+  if (
+    $route == 'user.login' ||
+    $route == 'user.pass' ||
+    $route == 'user.register'
+  ) {
+    $path = str_replace('.', '_', $route);
+
+    $suggestions[] = 'page_title__user';
+    $suggestions[] = 'page_title__' . $path;
+  }
+}
+
+/**
+ * Form_alter()
+ */
+function gin_login_form_alter(&$form, $form_state, $form_id) {
+  // User form (Login, Register or Forgot password)
+  if (strpos($form_id, 'user_login') !== FALSE || strpos($form_id, 'user_register') !== FALSE || strpos($form_id, 'user_pass') !== FALSE) {
+    $form['actions']['submit']['#attributes']['class'][] = 'button--primary';
+  }
+
+  // Adding button/links to Register and Forgot password.
+  if (strpos($form_id, 'user_login') !== FALSE) {
+    // Move actions before new elements.
+    $form['actions']['#weight'] = '98';
+
+    // Add new class to submit button.
+    $form['actions']['submit']['#attributes']['class'][] = 'button-login';
+
+    // New wrapper.
+    $form['more-links'] = [
+      '#type' => 'container',
+      '#weight' => '99',
+      '#attributes' => ['class' => ['more-links']],
+    ];
+
+    // Register button.
+    if (\Drupal::config('user.settings')->get('register') != UserInterface::REGISTER_ADMINISTRATORS_ONLY) {
+      $form['more-links']['register_button'] = [
+        '#type' => 'link',
+        '#url' => Url::fromRoute('user.register'),
+        '#title' => t('Create new account'),
+        '#attributes' => [
+          'class' => [
+            'register-button',
+            'button',
+            'button--secondary',
+          ],
+        ],
+        '#weight' => '1',
+      ];
+    }
+
+    // Forgot password link.
+    $form['more-links']['forgot_password_link'] = [
+      '#type' => 'link',
+      '#url' => Url::fromRoute('user.pass'),
+      '#title' => t('Forgot your password?'),
+      '#attributes' => ['class' => ['link', 'forgot-password-link']],
+      '#weight' => '2',
+    ];
+  }
+
+  // Changing name of Reset button.
+  if (strpos($form_id, 'user_pass') !== FALSE) {
+    $form['actions']['submit']['#value'] = t('Reset');
+  }
+}
+
+/**
+ * Theme()
+ */
+function gin_login_theme() {
+  // Page.
+  $theme['page__user__login'] = [
+    'template' => 'page--user--login',
+    'preprocess functions' => ['gin_login_preprocess_ginlogin'],
+  ];
+  $theme['page__user__password'] = [
+    'template' => 'page--user--password',
+    'preprocess functions' => ['gin_login_preprocess_ginlogin'],
+  ];
+  $theme['page__user__register'] = [
+    'template' => 'page--user--register',
+    'preprocess functions' => ['gin_login_preprocess_ginlogin'],
+  ];
+
+  return $theme;
+}
+
+/**
+ * CSS_alter()
+ */
+function gin_login_css_alter(&$css, $assets) {
+  // UPDATE THIS PATH TO YOUR MODULE'S CSS PATH.
+  $path = drupal_get_path('module', 'gin_login') . '/dist/css/gin_login.css';
+  if (isset($css[$path])) {
+    // Use anything greater than 100 to have it load
+    // after the theme as CSS_AGGREGATE_THEME is set to 100.
+    $css[$path]['group'] = 200;
+  }
+}
+
+/**
+ * Increases or decreases the brightness of a color.
+ */
+function _gin_login_adjust_brightness($hexCode, $adjustPercent) {
+  $hexCode = ltrim($hexCode, '#');
+
+  if (strlen($hexCode) == 3) {
+    $hexCode = $hexCode[0] . $hexCode[0] . $hexCode[1] . $hexCode[1] . $hexCode[2] . $hexCode[2];
+  }
+
+  $hexCode = array_map('hexdec', str_split($hexCode, 2));
+
+  foreach ($hexCode as & $color) {
+    $adjustableLimit = $adjustPercent < 0 ? $color : 255 - $color;
+    $adjustAmount = ceil($adjustableLimit * $adjustPercent);
+
+    $color = str_pad(dechex($color + $adjustAmount), 2, '0', STR_PAD_LEFT);
+  }
+
+  return '#' . implode($hexCode);
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function gin_login_preprocess_ginlogin(&$variables) {
+  $config = \Drupal::config('gin_login.settings');
+  $variables['site_name'] = \Drupal::config('system.site')->get('name');
+  $defaultLogo = drupal_get_path('module', 'gin_login') . '/images/drupal.svg';
+  $variables['logo'] = file_create_url($defaultLogo);
+  $configData = $config->get();
+
+  if ($configData['logo']['use_default'] == "0") {
+    if (isset($configData['logo']['path']) && !empty($configData['logo']['path'])) {
+      $variables['logo'] = file_create_url($configData['logo']['path']);
+    }
+  }
+
+  $variables['brand_image'] = '//source.unsplash.com/collection/9407737';
+  $variables['brand_alt'] = 'Random image from unsplash';
+
+  if ($configData['brand_image']['use_default'] == "0") {
+    if (isset($configData['brand_image']['path']) && !empty($configData['brand_image']['path'])) {
+      $variables['brand_image'] = file_create_url($configData['brand_image']['path']);
+      $variables['brand_alt'] = '';
+    }
+  }
+}

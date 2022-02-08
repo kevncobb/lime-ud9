@@ -1,0 +1,7 @@
+field_name: organigrams_background_color
+type: textfield
+label: 'Background color'
+description: 'Specify the background color of the items in this organigram.'
+field_group: 'Item settings'
+field_group_weight: 2
+weight: 10

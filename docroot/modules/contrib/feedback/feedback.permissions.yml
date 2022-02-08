@@ -1,0 +1,19 @@
+add feedback message entities:
+  title: 'Create new Feedback message entities'
+
+administer feedback message entities:
+  title: 'Administer Feedback messages'
+  description: 'Allow to access the administration form to configure Feedback message entities.'
+  restrict access: true
+
+delete feedback message entities:
+  title: 'Delete Feedback message entities'
+
+edit feedback message entities:
+  title: 'Edit Feedback message entities'
+
+view published feedback message entities:
+  title: 'View published Feedback message entities'
+
+view unpublished feedback message entities:
+  title: 'View unpublished Feedback message entities'

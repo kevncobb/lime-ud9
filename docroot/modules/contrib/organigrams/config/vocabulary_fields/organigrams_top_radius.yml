@@ -1,0 +1,8 @@
+field_name: organigrams_top_radius
+type: textfield
+label: 'Top radius'
+default: 0
+description: 'Specify the radius of the top corners in pixels of the items in this organigram.'
+field_group: 'Item settings'
+field_group_weight: 2
+weight: 3

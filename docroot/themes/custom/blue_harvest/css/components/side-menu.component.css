@@ -1,0 +1,575 @@
+.font-size-lg {
+  font-size: 1.375rem;
+}
+
+.font-size-sm {
+  font-size: 0.9625rem;
+}
+
+.fibonacci-aside {
+  position: relative;
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+@media (min-width: 768px) {
+  .fibonacci-aside {
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 33.33333%;
+    -ms-flex: 0 0 33.33333%;
+    flex: 0 0 33.33333%;
+    max-width: 33.33333%;
+  }
+}
+
+#side-submenu > ul.nav {
+  margin: 0 !important;
+}
+
+.fibonacci-aside > .row,
+.sidebar > .row,
+.thirds-right > .row,
+.large-4 > .row,
+#expandable-menu-wrapper > .row {
+  padding-left: 1rem;
+}
+
+.fibonacci-aside > .row .bg-edge2edge,
+.sidebar > .row .bg-edge2edge,
+.thirds-right > .row .bg-edge2edge,
+.large-4 > .row .bg-edge2edge,
+#expandable-menu-wrapper > .row .bg-edge2edge {
+  position: static;
+  -webkit-box-flex: 1;
+  -webkit-flex: auto;
+  -ms-flex: auto;
+  flex: auto;
+  margin: 0 !important;
+}
+
+.fibonacci-aside > .row nav ul.nav,
+.sidebar > .row nav ul.nav,
+.thirds-right > .row nav ul.nav,
+.large-4 > .row nav ul.nav,
+#expandable-menu-wrapper > .row nav ul.nav {
+  clear: both;
+  margin: 0;
+}
+
+.fibonacci-aside .field-wrapper.field-name-field-block,
+.sidebar .field-wrapper.field-name-field-block,
+.thirds-right .field-wrapper.field-name-field-block,
+.large-4 .field-wrapper.field-name-field-block,
+#expandable-menu-wrapper .field-wrapper.field-name-field-block {
+  width: 100%;
+}
+
+.fibonacci-aside div.collapsing,
+.sidebar div.collapsing,
+.thirds-right div.collapsing,
+.large-4 div.collapsing,
+#expandable-menu-wrapper div.collapsing {
+  -webkit-transition: height 1s ease-in-out;
+  -o-transition: height 1s ease-in-out;
+  transition: height 1s ease-in-out;
+}
+
+.fibonacci-aside nav,
+.sidebar nav,
+.thirds-right nav,
+.large-4 nav,
+#expandable-menu-wrapper nav {
+  position: relative;
+  z-index: 10;
+  padding-bottom: 2rem;
+  font-family: futura-pt-bold, sans-serif;
+}
+
+.fibonacci-aside nav h2,
+.sidebar nav h2,
+.thirds-right nav h2,
+.large-4 nav h2,
+#expandable-menu-wrapper nav h2 {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  text-transform: uppercase;
+  color: white;
+  border-radius: 0.2rem 0.2rem 0 0;
+  background-color: #0038a5;
+  font-family: futura-pt-bold, sans-serif;
+  font-size: 1.618rem;
+  font-weight: normal;
+  line-height: inherit;
+}
+
+.fibonacci-aside nav h2 span,
+.sidebar nav h2 span,
+.thirds-right nav h2 span,
+.large-4 nav h2 span,
+#expandable-menu-wrapper nav h2 span {
+  display: block;
+  padding: 0.3rem 1rem 0.2rem;
+}
+
+.fibonacci-aside nav h2 span.has-link,
+.sidebar nav h2 span.has-link,
+.thirds-right nav h2 span.has-link,
+.large-4 nav h2 span.has-link,
+#expandable-menu-wrapper nav h2 span.has-link {
+  padding: 0;
+}
+
+.fibonacci-aside nav h2 span.has-link a,
+.sidebar nav h2 span.has-link a,
+.thirds-right nav h2 span.has-link a,
+.large-4 nav h2 span.has-link a,
+#expandable-menu-wrapper nav h2 span.has-link a {
+  position: relative;
+}
+
+.fibonacci-aside nav h2 span.has-link a .icon-arrow-right,
+.sidebar nav h2 span.has-link a .icon-arrow-right,
+.thirds-right nav h2 span.has-link a .icon-arrow-right,
+.large-4 nav h2 span.has-link a .icon-arrow-right,
+#expandable-menu-wrapper nav h2 span.has-link a .icon-arrow-right {
+  position: absolute;
+  top: 4px;
+  right: -5px;
+  width: 53px;
+  height: 44px;
+  -webkit-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  color: #0138a5;
+  background-color: #fbea65;
+  font-size: 1.4rem;
+}
+
+.fibonacci-aside nav h2 span a,
+.sidebar nav h2 span a,
+.thirds-right nav h2 span a,
+.large-4 nav h2 span a,
+#expandable-menu-wrapper nav h2 span a {
+  padding: 0.7rem 1rem;
+}
+
+.fibonacci-aside nav h2:empty,
+.fibonacci-aside nav h2:only-child,
+.sidebar nav h2:empty,
+.sidebar nav h2:only-child,
+.thirds-right nav h2:empty,
+.thirds-right nav h2:only-child,
+.large-4 nav h2:empty,
+.large-4 nav h2:only-child,
+#expandable-menu-wrapper nav h2:empty,
+#expandable-menu-wrapper nav h2:only-child {
+  padding: 5px 0 5px 30px;
+}
+
+.fibonacci-aside nav h2 a,
+.sidebar nav h2 a,
+.thirds-right nav h2 a,
+.large-4 nav h2 a,
+#expandable-menu-wrapper nav h2 a {
+  display: block;
+  text-decoration: none;
+  color: white;
+}
+
+.fibonacci-aside nav h2::before,
+.sidebar nav h2::before,
+.thirds-right nav h2::before,
+.large-4 nav h2::before,
+#expandable-menu-wrapper nav h2::before {
+  display: none;
+}
+
+.fibonacci-aside nav ul,
+.sidebar nav ul,
+.thirds-right nav ul,
+.large-4 nav ul,
+#expandable-menu-wrapper nav ul {
+  padding: 0;
+}
+
+.fibonacci-aside nav ul li,
+.sidebar nav ul li,
+.thirds-right nav ul li,
+.large-4 nav ul li,
+#expandable-menu-wrapper nav ul li {
+  list-style-type: none;
+}
+
+.fibonacci-aside nav ul.root-level a,
+.fibonacci-aside nav ul.menu-level-0 a,
+.sidebar nav ul.root-level a,
+.sidebar nav ul.menu-level-0 a,
+.thirds-right nav ul.root-level a,
+.thirds-right nav ul.menu-level-0 a,
+.large-4 nav ul.root-level a,
+.large-4 nav ul.menu-level-0 a,
+#expandable-menu-wrapper nav ul.root-level a,
+#expandable-menu-wrapper nav ul.menu-level-0 a {
+  display: inline-block;
+  width: 100%;
+  padding: 5px 0 6px 20px;
+  border: thin solid #ccc;
+  border-top: none;
+  font-family: futura-pt, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.fibonacci-aside nav ul.root-level .submenu-header,
+.fibonacci-aside nav ul.menu-level-0 .submenu-header,
+.sidebar nav ul.root-level .submenu-header,
+.sidebar nav ul.menu-level-0 .submenu-header,
+.thirds-right nav ul.root-level .submenu-header,
+.thirds-right nav ul.menu-level-0 .submenu-header,
+.large-4 nav ul.root-level .submenu-header,
+.large-4 nav ul.menu-level-0 .submenu-header,
+#expandable-menu-wrapper nav ul.root-level .submenu-header,
+#expandable-menu-wrapper nav ul.menu-level-0 .submenu-header {
+  position: relative;
+}
+
+.fibonacci-aside nav ul.root-level li.nav-item,
+.fibonacci-aside nav ul.menu-level-0 li.nav-item,
+.sidebar nav ul.root-level li.nav-item,
+.sidebar nav ul.menu-level-0 li.nav-item,
+.thirds-right nav ul.root-level li.nav-item,
+.thirds-right nav ul.menu-level-0 li.nav-item,
+.large-4 nav ul.root-level li.nav-item,
+.large-4 nav ul.menu-level-0 li.nav-item,
+#expandable-menu-wrapper nav ul.root-level li.nav-item,
+#expandable-menu-wrapper nav ul.menu-level-0 li.nav-item {
+  position: relative;
+  float: left;
+  width: 100%;
+  list-style-type: none;
+  background-color: #fbfbfc;
+}
+
+.fibonacci-aside nav ul.root-level li.nav-item button.submenu-toggle,
+.fibonacci-aside nav ul.menu-level-0 li.nav-item button.submenu-toggle,
+.sidebar nav ul.root-level li.nav-item button.submenu-toggle,
+.sidebar nav ul.menu-level-0 li.nav-item button.submenu-toggle,
+.thirds-right nav ul.root-level li.nav-item button.submenu-toggle,
+.thirds-right nav ul.menu-level-0 li.nav-item button.submenu-toggle,
+.large-4 nav ul.root-level li.nav-item button.submenu-toggle,
+.large-4 nav ul.menu-level-0 li.nav-item button.submenu-toggle,
+#expandable-menu-wrapper nav ul.root-level li.nav-item button.submenu-toggle,
+#expandable-menu-wrapper nav ul.menu-level-0 li.nav-item button.submenu-toggle {
+  border: none;
+  background-color: #ccc;
+}
+
+.fibonacci-aside nav ul.root-level li.nav-item:focus,
+.fibonacci-aside nav ul.root-level li.nav-item:hover,
+.fibonacci-aside nav ul.menu-level-0 li.nav-item:focus,
+.fibonacci-aside nav ul.menu-level-0 li.nav-item:hover,
+.sidebar nav ul.root-level li.nav-item:focus,
+.sidebar nav ul.root-level li.nav-item:hover,
+.sidebar nav ul.menu-level-0 li.nav-item:focus,
+.sidebar nav ul.menu-level-0 li.nav-item:hover,
+.thirds-right nav ul.root-level li.nav-item:focus,
+.thirds-right nav ul.root-level li.nav-item:hover,
+.thirds-right nav ul.menu-level-0 li.nav-item:focus,
+.thirds-right nav ul.menu-level-0 li.nav-item:hover,
+.large-4 nav ul.root-level li.nav-item:focus,
+.large-4 nav ul.root-level li.nav-item:hover,
+.large-4 nav ul.menu-level-0 li.nav-item:focus,
+.large-4 nav ul.menu-level-0 li.nav-item:hover,
+#expandable-menu-wrapper nav ul.root-level li.nav-item:focus,
+#expandable-menu-wrapper nav ul.root-level li.nav-item:hover,
+#expandable-menu-wrapper nav ul.menu-level-0 li.nav-item:focus,
+#expandable-menu-wrapper nav ul.menu-level-0 li.nav-item:hover {
+  -webkit-transition: 50ms;
+  -o-transition: 50ms;
+  transition: 50ms;
+  background-color: white;
+}
+
+.fibonacci-aside nav ul.root-level li.nav-item:focus button.submenu-toggle,
+.fibonacci-aside nav ul.root-level li.nav-item:hover button.submenu-toggle,
+.fibonacci-aside nav ul.menu-level-0 li.nav-item:focus button.submenu-toggle,
+.fibonacci-aside nav ul.menu-level-0 li.nav-item:hover button.submenu-toggle,
+.sidebar nav ul.root-level li.nav-item:focus button.submenu-toggle,
+.sidebar nav ul.root-level li.nav-item:hover button.submenu-toggle,
+.sidebar nav ul.menu-level-0 li.nav-item:focus button.submenu-toggle,
+.sidebar nav ul.menu-level-0 li.nav-item:hover button.submenu-toggle,
+.thirds-right nav ul.root-level li.nav-item:focus button.submenu-toggle,
+.thirds-right nav ul.root-level li.nav-item:hover button.submenu-toggle,
+.thirds-right nav ul.menu-level-0 li.nav-item:focus button.submenu-toggle,
+.thirds-right nav ul.menu-level-0 li.nav-item:hover button.submenu-toggle,
+.large-4 nav ul.root-level li.nav-item:focus button.submenu-toggle,
+.large-4 nav ul.root-level li.nav-item:hover button.submenu-toggle,
+.large-4 nav ul.menu-level-0 li.nav-item:focus button.submenu-toggle,
+.large-4 nav ul.menu-level-0 li.nav-item:hover button.submenu-toggle,
+#expandable-menu-wrapper nav ul.root-level li.nav-item:focus button.submenu-toggle,
+#expandable-menu-wrapper nav ul.root-level li.nav-item:hover button.submenu-toggle,
+#expandable-menu-wrapper nav ul.menu-level-0 li.nav-item:focus button.submenu-toggle,
+#expandable-menu-wrapper nav ul.menu-level-0 li.nav-item:hover button.submenu-toggle {
+  background-color: #fff;
+}
+
+.fibonacci-aside nav ul.root-level li.nav-item.active > a,
+.fibonacci-aside nav ul.menu-level-0 li.nav-item.active > a,
+.sidebar nav ul.root-level li.nav-item.active > a,
+.sidebar nav ul.menu-level-0 li.nav-item.active > a,
+.thirds-right nav ul.root-level li.nav-item.active > a,
+.thirds-right nav ul.menu-level-0 li.nav-item.active > a,
+.large-4 nav ul.root-level li.nav-item.active > a,
+.large-4 nav ul.menu-level-0 li.nav-item.active > a,
+#expandable-menu-wrapper nav ul.root-level li.nav-item.active > a,
+#expandable-menu-wrapper nav ul.menu-level-0 li.nav-item.active > a {
+  font-weight: 700;
+}
+
+.fibonacci-aside nav ul.root-level li.nav-item.active > a.is-active,
+.fibonacci-aside nav ul.menu-level-0 li.nav-item.active > a.is-active,
+.sidebar nav ul.root-level li.nav-item.active > a.is-active,
+.sidebar nav ul.menu-level-0 li.nav-item.active > a.is-active,
+.thirds-right nav ul.root-level li.nav-item.active > a.is-active,
+.thirds-right nav ul.menu-level-0 li.nav-item.active > a.is-active,
+.large-4 nav ul.root-level li.nav-item.active > a.is-active,
+.large-4 nav ul.menu-level-0 li.nav-item.active > a.is-active,
+#expandable-menu-wrapper nav ul.root-level li.nav-item.active > a.is-active,
+#expandable-menu-wrapper nav ul.menu-level-0 li.nav-item.active > a.is-active {
+  border-left: 7px solid #fbea65;
+}
+
+.fibonacci-aside nav ul.root-level li.nav-item.active ul.dropdown li.menu-item a,
+.fibonacci-aside nav ul.menu-level-0 li.nav-item.active ul.dropdown li.menu-item a,
+.sidebar nav ul.root-level li.nav-item.active ul.dropdown li.menu-item a,
+.sidebar nav ul.menu-level-0 li.nav-item.active ul.dropdown li.menu-item a,
+.thirds-right nav ul.root-level li.nav-item.active ul.dropdown li.menu-item a,
+.thirds-right nav ul.menu-level-0 li.nav-item.active ul.dropdown li.menu-item a,
+.large-4 nav ul.root-level li.nav-item.active ul.dropdown li.menu-item a,
+.large-4 nav ul.menu-level-0 li.nav-item.active ul.dropdown li.menu-item a,
+#expandable-menu-wrapper nav ul.root-level li.nav-item.active ul.dropdown li.menu-item a,
+#expandable-menu-wrapper nav ul.menu-level-0 li.nav-item.active ul.dropdown li.menu-item a {
+  font-weight: 300;
+}
+
+.fibonacci-aside nav ul.root-level li.nav-item ul.dropdown li.menu-item,
+.fibonacci-aside nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item,
+.sidebar nav ul.root-level li.nav-item ul.dropdown li.menu-item,
+.sidebar nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item,
+.thirds-right nav ul.root-level li.nav-item ul.dropdown li.menu-item,
+.thirds-right nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item,
+.large-4 nav ul.root-level li.nav-item ul.dropdown li.menu-item,
+.large-4 nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item,
+#expandable-menu-wrapper nav ul.root-level li.nav-item ul.dropdown li.menu-item,
+#expandable-menu-wrapper nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item {
+  float: left;
+  width: 100%;
+  background-color: white;
+}
+
+.fibonacci-aside nav ul.root-level li.nav-item ul.dropdown li.menu-item:focus,
+.fibonacci-aside nav ul.root-level li.nav-item ul.dropdown li.menu-item:hover,
+.fibonacci-aside nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item:focus,
+.fibonacci-aside nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item:hover,
+.sidebar nav ul.root-level li.nav-item ul.dropdown li.menu-item:focus,
+.sidebar nav ul.root-level li.nav-item ul.dropdown li.menu-item:hover,
+.sidebar nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item:focus,
+.sidebar nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item:hover,
+.thirds-right nav ul.root-level li.nav-item ul.dropdown li.menu-item:focus,
+.thirds-right nav ul.root-level li.nav-item ul.dropdown li.menu-item:hover,
+.thirds-right nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item:focus,
+.thirds-right nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item:hover,
+.large-4 nav ul.root-level li.nav-item ul.dropdown li.menu-item:focus,
+.large-4 nav ul.root-level li.nav-item ul.dropdown li.menu-item:hover,
+.large-4 nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item:focus,
+.large-4 nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item:hover,
+#expandable-menu-wrapper nav ul.root-level li.nav-item ul.dropdown li.menu-item:focus,
+#expandable-menu-wrapper nav ul.root-level li.nav-item ul.dropdown li.menu-item:hover,
+#expandable-menu-wrapper nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item:focus,
+#expandable-menu-wrapper nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item:hover {
+  -webkit-transition: 50ms;
+  -o-transition: 50ms;
+  transition: 50ms;
+  background-color: white;
+}
+
+.fibonacci-aside nav ul.root-level li.nav-item ul.dropdown li.menu-item a:before,
+.fibonacci-aside nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item a:before,
+.sidebar nav ul.root-level li.nav-item ul.dropdown li.menu-item a:before,
+.sidebar nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item a:before,
+.thirds-right nav ul.root-level li.nav-item ul.dropdown li.menu-item a:before,
+.thirds-right nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item a:before,
+.large-4 nav ul.root-level li.nav-item ul.dropdown li.menu-item a:before,
+.large-4 nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item a:before,
+#expandable-menu-wrapper nav ul.root-level li.nav-item ul.dropdown li.menu-item a:before,
+#expandable-menu-wrapper nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item a:before {
+  content: "- ";
+}
+
+.fibonacci-aside nav ul.root-level li.nav-item ul.dropdown li.menu-item ul.dropdown li.menu-item,
+.fibonacci-aside nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item ul.dropdown li.menu-item,
+.sidebar nav ul.root-level li.nav-item ul.dropdown li.menu-item ul.dropdown li.menu-item,
+.sidebar nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item ul.dropdown li.menu-item,
+.thirds-right nav ul.root-level li.nav-item ul.dropdown li.menu-item ul.dropdown li.menu-item,
+.thirds-right nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item ul.dropdown li.menu-item,
+.large-4 nav ul.root-level li.nav-item ul.dropdown li.menu-item ul.dropdown li.menu-item,
+.large-4 nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item ul.dropdown li.menu-item,
+#expandable-menu-wrapper nav ul.root-level li.nav-item ul.dropdown li.menu-item ul.dropdown li.menu-item,
+#expandable-menu-wrapper nav ul.menu-level-0 li.nav-item ul.dropdown li.menu-item ul.dropdown li.menu-item {
+  float: left;
+  width: 100%;
+  background-color: white;
+}
+
+.fibonacci-aside nav ul.root-level li.menu-item--expanded.active[tabindex="0"] ul.is-accordion-submenu,
+.fibonacci-aside nav ul.menu-level-0 li.menu-item--expanded.active[tabindex="0"] ul.is-accordion-submenu,
+.sidebar nav ul.root-level li.menu-item--expanded.active[tabindex="0"] ul.is-accordion-submenu,
+.sidebar nav ul.menu-level-0 li.menu-item--expanded.active[tabindex="0"] ul.is-accordion-submenu,
+.thirds-right nav ul.root-level li.menu-item--expanded.active[tabindex="0"] ul.is-accordion-submenu,
+.thirds-right nav ul.menu-level-0 li.menu-item--expanded.active[tabindex="0"] ul.is-accordion-submenu,
+.large-4 nav ul.root-level li.menu-item--expanded.active[tabindex="0"] ul.is-accordion-submenu,
+.large-4 nav ul.menu-level-0 li.menu-item--expanded.active[tabindex="0"] ul.is-accordion-submenu,
+#expandable-menu-wrapper nav ul.root-level li.menu-item--expanded.active[tabindex="0"] ul.is-accordion-submenu,
+#expandable-menu-wrapper nav ul.menu-level-0 li.menu-item--expanded.active[tabindex="0"] ul.is-accordion-submenu {
+  display: block;
+}
+
+.fibonacci-aside ul,
+.sidebar ul,
+.thirds-right ul,
+.large-4 ul,
+#expandable-menu-wrapper ul {
+  margin-left: 0;
+}
+
+.fibonacci-aside .field-type-text-long ul,
+.sidebar .field-type-text-long ul,
+.thirds-right .field-type-text-long ul,
+.large-4 .field-type-text-long ul,
+#expandable-menu-wrapper .field-type-text-long ul {
+  margin-left: 1.25rem;
+}
+
+.fibonacci-aside .nested.submenu,
+.sidebar .nested.submenu,
+.thirds-right .nested.submenu,
+.large-4 .nested.submenu,
+#expandable-menu-wrapper .nested.submenu {
+  float: left;
+  width: 100%;
+  margin-left: 0;
+}
+
+.fibonacci-aside .nested.submenu > li > a,
+.sidebar .nested.submenu > li > a,
+.thirds-right .nested.submenu > li > a,
+.large-4 .nested.submenu > li > a,
+#expandable-menu-wrapper .nested.submenu > li > a {
+  background-color: #fbfbfb;
+}
+
+.fibonacci-aside .nested.submenu > li > a::before,
+.sidebar .nested.submenu > li > a::before,
+.thirds-right .nested.submenu > li > a::before,
+.large-4 .nested.submenu > li > a::before,
+#expandable-menu-wrapper .nested.submenu > li > a::before {
+  content: "- ";
+  font-family: futura-pt-bold, sans-serif;
+}
+
+.fibonacci-aside .nested.submenu > li ul.submenu,
+.sidebar .nested.submenu > li ul.submenu,
+.thirds-right .nested.submenu > li ul.submenu,
+.large-4 .nested.submenu > li ul.submenu,
+#expandable-menu-wrapper .nested.submenu > li ul.submenu {
+  float: left;
+  width: 100%;
+  margin-left: 0;
+}
+
+.fibonacci-aside .nested.submenu > li ul.submenu li > a,
+.sidebar .nested.submenu > li ul.submenu li > a,
+.thirds-right .nested.submenu > li ul.submenu li > a,
+.large-4 .nested.submenu > li ul.submenu li > a,
+#expandable-menu-wrapper .nested.submenu > li ul.submenu li > a {
+  background-color: #fff;
+}
+
+.fibonacci-aside .nested.submenu > li ul.submenu li > a::before,
+.sidebar .nested.submenu > li ul.submenu li > a::before,
+.thirds-right .nested.submenu > li ul.submenu li > a::before,
+.large-4 .nested.submenu > li ul.submenu li > a::before,
+#expandable-menu-wrapper .nested.submenu > li ul.submenu li > a::before {
+  content: "- ";
+  font-family: futura-pt-bold, sans-serif;
+}
+
+.fibonacci-aside .nested.submenu > li .submenu.nested,
+.sidebar .nested.submenu > li .submenu.nested,
+.thirds-right .nested.submenu > li .submenu.nested,
+.large-4 .nested.submenu > li .submenu.nested,
+#expandable-menu-wrapper .nested.submenu > li .submenu.nested {
+  float: left;
+  width: 100%;
+  margin-left: 0;
+}
+
+.fibonacci-aside .nested.submenu > li .submenu.nested li > a,
+.sidebar .nested.submenu > li .submenu.nested li > a,
+.thirds-right .nested.submenu > li .submenu.nested li > a,
+.large-4 .nested.submenu > li .submenu.nested li > a,
+#expandable-menu-wrapper .nested.submenu > li .submenu.nested li > a {
+  background-color: #fff;
+}
+
+.menu-align-right ul:first-child {
+  text-align: right;
+}
+
+#expandable-menu-wrapper {
+  clear: both;
+  width: 100%;
+}
+
+#expandable-menu nav#side-submenu {
+  display: block;
+  max-width: 100%;
+  margin: 0 auto !important;
+  padding: 0 0 2rem 0;
+}
+
+#expandable-menu nav#side-submenu h2 {
+  border-radius: 0;
+}
+
+.submenu-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 37px;
+  height: 37px;
+  cursor: pointer;
+}
+
+.submenu-toggle::after {
+  top: 0;
+  bottom: 0;
+  display: block;
+  width: 0;
+  height: 0;
+  margin: auto;
+  content: "";
+  border: inset 6px;
+  border-color: #0038a5 transparent transparent;
+  border-top-style: solid;
+  border-bottom-width: 0;
+}
+
+.submenu-toggle[aria-expanded="true"]::after {
+  -webkit-transform: scaleY(-1);
+  -o-transform: scaleY(-1);
+  transform: scaleY(-1);
+  -webkit-transform-origin: 50% 50%;
+  -o-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+}

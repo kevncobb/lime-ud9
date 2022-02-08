@@ -1,0 +1,251 @@
+// Form styles.
+// -----------------------------------------------------------------------------
+@import "../../bootstrap/less/variables.less";  // Bootstrap variables.
+@import "../../bootstrap/less/mixins.less";     // Bootstrap mixins.
+@import "../variables.less";                    // VARTHEME_SUBTHEME variables.
+@import "../mixins.less";                       // VARTHEME_SUBTHEME mixins.
+// -----------------------------------------------------------------------------
+
+// Checkboxes / radio buttons.
+.checkbox, .radio {
+  // Remove top/bottom margins when in table context, because this is most
+  // likely a tableselect checkbox element.
+  table &.form-no-label {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+}
+
+// Browsers do not recognize pseudo :after selectors, we must create a wrapper
+// around the select element to style it properly.
+// @see http://stackoverflow.com/q/21103542
+.select-wrapper {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  .form-inline & {
+    width: auto;
+  }
+  .input-group & {
+    display: table-cell;
+    // Reset rounded corners
+    &:first-child .form-control:first-child {
+      .border-left-radius(@border-radius-base);
+    }
+    &:last-child .form-control:first-child {
+      .border-right-radius(@border-radius-base);
+    }
+  }
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    line-height: 1;
+    padding-right: 2em;
+    &::-ms-expand {
+      opacity: 0;
+    }
+  }
+  &:after {
+    color: @brand-primary;
+    content: '▼';
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    margin-top: -.5em;
+    padding-right: .5em;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    z-index: 10;
+
+    // Use a more stylish icon if the theme uses glyphicons.
+    .has-glyphicons & {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      content: '\e114'; // .glyphicon-chevron-down
+      display: inline-block;
+      font-family: 'Glyphicons Halflings';
+    }
+    .has-error & {
+      color: @state-danger-text;
+    }
+    .has-success & {
+      color: @state-success-text;
+    }
+    .has-warning & {
+      color: @state-warning-text;
+    }
+  }
+}
+
+// Use CSS/SVG image for required mark.
+// @see https://www.drupal.org/node/2152217
+// @see https://www.drupal.org/node/2274631
+.form-required:after {
+  background-image: url(../../images/required.svg);
+  background-size: 10px 7px;
+  content:"";
+  display: inline-block;
+  line-height:1;
+  height: 7px;
+  width: 10px;
+}
+
+// Form action buttons.
+.form-actions {
+  .btn, .btn-group {
+    margin-right: 10px;
+  }
+  .btn-group {
+    .btn {
+      margin-right: 0;
+    }
+  }
+}
+
+.view-course-glossary {
+  .attachment-before {
+    padding: 0 10px 10px 6px;
+  }
+}
+#views-exposed-form-course-listing-page-3 {
+  width: 100%;
+  @media @tablet {
+    width: auto;
+  }
+}
+
+.not-chosen {
+  .chosen-container-single {
+    border: 1px solid #aaa;
+    .chosen-single {
+      border: none;
+      background: transparent;
+      box-shadow: none;
+      div b {
+        background: none;
+      }
+      .chosen-drop {
+        left: -1px;
+        width: 101%;
+      }
+    }
+  }
+}
+
+.form-type-checkbox.js-form-type-checkbox label {
+  padding: 0.5rem 1rem;
+  margin-left: 3px;
+  line-height: 1rem;
+  input:not(#edit-persistent-login) {
+    margin-right: 5px;
+    top: 0;
+  }
+}
+.form-item {
+  padding-right: 2rem;
+}
+.chosen-drop {
+  left: 0;
+}
+.views-field-field-online-evening-term {
+  ul {
+    padding: 0;
+    margin: 0;
+    li {
+      list-style-type: none;
+      list-style-image: none;
+    }
+  }
+}
+.view-course-listing.view-display-id-page_3 {
+  tr {
+    th:nth-child(2), td:nth-child(2) {
+      display: none;
+      @media @tablet {
+        display: table-cell;
+      }
+    }
+  }
+}
+
+.view-course-listing.view-display-id-page_1 {
+  .bef-exposed-form .form--inline > .form-item {
+    float: left;
+    padding: 7px 4px;
+    background-color: #f3f3f3;
+    margin: 8px 0px 5px;
+
+    &.form-type-checkbox {
+      float: right;
+      &:last-child {
+        clear: both;
+      }
+      &.form-item-field-honors-indicator-value, .form-item-field-may-be-offered-as-an-honor-value {
+        float: left;
+      }
+    }
+  }
+  .form-item-field-course-discipline-target-id {
+    background: none;
+    margin: 1px;
+  }
+}
+.fibonacci-aside-left, .fibonacci-aside, .view-course-schedule {
+  .filter-header, .view-filters {
+    .bef-exposed-form .form--inline > .form-item {
+      padding: 14px 15px;
+      background-color: rgba(243, 243, 243, 0.88);
+      margin: 8px 3px 5px;
+      color: #444444;
+      line-height: 3.5rem;
+    }
+    .block-title {
+      font-size: 3rem;
+      color: white;
+      background: @brand-primary;
+      text-transform: uppercase;
+      padding: 15px;
+      font-weight: 100;
+      margin: 3rem 0 0 !important;
+    }
+  }
+  form {
+      padding: 10px;
+      background-color: rgba(243, 243, 243, 0.88);
+      .form-type-textfield, .form-type-select {
+        .form-control {
+          max-width: 237px;
+        }
+        input::placeholder {
+          color: #a5a5a5;
+          font-size: 80%;
+        }
+    }
+  }
+}
+
+.fibonacci-aside-left, .fibonacci-aside, .view-course-schedule {
+  .bef-exposed-form .form--inline > .form-item {
+    padding: 9px 10px;
+    margin: 0px 3px 0px;
+    color: #444444;
+    line-height: 2.5rem;
+    label {
+      display: block;
+    }
+  }
+  .form-actions {
+    clear: none;
+    float: right;
+    margin-top: 20px;
+    button.btn-info {
+      margin: 9px 3px;
+      font-size: 3rem;
+      background-color: @brand-success;
+      border-color: darken(@brand-success, 5%);
+    }
+  }
+}

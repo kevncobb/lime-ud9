@@ -1,0 +1,6 @@
+entity.feedback_message_type.add_form:
+  route_name: 'entity.feedback_message_type.add_form'
+  title: 'Add Feedback message type'
+  appears_on:
+    - entity.feedback_message_type.collection
+

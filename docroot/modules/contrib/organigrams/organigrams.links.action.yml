@@ -1,0 +1,12 @@
+entity.taxonomy_vocabulary.add_organigrams_form:
+  route_name: entity.vocabulary.add_organigram_form
+  title: 'Add organigram'
+  appears_on:
+    - entity.taxonomy_vocabulary.collection
+  weight: 10
+
+entity.taxonomy_term.import_organigrams_form:
+  route_name: organigrams.import_form
+  title: 'Import Drupal 7 organigram'
+  appears_on:
+    - entity.vocabulary.add_organigram_form

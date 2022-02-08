@@ -1,0 +1,5 @@
+services:
+  views_infinite_scroll_with_pager.ajax_subscriber:
+    class: Drupal\views_infinite_scroll_with_pager\EventSubscriber\AjaxResponseSubscriber
+    tags:
+      - { name: event_subscriber }

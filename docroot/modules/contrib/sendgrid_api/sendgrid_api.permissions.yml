@@ -1,0 +1,4 @@
+administer sendgrid_api:
+  title: 'Administer SendGrid API'
+  description: 'Administer settings for SendGrid API.'
+  restrict access: TRUE

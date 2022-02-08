@@ -1,0 +1,24 @@
+.font-size-lg {
+  font-size: 1.375rem;
+}
+
+.font-size-sm {
+  font-size: 0.9625rem;
+}
+
+.progress-wrapper {
+  margin-bottom: 1rem;
+}
+
+.progress-wrapper:last-child .progress {
+  margin-bottom: 0.3125rem;
+}
+
+.progress-wrapper .message {
+  margin-bottom: 0.3125rem;
+  font-weight: 700;
+}
+
+.progress-wrapper .progress-bar {
+  min-width: 2em;
+}

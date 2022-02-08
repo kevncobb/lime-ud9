@@ -1,0 +1,320 @@
+// blue_harvest content styling.
+// -----------------------------------------------------------------------------
+@import "../../node_modules/bootstrap/scss/functions";  // Bootstrap functions.
+@import "../../node_modules/bootstrap/scss/mixins";     // Bootstrap mixins.
+@import "../variables";                   // blue_harvest variables.
+@import "../mixins";                      // blue_harvest mixins.
+// -----------------------------------------------------------------------------
+
+/* Insert your blue_harvest content custom SASS styling. */
+
+.grid-margin-x {
+  @include make-row();
+}
+.grid-container {
+  @include make-container();
+}
+.cell {
+  @include make-col-ready();
+}
+
+
+@include media-breakpoint-up(sm) {
+  .small-1 {
+    @include make-col-ready();
+    @include make-col(1);
+  }
+  .small-2 {
+    @include make-col-ready();
+    @include make-col(2);
+  }
+  .small-3 {
+    @include make-col-ready();
+    @include make-col(3);
+  }
+  .small-4 {
+    @include make-col-ready();
+    @include make-col(4);
+  }
+  .small-5 {
+    @include make-col-ready();
+    @include make-col(5);
+  }
+  .small-6 {
+    @include make-col-ready();
+    @include make-col(6);
+  }
+  .small-7 {
+    @include make-col-ready();
+    @include make-col(7);
+  }
+  .small-8 {
+    @include make-col-ready();
+    @include make-col(8);
+  }
+  .small-9 {
+    @include make-col-ready();
+    @include make-col(9);
+  }
+  .small-10 {
+    @include make-col-ready();
+    @include make-col(10);
+  }
+  .small-11 {
+    @include make-col-ready();
+    @include make-col(11);
+  }
+  .small-12 {
+    @include make-col-ready();
+    @include make-col(12);
+  }
+}
+
+
+@include media-breakpoint-up(md) {
+  .medium-1 {
+    @include make-col-ready();
+    @include make-col(1);
+  }
+  .medium-2 {
+    @include make-col-ready();
+    @include make-col(2);
+  }
+  .medium-3 {
+    @include make-col-ready();
+    @include make-col(3);
+  }
+  .medium-4 {
+    @include make-col-ready();
+    @include make-col(4);
+  }
+  .medium-5 {
+    @include make-col-ready();
+    @include make-col(5);
+  }
+  .medium-6 {
+    @include make-col-ready();
+    @include make-col(6);
+  }
+  .medium-7 {
+    @include make-col-ready();
+    @include make-col(7);
+  }
+  .medium-8 {
+    @include make-col-ready();
+    @include make-col(8);
+  }
+  .medium-9 {
+    @include make-col-ready();
+    @include make-col(9);
+  }
+  .medium-10 {
+    @include make-col-ready();
+    @include make-col(10);
+  }
+  .medium-11 {
+    @include make-col-ready();
+    @include make-col(11);
+  }
+  .medium-12 {
+    @include make-col-ready();
+    @include make-col(12);
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  .large-1 {
+    @include make-col-ready();
+    @include make-col(1);
+  }
+  .large-2 {
+    @include make-col-ready();
+    @include make-col(2);
+  }
+  .large-3 {
+    @include make-col-ready();
+    @include make-col(3);
+  }
+  .large-4 {
+    @include make-col-ready();
+    @include make-col(4);
+  }
+  .large-5 {
+    @include make-col-ready();
+    @include make-col(5);
+  }
+  .large-6 {
+    @include make-col-ready();
+    @include make-col(6);
+  }
+  .large-7 {
+    @include make-col-ready();
+    @include make-col(7);
+  }
+  .large-8 {
+    @include make-col-ready();
+    @include make-col(8);
+  }
+  .large-9 {
+    @include make-col-ready();
+    @include make-col(9);
+  }
+  .large-10 {
+    @include make-col-ready();
+    @include make-col(10);
+  }
+  .large-11 {
+    @include make-col-ready();
+    @include make-col(11);
+  }
+  .large-12 {
+    @include make-col-ready();
+    @include make-col(12);
+  }
+}
+
+.lc-btn {
+  @include button-variant($primary, darken($primary, 3%));
+  @include button-size(0.618rem, 1.214rem, 1rem, 1.618rem, 0.236rem);
+  color: white !important;
+}
+
+
+.medium-order-4 {
+  @include media-breakpoint-up(md) {
+    order: 4;
+  }
+}
+.large-order-initial {
+  @include media-breakpoint-up(lg) {
+    order: initial;
+  }
+}
+
+.show-first-item-only {
+  > .field-items > .field-item {
+    display: none;
+    &:first-child {
+      display: block;
+    }
+  }
+}
+.bg-edge2edge {
+  //width: 100%;
+}
+.max-1000 {
+  max-width: 1000px;
+}
+.use-margin-x > div > .grid-x, .use-margin-x > div.grid-container > div > .grid-x {
+  @extend .grid-margin-x;
+  margin: auto;
+}
+.content-container {
+  > div {
+    @extend .grid-container;
+    display: inherit;
+  }
+}
+
+.smaller-gutters {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+// To force a Drupal Block Component to fill width
+.fill-block {
+  .field-type-block-field {
+    width: 100%;
+    height: 100%;
+    clear: both;
+  }
+}
+
+.field-paragraph--bp-view {
+  width: 100%;
+}
+.pull-left-negative-5 {
+  @include media-breakpoint-up(lg) {
+    margin-left: -5rem;
+  }
+}
+.pull-right-negative-5 {
+  @include media-breakpoint-up(lg) {
+    margin-right: -5rem;
+  }
+}
+
+.md-order-1 {
+  @include media-breakpoint-up(md) {
+    order: 1;
+  }
+}
+.md-order-2 {
+  @include media-breakpoint-up(md) {
+    order: 2;
+  }
+}
+
+.bumpup-md-9 {
+  position: relative;
+  @include media-breakpoint-up(md) {
+    top: -9rem;
+    margin-bottom: -9rem;
+  }
+}
+.content-bump-up, .bumpup-xl-5 { //remove .content-bump-up
+  position: relative;
+  @include media-breakpoint-up(xl) {
+    top: -5rem;
+    margin-bottom: -5rem;
+  }
+}
+.content-cut-bottom {
+  position: relative;
+  //z-index: -1;
+  bottom: -5rem;
+  margin-top: -5rem;
+}
+.mobile-hide {
+  @media screen and (max-width: 520px) {
+    display: none;
+  }
+}
+.hide-for-medium {
+  @include media-breakpoint-up(md) {
+    display: none;
+  }
+}
+.hide-for-lcmedium {
+  @include media-breakpoint-up(md) {
+    display: none;
+  }
+}
+.show-for-all {
+  display: block !important;
+}
+article.node--type-news {
+  //@extend .grid-container;
+}
+.fibonacci-aside.small-5 {
+  @include media-breakpoint-up(md) {
+    @include make-col(5);
+  }
+}
+.addtoany_list {
+  display: inline-block;
+  margin: 0 0 2rem;
+}
+.bs-region .row {
+  @extend .grid-container;
+}
+.bs-2col-stacked {
+  //@extend .grid-container;
+  //@extend .grid-x;
+}
+.bs-2col-stacked .bs-region--left {
+  @include make-col(6);
+}
+.bs-2col-stacked .bs-region--right {
+  @include make-col(6);
+}

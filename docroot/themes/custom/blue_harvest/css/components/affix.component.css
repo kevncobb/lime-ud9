@@ -1,0 +1,15 @@
+.font-size-lg {
+  font-size: 1.375rem;
+}
+
+.font-size-sm {
+  font-size: 0.9625rem;
+}
+
+.affix {
+  position: fixed;
+  z-index: 1035;
+  top: 0;
+  left: 0;
+  width: 100%;
+}

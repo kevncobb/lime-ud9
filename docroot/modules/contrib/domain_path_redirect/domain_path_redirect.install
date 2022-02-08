@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * @file
+ * Update hooks for the Domain Path Redirect module.
+ */
+
+/**
+ * Reimport config needed for multilanguage support.
+ */
+function domain_path_redirect_update_8100(&$sandbox) {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'domain_path_redirect');
+}
+
+/**
+ * Update redirect bundle name.
+ */
+function domain_path_redirect_update_8101(&$sandbox) {
+  $query = \Drupal::database();
+  // Loop through 100 redirects at a time.
+  if (!isset($sandbox['progress'])) {
+    $sandbox['progress'] = 0;
+    $sandbox['current_rid'] = 0;
+    $sandbox['max'] = $query->select('domain_path_redirect', 'r')
+      ->condition('r.type', 'domain_path_redirect', '!=')
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+  }
+
+  $result = $query->select('domain_path_redirect', 'r')
+    ->fields('r', ['rid'])
+    ->condition('rid', $sandbox['current_rid'], '>')
+    ->range(0, 100)
+    ->condition('r.type', 'domain_path_redirect', '!=')
+    ->orderBy('rid', 'ASC')
+    ->execute();
+
+  foreach ($result as $row) {
+    // Do a direct query to speed things up.
+    $query->update('redirect')
+      ->fields(['type' => 'domain_path_redirect'])
+      ->condition('rid', $row->rid)
+      ->execute();
+    $sandbox['progress']++;
+    $sandbox['current_rid'] = $row->rid;
+  }
+
+  $sandbox['#finished'] = empty($sandbox['max']) ? 1 : ($sandbox['progress'] / $sandbox['max']);
+}

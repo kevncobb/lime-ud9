@@ -1,0 +1,36 @@
+views.pager.infinite_scroll_with_pager:
+  type: views_pager_sql
+  label: 'Infinite Scroll Pager'
+  mapping:
+    views_infinite_scroll:
+      type: mapping
+      mapping:
+        button_text:
+          type: label
+          label: 'Button Text'
+        automatically_load_content:
+          type: boolean
+          label: 'Automatically Load Content'
+    pager_values:
+      type: mapping
+      mapping:
+        quantity:
+          type: integer
+          label: 'Number of visible links'
+        user_friendly_keys:
+          type: boolean
+          label: 'User friendly pager keys'
+        first:
+          type: label
+          label: 'First page link text'
+        previous:
+          type: label
+          label: 'Previous page link text'
+        next:
+          type: label
+          label: 'Next page link text'
+        last:
+          type: label
+          label: 'Last page link text'
+
+

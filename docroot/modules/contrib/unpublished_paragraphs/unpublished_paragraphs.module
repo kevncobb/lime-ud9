@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * @file
+ * Contains unpublished_paragraphs.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Template\Attribute;
+
+/**
+ * Implements hook_help().
+ */
+function unpublished_paragraphs_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the unpublished_paragraphs module.
+    case 'help.page.unpublished_paragraphs':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Toggles visibility of unpublished paragraphs for users with the proper permission.') . '</p>';
+      break;
+
+    default:
+      $output = '';
+  }
+  return $output;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ *
+ * Injects "paragraphs unpublished" classes to every unpublished paragraph,
+ * only in not administrative routes (just in the render view).
+ */
+function unpublished_paragraphs_preprocess_paragraph(&$variables) {
+  // In case of a not administrative view ...
+  if (!\Drupal::service('router.admin_context')->isAdminRoute()) {
+    /** @var \Drupal\paragraphs\ParagraphInterface $paragraph */
+    $paragraph = $variables["paragraph"];
+    /** @var \Drupal\paragraphs\ParagraphInterface $paragraph */
+    if (!$paragraph->isPublished()) {
+      /** @var \Drupal\Core\Template\Attribute $attributes */
+      $variables['attributes'] = new Attribute($variables['attributes']);
+      $variables['attributes']->addClass(['paragraph', 'unpublished']);
+      $variables['#attached']['library'][] = 'unpublished_paragraphs/unpublished-toggle';
+    }
+  }
+}

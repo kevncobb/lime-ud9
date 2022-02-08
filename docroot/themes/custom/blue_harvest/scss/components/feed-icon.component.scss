@@ -1,0 +1,13 @@
+// Feed icon component style.
+// -----------------------------------------------------------------------------
+@import "../../node_modules/bootstrap/scss/functions";  // Bootstrap functions.
+@import "../../node_modules/bootstrap/scss/mixins";     // Bootstrap mixins.
+@import "../variables";                   // blue_harvest variables.
+@import "../mixins";                      // blue_harvest mixins.
+// -----------------------------------------------------------------------------
+
+.feed-icon {
+  border-bottom: none;
+  display: inline-block;
+  padding: $spacer 0 0 0;
+}

@@ -1,0 +1,176 @@
+.font-size-lg {
+  font-size: 1.375rem;
+}
+
+.font-size-sm {
+  font-size: 0.9625rem;
+}
+
+.views-displays .tabs .open > a {
+  border-radius: 0.3rem 0.3rem 0 0;
+}
+
+.views-displays .tabs .open > a:hover,
+.views-displays .tabs .open > a:focus {
+  color: #0038a5;
+}
+
+.views-displays .tabs .action-list {
+  padding: 0;
+}
+
+.views-displays .secondary .form-submit {
+  font-size: 0.9625rem;
+}
+
+.views-filterable-options .filterable-option:nth-of-type(even) .form-type-checkbox {
+  background-color: #f9f9f9;
+}
+
+.views-ui-display-tab-actions .dropbutton .form-submit {
+  color: #001e59;
+}
+
+.views-ui-display-tab-actions .dropbutton .form-submit:hover,
+.views-ui-display-tab-actions .dropbutton .form-submit:focus {
+  color: #0038a5;
+}
+
+.upcoming-events-row {
+  clear: both;
+  margin: 0;
+  padding: 14px 0;
+  letter-spacing: -0.5px;
+  font-weight: 800;
+}
+
+.upcoming-events-row:first-child {
+  padding-top: 0;
+}
+
+.upcoming-events-row .upcoming-events-block .date-box {
+  float: left;
+  min-width: 60px;
+  margin-right: 8px;
+  padding: 14px 5px;
+  color: #0038a5;
+  background-color: #fbea65;
+}
+
+.upcoming-events-row .upcoming-events-block .date-box .month {
+  display: block;
+  text-align: center;
+  text-transform: uppercase;
+  font-family: futura-pt-bold, sans-serif;
+  font-size: 12px;
+  line-height: 30px;
+
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: lining-nums;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.upcoming-events-row .upcoming-events-block .date-box .day {
+  display: block;
+  text-align: center;
+  font-family: futura-pt-bold, sans-serif;
+  font-size: 27px;
+  line-height: 30px;
+
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: lining-nums;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.upcoming-events-row .upcoming-events-block .time {
+  margin-bottom: -4px;
+  color: #000;
+  font-family: futura-pt-bold, sans-serif;
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.5;
+
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: lining-nums;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.upcoming-events-row .upcoming-events-block .event-title {
+  margin-bottom: 15px;
+  font-size: 14px;
+  line-height: 23px;
+}
+
+.events-listing .views-row .layout--onecol.grid-margin-x {
+  margin: 0;
+}
+
+.addtocal-form .addtocal {
+  color: #2556a3;
+  font-size: 1rem;
+}
+
+.flip-time-title .fc-event > .fc-content {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  font-size: 12px;
+  font-weight: 100;
+  line-height: 23px;
+}
+
+.flip-time-title .fc-event > .fc-content .fc-time {
+  -ms-flex-order: 2;
+  -webkit-order: 2;
+  -webkit-box-ordinal-group: 3;
+  order: 2;
+  padding-left: 4px;
+  font-weight: bold;
+}
+
+.flip-time-title .fc-event > .fc-content .fc-title {
+  -ms-flex-order: 1;
+  -webkit-order: 1;
+  -webkit-box-ordinal-group: 2;
+  order: 1;
+}
+
+.full-calendar .fc-event > .fc-content {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  font-size: 12px;
+  font-weight: 100;
+  line-height: 23px;
+}
+
+.full-calendar .fc-event > .fc-content .fc-time {
+  padding-right: 4px;
+  font-weight: bold;
+}
+
+.full-calendar .views-exposed-form .js-form-item.js-form-type-checkbox {
+  float: none;
+  margin: -9px -40% 10px;
+  padding: 0;
+  text-align: center;
+  text-transform: uppercase;
+  background-color: #f7efba;
+}
+
+.full-calendar .js-form-type-checkbox input {
+  top: 18px;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #333;
+  border-radius: 0;
+}
+
+.full-calendar .js-form-type-checkbox input + label {
+  font-family: "futura-pt","Arial Narrow",sans-serif;
+  font-size: large;
+  font-weight: 900;
+  line-height: 2.8rem;
+}

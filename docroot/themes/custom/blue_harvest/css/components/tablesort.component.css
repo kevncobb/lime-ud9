@@ -1,0 +1,15 @@
+.font-size-lg {
+  font-size: 1.375rem;
+}
+
+.font-size-sm {
+  font-size: 0.9625rem;
+}
+
+th.is-active img {
+  display: inline;
+}
+
+td.is-active {
+  background-color: #dee2e6;
+}

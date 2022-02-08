@@ -1,0 +1,7 @@
+field_name: field_o_background_color_hover
+label: 'Background color hover'
+description: 'Specify the background color of this organigram item when hovering over it if it has a URL.'
+required: false
+default_value: {  }
+widget_type: text_textfield
+weight: 14

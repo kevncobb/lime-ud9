@@ -1,0 +1,35 @@
+{#
+/**
+ * @file
+ * Template for a one column panel layout.
+ *
+ * This template provides a very simple "one column" panel display layout.
+ *
+ * Variables:
+ * - $id: An optional CSS id to use for the layout.
+ * - $content: An array of content, each item in the array is keyed to one
+ *   panel of the layout. This layout supports the following sections:
+ *   - content.middle: The only panel in the layout.
+ */
+#}
+<div class="half-layout" {% if css_id %}{{ css_id }}{% endif %}>
+  <div class="half-layout-top">
+    {{ content.top }}
+  </div>
+  <div class="container">
+    <div class="half-layout-left">
+      {{ content.left }}
+    </div>
+    <div class="half-layout-right">
+      {{ content.right }}
+    </div>
+  </div>
+  <div class="half-layout-penultimate">
+    {{ content.penultimate }}
+  </div>
+  <div class="half-layout-bottom">
+    {{ content.bottom }}
+  </div>
+
+
+</div>

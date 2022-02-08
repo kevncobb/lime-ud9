@@ -1,0 +1,22 @@
+node.type.*.third_party.node_form_overrides:
+  type: mapping
+  label: 'Label Overrides'
+  mapping:
+    insert_button:
+      type: string
+      label: 'Insert Button'
+    update_button:
+      type: string
+      label: 'Update Button'
+    insert_title:
+      type: string
+      label: 'Insert Title'
+    update_title:
+      type: string
+      label: 'Update Title'
+    delete_form_title:
+      type: string
+      label: 'Delete form title'
+    delete_form_description:
+      type: string
+      label: 'Delete form description'

@@ -1,0 +1,72 @@
+// blue_harvest header styling.
+// -----------------------------------------------------------------------------
+@import "../../node_modules/bootstrap/scss/functions";  // Bootstrap functions.
+@import "../../node_modules/bootstrap/scss/mixins";     // Bootstrap mixins.
+@import "../variables";                   // blue_harvest variables.
+@import "../mixins";                      // blue_harvest mixins.
+// -----------------------------------------------------------------------------
+
+.lc-tabs {
+  ul.tabs {
+    list-style-type: none;
+    margin-bottom: 0;
+    padding: 0;
+    border: none;
+    li {
+      cursor: pointer;
+      display: block;
+      float: left;
+      width: 49%;
+      margin-right: 1%;
+      margin-bottom: 0;
+      &:nth-child(even) {
+        margin-right: 0;
+      }
+      text-transform: uppercase;
+      text-align: center;
+
+      font-size: 35px;
+      line-height: 30px;
+      font-weight: bold;
+      @media (min-width: map-get($grid-breakpoints, "md")) {
+        width: 24%;
+        margin-right: 1.3333%;
+        &:nth-child(even) {
+          margin-right: 1.3333%;
+        }
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+
+      &:focus, &:hover {
+        background: $gray-800;
+      }
+      a {
+        color: #FFF;
+        background: #a2a2a2;
+        padding: 25px 0px;
+        font-size: inherit;
+        line-height: inherit;
+        text-decoration: none;
+        -webkit-transition: 0.2s;
+        -moz-transition: 0.2s;
+        -ms-transition: 0.2s;
+        transition: 0.2s;
+        &:focus, &:hover {
+          background: inherit;
+        }
+      }
+      &.is-active {
+        a { background-color: $limestone-blue; }
+        a:focus, a:hover {
+          background: $limestone-blue;
+        }
+      }
+    }
+  }
+  .tabs-content {
+    background-color: #fbfbfb;
+    border: 1px solid #f5f5f5;
+  }
+}

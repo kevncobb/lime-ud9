@@ -1,0 +1,24 @@
+style:
+  css:
+    component:
+      css/views_slideshow_cycle2.css: {}
+  dependencies:
+    - core/jquery
+
+local:
+  js:
+    /libraries/jquery.cycle2/build/jquery.cycle2.js: {}
+  dependencies:
+    - core/jquery
+
+remote:
+  remote: https://malsup.github.com/jquery.cycle2.js
+  version: 2.1.6
+  license:
+    name: MIT
+    url: http://jquery.malsup.com/license.html
+    gpl-compatible: true
+  js:
+      //malsup.github.io/min/jquery.cycle2.min.js: { type: external, minified: true }
+  dependencies:
+    - core/jquery

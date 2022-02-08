@@ -1,0 +1,10 @@
+field_name: field_o_image_alignment
+label: 'Image alignment'
+description: 'Specify the alignment of the image for this organigram item.'
+required: false
+translatable: false
+default_value:
+  -
+    value: lt
+widget_type: options_select
+weight: 21

@@ -1,0 +1,26 @@
+orgchart:
+  version: 1.14
+  js:
+    js/orgchart/orgchart.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
+
+organigrams:
+  version: 1.x
+  js:
+    js/organigrams.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
+    - core/jquery.once
+    - core/drupalSettings
+
+explorercanvas:
+  version: aa989ea9d9bac748638f7c66b0fc88e619715da6
+  license:
+    name: Apache License
+    url: https://github.com/arv/ExplorerCanvas/blob/aa989ea9d9bac748638f7c66b0fc88e619715da6/COPYING
+    gpl-compatible: true
+  js:
+    js/ExplorerCanvas/excanvas.js: {}

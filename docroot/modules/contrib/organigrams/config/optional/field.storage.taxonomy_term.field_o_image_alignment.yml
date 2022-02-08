@@ -1,0 +1,47 @@
+langcode: und
+status: true
+dependencies:
+  module:
+    - options
+    - taxonomy
+id: taxonomy_term.field_o_image_alignment
+field_name: field_o_image_alignment
+entity_type: taxonomy_term
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: lt
+      label: Topleft
+    -
+      value: ct
+      label: Topcenter
+    -
+      value: rt
+      label: Topright
+    -
+      value: lm
+      label: Centerleft
+    -
+      value: cm
+      label: Center
+    -
+      value: rm
+      label: Centerright
+    -
+      value: lb
+      label: Bottomleft
+    -
+      value: cb
+      label: Bottomcenter
+    -
+      value: rb
+      label: Bottomright
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: true
+custom_storage: false

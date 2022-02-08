@@ -1,0 +1,8 @@
+field_name: field_o_border_color
+label: 'Border color'
+description: 'Specify the border color of this organigram item.'
+required: false
+translatable: false
+default_value: {  }
+widget_type: text_textfield
+weight: 15

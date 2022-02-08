@@ -1,0 +1,203 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for Varbase Layout Builder module.
+ */
+
+use Symfony\Component\Yaml\Yaml;
+use Drupal\Core\Config\InstallStorage;
+use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Config\FileStorage;
+use Vardot\Entity\EntityDefinitionUpdateManager;
+
+/**
+ * Implements hook_install().
+ */
+function varbase_layout_builder_install() {
+
+  $module_name = preg_replace('/_install$/', '', __FUNCTION__);
+  $module_path = Drupal::service('module_handler')->getModule($module_name)->getPath();
+
+  // Processer for install: in [$module_name].info.yml file.
+  // --------------------------------------------------------------------------.
+  $module_info_file = $module_path . '/' . $module_name . '.info.yml';
+  if (file_exists($module_info_file)) {
+    $module_info_data = (array) Yaml::parse(file_get_contents($module_info_file));
+    if (isset($module_info_data['install'])
+      && is_array($module_info_data['install'])) {
+
+      foreach ($module_info_data['install'] as $module) {
+        if (!\Drupal::moduleHandler()->moduleExists($module)) {
+          \Drupal::service('module_installer')->install([$module], TRUE);
+        }
+      }
+    }
+  }
+
+  // Remove BLB layout options to use VLB layout options.
+  $blb_layout_options = \Drupal::service('config.factory')->listAll($prefix = "bootstrap_layout_builder.layout_option.blb_");
+  foreach ($blb_layout_options as $blb_layout_option) {
+    \Drupal::service('config.factory')->getEditable($blb_layout_option)->delete();
+  }
+
+  // Remove BLB breakpoints to use VLB breakpoints.
+  $blb_breakpoints = \Drupal::service('config.factory')->listAll($prefix = "bootstrap_layout_builder.breakpoint.");
+  foreach ($blb_breakpoints as $blb_breakpoint) {
+    \Drupal::service('config.factory')->getEditable($blb_breakpoint)->delete();
+  }
+
+  // Install optional configs.
+  $optional_install_path = $module_path . '/' . InstallStorage::CONFIG_OPTIONAL_DIRECTORY;
+  if (is_dir($optional_install_path)) {
+    $config_installer = \Drupal::service('config.installer');
+    $config_installer->installDefaultConfig('module', $module_name);
+
+    // Install any optional config the module provides.
+    $storage = new FileStorage($optional_install_path, StorageInterface::DEFAULT_COLLECTION);
+    $config_installer->installOptionalConfig($storage, '');
+
+    // Have the .settings.yml configs into the active config.
+    $settings_config_files = \Drupal::service('file_system')->scanDirectory($optional_install_path, '/^.*\\.(settings.yml)$/i');
+    if (isset($settings_config_files) && is_array($settings_config_files)) {
+      foreach ($settings_config_files as $settings_config_file) {
+        $settings_config_file_content = file_get_contents(DRUPAL_ROOT . '/' . $settings_config_file->uri);
+        $settings_config_file_data = (array) Yaml::parse($settings_config_file_content);
+        $config_factory = \Drupal::configFactory()->getEditable($settings_config_file->name);
+        $config_factory->setData($settings_config_file_data)->save(TRUE);
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------.
+  // Entity updates to clear up any mismatched entity and/or field definitions
+  // And Fix changes were detected in the entity type and field definitions.
+  \Drupal::classResolver()
+    ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
+    ->applyUpdates();
+
+}
+
+/**
+ * Issue #3104761: Add and enable [Entity Blocks] module ( ~1.0 )
+ */
+function varbase_layout_builder_update_8101() {
+  if (!\Drupal::moduleHandler()->moduleExists('entity_block')) {
+    \Drupal::service('module_installer')->install(['entity_block'], FALSE);
+  }
+}
+
+/**
+ * Issue #3169416: Theme Layout Builder Modal and Media Library to look like.
+ *
+ * Claro admin theme.
+ */
+function varbase_layout_builder_update_8102() {
+
+  if (!version_compare(\Drupal::VERSION, '8.8.0', 'lt')) {
+    if (!\Drupal::service('theme_handler')->themeExists('claro')) {
+
+      // Install Claro theme.
+      \Drupal::service('theme_installer')->install(['claro'], FALSE);
+    }
+
+    if (\Drupal::moduleHandler()->moduleExists('media_library_theme_reset')) {
+      \Drupal::service('module_installer')->uninstall(['media_library_theme_reset'], FALSE);
+    }
+
+    $config_factory = \Drupal::service('config.factory')->getEditable('varbase_layout_builder.settings');
+    $config_factory->set('use_claro', 1)->save(TRUE);
+  }
+}
+
+/**
+ * Issue #3170980: Add Layout Builder Component Attributes module.
+ */
+function varbase_layout_builder_update_8103() {
+  if (!\Drupal::moduleHandler()->moduleExists('layout_builder_component_attributes')) {
+    \Drupal::service('module_installer')->install(['layout_builder_component_attributes'], FALSE);
+  }
+}
+
+/**
+ * Issue #3210657: Add Boxed options ( Wide, Medium, Narrow, Tiny )
+ */
+function varbase_layout_builder_update_10001() {
+  $module_path = Drupal::service('module_handler')->getModule('varbase_layout_builder')->getPath();
+
+  // Install configs path.
+  $install_path = $module_path . '/' . InstallStorage::CONFIG_INSTALL_DIRECTORY;
+  if (is_dir($install_path)) {
+
+    // Have forced configs import.
+    $forced_configs_import = [
+      'varbase_layout_builder.layout_defaults',
+    ];
+
+    foreach ($forced_configs_import as $config_name) {
+
+      $config_path = $install_path . '/' . $config_name . '.yml';
+      if (file_exists($config_path)) {
+        $config_content = file_get_contents($config_path);
+        $config_data = (array) Yaml::parse($config_content);
+        $config_factory = \Drupal::configFactory()->getEditable($config_name);
+        $config_factory->setData($config_data)->save(TRUE);
+      }
+    }
+  }
+}
+
+/**
+ * Issue #3218194: Add Vertical and Horizontal alignments to section styling settings
+ */
+function varbase_layout_builder_update_10002() {
+  $config_factory = \Drupal::configFactory()->getEditable('bootstrap_styles.settings');
+  $config_factory->set('horizontal_alignment', "justify-content-start|Align start\r\njustify-content-center|Align center\r\njustify-content-end|Align end");
+  $config_factory->set('vertical_alignment', "align-items-start|Align top\r\nalign-items-center|Align middle\r\nalign-items-end|Align bottom");
+  $config_factory->save();
+}
+
+/**
+ * Issue #3244849: Fix border color (side) variation classes.
+ *
+ * In Bootstrap Styles for Varbase Layout Builder default configs
+ */
+function varbase_layout_builder_update_10003() {
+  $config_factory = \Drupal::configFactory()->getEditable('bootstrap_styles.settings');
+
+  // Only update if the border_left_color current config value is not changed from the old config.
+  $crrent_border_left_color = $config_factory->get('border_left_color');
+  $old_border_left_color = "border-start border-primary|Primary\r\nborder-start border-secondary|Secondary\r\nborder-start border-success|Success\r\nborder-start border-danger|Danger\r\nborder-start border-warning|Warning\r\nborder-start border-info|Info\r\nborder-start border-light|Light\r\nborder-start border-dark|Dark\r\nborder-start border-white|White";
+  $new_border_left_color = "border-start border-start-primary|Primary\r\nborder-start border-start-secondary|Secondary\r\nborder-start border-start-success|Success\r\nborder-start border-start-danger|Danger\r\nborder-start border-start-warning|Warning\r\nborder-start border-start-info|Info\r\nborder-start border-start-light|Light\r\nborder-start border-start-dark|Dark\r\nborder-start border-start-white|White";
+  if ($crrent_border_left_color === $old_border_left_color) {
+    $config_factory->set('border_left_color', $new_border_left_color);
+    $config_factory->save();
+  }
+
+  // Only update if the border_top_color current config value is not changed from the old config.
+  $current_border_top_color = $config_factory->get('border_top_color');
+  $old_border_top_color = "border-top border-primary|Primary\r\nborder-top border-secondary|Secondary\r\nborder-top border-success|Success\r\nborder-top border-danger|Danger\r\nborder-top border-warning|Warning\r\nborder-top border-info|Info\r\nborder-top border-light|Light\r\nborder-top border-dark|Dark\r\nborder-top border-white|White";
+  $new_border_top_color = "border-top border-top-primary|Primary\r\nborder-top border-top-secondary|Secondary\r\nborder-top border-top-success|Success\r\nborder-top border-top-danger|Danger\r\nborder-top border-top-warning|Warning\r\nborder-top border-top-info|Info\r\nborder-top border-top-light|Light\r\nborder-top border-top-dark|Dark\r\nborder-top border-top-white|White";
+  if ($current_border_top_color === $old_border_top_color) {
+    $config_factory->set('border_top_color', $new_border_top_color);
+    $config_factory->save();
+  }
+
+  // Only update if the border_right_color current config value is not changed from the old config.
+  $current_border_right_color = $config_factory->get('border_right_color');
+  $old_border_right_color = "border-end border-primary|Primary\r\nborder-end border-secondary|Secondary\r\nborder-end border-success|Success\r\nborder-end border-danger|Danger\r\nborder-end border-warning|Warning\r\nborder-end border-info|Info\r\nborder-end border-light|Light\r\nborder-end border-dark|Dark\r\nborder-end border-white|White";
+  $new_border_right_color = "border-end border-end-primary|Primary\r\nborder-end border-end-secondary|Secondary\r\nborder-end border-end-success|Success\r\nborder-end border-end-danger|Danger\r\nborder-end border-end-warning|Warning\r\nborder-end border-end-info|Info\r\nborder-end border-end-light|Light\r\nborder-end border-end-dark|Dark\r\nborder-end border-end-white|White";
+  if ($current_border_right_color === $old_border_right_color) {
+    $config_factory->set('border_right_color', $new_border_right_color);
+    $config_factory->save();
+  }
+
+  // Only update if the border_bottom_color current config value is not changed from the old config.
+  $current_border_bottom_color = $config_factory->get('border_bottom_color');
+  $old_border_bottom_color = "border-bottom border-primary|Primary\r\nborder-bottom border-secondary|Secondary\r\nborder-bottom border-success|Success\r\nborder-bottom border-danger|Danger\r\nborder-bottom border-warning|Warning\r\nborder-bottom border-info|Info\r\nborder-bottom border-light|Light\r\nborder-bottom border-dark|Dark\r\nborder-bottom border-white|White";
+  $new_border_bottom_color = "border-bottom border-bottom-primary|Primary\r\nborder-bottom border-bottom-secondary|Secondary\r\nborder-bottom border-bottom-success|Success\r\nborder-bottom border-bottom-danger|Danger\r\nborder-bottom border-bottom-warning|Warning\r\nborder-bottom border-bottom-info|Info\r\nborder-bottom border-bottom-light|Light\r\nborder-bottom border-bottom-dark|Dark\r\nborder-bottom border-bottom-white|White";
+  if ($current_border_bottom_color === $old_border_bottom_color) {
+    $config_factory->set('border_bottom_color', $new_border_bottom_color);
+    $config_factory->save();
+  }
+}

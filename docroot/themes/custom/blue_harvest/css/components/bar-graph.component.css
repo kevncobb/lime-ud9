@@ -1,0 +1,572 @@
+/* ==========================================================================
+	Home Pillars
+============================================================================= */
+.font-size-lg {
+  font-size: 1.375rem;
+}
+
+.font-size-sm {
+  font-size: 0.9625rem;
+}
+
+/* ==========================================================================
+   Bar Graph
+============================================================================= */
+.bar_graph {
+  position: relative;
+  padding: 0 0 20px;
+  color: #222;
+}
+
+.bar_graph:first-child {
+  padding-top: 40px;
+}
+
+.bar_graph + .bar_graph .bar_graph_container {
+  border-top: none;
+}
+
+.bar_graph.theme_dark {
+  padding: 60px 0 80px;
+  color: #fff;
+  background: #222;
+}
+
+.bar_graph.theme_dark .bar_graph_container {
+  padding-top: 0;
+  border-top: none;
+}
+
+.bar_graph.theme_dark .bar_graph_heading {
+  margin-bottom: 5px;
+}
+
+.bar_graph.theme_dark .bar_graph_button_link:hover {
+  color: #222;
+  background: #fff;
+}
+
+.bar_graph.theme_dark .bar_graph_fullwidth {
+  margin-top: 40px;
+}
+
+.bar_graph.theme_gray {
+  background: #f2f2f3;
+}
+
+.page_layout_home .bar_graph {
+  z-index: 2;
+}
+
+.bar_graph_container {
+  position: relative;
+  padding-top: 46px;
+  border-top: 4px solid #f2f2f3;
+}
+
+.bar_graph_heading {
+  margin-top: 0;
+  margin-bottom: 5px;
+  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.bar_graph_title {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 26px;
+  font-size: 1.625rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.bar_graph_summary {
+  width: 100%;
+}
+
+.bar_graph_description {
+  margin-top: 0;
+}
+
+.bar_graph_description p:last-child {
+  margin-bottom: 0;
+}
+
+.bar_graph_description_text {
+  margin-top: 53px;
+  font-size: 18px;
+  font-size: 1.125rem;
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+.bar_graph_button {
+  width: 100%;
+  margin-top: 32px;
+}
+
+.bar_graph_button_link {
+  display: inline-block;
+  padding: 7px 22px 8px;
+  cursor: pointer;
+  -webkit-transition: background 0.25s, border 0.25s, color 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s;
+  -o-transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, -o-transform 0.25s;
+  transition: background 0.25s, border 0.25s, color 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, transform 0.25s;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, transform 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s, -o-transform 0.25s;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, transform 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s;
+  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
+  text-transform: uppercase;
+  color: #fff;
+  background: #0038a5;
+  font-size: 14px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.5;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.bar_graph_button_link:focus {
+  color: #fff;
+  background: #000;
+}
+
+.bar_graph_button_link:hover {
+  color: #fff;
+  background: #000;
+}
+
+.large .bar_graph_button_link {
+  padding: 11px 32px 12px;
+}
+
+.large .bar_graph.color_purple .bar_graph_button_link {
+  padding: 11px 32px 12px;
+}
+
+.large .bar_graph.color_orange .bar_graph_button_link {
+  padding: 11px 32px 12px;
+}
+
+.large .bar_graph.color_blue .bar_graph_button_link {
+  padding: 11px 32px 12px;
+}
+
+.large .bar_graph.color_green .bar_graph_button_link {
+  padding: 11px 32px 12px;
+}
+
+.large .bar_graph.color_yellow .bar_graph_button_link {
+  padding: 11px 32px 12px;
+}
+
+.bar_graph.color_purple .bar_graph_button_link {
+  padding: 7px 22px 8px;
+  cursor: pointer;
+  -webkit-transition: background 0.25s, border 0.25s, color 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s;
+  -o-transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, -o-transform 0.25s;
+  transition: background 0.25s, border 0.25s, color 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, transform 0.25s;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, transform 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s, -o-transform 0.25s;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, transform 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s;
+  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
+  text-transform: uppercase;
+  color: #fff;
+  background: #4b2e84;
+  font-size: 14px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.5;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.bar_graph.color_purple .bar_graph_button_link:focus {
+  color: #fff;
+  background: #000;
+}
+
+.bar_graph.color_purple .bar_graph_button_link:hover {
+  color: #fff;
+  background: #000;
+}
+
+.bar_graph.color_purple .bar_graph_value {
+  background: #4b2e84;
+}
+
+.bar_graph.color_purple .bar_graph_value_label.small_value {
+  color: #4b2e84;
+}
+
+.bar_graph.color_orange .bar_graph_button_link {
+  padding: 7px 22px 8px;
+  cursor: pointer;
+  -webkit-transition: background 0.25s, border 0.25s, color 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s;
+  -o-transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, -o-transform 0.25s;
+  transition: background 0.25s, border 0.25s, color 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, transform 0.25s;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, transform 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s, -o-transform 0.25s;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, transform 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s;
+  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
+  text-transform: uppercase;
+  color: #000;
+  background: #ff5e00;
+  font-size: 14px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.5;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.bar_graph.color_orange .bar_graph_button_link:focus {
+  color: #fff;
+  background: #000;
+}
+
+.bar_graph.color_orange .bar_graph_button_link:hover {
+  color: #fff;
+  background: #000;
+}
+
+.bar_graph.color_orange .bar_graph_value {
+  background: #ff5e00;
+}
+
+.bar_graph.color_orange .bar_graph_value_label.small_value {
+  color: #ff5e00;
+}
+
+.bar_graph.color_blue .bar_graph_button_link {
+  padding: 7px 22px 8px;
+  cursor: pointer;
+  -webkit-transition: background 0.25s, border 0.25s, color 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s;
+  -o-transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, -o-transform 0.25s;
+  transition: background 0.25s, border 0.25s, color 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, transform 0.25s;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, transform 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s, -o-transform 0.25s;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, transform 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s;
+  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
+  text-transform: uppercase;
+  color: #fff;
+  background: #0038a5;
+  font-size: 14px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.5;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.bar_graph.color_blue .bar_graph_button_link:focus {
+  color: #fff;
+  background: #000;
+}
+
+.bar_graph.color_blue .bar_graph_button_link:hover {
+  color: #fff;
+  background: #000;
+}
+
+.bar_graph.color_blue .bar_graph_value {
+  background: #0038a5;
+}
+
+.bar_graph.color_blue .bar_graph_value_label.small_value {
+  color: #0038a5;
+}
+
+.bar_graph.color_green .bar_graph_button_link {
+  padding: 7px 22px 8px;
+  cursor: pointer;
+  -webkit-transition: background 0.25s, border 0.25s, color 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s;
+  -o-transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, -o-transform 0.25s;
+  transition: background 0.25s, border 0.25s, color 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, transform 0.25s;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, transform 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s, -o-transform 0.25s;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, transform 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s;
+  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
+  text-transform: uppercase;
+  color: #000;
+  background: #78be20;
+  font-size: 14px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.5;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.bar_graph.color_green .bar_graph_button_link:focus {
+  color: #fff;
+  background: #000;
+}
+
+.bar_graph.color_green .bar_graph_button_link:hover {
+  color: #fff;
+  background: #000;
+}
+
+.bar_graph.color_green .bar_graph_value {
+  background: #78be20;
+}
+
+.bar_graph.color_green .bar_graph_value_label.small_value {
+  color: #78be20;
+}
+
+.bar_graph.color_yellow .bar_graph_button_link {
+  padding: 7px 22px 8px;
+  cursor: pointer;
+  -webkit-transition: background 0.25s, border 0.25s, color 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s;
+  -o-transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, -o-transform 0.25s;
+  transition: background 0.25s, border 0.25s, color 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, transform 0.25s;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, transform 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s, -o-transform 0.25s;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s, color 0.25s, transform 0.25s, -webkit-box-shadow 0.25s, -webkit-transform 0.25s;
+  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
+  text-transform: uppercase;
+  color: #000;
+  background: #ffd900;
+  font-size: 14px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.5;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.bar_graph.color_yellow .bar_graph_button_link:focus {
+  color: #fff;
+  background: #000;
+}
+
+.bar_graph.color_yellow .bar_graph_button_link:hover {
+  color: #fff;
+  background: #000;
+}
+
+.bar_graph.color_yellow .bar_graph_value {
+  background: #ffd900;
+}
+
+.bar_graph.color_yellow .bar_graph_value_label {
+  color: #222;
+}
+
+.bar_graph.color_yellow .bar_graph_value_label.small_value {
+  color: #222;
+}
+
+.bar_graph_button_link_label {
+  display: block;
+  text-align: center;
+}
+
+.bar_graph_summary_label {
+  font-size: 22px;
+  font-size: 1.375rem;
+  font-weight: 300;
+  line-height: 1.25;
+}
+
+.bar_graph_nominator {
+  position: absolute;
+  top: 0;
+  left: 35px;
+  color: #a7a9ac;
+  font-size: 20px;
+  font-size: 1.25rem;
+  font-weight: 900;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.bar_graph_fullwidth {
+  overflow: hidden;
+  margin-top: 40px;
+  border: 4px solid #fff;
+  border-radius: 100px;
+  background: #fff url("/themes/custom/blue_harvest/images/bargraph_bg.png") repeat-x;
+  -webkit-background-size: auto 100%;
+  background-size: auto 100%;
+  -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+}
+
+.bar_graph_value {
+  position: relative;
+  width: 0;
+  height: 60px;
+  -webkit-transition: width 1.5s;
+  -o-transition: width 1.5s;
+  transition: width 1.5s;
+  vertical-align: top;
+  border-top-left-radius: 60px;
+  border-bottom-left-radius: 60px;
+  background: #4b2e84;
+}
+
+.bar_graph_value_label {
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  padding: 0 10px;
+  -webkit-transition: opacity 0.5s 0.65s;
+  -o-transition: opacity 0.5s 0.65s;
+  transition: opacity 0.5s 0.65s;
+  -webkit-transform: translate(0, -50%);
+  -o-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
+  opacity: 0;
+  color: #fff;
+  font-size: 26px;
+  font-size: 1.625rem;
+  font-size: 18px;
+  font-size: 1.125rem;
+  font-weight: 900;
+  line-height: 1.2;
+  line-height: 1;
+}
+
+.evaluated .bar_graph_value_label {
+  opacity: 1;
+}
+
+.bar_graph_value_label.small_value {
+  right: auto;
+  left: 100%;
+  padding: 22px 100px 22px 20px;
+  -webkit-transition: opacity 0.5s 0.125s;
+  -o-transition: opacity 0.5s 0.125s;
+  transition: opacity 0.5s 0.125s;
+  background: #fff;
+  background: -webkit-gradient(linear, left top, right top, from(white), color-stop(64%, white), to(rgba(255, 255, 255, 0)));
+  background: -webkit-linear-gradient(left, white 0%, white 64%, rgba(255, 255, 255, 0) 100%);
+  background: -o-linear-gradient(left, white 0%, white 64%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(90deg, white 0%, white 64%, rgba(255, 255, 255, 0) 100%);
+}
+
+.bar_graph_value_number {
+  display: none;
+}
+
+.bar_graph_labels {
+  position: relative;
+  height: 26px;
+  margin-top: 12px;
+}
+
+.bar_graph_denominator {
+  position: absolute;
+  top: 0;
+  right: 15px;
+  color: #a7a9ac;
+  font-size: 20px;
+  font-size: 1.25rem;
+  font-weight: 900;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media screen and (min-width: 500px) {
+  .bar_graph {
+    padding-bottom: 40px;
+  }
+  .bar_graph_value {
+    height: 100px;
+    border-top-left-radius: 100px;
+    border-bottom-left-radius: 100px;
+  }
+  .bar_graph_value_label.small_value {
+    padding-top: 38px;
+    padding-bottom: 38px;
+  }
+  .bar_graph_value_label {
+    font-size: 26px;
+    font-size: 1.625rem;
+  }
+}
+
+@media screen and (min-width: 740px) {
+  .bar_graph.theme_dark {
+    padding: 90px 0 110px;
+  }
+  .bar_graph.theme_dark .bar_graph_heading {
+    margin-bottom: 21px;
+  }
+  .bar_graph.theme_dark .bar_graph_fullwidth {
+    margin-top: 70px;
+  }
+  .bar_graph_title {
+    margin-bottom: 2px;
+    font-size: 40px;
+    font-size: 2.5rem;
+    font-weight: 700;
+  }
+  .bar_graph_description_text {
+    font-size: 20px;
+    font-size: 1.25rem;
+  }
+  .bar_graph_summary_label {
+    font-size: 30px;
+    font-size: 1.875rem;
+  }
+  .bar_graph_value_label {
+    font-size: 40px;
+    font-size: 2.5rem;
+    font-weight: 700;
+  }
+}
+
+@media screen and (max-width: 499px) {
+  .bar_graph_info {
+    text-align: center;
+  }
+}
+
+@media screen and (min-width: 980px) {
+  .bar_graph_summary {
+    width: 70%;
+  }
+  .bar_graph_button {
+    width: 30%;
+    margin-top: 10px;
+    text-align: right;
+  }
+  .bar_graph_inner {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+  }
+}
+
+@media only screen and (min-width: 800px) {
+  .bar_graph_fullwidth {
+    margin: 40px -15px 0 -15px;
+  }
+}

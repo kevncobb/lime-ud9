@@ -1,0 +1,7 @@
+field_name: organigrams_font_size
+type: textfield
+label: 'Font size'
+description: 'Specify the font size in pixels of the items in this organigram.'
+field_group: 'Font settings'
+field_group_weight: 3
+weight: 4
