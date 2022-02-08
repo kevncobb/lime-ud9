@@ -998,13 +998,27 @@ $settings['migrate_node_migrate_type_classic'] = FALSE;
 $databases['default']['default'] = array (
   'database' => 'pantheon',
   'username' => 'pantheon',
-  'password' => 'pantheon',
+  'password' => 'c55187252dea4f648ed2aa6638ca9602',
   'prefix' => '',
-  'host' => 'database',
-  'port' => '3306',
+  'host' => 'dbserver.dev.9f541b27-81c8-4423-a3a0-8fbdaa84145d.drush.in',
+  'port' => '14273',
   'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
   'driver' => 'mysql',
 );
-$settings['config_sync_directory'] = 'sites/default/files/config_Q1AoB_1BMyYum0w7p4YhnYETlS3qeEPhClZoAo50V-57enLxT26eIC4fH4pr3bLNWRvEDVaUNg/sync';
+$settings['config_sync_directory'] = 'sites/default/files/config_H9Rhz0Yop7-dpreBvi6rpToXs897SKIy5dfRDuUzNoNv-vVilZht5PLor44WrRWAc9x5FiKllQ/sync';
 
 $config['system.logging']['error_level'] = 'verbose';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
