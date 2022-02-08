@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '69ee639725def08635b5985920d925a9e0c6e514',
+        'reference' => 'c8f9be09f8e9f1dc554e71a9faf03d7f768754d9',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -1507,6 +1507,17 @@
             'replaced' => array(
                 0 => '9.3.5',
             ),
+        ),
+        'drupal/field_formatter' => array(
+            'pretty_version' => 'dev-3.x',
+            'version' => 'dev-3.x',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/field_formatter',
+            'aliases' => array(
+                0 => '3.x-dev',
+            ),
+            'reference' => '7840c03f1e7dd7a5666437f2c702385f8297de46',
+            'dev_requirement' => false,
         ),
         'drupal/field_group' => array(
             'pretty_version' => '3.2.0',
@@ -4905,7 +4916,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '69ee639725def08635b5985920d925a9e0c6e514',
+            'reference' => 'c8f9be09f8e9f1dc554e71a9faf03d7f768754d9',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(

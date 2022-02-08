@@ -55,7 +55,8 @@
     "drupal/yoast_seo": "^1.7",
     "drupal/ace_editor": "1.x-dev@dev",
     "drupal/console": "~1.0",
-    "pantheon-systems/terminus-drupal-console-plugin": "^1.1"
+    "pantheon-systems/terminus-drupal-console-plugin": "^1.1",
+    "drupal/field_formatter": "3.x-dev@dev"
   },
   "require-dev": {
     "drupal/core-dev": "9.3.3",
