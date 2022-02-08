@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'c8f9be09f8e9f1dc554e71a9faf03d7f768754d9',
+        'reference' => '1774f37c99637fa6ef6419907ba8eb4f46597221',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -1446,6 +1446,15 @@
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/entity_reference_revisions',
             'aliases' => array(),
             'reference' => '8.x-1.9',
+            'dev_requirement' => false,
+        ),
+        'drupal/entity_update' => array(
+            'pretty_version' => '2.0.0-rc2',
+            'version' => '2.0.0.0-RC2',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/entity_update',
+            'aliases' => array(),
+            'reference' => '2.0.0-rc2',
             'dev_requirement' => false,
         ),
         'drupal/entity_usage' => array(
@@ -4916,7 +4925,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'c8f9be09f8e9f1dc554e71a9faf03d7f768754d9',
+            'reference' => '1774f37c99637fa6ef6419907ba8eb4f46597221',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(
