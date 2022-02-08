@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'cc961138307dfc3d6b9ed15d2bd49d9a2649d2ac',
+        'reference' => 'a8aa1dfe04c7bb9a29b6f9fd3b5341b869a30ec7',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -3842,6 +3842,15 @@
                 0 => '*',
             ),
         ),
+        'pantheon-systems/terminus-drupal-console-plugin' => array(
+            'pretty_version' => '1.1.0',
+            'version' => '1.1.0.0',
+            'type' => 'terminus-plugin',
+            'install_path' => __DIR__ . '/../pantheon-systems/terminus-drupal-console-plugin',
+            'aliases' => array(),
+            'reference' => 'c1bfd7695f75428baf3910a680b9f02320fef15d',
+            'dev_requirement' => false,
+        ),
         'paragonie/random_compat' => array(
             'pretty_version' => 'v9.99.100',
             'version' => '9.99.100.0',
@@ -4061,8 +4070,8 @@
         'psr/container-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0',
-                1 => '^1.0',
+                0 => '^1.0',
+                1 => '1.0',
             ),
         ),
         'psr/event-dispatcher' => array(
@@ -4896,7 +4905,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'cc961138307dfc3d6b9ed15d2bd49d9a2649d2ac',
+            'reference' => 'a8aa1dfe04c7bb9a29b6f9fd3b5341b869a30ec7',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(

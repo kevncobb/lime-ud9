@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "db09de60b192cc460533facfaa924ec5",
+    "content-hash": "5014991e0f7de6d7c318861e1800eeac",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -19324,6 +19324,42 @@
                 "source": "https://github.com/oomphinc/composer-installers-extender/tree/2.0.1"
             },
             "time": "2021-12-15T12:32:42+00:00"
+        },
+        {
+            "name": "pantheon-systems/terminus-drupal-console-plugin",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pantheon-systems/terminus-drupal-console-plugin.git",
+                "reference": "c1bfd7695f75428baf3910a680b9f02320fef15d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pantheon-systems/terminus-drupal-console-plugin/zipball/c1bfd7695f75428baf3910a680b9f02320fef15d",
+                "reference": "c1bfd7695f75428baf3910a680b9f02320fef15d",
+                "shasum": ""
+            },
+            "type": "terminus-plugin",
+            "extra": {
+                "terminus": {
+                    "compatible-version": "^1|^2"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Pantheon\\TerminusDrupalConsole\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Drupal Console - A Terminus plugin for running Drupal Console commands on a Pantheon site",
+            "support": {
+                "issues": "https://github.com/pantheon-systems/terminus-drupal-console-plugin/issues",
+                "source": "https://github.com/pantheon-systems/terminus-drupal-console-plugin/tree/1.x"
+            },
+            "time": "2019-02-22T16:32:39+00:00"
         },
         {
             "name": "paragonie/random_compat",

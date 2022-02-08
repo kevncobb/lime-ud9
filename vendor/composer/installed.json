@@ -22629,6 +22629,45 @@
             "install-path": "../palantirnet/drupal-rector"
         },
         {
+            "name": "pantheon-systems/terminus-drupal-console-plugin",
+            "version": "1.1.0",
+            "version_normalized": "1.1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pantheon-systems/terminus-drupal-console-plugin.git",
+                "reference": "c1bfd7695f75428baf3910a680b9f02320fef15d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pantheon-systems/terminus-drupal-console-plugin/zipball/c1bfd7695f75428baf3910a680b9f02320fef15d",
+                "reference": "c1bfd7695f75428baf3910a680b9f02320fef15d",
+                "shasum": ""
+            },
+            "time": "2019-02-22T16:32:39+00:00",
+            "type": "terminus-plugin",
+            "extra": {
+                "terminus": {
+                    "compatible-version": "^1|^2"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Pantheon\\TerminusDrupalConsole\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Drupal Console - A Terminus plugin for running Drupal Console commands on a Pantheon site",
+            "support": {
+                "issues": "https://github.com/pantheon-systems/terminus-drupal-console-plugin/issues",
+                "source": "https://github.com/pantheon-systems/terminus-drupal-console-plugin/tree/1.x"
+            },
+            "install-path": "../pantheon-systems/terminus-drupal-console-plugin"
+        },
+        {
             "name": "paragonie/random_compat",
             "version": "v9.99.100",
             "version_normalized": "9.99.100.0",

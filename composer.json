@@ -54,7 +54,8 @@
     "drupal/sendgrid_integration": "^1.7",
     "drupal/yoast_seo": "^1.7",
     "drupal/ace_editor": "1.x-dev@dev",
-    "drupal/console": "~1.0"
+    "drupal/console": "~1.0",
+    "pantheon-systems/terminus-drupal-console-plugin": "^1.1"
   },
   "require-dev": {
     "drupal/core-dev": "9.3.3",
