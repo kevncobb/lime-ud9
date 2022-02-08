@@ -30,10 +30,21 @@ class EntityUpdateExec extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, $action = 'default') {
 
-    $link_help = '/admin/help/entity_update';
-    $about_text = <<<TEXT
+    $aboutTextDiff = 'This page allows you to <b>update the entity types schema</b>.';
+    if ($action == 'clean') {
+      $aboutTextDiff = 'This page allows you to <b>cleanup the backup table</b>.';
+    }
+    elseif ($action == 'rescue') {
+      $aboutTextDiff = 'This page allows you to <b>restore entities from backup table</b>.';
+    }
+    elseif ($action == 'type') {
+      $aboutTextDiff = 'This page allows you to <b>update a selected entity type</b>.';
+    }
+
+    $aboutText = <<<TEXT
+<p>$aboutTextDiff</p>
 <p>
-  This page allows you to update the entity types schema. Please refer to the <a href='$link_help'>Help page</a>.
+Please refer to the <a href='/admin/help/entity_update'>Help page</a>.
 </p>
 <p>
 <b>CAUTION</b>
@@ -56,7 +67,7 @@ TEXT;
 
     $form['messages']['about'] = [
       '#type' => 'markup',
-      '#markup' => $about_text,
+      '#markup' => $aboutText,
       '#prefix' => '<div>',
       '#suffix' => '</div>',
     ];

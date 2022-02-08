@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\entity_update\Functional;
 
+error_reporting(0);
 use Drupal\entity_update\EntityUpdate;
 use Drupal\entity_update_tests\Entity\EntityUpdateTestsContentEntity;
 use Drupal\entity_update_tests\EntityUpdateTestHelper;
@@ -36,6 +37,9 @@ class EntityUpdateUIFunctionsTest extends BrowserTestBase {
     $permissions = ['administer software updates'];
     $this->admin_user = $this->drupalCreateUser($permissions);
     $this->drupalLogin($this->admin_user);
+
+    // Disable drush print.
+    EntityUpdatePrint::setEchoPrintEnable(FALSE);
   }
 
   /**

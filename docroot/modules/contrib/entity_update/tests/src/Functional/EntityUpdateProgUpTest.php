@@ -2,6 +2,9 @@
 
 namespace Drupal\Tests\entity_update\Functional;
 
+error_reporting(0);
+
+use Drupal\entity_update\EntityUpdatePrint;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\entity_update\EntityUpdate;
 use Drupal\entity_update_tests\EntityUpdateTestHelper;
@@ -41,6 +44,9 @@ class EntityUpdateProgUpTest extends BrowserTestBase {
     EntityUpdate::basicUpdate();
     // Create entities.
     EntityUpdateTestsContentEntity::create(['id' => 1])->save();
+
+    // Disable drush print.
+    EntityUpdatePrint::setEchoPrintEnable(FALSE);
   }
 
   /**

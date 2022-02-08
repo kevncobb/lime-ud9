@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\entity_update\Functional;
 
+error_reporting(0);
 use Drupal\Tests\BrowserTestBase;
 
 /**
