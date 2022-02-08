@@ -4,6 +4,7 @@ namespace Drupal\entity_reference_revisions\Plugin\DataType;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Plugin\DataType\EntityReference;
+use Drupal\Core\TypedData\TypedDataInterface;
 
 /**
  * Defines an 'entity_reference_revisions' data type.
@@ -48,6 +49,18 @@ class EntityReferenceRevisions extends EntityReference {
   protected $id;
 
   /**
+   * The entity storage service for this field's target entity type.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected $entityStorage;
+
+  public function __construct($definition, $name, TypedDataInterface $parent) {
+    parent::__construct($definition, $name, $parent);
+    $this->entityStorage = \Drupal::entityTypeManager()->getStorage($this->getTargetDefinition()->getEntityTypeId());
+  }
+
+  /**
    * Returns the definition of the referenced entity.
    *
    * @return \Drupal\Core\Entity\TypedData\EntityDataDefinitionInterface
@@ -73,12 +86,11 @@ class EntityReferenceRevisions extends EntityReference {
    */
   public function getTarget() {
     if (!isset($this->target) && isset($this->revision_id)) {
-      $storage = \Drupal::entityTypeManager()->getStorage($this->getTargetDefinition()->getEntityTypeId());
       // By default always load the default revision, so caches get used.
-      $entity = $storage->load($this->id);
+      $entity = $this->entityStorage->load($this->id);
       if ($entity !== NULL && $entity->getRevisionId() != $this->revision_id) {
         // A non-default revision is a referenced, so load this one.
-        $entity = $storage->loadRevision($this->revision_id);
+        $entity = $this->entityStorage->loadRevision($this->revision_id);
       }
       $this->target = isset($entity) ? $entity->getTypedData() : NULL;
     }
@@ -112,6 +124,12 @@ class EntityReferenceRevisions extends EntityReference {
     }
     elseif (is_object($value) && $value instanceof EntityInterface) {
       $this->target = $value->getTypedData();
+    }
+    elseif (is_scalar($value)) {
+      if ($entity = $this->entityStorage->load($value)) {
+        $this->id = $entity->id();
+        $this->revision_id = $entity->getRevisionId();
+      }
     }
     elseif (!is_scalar($value['target_id']) || !is_scalar($value['target_revision_id']) || $this->getTargetDefinition()->getEntityTypeId() === NULL) {
       throw new \InvalidArgumentException('Value is not a valid entity.');

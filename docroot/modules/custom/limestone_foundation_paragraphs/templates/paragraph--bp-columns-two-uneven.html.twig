@@ -51,17 +51,17 @@
 {% if content.bp_column_style_2|render %}
   {% set column_style_2 = content.bp_column_style_2['#items'].getString() %}
   {% set col_1 = [
-    'paragraph--style--75-25' == column_style_2 ? 'col-lg-9',
-    'paragraph--style--66-33' == column_style_2 ? 'col-lg-8',
-    'paragraph--style--25-75' == column_style_2 ? 'col-lg-3',
-    'paragraph--style--33-66' == column_style_2 ? 'col-lg-4',
+    'paragraph--style--75-25' == column_style_2 ? 'large-9',
+    'paragraph--style--66-33' == column_style_2 ? 'large-8',
+    'paragraph--style--25-75' == column_style_2 ? 'large-3',
+    'paragraph--style--33-66' == column_style_2 ? 'large-4',
   ]
   %}
   {% set col_2 = [
-    'paragraph--style--75-25' == column_style_2 ? 'col-lg-3',
-    'paragraph--style--66-33' == column_style_2 ? 'col-lg-4',
-    'paragraph--style--25-75' == column_style_2 ? 'col-lg-9',
-    'paragraph--style--33-66' == column_style_2 ? 'col-lg-8',
+    'paragraph--style--75-25' == column_style_2 ? 'large-3',
+    'paragraph--style--66-33' == column_style_2 ? 'large-4',
+    'paragraph--style--25-75' == column_style_2 ? 'large-9',
+    'paragraph--style--33-66' == column_style_2 ? 'large-8',
   ]
   %}
 {% endif %}
