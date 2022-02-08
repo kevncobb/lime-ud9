@@ -1,4 +1,6 @@
+#!/usr/bin/env php
 <?php
+require __DIR__. '/drupal.php';
 
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Input\ArrayInput;
