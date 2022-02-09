@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\feeds_ex\Unit\Feeds\Parser;
 
+use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\feeds\Result\RawFetcherResult;
 use Drupal\feeds_ex\Feeds\Parser\JmesPathParser;
 use Drupal\feeds_ex\Messenger\TestMessenger;
@@ -24,7 +25,7 @@ class JmesPathParserTest extends ParserTestBase {
     $configuration = ['feed_type' => $this->feedType];
     $utility = new JsonUtility();
     $utility->setStringTranslation($this->getStringTranslationStub());
-    $this->parser = new JmesPathParser($configuration, 'jmespath', [], $utility);
+    $this->parser = new JmesPathParser($configuration, 'jmespath', [], $this->createMock(PluginManagerInterface::class), $utility);
     $this->parser->setStringTranslation($this->getStringTranslationStub());
     $this->parser->setFeedsExMessenger(new TestMessenger());
 
@@ -50,18 +51,21 @@ class JmesPathParserTest extends ParserTestBase {
       'context' => [
         'value' => 'items',
       ],
-      'sources' => [
+    ];
+    $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([
         'title' => [
-          'name' => 'Title',
+          'label' => 'Title',
           'value' => 'title',
         ],
         'description' => [
-          'name' => 'Title',
+          'label' => 'Description',
           'value' => 'description',
         ],
-      ],
-    ];
-    $this->parser->setConfiguration($config);
+      ]));
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
     $this->assertCount(3, $result);
@@ -83,19 +87,22 @@ class JmesPathParserTest extends ParserTestBase {
       'context' => [
         'value' => 'items',
       ],
-      'sources' => [
-        'title' => [
-          'name' => 'Title',
-          'value' => 'title',
-        ],
-        'description' => [
-          'name' => 'Title',
-          'value' => 'description',
-        ],
-      ],
       'source_encoding' => ['EUC-JP'],
     ];
     $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([
+        'title' => [
+          'label' => 'Title',
+          'value' => 'title',
+        ],
+        'description' => [
+          'label' => 'Description',
+          'value' => 'description',
+        ],
+      ]));
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
     $this->assertCount(3, $result);
@@ -116,19 +123,22 @@ class JmesPathParserTest extends ParserTestBase {
       'context' => [
         'value' => 'items',
       ],
-      'sources' => [
-        'title' => [
-          'name' => 'Title',
-          'value' => 'title',
-        ],
-        'description' => [
-          'name' => 'Title',
-          'value' => 'description',
-        ],
-      ],
       'line_limit' => 1,
     ];
     $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([
+        'title' => [
+          'label' => 'Title',
+          'value' => 'title',
+        ],
+        'description' => [
+          'label' => 'Description',
+          'value' => 'description',
+        ],
+      ]));
 
     foreach (range(0, 2) as $delta) {
       $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
@@ -152,14 +162,17 @@ class JmesPathParserTest extends ParserTestBase {
       'context' => [
         'value' => '@',
       ],
-      'sources' => [
-        'title' => [
-          'name' => 'Title',
-          'value' => 'items[0].title',
-        ],
-      ],
     ];
     $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([
+        'title' => [
+          'label' => 'Title',
+          'value' => 'items[0].title',
+        ],
+      ]));
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
     $this->assertCount(1, $result);
@@ -190,9 +203,12 @@ class JmesPathParserTest extends ParserTestBase {
       'context' => [
         'value' => 'items',
       ],
-      'sources' => [],
     ];
     $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([]));
 
     $this->expectException(RuntimeException::class);
     $this->expectExceptionMessage('The context expression must return an object or array.');
@@ -207,9 +223,12 @@ class JmesPathParserTest extends ParserTestBase {
       'context' => [
         'value' => 'items',
       ],
-      'sources' => [],
     ];
     $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([]));
 
     $this->expectException(RuntimeException::class);
     $this->expectExceptionMessage('The JSON is invalid.');
@@ -220,6 +239,9 @@ class JmesPathParserTest extends ParserTestBase {
    * Tests empty feed handling.
    */
   public function testEmptyFeed() {
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([]));
     $this->parser->parse($this->feed, new RawFetcherResult(' ', $this->fileSystem), $this->state);
     $this->assertEmptyFeedMessage($this->parser->getMessenger()->getMessages());
   }

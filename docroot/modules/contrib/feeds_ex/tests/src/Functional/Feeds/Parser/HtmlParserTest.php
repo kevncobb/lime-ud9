@@ -20,6 +20,11 @@ class HtmlParserTest extends ParserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $customSourceType = 'xml';
+
+  /**
+   * {@inheritdoc}
+   */
   public function dataProviderValidContext() {
     return [
       ['//div[@class="post"]'],
@@ -33,6 +38,30 @@ class HtmlParserTest extends ParserTestBase {
     return [
       ['!! ', 'Invalid expression'],
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function testMapping() {
+    $expected_sources = [
+      'name' => [
+        'label' => 'Name',
+        'value' => 'name',
+        'machine_name' => 'name',
+        'type' => $this->customSourceType,
+        'raw' => FALSE,
+        'inner' => FALSE,
+      ],
+    ];
+    $custom_source = [
+      'label' => 'Name',
+      'value' => 'name',
+      'machine_name' => 'name',
+    ];
+
+    $this->setupContext();
+    $this->doMappingTest($expected_sources, $custom_source);
   }
 
 }

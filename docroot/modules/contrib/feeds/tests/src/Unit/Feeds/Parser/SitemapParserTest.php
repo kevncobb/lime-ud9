@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\feeds\Unit\Feeds\Parser;
 
+use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\feeds\Exception\EmptyFeedException;
 use Drupal\feeds\Feeds\Parser\SitemapParser;
 use Drupal\feeds\Result\RawFetcherResult;
@@ -51,7 +52,7 @@ class SitemapParserTest extends FeedsUnitTestCase {
 
     $this->feedType = $this->createMock('Drupal\feeds\FeedTypeInterface');
     $configuration = ['feed_type' => $this->feedType];
-    $this->parser = new SitemapParser($configuration, 'sitemap', []);
+    $this->parser = new SitemapParser($configuration, 'sitemap', [], $this->createMock(PluginManagerInterface::class));
     $this->parser->setStringTranslation($this->getStringTranslationStub());
 
     $this->state = new State();

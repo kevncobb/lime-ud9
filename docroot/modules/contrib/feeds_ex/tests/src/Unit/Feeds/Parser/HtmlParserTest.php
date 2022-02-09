@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\feeds_ex\Unit\Feeds\Parser;
 
+use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\feeds\Result\RawFetcherResult;
 use Drupal\feeds_ex\Feeds\Parser\HtmlParser;
 use Drupal\feeds_ex\Messenger\TestMessenger;
@@ -22,7 +23,7 @@ class HtmlParserTest extends ParserTestBase {
     $configuration = ['feed_type' => $this->feedType];
     $utility = new XmlUtility();
     $utility->setStringTranslation($this->getStringTranslationStub());
-    $this->parser = new HtmlParser($configuration, 'html', [], $utility);
+    $this->parser = new HtmlParser($configuration, 'html', [], $this->createMock(PluginManagerInterface::class), $utility);
     $this->parser->setStringTranslation($this->getStringTranslationStub());
     $this->parser->setFeedsExMessenger(new TestMessenger());
   }
@@ -37,18 +38,21 @@ class HtmlParserTest extends ParserTestBase {
       'context' => [
         'value' => '//div[@class="post"]',
       ],
-      'sources' => [
+    ] + $this->parser->defaultConfiguration();
+    $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([
         'title' => [
-          'name' => 'Title',
+          'label' => 'Title',
           'value' => 'h3',
         ],
         'description' => [
-          'name' => 'Description',
+          'label' => 'Description',
           'value' => 'p',
         ],
-      ],
-    ] + $this->parser->defaultConfiguration();
-    $this->parser->setConfiguration($config);
+      ]));
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
     $this->assertCount(3, $result);
@@ -71,19 +75,22 @@ class HtmlParserTest extends ParserTestBase {
       'context' => [
         'value' => '//div[@class="post"]',
       ],
-      'sources' => [
+    ] + $this->parser->defaultConfiguration();
+    $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([
         'title' => [
-          'name' => 'Title',
+          'label' => 'Title',
           'value' => 'h3',
         ],
         'description' => [
-          'name' => 'Description',
+          'label' => 'Description',
           'value' => 'p',
           'raw' => TRUE,
         ],
-      ],
-    ] + $this->parser->defaultConfiguration();
-    $this->parser->setConfiguration($config);
+      ]));
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
     $this->assertCount(3, $result);
@@ -106,20 +113,23 @@ class HtmlParserTest extends ParserTestBase {
       'context' => [
         'value' => '//div[@class="post"]',
       ],
-      'sources' => [
+    ] + $this->parser->defaultConfiguration();
+    $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([
         'title' => [
-          'name' => 'Title',
+          'label' => 'Title',
           'value' => 'h3',
         ],
         'description' => [
-          'name' => 'Description',
+          'label' => 'Description',
           'value' => 'p',
           'raw' => TRUE,
           'inner' => TRUE,
         ],
-      ],
-    ] + $this->parser->defaultConfiguration();
-    $this->parser->setConfiguration($config);
+      ]));
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
     $this->assertCount(3, $result);
@@ -142,18 +152,21 @@ class HtmlParserTest extends ParserTestBase {
       'context' => [
         'value' => '//div[@class="post"]',
       ],
-      'sources' => [
+    ] + $this->parser->defaultConfiguration();
+    $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([
         'title' => [
-          'name' => 'Title',
+          'label' => 'Title',
           'value' => 'h3',
         ],
         'description' => [
-          'name' => 'Title',
+          'label' => 'Description',
           'value' => 'p',
         ],
-      ],
-    ] + $this->parser->defaultConfiguration();
-    $this->parser->setConfiguration($config);
+      ]));
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
     $this->assertCount(3, $result);
@@ -176,19 +189,22 @@ class HtmlParserTest extends ParserTestBase {
       'context' => [
         'value' => '//div[@class="post"]',
       ],
-      'sources' => [
-        'title' => [
-          'name' => 'Title',
-          'value' => 'h3',
-        ],
-        'description' => [
-          'name' => 'Title',
-          'value' => 'p',
-        ],
-      ],
       'source_encoding' => ['EUC-JP'],
     ] + $this->parser->defaultConfiguration();
     $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([
+        'title' => [
+          'label' => 'Title',
+          'value' => 'h3',
+        ],
+        'description' => [
+          'label' => 'Description',
+          'value' => 'p',
+        ],
+      ]));
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
     $this->assertCount(3, $result);
@@ -221,6 +237,9 @@ class HtmlParserTest extends ParserTestBase {
    * Tests empty feed handling.
    */
   public function testEmptyFeed() {
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([]));
     $this->parser->parse($this->feed, new RawFetcherResult(' ', $this->fileSystem), $this->state);
     $this->assertEmptyFeedMessage($this->parser->getMessenger()->getMessages());
   }

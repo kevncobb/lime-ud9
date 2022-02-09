@@ -34,6 +34,7 @@ class QueryPathHtmlParserTest extends ParserTestBase {
         'map' => [
           'value' => [
             'value' => 'h3',
+            'label' => 'Heading 3',
             'machine_name' => 'h3_',
           ],
         ],
@@ -44,11 +45,12 @@ class QueryPathHtmlParserTest extends ParserTestBase {
         'map' => [
           'value' => [
             'value' => 'p',
+            'label' => 'Paragraph',
             'machine_name' => 'p_',
           ],
         ],
       ],
-    ], $edit);
+    ], 'custom__querypathxml', $edit);
 
     // Create a feed and import file.
     $edit = [

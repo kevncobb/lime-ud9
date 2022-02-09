@@ -20,6 +20,11 @@ class JsonPathParserTest extends ParserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $customSourceType = 'json';
+
+  /**
+   * {@inheritdoc}
+   */
   public function dataProviderValidContext() {
     return [
       ['$.items.*'],
@@ -37,6 +42,27 @@ class JsonPathParserTest extends ParserTestBase {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function testMapping() {
+    $expected_sources = [
+      'name' => [
+        'label' => 'name',
+        'value' => 'name',
+        'machine_name' => 'name',
+        'type' => $this->customSourceType,
+      ],
+    ];
+    $custom_source = [
+      'value' => 'name',
+      'machine_name' => 'name',
+    ];
+
+    $this->setupContext();
+    $this->doMappingTest($expected_sources, $custom_source);
+  }
+
+  /**
    * Tests mapping validation.
    */
   public function testInvalidMappingSource() {
@@ -47,22 +73,22 @@ class JsonPathParserTest extends ParserTestBase {
       'context' => '$.items.*',
     ];
 
-    $this->drupalPostForm('/admin/structure/feeds/manage/' . $this->feedType->id() . '/mapping', $edit, 'Save');
+    $this->submitForm($edit, 'Save');
 
     // Now setup bad mapping.
     $edit = [
-      'mappings[1][map][value][select]' => '__new',
-      'mappings[1][map][value][__new][value]' => '.hello*',
-      'mappings[1][map][value][__new][machine_name]' => '_hello_',
+      'mappings[1][map][value][select]' => 'custom__json',
+      'mappings[1][map][value][custom__json][value]' => '.hello*',
+      'mappings[1][map][value][custom__json][machine_name]' => '_hello_',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
 
     // Assert that a warning is displayed.
     $this->assertSession()->pageTextContains('Unable to parse token hello* in expression: .hello*');
 
     // Now check the parser configuration.
     $this->feedType = $this->reloadEntity($this->feedType);
-    $this->assertEquals([], $this->feedType->getParser()->getConfiguration('sources'));
+    $this->assertEquals([], $this->feedType->getCustomSources());
   }
 
 }

@@ -20,6 +20,11 @@ class JmesPathParserTest extends ParserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $customSourceType = 'json';
+
+  /**
+   * {@inheritdoc}
+   */
   public function dataProviderValidContext() {
     return [
       ['items'],
@@ -38,6 +43,27 @@ class JmesPathParserTest extends ParserTestBase {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function testMapping() {
+    $expected_sources = [
+      'name' => [
+        'label' => 'name',
+        'value' => 'name',
+        'machine_name' => 'name',
+        'type' => $this->customSourceType,
+      ],
+    ];
+    $custom_source = [
+      'value' => 'name',
+      'machine_name' => 'name',
+    ];
+
+    $this->setupContext();
+    $this->doMappingTest($expected_sources, $custom_source);
+  }
+
+  /**
    * Tests mapping validation.
    */
   public function testInvalidMappingSource() {
@@ -47,23 +73,23 @@ class JmesPathParserTest extends ParserTestBase {
     $edit = [
       'context' => '@',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
 
     // Now try to configure an invalid mapping source.
     $edit = [
-      'mappings[1][map][value][select]' => '__new',
+      'mappings[1][map][value][select]' => 'custom__json',
       // Invalid source expression. Closing bracket is missing.
-      'mappings[1][map][value][__new][value]' => 'items[].join(`__`,[title,description)',
-      'mappings[1][map][value][__new][machine_name]' => 'title_desc',
+      'mappings[1][map][value][custom__json][value]' => 'items[].join(`__`,[title,description)',
+      'mappings[1][map][value][custom__json][machine_name]' => 'title_desc',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
 
     // Assert that a warning is displayed.
     $this->assertSession()->pageTextContains('Syntax error at character');
 
     // Now check the parser configuration.
     $this->feedType = $this->reloadEntity($this->feedType);
-    $this->assertEquals([], $this->feedType->getParser()->getConfiguration('sources'));
+    $this->assertEquals([], $this->feedType->getCustomSources());
   }
 
   /**
@@ -80,29 +106,20 @@ class JmesPathParserTest extends ParserTestBase {
         'context' => [
           'value' => '@',
         ],
-        'sources' => [
-          'title' => [
-            'label' => 'Title',
-            'value' => 'items[].title',
-          ],
-          'title_desc' => [
-            'label' => 'Title and description',
-            // Invalid source expression. Closing bracket is missing.
-            'value' => 'items[].join(`__`,[title,description)',
-          ],
-        ],
       ],
       'custom_sources' => [
         'title' => [
           'label' => 'Title',
           'value' => 'items[].title',
           'machine_name' => 'title',
+          'type' => 'json',
         ],
         'title_desc' => [
           'label' => 'Title and description',
           // Invalid source expression. Closing bracket is missing.
           'value' => 'items[].join(`__`,[title,description)',
           'machine_name' => 'title_desc',
+          'type' => 'json',
         ],
       ],
       'mappings' => [

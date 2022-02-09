@@ -76,4 +76,11 @@ class ParserWithMappingForm extends PluginBase implements ParserInterface, Mappi
     ]);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getSupportedCustomSourcePlugins(): array {
+    return [];
+  }
+
 }

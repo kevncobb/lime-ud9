@@ -7,8 +7,3 @@ package: Feeds
 dependencies:
   - feeds:feeds
   - drupal:system (>=8.7.0)
-
-# Information added by Drupal.org packaging script on 2021-09-02
-version: '8.x-1.0-alpha5'
-project: 'feeds_ex'
-datestamp: 1630593700

@@ -32,6 +32,7 @@ class QueryPathHtmlParser extends QueryPathXmlParser {
   protected function setUp(FeedInterface $feed, FetcherResultInterface $fetcher_result, StateInterface $state) {
     // Change some parser settings.
     $this->queryPathOptions['use_parser'] = 'html';
+    $this->sources = $feed->getType()->getCustomSources(['querypathxml']);
   }
 
   /**

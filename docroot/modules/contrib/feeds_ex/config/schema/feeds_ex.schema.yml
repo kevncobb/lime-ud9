@@ -48,8 +48,6 @@ feeds_ex_parser_base:
         type: string
     display_errors:
       type: boolean
-    debug_mode:
-      type: boolean
     line_limit:
       type: integer
 
@@ -58,3 +56,38 @@ feeds_ex_xml_parsers:
   mapping:
     use_tidy:
       type: boolean
+
+# Custom source configurations.
+feeds.custom_source.xml:
+  type: mapping
+  mapping:
+    label:
+      type: string
+    machine_name:
+      type: string
+    value:
+      type: string
+    raw:
+      type: boolean
+    inner:
+      type: boolean
+    type:
+      type: string
+
+feeds.custom_source.querypathxml:
+  type: mapping
+  mapping:
+    label:
+      type: string
+    machine_name:
+      type: string
+    value:
+      type: string
+    attribute:
+      type: string
+    raw:
+      type: boolean
+    inner:
+      type: boolean
+    type:
+      type: string

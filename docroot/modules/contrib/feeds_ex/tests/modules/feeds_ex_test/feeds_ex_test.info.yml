@@ -4,8 +4,3 @@ description: 'Provides a test parser.'
 package: Testing
 dependencies:
   - feeds_ex:feeds_ex
-
-# Information added by Drupal.org packaging script on 2021-09-02
-version: '8.x-1.0-alpha5'
-project: 'feeds_ex'
-datestamp: 1630593700

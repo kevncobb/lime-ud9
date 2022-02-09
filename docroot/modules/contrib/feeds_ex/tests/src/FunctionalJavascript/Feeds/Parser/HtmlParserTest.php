@@ -34,6 +34,7 @@ class HtmlParserTest extends ParserTestBase {
         'map' => [
           'value' => [
             'value' => 'h3',
+            'label' => 'Heading 3',
             'machine_name' => 'title_',
           ],
         ],
@@ -43,11 +44,12 @@ class HtmlParserTest extends ParserTestBase {
         'map' => [
           'value' => [
             'value' => 'p',
+            'label' => 'Paragraph',
             'machine_name' => 'body_',
           ],
         ],
       ],
-    ], $edit);
+    ], 'custom__xml', $edit);
 
     // Create a feed and import file.
     $edit = [

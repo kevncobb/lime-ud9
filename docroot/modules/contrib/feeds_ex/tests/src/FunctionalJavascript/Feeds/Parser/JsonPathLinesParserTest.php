@@ -43,7 +43,7 @@ class JsonPathLinesParserTest extends ParserTestBase {
           ],
         ],
       ],
-    ]);
+    ], 'custom__json');
 
     // Create a feed and import file.
     $edit = [

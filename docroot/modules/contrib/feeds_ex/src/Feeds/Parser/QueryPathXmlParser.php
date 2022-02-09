@@ -5,7 +5,6 @@ namespace Drupal\feeds_ex\Feeds\Parser;
 use RuntimeException;
 use QueryPath;
 use Drupal\Component\Render\HtmlEscapedText;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\feeds\FeedInterface;
 use Drupal\feeds\Result\FetcherResultInterface;
 use Drupal\feeds\StateInterface;
@@ -40,6 +39,14 @@ class QueryPathXmlParser extends XmlParser {
   /**
    * {@inheritdoc}
    */
+  protected function setUp(FeedInterface $feed, FetcherResultInterface $fetcher_result, StateInterface $state) {
+    parent::setUp($feed, $fetcher_result, $state);
+    $this->sources = $feed->getType()->getCustomSources(['querypathxml']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function executeContext(FeedInterface $feed, FetcherResultInterface $fetcher_result, StateInterface $state) {
     $document = $this->prepareDocument($feed, $fetcher_result);
     $query_path = QueryPath::with($document, $this->configuration['context']['value'], $this->queryPathOptions);
@@ -65,7 +72,7 @@ class QueryPathXmlParser extends XmlParser {
       return;
     }
 
-    $config = $this->configuration['sources'][$machine_name] + [
+    $config = $this->sources[$machine_name] + [
       'attribute' => '',
     ];
 
@@ -129,30 +136,8 @@ class QueryPathXmlParser extends XmlParser {
   /**
    * {@inheritdoc}
    */
-  protected function configFormTableHeader() {
-    return [
-      'attribute' => $this->t('Attribute'),
-    ] + parent::configFormTableHeader();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function configFormTableColumn(FormStateInterface $form_state, array $values, $column, $machine_name) {
-    switch ($column) {
-      case 'attribute':
-        return [
-          '#type' => 'textfield',
-          '#title' => $this->t('Attribute name'),
-          '#title_display' => 'invisible',
-          '#default_value' => !empty($values['attribute']) ? $values['attribute'] : '',
-          '#size' => 10,
-          '#maxlength' => 1024,
-        ];
-
-      default:
-        return parent::configFormTableColumn($form_state, $values, $column, $machine_name);
-    }
+  public function getSupportedCustomSourcePlugins(): array {
+    return ['querypathxml'];
   }
 
   /**

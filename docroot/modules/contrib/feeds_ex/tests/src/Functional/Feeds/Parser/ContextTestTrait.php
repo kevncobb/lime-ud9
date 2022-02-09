@@ -66,9 +66,9 @@ trait ContextTestTrait {
   abstract public function dataProviderInvalidContext();
 
   /**
-   * Does a basic mapping test.
+   * Sets the context on the mapping form.
    */
-  public function testMapping() {
+  protected function setupContext() {
     // First, set context.
     $data = $this->dataProviderValidContext();
     $contexts = reset($data);
@@ -78,10 +78,13 @@ trait ContextTestTrait {
       'context' => $context,
     ];
 
-    $this->drupalPostForm('/admin/structure/feeds/manage/' . $this->feedType->id() . '/mapping', $edit, 'Save');
-
-    // Now set mapping.
-    $this->doMappingTest();
+    $this->drupalGet('/admin/structure/feeds/manage/' . $this->feedType->id() . '/mapping');
+    $this->submitForm($edit, 'Save');
   }
+
+  /**
+   * Does a basic mapping test.
+   */
+  abstract public function testMapping();
 
 }

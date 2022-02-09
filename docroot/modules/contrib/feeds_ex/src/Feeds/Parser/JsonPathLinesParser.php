@@ -38,6 +38,7 @@ class JsonPathLinesParser extends JsonPathParser {
    * {@inheritdoc}
    */
   protected function setUp(FeedInterface $feed, FetcherResultInterface $fetcher_result, StateInterface $state) {
+    parent::setUp($feed, $fetcher_result, $state);
     $this->iterator = new LineIterator($fetcher_result->getFilePath());
 
     if (!$this->iterator->getSize()) {

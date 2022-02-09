@@ -34,6 +34,7 @@ class QueryPathXmlParserTest extends ParserTestBase {
         'map' => [
           'value' => [
             'value' => 'title',
+            'label' => 'Title',
             'machine_name' => 'title_',
           ],
         ],
@@ -44,11 +45,12 @@ class QueryPathXmlParserTest extends ParserTestBase {
         'map' => [
           'value' => [
             'value' => 'description',
+            'label' => 'Description',
             'machine_name' => 'description_',
           ],
         ],
       ],
-    ], $edit);
+    ], 'custom__querypathxml', $edit);
 
     // Create a feed and import file.
     $edit = [

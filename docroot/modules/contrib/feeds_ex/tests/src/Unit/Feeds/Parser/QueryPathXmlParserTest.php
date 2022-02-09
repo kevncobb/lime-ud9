@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\feeds_ex\Unit\Feeds\Parser;
 
+use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\feeds\Result\RawFetcherResult;
 use Drupal\feeds_ex\Feeds\Parser\QueryPathXmlParser;
 use Drupal\feeds_ex\Messenger\TestMessenger;
@@ -22,7 +23,7 @@ class QueryPathXmlParserTest extends ParserTestBase {
     $configuration = ['feed_type' => $this->feedType];
     $utility = new XmlUtility();
     $utility->setStringTranslation($this->getStringTranslationStub());
-    $this->parser = new QueryPathXmlParser($configuration, 'querypathxml', [], $utility);
+    $this->parser = new QueryPathXmlParser($configuration, 'querypathxml', [], $this->createMock(PluginManagerInterface::class), $utility);
     $this->parser->setStringTranslation($this->getStringTranslationStub());
     $this->parser->setFeedsExMessenger(new TestMessenger());
   }
@@ -37,7 +38,12 @@ class QueryPathXmlParserTest extends ParserTestBase {
       'context' => [
         'value' => 'items item',
       ],
-      'sources' => [
+    ];
+    $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([
         'title' => [
           'name' => 'Title',
           'value' => 'title',
@@ -48,9 +54,7 @@ class QueryPathXmlParserTest extends ParserTestBase {
           'value' => 'description',
           'attribute' => '',
         ],
-      ],
-    ];
-    $this->parser->setConfiguration($config);
+      ]));
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
     $this->assertCount(3, $result);
@@ -71,7 +75,12 @@ class QueryPathXmlParserTest extends ParserTestBase {
       'context' => [
         'value' => 'items item',
       ],
-      'sources' => [
+    ];
+    $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([
         'title' => [
           'name' => 'Title',
           'value' => 'title',
@@ -83,9 +92,7 @@ class QueryPathXmlParserTest extends ParserTestBase {
           'attribute' => '',
           'raw' => TRUE,
         ],
-      ],
-    ];
-    $this->parser->setConfiguration($config);
+      ]));
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
     $this->assertCount(3, $result);
@@ -106,7 +113,12 @@ class QueryPathXmlParserTest extends ParserTestBase {
       'context' => [
         'value' => 'items item',
       ],
-      'sources' => [
+    ];
+    $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([
         'title' => [
           'name' => 'Title',
           'value' => 'title',
@@ -119,9 +131,7 @@ class QueryPathXmlParserTest extends ParserTestBase {
           'raw' => TRUE,
           'inner' => TRUE,
         ],
-      ],
-    ];
-    $this->parser->setConfiguration($config);
+      ]));
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
     $this->assertCount(3, $result);
@@ -142,7 +152,12 @@ class QueryPathXmlParserTest extends ParserTestBase {
       'context' => [
         'value' => 'items item',
       ],
-      'sources' => [
+    ];
+    $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([
         'title' => [
           'name' => 'Title',
           'value' => 'title',
@@ -153,9 +168,7 @@ class QueryPathXmlParserTest extends ParserTestBase {
           'value' => 'description',
           'attribute' => '',
         ],
-      ],
-    ];
-    $this->parser->setConfiguration($config);
+      ]));
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
     $this->assertCount(3, $result);
@@ -176,15 +189,18 @@ class QueryPathXmlParserTest extends ParserTestBase {
       'context' => [
         'value' => 'items thing',
       ],
-      'sources' => [
+    ];
+    $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([
         'url' => [
           'name' => 'URL',
           'value' => 'img',
           'attribute' => 'src',
         ],
-      ],
-    ];
-    $this->parser->setConfiguration($config);
+      ]));
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
     $this->assertCount(1, $result);
@@ -205,7 +221,12 @@ class QueryPathXmlParserTest extends ParserTestBase {
       'context' => [
         'value' => 'items item',
       ],
-      'sources' => [
+    ];
+    $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([
         'title' => [
           'name' => 'Title',
           'value' => 'title',
@@ -216,9 +237,7 @@ class QueryPathXmlParserTest extends ParserTestBase {
           'value' => 'description',
           'attribute' => '',
         ],
-      ],
-    ];
-    $this->parser->setConfiguration($config);
+      ]));
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
     $this->assertCount(3, $result);
@@ -241,21 +260,24 @@ class QueryPathXmlParserTest extends ParserTestBase {
       'context' => [
         'value' => 'items item',
       ],
-      'sources' => [
+      'source_encoding' => ['EUC-JP'],
+    ];
+    $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([
         'title' => [
-          'name' => 'Title',
+          'label' => 'Title',
           'value' => 'title',
           'attribute' => '',
         ],
         'description' => [
-          'name' => 'Title',
+          'label' => 'Description',
           'value' => 'description',
           'attribute' => '',
         ],
-      ],
-      'source_encoding' => ['EUC-JP'],
-    ];
-    $this->parser->setConfiguration($config);
+      ]));
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
     $this->assertCount(3, $result);
@@ -276,7 +298,13 @@ class QueryPathXmlParserTest extends ParserTestBase {
       'context' => [
         'value' => 'items item',
       ],
-      'sources' => [
+      'line_limit' => 1,
+    ];
+    $this->parser->setConfiguration($config);
+
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([
         'title' => [
           'name' => 'Title',
           'value' => 'title',
@@ -287,10 +315,7 @@ class QueryPathXmlParserTest extends ParserTestBase {
           'value' => 'description',
           'attribute' => '',
         ],
-      ],
-      'line_limit' => 1,
-    ];
-    $this->parser->setConfiguration($config);
+      ]));
 
     foreach (range(0, 2) as $delta) {
       $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
@@ -323,6 +348,9 @@ class QueryPathXmlParserTest extends ParserTestBase {
    * Tests empty feed handling.
    */
   public function testEmptyFeed() {
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([]));
     $this->parser->parse($this->feed, new RawFetcherResult(' ', $this->fileSystem), $this->state);
     $this->assertEmptyFeedMessage($this->parser->getMessenger()->getMessages());
   }

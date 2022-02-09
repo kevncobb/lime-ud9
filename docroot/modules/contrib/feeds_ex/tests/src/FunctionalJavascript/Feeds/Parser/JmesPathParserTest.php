@@ -48,7 +48,7 @@ class JmesPathParserTest extends ParserTestBase {
           ],
         ],
       ],
-    ], $edit);
+    ], 'custom__json', $edit);
 
     // Create a feed and import file.
     $edit = [

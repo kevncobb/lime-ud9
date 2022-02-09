@@ -3,7 +3,7 @@
 namespace Drupal\feeds_ex\Feeds\Parser;
 
 use Exception;
-use RuntimeException;
+use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
@@ -63,6 +63,13 @@ abstract class ParserBase extends FeedsParserBase implements ParserInterface, Pl
   protected static $htmlTags = ['a', 'em', 'strong', 'cite', 'blockquote', 'br', 'pre', 'code', 'ul', 'ol', 'li', 'dl', 'dt', 'dd'];
 
   /**
+   * A list of sources to parse.
+   *
+   * @var array
+   */
+  protected $sources;
+
+  /**
    * Constructs a ParserBase object.
    *
    * @param array $configuration
@@ -71,13 +78,16 @@ abstract class ParserBase extends FeedsParserBase implements ParserInterface, Pl
    *   The plugin id.
    * @param array $plugin_definition
    *   The plugin definition.
+   * @param \Drupal\Component\Plugin\PluginManagerInterface $custom_source_plugin_manager
+   *   The custom source plugin manager.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, PluginManagerInterface $custom_source_plugin_manager) {
     if (!$this->hasConfigForm()) {
       unset($plugin_definition['form']['configuration']);
     }
+    $this->sources = [];
 
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $custom_source_plugin_manager);
   }
 
   /**
@@ -213,35 +223,6 @@ abstract class ParserBase extends FeedsParserBase implements ParserInterface, Pl
   }
 
   /**
-   * Returns the list of table headers.
-   *
-   * @return array
-   *   A list of header names keyed by the form keys.
-   */
-  protected function configFormTableHeader() {
-    return [];
-  }
-
-  /**
-   * Returns a form element for a specific column.
-   *
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current form state.
-   * @param array $values
-   *   The individual source item values.
-   * @param string $column
-   *   The name of the column.
-   * @param string $machine_name
-   *   The machine name of the source.
-   *
-   * @return array
-   *   A single form element.
-   */
-  protected function configFormTableColumn(FormStateInterface $form_state, array $values, $column, $machine_name) {
-    return [];
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function parse(FeedInterface $feed, FetcherResultInterface $fetcher_result, StateInterface $state) {
@@ -311,7 +292,7 @@ abstract class ParserBase extends FeedsParserBase implements ParserInterface, Pl
    */
   protected function prepareExpressions() {
     $expressions = [];
-    foreach ($this->configuration['sources'] as $machine_name => $source) {
+    foreach ($this->sources as $machine_name => $source) {
       if (strlen($source['value'])) {
         $expressions[$machine_name] = $source['value'];
       }
@@ -360,7 +341,7 @@ abstract class ParserBase extends FeedsParserBase implements ParserInterface, Pl
 
       $result = $this->executeSourceExpression($machine_name, $expression, $row);
 
-      if (!empty($this->configuration['sources'][$machine_name]['debug'])) {
+      if (!empty($this->sources[$machine_name]['debug'])) {
         $this->debug($result, $machine_name);
       }
 
@@ -429,8 +410,8 @@ abstract class ParserBase extends FeedsParserBase implements ParserInterface, Pl
    */
   protected function debug($data, $machine_name) {
     $name = $machine_name;
-    if ($this->configuration['sources'][$machine_name]['name']) {
-      $name = $this->configuration['sources'][$machine_name]['name'];
+    if ($this->sources[$machine_name]['name']) {
+      $name = $this->sources[$machine_name]['name'];
     }
 
     $output = '<strong>' . $name . ':</strong>';
@@ -446,7 +427,7 @@ abstract class ParserBase extends FeedsParserBase implements ParserInterface, Pl
    * {@inheritdoc}
    */
   public function getMappingSources() {
-    return $this->configuration['sources'];
+    return [];
   }
 
   /**
@@ -454,13 +435,11 @@ abstract class ParserBase extends FeedsParserBase implements ParserInterface, Pl
    */
   public function defaultConfiguration() {
     return [
-      'sources' => [],
       'context' => [
         'value' => '',
       ],
       'display_errors' => FALSE,
       'source_encoding' => ['auto'],
-      'debug_mode' => FALSE,
       'line_limit' => 100,
     ];
   }
@@ -486,7 +465,6 @@ abstract class ParserBase extends FeedsParserBase implements ParserInterface, Pl
     // Preserve some configuration.
     $config = array_merge([
       'context' => $this->getConfiguration('context'),
-      'sources' => $this->getConfiguration('sources'),
     ], $form_state->getValues());
 
     $this->setConfiguration($config);
@@ -529,13 +507,31 @@ abstract class ParserBase extends FeedsParserBase implements ParserInterface, Pl
 
       // Validate new sources.
       $mappings = $form_state->getValue('mappings');
+      if (empty($mappings)) {
+        return;
+      }
+      // Setup a list of select keys we are interested in.
+      $select_keys = [];
+      foreach ($this->getSupportedCustomSourcePlugins() as $custom_source_plugin_type) {
+        $select_keys[] = 'custom__' . $custom_source_plugin_type;
+      }
       foreach ($mappings as $i => $mapping) {
         foreach ($mapping['map'] as $subtarget => $map) {
-          if ($map['select'] == '__new' && isset($map['__new']['value'])) {
-            if ($message = $this->validateExpression($map['__new']['value'])) {
-              $message = new FormattableMarkup(Xss::filter($message, static::$htmlTags), []);
-              $form_state->setErrorByName("mappings][$i][map][$subtarget][__new][value", $message);
-            }
+          $select = $map['select'];
+          // Check if a new custom source was added of a type we're interested
+          // in.
+          if (!in_array($select, $select_keys)) {
+            // We're not interested in this selected source.
+            continue;
+          }
+          // Check if a value was set for the custom source.
+          if (!isset($map[$select]['value'])) {
+            // No value was set for the custom source's value.
+            continue;
+          }
+          if ($message = $this->validateExpression($map[$select]['value'])) {
+            $message = new FormattableMarkup(Xss::filter($message, static::$htmlTags), []);
+            $form_state->setErrorByName("mappings][$i][map][$subtarget][$select][value", $message);
           }
         }
       }
@@ -557,229 +553,7 @@ abstract class ParserBase extends FeedsParserBase implements ParserInterface, Pl
       'value' => $form_state->getValue('context'),
     ];
 
-    // Set sources.
-    // @todo refactor to let parsers use custom sources directly.
-    $config['sources'] = [];
-    $mappings = $form_state->getValue('mappings');
-    foreach ($mappings as $i => $mapping) {
-      foreach ($mapping['map'] as $subtarget => $map) {
-        if (empty($map['select'])) {
-          continue;
-        }
-        if ($map['select'] == '__new') {
-          $name = $map['__new']['machine_name'];
-        }
-        else {
-          $name = $map['select'];
-        }
-
-        $source = $this->feedType->getCustomSource($name);
-        if ($source) {
-          unset($source['machine_name']);
-          $config['sources'][$name] = $source;
-        }
-      }
-    }
-
     $this->setConfiguration($config);
-  }
-
-  /**
-   * Builds configuration form for the parser settings.
-   *
-   * @todo The code below is still D7 code and does not work in D8 yet. Also,
-   * it's likely that most of the code below is no longer needed as the parser
-   * UI is planned to be implemented in a completely different way.
-   *
-   * @see https://www.drupal.org/node/2917924
-   */
-  public function _buildConfigurationForm(array $form, FormStateInterface $form_state) {
-
-    $form = [
-      '#tree' => TRUE,
-      '#theme' => 'feeds_ex_configuration_table',
-      '#prefix' => '<div id="feeds-ex-configuration-wrapper">',
-      '#suffix' => '</div>',
-    ];
-
-    $form['sources'] = [
-      '#id' => 'feeds-ex-source-table',
-      '#attributes' => [
-        'class' => ['feeds-ex-source-table'],
-      ],
-    ];
-
-    $max_weight = 0;
-    foreach ($this->configuration['sources'] as $machine_name => $source) {
-      $form['sources'][$machine_name]['name'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t('Name'),
-        '#title_display' => 'invisible',
-        '#default_value' => $source['name'],
-        '#size' => 20,
-      ];
-      $form['sources'][$machine_name]['machine_name'] = [
-        '#title' => $this->t('Machine name'),
-        '#title_display' => 'invisible',
-        '#markup' => $machine_name,
-      ];
-      $form['sources'][$machine_name]['value'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t('Value'),
-        '#title_display' => 'invisible',
-        '#default_value' => $source['value'],
-        '#size' => 50,
-        '#maxlength' => 1024,
-      ];
-
-      foreach ($this->configFormTableHeader() as $column => $name) {
-        $form['sources'][$machine_name][$column] = $this->configFormTableColumn($form_state, $source, $column, $machine_name);
-      }
-
-      $form['sources'][$machine_name]['debug'] = [
-        '#type' => 'checkbox',
-        '#title' => $this->t('Debug'),
-        '#title_display' => 'invisible',
-        '#default_value' => $source['debug'],
-      ];
-      $form['sources'][$machine_name]['remove'] = [
-        '#type' => 'checkbox',
-        '#title' => $this->t('Remove'),
-        '#title_display' => 'invisible',
-      ];
-      $form['sources'][$machine_name]['weight'] = [
-        '#type' => 'textfield',
-        '#default_value' => $source['weight'],
-        '#size' => 3,
-        '#attributes' => ['class' => ['feeds-ex-source-weight']],
-      ];
-      $max_weight = $source['weight'];
-    }
-
-    $form['add']['name'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Add new source'),
-      '#id' => 'edit-sources-add-name',
-      '#description' => $this->t('Name'),
-      '#size' => 20,
-    ];
-    $form['add']['machine_name'] = [
-      '#title' => $this->t('Machine name'),
-      '#title_display' => 'invisible',
-      '#type' => 'machine_name',
-      '#machine_name' => [
-        'exists' => 'feeds_ex_source_exists',
-        'source' => ['add', 'name'],
-        'standalone' => TRUE,
-        'label' => '',
-      ],
-      '#field_prefix' => '<span dir="ltr">',
-      '#field_suffix' => '</span>&lrm;',
-      '#feeds_importer' => $this->id,
-      '#required' => FALSE,
-      '#maxlength' => 32,
-      '#size' => 15,
-      '#description' => $this->t('A unique machine-readable name containing letters, numbers, and underscores.'),
-    ];
-    $form['add']['value'] = [
-      '#type' => 'textfield',
-      '#description' => $this->t('Value'),
-      '#title' => '&nbsp;',
-      '#size' => 50,
-      '#maxlength' => 1024,
-    ];
-    foreach ($this->configFormTableHeader() as $column => $name) {
-      $form['add'][$column] = $this->configFormTableColumn($form_state, [], $column, '');
-    }
-    $form['add']['debug'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Debug'),
-      '#title_display' => 'invisible',
-    ];
-    $form['add']['weight'] = [
-      '#type' => 'textfield',
-      '#default_value' => ++$max_weight,
-      '#size' => 3,
-      '#attributes' => ['class' => ['feeds-ex-source-weight']],
-    ];
-    $form['display_errors'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Display errors'),
-      '#description' => $this->t('Display all error messages after parsing. Fatal errors will always be displayed.'),
-      '#default_value' => $this->configuration['display_errors'],
-    ];
-    $form['debug_mode'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Enable debug mode'),
-      '#description' => $this->t('Displays the configuration form on the feed source page to ease figuring out the expressions. Any values entered on that page will be saved here.'),
-      '#default_value' => $this->configuration['debug_mode'],
-    ];
-
-    $form = $this->getEncoder()->buildConfigurationForm($form, $form_state);
-
-    $form['#attached']['drupal_add_tabledrag'][] = [
-      'feeds-ex-source-table',
-      'order',
-      'sibling',
-      'feeds-ex-source-weight',
-    ];
-    $form['#attached']['css'][] = drupal_get_path('module', 'feeds_ex') . '/feeds_ex.css';
-    $form['#header'] = $this->getFormHeader();
-
-    return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function configFormValidate(&$values) {
-    // Throwing an exception during validation shows a nasty error to users.
-    try {
-      $this->loadLibrary();
-    }
-    catch (RuntimeException $e) {
-      $this->getMessenger()->addMessage($e->getMessage(), 'error', FALSE);
-      return;
-    }
-
-    // @todo We should do this in Feeds automatically.
-    $values += $this->defaultConfiguration();
-
-    // Remove sources.
-    foreach ($values['sources'] as $machine_name => $source) {
-      if (!empty($source['remove'])) {
-        unset($values['sources'][$machine_name]);
-      }
-    }
-
-    // Add new source.
-    if (strlen($values['add']['machine_name']) && strlen($values['add']['name'])) {
-      if ($message = $this->validateExpression($values['add']['value'])) {
-        form_set_error('add][value', $message);
-      }
-      else {
-        $values['sources'][$values['add']['machine_name']] = $values['add'];
-      }
-    }
-
-    // Rebuild sources to keep the configuration values clean.
-    $columns = $this->getFormHeader();
-    unset($columns['remove'], $columns['machine_name']);
-    $columns = array_keys($columns);
-
-    foreach ($values['sources'] as $machine_name => $source) {
-      $new_value = [];
-      foreach ($columns as $column) {
-        $new_value[$column] = $source[$column];
-      }
-      $values['sources'][$machine_name] = $new_value;
-    }
-
-    // Sort by weight.
-    uasort($values['sources'], 'ctools_plugin_sort');
-
-    // Let the encoder do its thing.
-    $this->getEncoder()->configFormValidate($values);
   }
 
   /**
@@ -787,81 +561,6 @@ abstract class ParserBase extends FeedsParserBase implements ParserInterface, Pl
    */
   public function hasConfigForm() {
     return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function sourceDefaults() {
-    return [];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function buildFeedForm(array $form, FormStateInterface $form_state, FeedInterface $feed) {
-    if (!$this->hasSourceConfig()) {
-      return [];
-    }
-
-    $form = $this->buildConfigurationForm($form, $form_state);
-    $form['add']['machine_name']['#machine_name']['source'] = [
-      'feeds',
-      get_class($this),
-      'add',
-      'name',
-    ];
-
-    return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function sourceFormValidate(&$source_config) {
-    $this->configFormValidate($source_config);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function sourceSave(FeedInterface $feed) {
-    $config = $feed->getConfigurationFor($this);
-    $feed->setConfigFor($this, []);
-
-    if ($this->hasSourceConfig() && $config) {
-      $this->setConfig($config);
-      $this->save();
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function hasSourceConfig() {
-    return !empty($this->configuration['debug_mode']);
-  }
-
-  /**
-   * Returns the configuration form table header.
-   *
-   * @return array
-   *   The header array.
-   */
-  protected function getFormHeader() {
-    $header = [
-      'name' => $this->t('Name'),
-      'machine_name' => $this->t('Machine name'),
-      'value' => $this->t('Value'),
-    ];
-    $header += $this->configFormTableHeader();
-    $header += [
-      'debug' => $this->t('Debug'),
-      'remove' => $this->t('Remove'),
-      'weight' => $this->t('Weight'),
-    ];
-
-    return $header;
   }
 
   /**

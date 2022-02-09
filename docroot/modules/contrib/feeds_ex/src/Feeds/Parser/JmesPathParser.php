@@ -2,6 +2,7 @@
 
 namespace Drupal\feeds_ex\Feeds\Parser;
 
+use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\feeds\FeedInterface;
 use Drupal\feeds\Result\FetcherResultInterface;
@@ -45,8 +46,8 @@ class JmesPathParser extends JsonParserBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, JsonUtility $utility) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $utility);
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, PluginManagerInterface $custom_source_plugin_manager, JsonUtility $utility) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $custom_source_plugin_manager, $utility);
 
     // Set default factory.
     $this->runtimeFactory = new JmesRuntimeFactory();

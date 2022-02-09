@@ -24,6 +24,13 @@ abstract class ParserTestBase extends FeedsExBrowserTestBase {
   protected $parserId = '';
 
   /**
+   * The custom source type to use.
+   *
+   * @var string
+   */
+  protected $customSourceType = 'blank';
+
+  /**
    * {@inheritdoc}
    */
   public function setUp() {
@@ -37,27 +44,27 @@ abstract class ParserTestBase extends FeedsExBrowserTestBase {
 
   /**
    * Tests basic mapping.
+   *
+   * @param array $expected_sources
+   *   The expected custom sources being set.
+   * @param array $custom_source
+   *   The properties set on the custom source.
    */
-  public function doMappingTest() {
+  public function doMappingTest(array $expected_sources, array $custom_source) {
     $this->drupalGet('/admin/structure/feeds/manage/' . $this->feedType->id() . '/mapping');
 
     // Set source for title target.
     $edit = [
-      'mappings[1][map][value][select]' => '__new',
-      'mappings[1][map][value][__new][value]' => 'name',
-      'mappings[1][map][value][__new][machine_name]' => 'name',
+      'mappings[1][map][value][select]' => 'custom__' . $this->customSourceType,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    foreach ($custom_source as $key => $value) {
+      $edit['mappings[1][map][value][custom__' . $this->customSourceType . '][' . $key . ']'] = $value;
+    }
+    $this->submitForm($edit, 'Save');
 
     // Now check the parser configuration.
     $this->feedType = $this->reloadEntity($this->feedType);
-    $expected_sources = [
-      'name' => [
-        'label' => 'name',
-        'value' => 'name',
-      ],
-    ];
-    $this->assertEquals($expected_sources, $this->feedType->getParser()->getConfiguration('sources'));
+    $this->assertEquals($expected_sources, $this->feedType->getCustomSources());
   }
 
 }

@@ -127,11 +127,11 @@ view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
 
 {# Prints div with classes, and content without Width and Background. #}
 <div{{ attributes.addClass(classes).setAttribute('id', paragraph_id) }} {% if VBP.background_image.url %} style="background-image: url({{- VBP.background_image.url -}});" {% endif %}>
-  {% if add_container %}<div class="container">{% endif %}
-    <div class="row">
-      <div class="{{- VBP.bp_width.value -}}">
+  {% if add_container %}<div class="grid-container">{% endif %}
+    <div>
+      <div class="{{- VBP.bp_width.value -}} grid-x">
         {% if paragraph_title and paragraph_title_status %}<h2 class="text-center">{% spaceless %}{{- paragraph_title|striptags -}}{% endspaceless %}</h2>{% endif %}
-        <div class="row">
+
           {% for key, item in content.bp_column_content_2 if key|first != '#' %}
             {% set attributes = attributes.removeClass('bg-edge2edge').removeAttribute('id') %}
             {% set column_style_field = content.bp_column_style_2|render %}
@@ -147,7 +147,7 @@ view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
             {% endif %}
             <div{{ attributes.removeClass(classes).addClass(col_classes).addClass('p-0') }}>{{ item }}</div>
           {% endfor %}
-        </div>
+
       </div>
     </div>
     {% if add_container %}</div>{% endif %}

@@ -37,6 +37,7 @@ class XmlParserTest extends ParserTestBase {
         'map' => [
           'guid' => [
             'value' => 'guid',
+            'label' => 'Guid',
             'machine_name' => 'guid_',
           ],
         ],
@@ -47,6 +48,7 @@ class XmlParserTest extends ParserTestBase {
         'map' => [
           'value' => [
             'value' => 'title',
+            'label' => 'Title',
             'machine_name' => 'title_',
           ],
         ],
@@ -56,6 +58,7 @@ class XmlParserTest extends ParserTestBase {
         'map' => [
           'value' => [
             'value' => 'body',
+            'label' => 'Body',
             'machine_name' => 'body_',
           ],
         ],
@@ -65,11 +68,12 @@ class XmlParserTest extends ParserTestBase {
         'map' => [
           'value' => [
             'value' => 'alpha',
+            'label' => 'Alpha',
             'machine_name' => 'alpha_',
           ],
         ],
       ],
-    ], $edit);
+    ], 'custom__xml', $edit);
 
     // Create a feed and import file.
     $edit = [

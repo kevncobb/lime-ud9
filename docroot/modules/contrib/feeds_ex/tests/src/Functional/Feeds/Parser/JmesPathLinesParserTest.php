@@ -16,10 +16,28 @@ class JmesPathLinesParserTest extends ParserTestBase {
   protected $parserId = 'jmespathlines';
 
   /**
-   * Does a basic mapping test.
+   * {@inheritdoc}
+   */
+  protected $customSourceType = 'json';
+
+  /**
+   * {@inheritdoc}
    */
   public function testMapping() {
-    $this->doMappingTest();
+    $expected_sources = [
+      'name' => [
+        'label' => 'name',
+        'value' => 'name',
+        'machine_name' => 'name',
+        'type' => $this->customSourceType,
+      ],
+    ];
+    $custom_source = [
+      'value' => 'name',
+      'machine_name' => 'name',
+    ];
+
+    $this->doMappingTest($expected_sources, $custom_source);
   }
 
 }

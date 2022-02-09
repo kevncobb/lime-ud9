@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\feeds_ex\Unit\Feeds\Parser;
 
+use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\feeds\Result\FetcherResult;
 use Drupal\feeds_ex\Feeds\Parser\JmesPathLinesParser;
 use Drupal\feeds_ex\Messenger\TestMessenger;
@@ -26,19 +27,18 @@ class JmesPathLinesParserTest extends JsonPathLinesParserTest {
     $configuration = ['feed_type' => $this->feedType];
     $utility = new JsonUtility();
     $utility->setStringTranslation($this->getStringTranslationStub());
-    $this->parser = new JmesPathLinesParser($configuration, 'jmespathlines', [], $utility);
+    $this->parser = new JmesPathLinesParser($configuration, 'jmespathlines', [], $this->createMock(PluginManagerInterface::class), $utility);
     $this->parser->setStringTranslation($this->getStringTranslationStub());
     $this->parser->setFeedsExMessenger(new TestMessenger());
 
-    $config = [
-      'sources' => [
+    $this->feedType->expects($this->any())
+      ->method('getCustomSources')
+      ->will($this->returnValue([
         'title' => [
-          'name' => 'Title',
+          'label' => 'Title',
           'value' => 'name',
         ],
-      ],
-    ];
-    $this->parser->setConfiguration($config);
+      ]));
 
     // Set JMESPath runtime factory.
     $factoryMock = $this->createMock('Drupal\feeds_ex\JmesRuntimeFactoryInterface');

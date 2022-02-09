@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '0ddb12df49517eb784803ae9db83609557370dd6',
+        'reference' => 'e20e7e67048a5cfdf532f633412deadd4e71dbe8',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -1511,6 +1511,28 @@
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/fast_404',
             'aliases' => array(),
             'reference' => '8.x-2.0-alpha6',
+            'dev_requirement' => false,
+        ),
+        'drupal/feeds' => array(
+            'pretty_version' => 'dev-3.x',
+            'version' => 'dev-3.x',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/feeds',
+            'aliases' => array(
+                0 => '3.x-dev',
+            ),
+            'reference' => '4bda84b02513472a4d365aa608b89720d62794d3',
+            'dev_requirement' => false,
+        ),
+        'drupal/feeds_ex' => array(
+            'pretty_version' => 'dev-1.x',
+            'version' => 'dev-1.x',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/feeds_ex',
+            'aliases' => array(
+                0 => '1.x-dev',
+            ),
+            'reference' => '56b9aaef48eb4f5e88da1ae2b8ee2fa7148b407f',
             'dev_requirement' => false,
         ),
         'drupal/field' => array(
@@ -3300,6 +3322,12 @@
             'reference' => '4ceb1162e179b2e74683f3229543225db56798f1',
             'dev_requirement' => false,
         ),
+        'flow/jsonpath' => array(
+            'dev_requirement' => false,
+            'replaced' => array(
+                0 => '*',
+            ),
+        ),
         'friends-of-behat/mink-browserkit-driver' => array(
             'pretty_version' => 'v1.6.1',
             'version' => '1.6.1.0',
@@ -3643,6 +3671,15 @@
             'install_path' => __DIR__ . '/../mkalkbrenner/php-htmldiff-advanced',
             'aliases' => array(),
             'reference' => '3a714b48c9c3d3730baaf6d3949691e654cd37c9',
+            'dev_requirement' => false,
+        ),
+        'mtdowling/jmespath.php' => array(
+            'pretty_version' => '2.6.1',
+            'version' => '2.6.1.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../mtdowling/jmespath.php',
+            'aliases' => array(),
+            'reference' => '9b87907a81b87bc76d19a7fb2d61e61486ee9edb',
             'dev_requirement' => false,
         ),
         'myclabs/deep-copy' => array(
@@ -4174,6 +4211,15 @@
             'reference' => '570292577277f06f590635381a7f761a6cf4f026',
             'dev_requirement' => false,
         ),
+        'querypath/querypath' => array(
+            'pretty_version' => '3.0.5',
+            'version' => '3.0.5.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../querypath/querypath',
+            'aliases' => array(),
+            'reference' => '6b8e2395fac61fac25bbe962f94def556cb85f7d',
+            'dev_requirement' => false,
+        ),
         'ralouphie/getallheaders' => array(
             'pretty_version' => '3.0.3',
             'version' => '3.0.3.0',
@@ -4419,6 +4465,15 @@
             'aliases' => array(),
             'reference' => 'b81ac84f41a4797dc25c8ede1b0718e2a74be0fc',
             'dev_requirement' => true,
+        ),
+        'softcreatr/jsonpath' => array(
+            'pretty_version' => '0.7.5',
+            'version' => '0.7.5.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../softcreatr/jsonpath',
+            'aliases' => array(),
+            'reference' => '008569bf80aa3584834f7890781576bc7b65afa7',
+            'dev_requirement' => false,
         ),
         'solarium/solarium' => array(
             'pretty_version' => '6.2.3',
@@ -4927,7 +4982,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '0ddb12df49517eb784803ae9db83609557370dd6',
+            'reference' => 'e20e7e67048a5cfdf532f633412deadd4e71dbe8',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(
