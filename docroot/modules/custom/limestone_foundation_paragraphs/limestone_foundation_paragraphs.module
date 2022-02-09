@@ -63,8 +63,8 @@ function limestone_foundation_paragraphs_preprocess_paragraph(&$variables) {
     'paragraph--width--tiny' => 'medium-4 medium-offset-4 small-8 small-offset-2',
     'paragraph--width--narrow' => 'medium-6 medium-offset-3 small-10 small-offset-1',
     'paragraph--width--medium' => 'medium-8 medium-offset-2',
-    'paragraph--width--wide' => 'medium-10 medium-offset-1',
-    'paragraph--width--full' => 'small-12',
+    'paragraph--width--wide' => 'medium-10 medium-offset-1 grid-x',
+    'paragraph--width--full' => 'small-12 grid-x',
     'bg-edge2edge' => 'bg-edge2edge small-12 p-0 grid-x',
   ];
 
