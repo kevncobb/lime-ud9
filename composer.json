@@ -59,7 +59,8 @@
     "drupal/field_formatter": "3.x-dev@dev",
     "drupal/entity_update": "2.0.x-dev@dev",
     "drupal/feeds_ex": "1.x-dev@dev",
-    "drupal/feeds": "3.x-dev@dev"
+    "drupal/feeds": "3.x-dev@dev",
+    "drupal/search_api_pantheon": "^8"
   },
   "require-dev": {
     "drupal/core-dev": "9.3.3",

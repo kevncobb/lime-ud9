@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'e20e7e67048a5cfdf532f633412deadd4e71dbe8',
+        'reference' => '974eba7015cb3fe5919f06c32dd823057fbdd7e0',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -2534,6 +2534,15 @@
             'reference' => '8.x-1.23',
             'dev_requirement' => false,
         ),
+        'drupal/search_api_pantheon' => array(
+            'pretty_version' => '8.0.0-beta9',
+            'version' => '8.0.0.0-beta9',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/search_api_pantheon',
+            'aliases' => array(),
+            'reference' => '8.0.0-beta9',
+            'dev_requirement' => false,
+        ),
         'drupal/search_api_solr' => array(
             'pretty_version' => 'dev-4.x',
             'version' => 'dev-4.x',
@@ -3409,6 +3418,15 @@
             'reference' => '61ad68e934066a6f8df29a3d23a6460536d0855c',
             'dev_requirement' => false,
         ),
+        'http-interop/http-factory-guzzle' => array(
+            'pretty_version' => '1.2.0',
+            'version' => '1.2.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../http-interop/http-factory-guzzle',
+            'aliases' => array(),
+            'reference' => '8f06e92b95405216b237521cc64c804dd44c4a81',
+            'dev_requirement' => false,
+        ),
         'instaclick/php-webdriver' => array(
             'pretty_version' => '1.4.10',
             'version' => '1.4.10.0',
@@ -3982,6 +4000,45 @@
             'reference' => 'dd448ad1ce34c63d09baccd05415e361300c35b4',
             'dev_requirement' => false,
         ),
+        'php-http/async-client-implementation' => array(
+            'dev_requirement' => false,
+            'provided' => array(
+                0 => '1.0',
+            ),
+        ),
+        'php-http/client-implementation' => array(
+            'dev_requirement' => false,
+            'provided' => array(
+                0 => '1.0',
+            ),
+        ),
+        'php-http/guzzle6-adapter' => array(
+            'pretty_version' => 'v2.0.2',
+            'version' => '2.0.2.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../php-http/guzzle6-adapter',
+            'aliases' => array(),
+            'reference' => '9d1a45eb1c59f12574552e81fb295e9e53430a56',
+            'dev_requirement' => false,
+        ),
+        'php-http/httplug' => array(
+            'pretty_version' => '2.2.0',
+            'version' => '2.2.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../php-http/httplug',
+            'aliases' => array(),
+            'reference' => '191a0a1b41ed026b717421931f8d3bd2514ffbf9',
+            'dev_requirement' => false,
+        ),
+        'php-http/promise' => array(
+            'pretty_version' => '1.1.0',
+            'version' => '1.1.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../php-http/promise',
+            'aliases' => array(),
+            'reference' => '4c4c1f9b7289a2ec57cde7f1e9762a5789506f88',
+            'dev_requirement' => false,
+        ),
         'phpdocumentor/reflection-common' => array(
             'pretty_version' => '2.2.0',
             'version' => '2.2.0.0',
@@ -4157,6 +4214,12 @@
             'reference' => '2dfb5f6c5eff0e91e20e913f8c5452ed95b86621',
             'dev_requirement' => false,
         ),
+        'psr/http-client-implementation' => array(
+            'dev_requirement' => false,
+            'provided' => array(
+                0 => '1.0',
+            ),
+        ),
         'psr/http-factory' => array(
             'pretty_version' => '1.0.1',
             'version' => '1.0.1.0',
@@ -4169,7 +4232,8 @@
         'psr/http-factory-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0',
+                0 => '^1.0',
+                1 => '1.0',
             ),
         ),
         'psr/http-message' => array(
@@ -4982,7 +5046,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'e20e7e67048a5cfdf532f633412deadd4e71dbe8',
+            'reference' => '974eba7015cb3fe5919f06c32dd823057fbdd7e0',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(

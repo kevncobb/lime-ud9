@@ -2,11 +2,14 @@
 docroot/files
 docroot/themes/custom/limestone/node_modules
 docroot/themes/custom/blue_harvest/node_modules
+docroot/*/node_modules
 docroot/modules/custom/limestone_foundation_paragraphs/node_modules
 docroot/sites/*/files
 docroot/sites/*/private
 docroot/sites/*/settings.local.php
 docroot/*/settings.local.php
+docroot/*/settings.php
+
 acquia-file
 /log
 update_backups

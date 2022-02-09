@@ -21,8 +21,8 @@ class ComposerStaticInit394befdd71e4af2912826c89f60dbc05
         '0d59ee240a4cd96ddbb4ff164fccea4d' => __DIR__ . '/..' . '/symfony/polyfill-php73/bootstrap.php',
         '92c8763cd6170fce6fcfe7e26b4e8c10' => __DIR__ . '/..' . '/symfony/phpunit-bridge/bootstrap.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
-        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
+        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '07d7f1a47144818725fd8d91a907ac57' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/functions/create_uploaded_file.php',
         'da94ac5d3ca7d2dbab84ce561ce72bfd' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/functions/marshal_headers_from_sapi.php',
@@ -212,6 +212,10 @@ class ComposerStaticInit394befdd71e4af2912826c89f60dbc05
         ),
         'H' => 
         array (
+            'Http\\Promise\\' => 13,
+            'Http\\Factory\\Guzzle\\' => 20,
+            'Http\\Client\\' => 12,
+            'Http\\Adapter\\Guzzle6\\' => 21,
             'Html2Text\\' => 10,
         ),
         'G' => 
@@ -699,6 +703,22 @@ class ComposerStaticInit394befdd71e4af2912826c89f60dbc05
         'Interop\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container',
+        ),
+        'Http\\Promise\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-http/promise/src',
+        ),
+        'Http\\Factory\\Guzzle\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/http-interop/http-factory-guzzle/src',
+        ),
+        'Http\\Client\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-http/httplug/src',
+        ),
+        'Http\\Adapter\\Guzzle6\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-http/guzzle6-adapter/src',
         ),
         'Html2Text\\' => 
         array (
@@ -5288,6 +5308,28 @@ class ComposerStaticInit394befdd71e4af2912826c89f60dbc05
         'Html2Text\\SpanTest' => __DIR__ . '/..' . '/html2text/html2text/test/SpanTest.php',
         'Html2Text\\StrToUpperTest' => __DIR__ . '/..' . '/html2text/html2text/test/StrToUpperTest.php',
         'Html2Text\\TableTest' => __DIR__ . '/..' . '/html2text/html2text/test/TableTest.php',
+        'Http\\Adapter\\Guzzle6\\Client' => __DIR__ . '/..' . '/php-http/guzzle6-adapter/src/Client.php',
+        'Http\\Adapter\\Guzzle6\\Exception\\UnexpectedValueException' => __DIR__ . '/..' . '/php-http/guzzle6-adapter/src/Exception/UnexpectedValueException.php',
+        'Http\\Adapter\\Guzzle6\\Promise' => __DIR__ . '/..' . '/php-http/guzzle6-adapter/src/Promise.php',
+        'Http\\Client\\Exception' => __DIR__ . '/..' . '/php-http/httplug/src/Exception.php',
+        'Http\\Client\\Exception\\HttpException' => __DIR__ . '/..' . '/php-http/httplug/src/Exception/HttpException.php',
+        'Http\\Client\\Exception\\NetworkException' => __DIR__ . '/..' . '/php-http/httplug/src/Exception/NetworkException.php',
+        'Http\\Client\\Exception\\RequestAwareTrait' => __DIR__ . '/..' . '/php-http/httplug/src/Exception/RequestAwareTrait.php',
+        'Http\\Client\\Exception\\RequestException' => __DIR__ . '/..' . '/php-http/httplug/src/Exception/RequestException.php',
+        'Http\\Client\\Exception\\TransferException' => __DIR__ . '/..' . '/php-http/httplug/src/Exception/TransferException.php',
+        'Http\\Client\\HttpAsyncClient' => __DIR__ . '/..' . '/php-http/httplug/src/HttpAsyncClient.php',
+        'Http\\Client\\HttpClient' => __DIR__ . '/..' . '/php-http/httplug/src/HttpClient.php',
+        'Http\\Client\\Promise\\HttpFulfilledPromise' => __DIR__ . '/..' . '/php-http/httplug/src/Promise/HttpFulfilledPromise.php',
+        'Http\\Client\\Promise\\HttpRejectedPromise' => __DIR__ . '/..' . '/php-http/httplug/src/Promise/HttpRejectedPromise.php',
+        'Http\\Factory\\Guzzle\\RequestFactory' => __DIR__ . '/..' . '/http-interop/http-factory-guzzle/src/RequestFactory.php',
+        'Http\\Factory\\Guzzle\\ResponseFactory' => __DIR__ . '/..' . '/http-interop/http-factory-guzzle/src/ResponseFactory.php',
+        'Http\\Factory\\Guzzle\\ServerRequestFactory' => __DIR__ . '/..' . '/http-interop/http-factory-guzzle/src/ServerRequestFactory.php',
+        'Http\\Factory\\Guzzle\\StreamFactory' => __DIR__ . '/..' . '/http-interop/http-factory-guzzle/src/StreamFactory.php',
+        'Http\\Factory\\Guzzle\\UploadedFileFactory' => __DIR__ . '/..' . '/http-interop/http-factory-guzzle/src/UploadedFileFactory.php',
+        'Http\\Factory\\Guzzle\\UriFactory' => __DIR__ . '/..' . '/http-interop/http-factory-guzzle/src/UriFactory.php',
+        'Http\\Promise\\FulfilledPromise' => __DIR__ . '/..' . '/php-http/promise/src/FulfilledPromise.php',
+        'Http\\Promise\\Promise' => __DIR__ . '/..' . '/php-http/promise/src/Promise.php',
+        'Http\\Promise\\RejectedPromise' => __DIR__ . '/..' . '/php-http/promise/src/RejectedPromise.php',
         'Interop\\Container\\ContainerInterface' => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container/ContainerInterface.php',
         'Interop\\Container\\Exception\\ContainerException' => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container/Exception/ContainerException.php',
         'Interop\\Container\\Exception\\NotFoundException' => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container/Exception/NotFoundException.php',
