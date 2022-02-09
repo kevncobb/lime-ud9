@@ -103,7 +103,8 @@ juicer:
   js:
     js/juicer.js: {}
   css:
-    fonts/juicer.css: {}
+    base:
+      fonts/juicer.css: {}
   dependencies:
     - core/jquery
     - core/jquery.once
