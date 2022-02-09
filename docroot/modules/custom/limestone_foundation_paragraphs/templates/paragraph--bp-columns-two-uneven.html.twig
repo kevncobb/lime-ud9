@@ -129,7 +129,7 @@ view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
 <div{{ attributes.addClass(classes).setAttribute('id', paragraph_id) }} {% if VBP.background_image.url %} style="background-image: url({{- VBP.background_image.url -}});" {% endif %}>
   {% if add_container %}<div class="grid-container">{% endif %}
     <div>
-      <div class="{{- VBP.bp_width.value -}} grid-x">
+      <div class="{{- VBP.bp_width.value -}} grid-x" data-equalizer data-equalize-on="smedium">
         {% if paragraph_title and paragraph_title_status %}<h2 class="text-center">{% spaceless %}{{- paragraph_title|striptags -}}{% endspaceless %}</h2>{% endif %}
 
           {% for key, item in content.bp_column_content_2 if key|first != '#' %}
@@ -145,7 +145,7 @@ view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
                 {% set col_classes = col_2 %}
               {% endif %}
             {% endif %}
-            <div{{ attributes.removeClass(classes).addClass(col_classes).addClass('p-0') }}>{{ item }}</div>
+            <div{{ attributes.removeClass(classes).addClass(col_classes).addClass('cell') }}>{{ item }}</div>
           {% endfor %}
 
       </div>
