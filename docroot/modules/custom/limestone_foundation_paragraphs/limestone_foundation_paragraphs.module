@@ -60,15 +60,15 @@ function limestone_foundation_paragraphs_preprocess_paragraph(&$variables) {
   }
 
   $width_map = [
-    'paragraph--width--tiny' => 'col-md-4 offset-md-4 col-sm-8 offset-sm-2',
-    'paragraph--width--narrow' => 'col-md-6 offset-md-3 col-sm-10 offset-sm-1',
-    'paragraph--width--medium' => 'col-md-8 offset-md-2',
-    'paragraph--width--wide' => 'col-md-10 offset-md-1',
-    'paragraph--width--full' => 'col-12',
-    'bg-edge2edge' => 'bg-edge2edge col-12 p-0',
+    'paragraph--width--tiny' => 'medium-4 medium-offset-4 small-8 small-offset-2',
+    'paragraph--width--narrow' => 'medium-6 medium-offset-3 small-10 small-offset-1',
+    'paragraph--width--medium' => 'medium-8 medium-offset-2',
+    'paragraph--width--wide' => 'medium-10 medium-offset-1',
+    'paragraph--width--full' => 'small-12',
+    'bg-edge2edge' => 'bg-edge2edge small-12 p-0 grid-x',
   ];
 
-  $width = 'col-12';
+  $width = 'small-12';
   if (isset($width_map[$width_value])) {
     $width = $width_map[$width_value];
   }
