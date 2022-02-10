@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'cc6d31997f750b54edfc1c5115caa44c2c041263',
+        'reference' => 'ec7dd9e2e8bc465f87c87e5fdeb68475bcc90841',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -1266,6 +1266,17 @@
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/devel',
             'aliases' => array(),
             'reference' => '4.1.3',
+            'dev_requirement' => false,
+        ),
+        'drupal/devel_php' => array(
+            'pretty_version' => 'dev-1.x',
+            'version' => 'dev-1.x',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/devel_php',
+            'aliases' => array(
+                0 => '1.x-dev',
+            ),
+            'reference' => '993d1b216337b63a7175de87c61185833a9b797a',
             'dev_requirement' => false,
         ),
         'drupal/diff' => array(
@@ -5055,7 +5066,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'cc6d31997f750b54edfc1c5115caa44c2c041263',
+            'reference' => 'ec7dd9e2e8bc465f87c87e5fdeb68475bcc90841',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(
