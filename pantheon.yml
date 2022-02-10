@@ -8,3 +8,5 @@ php_version: 8.0
 database:
   version: 10.4
 drush_version: 10
+search:
+    version: 8
