@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '974eba7015cb3fe5919f06c32dd823057fbdd7e0',
+        'reference' => 'cc6d31997f750b54edfc1c5115caa44c2c041263',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -3919,6 +3919,15 @@
                 0 => '*',
             ),
         ),
+        'pantheon-systems/search_api_pantheon' => array(
+            'pretty_version' => '8.0.0-beta9',
+            'version' => '8.0.0.0-beta9',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/search_api_pantheon',
+            'aliases' => array(),
+            'reference' => 'd7df67aff967871783d7947a689842c0401644d4',
+            'dev_requirement' => false,
+        ),
         'pantheon-systems/terminus-drupal-console-plugin' => array(
             'pretty_version' => '1.1.0',
             'version' => '1.1.0.0',
@@ -5046,7 +5055,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '974eba7015cb3fe5919f06c32dd823057fbdd7e0',
+            'reference' => 'cc6d31997f750b54edfc1c5115caa44c2c041263',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(

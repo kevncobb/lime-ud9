@@ -23154,6 +23154,69 @@
             "install-path": "../palantirnet/drupal-rector"
         },
         {
+            "name": "pantheon-systems/search_api_pantheon",
+            "version": "8.0.0-beta9",
+            "version_normalized": "8.0.0.0-beta9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pantheon-systems/search_api_pantheon.git",
+                "reference": "d7df67aff967871783d7947a689842c0401644d4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pantheon-systems/search_api_pantheon/zipball/d7df67aff967871783d7947a689842c0401644d4",
+                "reference": "d7df67aff967871783d7947a689842c0401644d4",
+                "shasum": ""
+            },
+            "require": {
+                "drupal/search_api_solr": "^4.2",
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-zip": "*",
+                "guzzlehttp/guzzle": "^6.5.2",
+                "http-interop/http-factory-guzzle": "^1.0",
+                "php": ">=7.4",
+                "php-http/guzzle6-adapter": "^2.0",
+                "psr/event-dispatcher": "^1.0"
+            },
+            "require-dev": {
+                "consolidation/robo": "^3.0",
+                "czproject/git-php": "^4.0",
+                "drupal/coder": "@stable",
+                "phpunit/phpunit": "@stable",
+                "psy/psysh": "@stable",
+                "squizlabs/php_codesniffer": "@stable",
+                "symfony/yaml": "^4"
+            },
+            "suggest": {
+                "drupal/facets": "^1.8",
+                "drupal/search_api_autocomplete": "^1",
+                "drupal/search_api_page": "^1.0",
+                "drupal/search_api_spellcheck": "^3",
+                "kint-php/kint": "@stable"
+            },
+            "time": "2022-02-09T04:32:20+00:00",
+            "type": "drupal-module",
+            "extra": {
+                "drush": {
+                    "services": {
+                        "drush.services.yml": "^10"
+                    }
+                }
+            },
+            "installation-source": "dist",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Connection module for Pantheon Search (solr 8)",
+            "support": {
+                "issues": "https://github.com/pantheon-systems/search_api_pantheon/issues",
+                "source": "https://github.com/pantheon-systems/search_api_pantheon/tree/8.0.0-beta9"
+            },
+            "install-path": "../../docroot/modules/contrib/search_api_pantheon"
+        },
+        {
             "name": "pantheon-systems/terminus-drupal-console-plugin",
             "version": "1.1.0",
             "version_normalized": "1.1.0.0",
