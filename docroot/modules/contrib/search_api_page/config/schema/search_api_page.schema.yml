@@ -35,10 +35,20 @@ search_api_page.search_api_page.*:
       type: sequence
       label: 'View mode configuration'
       sequence:
-        type: string
+        type: mapping
+        mapping:
+          default:
+            type: string
+          overrides:
+            type: sequence
+            sequence:
+              type: string
     show_search_form:
       type: boolean
       label: 'Show search form'
+    parse_mode:
+      type: string
+      label: 'Parse mode'
     uuid:
       type: string
 

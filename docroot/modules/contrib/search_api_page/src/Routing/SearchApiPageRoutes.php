@@ -5,6 +5,7 @@ namespace Drupal\search_api_page\Routing;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\search_api_page\Controller\SearchApiPageController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Route;
 
@@ -55,6 +56,9 @@ class SearchApiPageRoutes implements ContainerInjectionInterface {
    *
    * @return \Symfony\Component\Routing\Route[]
    *   An array of route objects.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function routes() {
     $routes = [];
@@ -71,39 +75,32 @@ class SearchApiPageRoutes implements ContainerInjectionInterface {
       foreach ($this->languageManager->getLanguages() as $language) {
 
         // Check if we are multilingual or not.
+        $path = $default_path;
         if ($is_multilingual) {
-          $path = $this->languageManager
+          $pathOverride = $this->languageManager
             ->getLanguageConfigOverride($language->getId(), 'search_api_page.search_api_page.' . $search_api_page->id())
             ->get('path');
 
-          if (empty($path)) {
-            $path = $default_path;
+          if (!empty($pathOverride)) {
+            $path = $pathOverride;
           }
         }
-        else {
-          $path = $default_path;
-        }
 
-        $args = [
-          '_controller' => 'Drupal\search_api_page\Controller\SearchApiPageController::page',
-          '_title_callback' => 'Drupal\search_api_page\Controller\SearchApiPageController::title',
+        $defaultArgs = [
+          '_controller' => SearchApiPageController::class . '::page',
+          '_title_callback' => SearchApiPageController::class . '::title',
           'search_api_page_name' => $search_api_page->id(),
         ];
 
         // Use clean urls or not.
         if ($search_api_page->getCleanUrl()) {
           $path .= '/{keys}';
-          $args['keys'] = '';
+          $defaultArgs['keys'] = '';
         }
 
-        $routes['search_api_page.' . $language->getId() . '.' . $search_api_page->id()] = new Route(
-          $path,
-          $args,
-          [
-            '_permission' => 'view search api pages',
-            'keys' => '.*',
-          ]
-        );
+        $routeName = 'search_api_page.' . $language->getId() . '.' . $search_api_page->id();
+        $routeRequirements = ['_permission' => 'view search api pages', 'keys' => '.*'];
+        $routes[$routeName] = new Route($path, $defaultArgs, $routeRequirements);
       }
     }
 

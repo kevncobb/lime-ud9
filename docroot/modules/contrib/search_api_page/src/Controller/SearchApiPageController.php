@@ -2,17 +2,60 @@
 
 namespace Drupal\search_api_page\Controller;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Language\LanguageInterface;
-use Drupal\search_api\Entity\Index;
-use Drupal\search_api_page\Entity\SearchApiPage;
-use Symfony\Component\HttpFoundation\Request;
+use Drupal\search_api\Item\ItemInterface;
+use Drupal\search_api\ParseMode\ParseModePluginManager;
+use Drupal\search_api\Query\ResultSetInterface;
 use Drupal\search_api\SearchApiException;
+use Drupal\search_api_page\Entity\SearchApiPage;
+use Drupal\search_api_page\SearchApiPageInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Drupal\Core\Pager\PagerManagerInterface;
 
 /**
  * Defines a controller to serve search pages.
  */
 class SearchApiPageController extends ControllerBase {
+
+  /**
+   * The parse mode plugin manager.
+   *
+   * @var \Drupal\search_api\ParseMode\ParseModePluginManager
+   */
+  protected $parseModePluginManager;
+
+  /**
+   * The parse mode pager manager.
+   *
+   * @var Drupal\Core\Pager\PagerManagerInterface
+   */
+  protected $pagerManager;
+
+  /**
+   * SearchApiPageController constructor.
+   *
+   * @param \Drupal\search_api\ParseMode\ParseModePluginManager $parseModePluginManager
+   *   The parse mode plugin manager.
+   * @param Drupal\Core\Pager\PagerManagerInterface $pagerManager
+   *   The parse mode pager manager.
+   */
+  public function __construct(ParseModePluginManager $parseModePluginManager, PagerManagerInterface $pagerManager) {
+    $this->parseModePluginManager = $parseModePluginManager;
+    $this->pagerManager = $pagerManager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('plugin.manager.search_api.parse_mode'),
+      $container->get('pager.manager')
+    );
+  }
 
   /**
    * Page callback.
@@ -25,141 +68,263 @@ class SearchApiPageController extends ControllerBase {
    *   The search word.
    *
    * @return array
-   *   The page build.
+   *   The page render array.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\search_api\SearchApiException
    */
   public function page(Request $request, $search_api_page_name, $keys = '') {
-    $build = [];
-
     /* @var $search_api_page \Drupal\search_api_page\SearchApiPageInterface */
-    $search_api_page = SearchApiPage::load($search_api_page_name);
+    $search_api_page = $this->entityTypeManager()
+      ->getStorage('search_api_page')
+      ->load($search_api_page_name);
 
     // Keys can be in the query.
     if (!$search_api_page->getCleanUrl()) {
       $keys = $request->get('keys');
     }
 
-    // Show the search form.
+    $build['#theme'] = 'search_api_page';
     if ($search_api_page->showSearchForm()) {
-      $args = [
-        'search_api_page' => $search_api_page->id(),
-        'keys' => $keys,
-      ];
-      $build['#form'] = $this->formBuilder()->getForm('Drupal\search_api_page\Form\SearchApiPageBlockForm', $args);
+      $build = $this->addSearchForm($build, $search_api_page, $keys);
     }
 
-    $perform_search = TRUE;
     if (empty($keys) && !$search_api_page->showAllResultsWhenNoSearchIsPerformed()) {
-      $perform_search = FALSE;
+      return $this->finishBuild($build, $search_api_page);
     }
 
-    if ($perform_search) {
+    $query = $this->prepareQuery($request, $search_api_page);
+    if (!empty($keys)) {
+      $query->keys($keys);
+    }
 
-      /* @var $search_api_index \Drupal\search_api\IndexInterface */
-      $search_api_index = Index::load($search_api_page->getIndex());
+    $result = $query->execute();
+    /* @var $items \Drupal\search_api\Item\ItemInterface[] */
+    $items = $result->getResultItems();
 
-      // Create the query.
-      $query = $search_api_index->query([
-        'limit' => $search_api_page->getLimit(),
-        'offset' => !is_null($request->get('page')) ? $request->get('page') * $search_api_page->getLimit() : 0,
-      ]);
-
-      $query->setSearchID('search_api_page:' . $search_api_page->id());
-
-      $parse_mode = \Drupal::getContainer()
-        ->get('plugin.manager.search_api.parse_mode')
-        ->createInstance('direct');
-      $query->setParseMode($parse_mode);
-
-      // Search for keys.
-      if (!empty($keys)) {
-        $query->keys($keys);
+    $results = [];
+    foreach ($items as $item) {
+      $rendered = $this->createItemRenderArray($item, $search_api_page);
+      if ($rendered === []) {
+        continue;
       }
+      $results[] = $rendered;
+    }
 
-      // Add filter for current language.
-      $langcode = \Drupal::service('language_manager')
-        ->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)
-        ->getId();
-      $query->addCondition('search_api_language', $langcode);
+    if (empty($results)) {
+      return $this->finishBuildWithoutResults($build, $search_api_page);
+    }
 
-      // Index fields.
-      $query->setFulltextFields($search_api_page->getSearchedFields());
+    return $this->finishBuildWithResults($build, $result, $results, $search_api_page);
+  }
 
-      $result = $query->execute();
-      $items = $result->getResultItems();
+  /**
+   * Adds the search form to the build.
+   *
+   * @param array $build
+   *   The build to add the form to.
+   * @param \Drupal\search_api_page\SearchApiPageInterface $search_api_page
+   *   The search api page.
+   * @param mixed $keys
+   *   The search word.
+   *
+   * @return array
+   *   The build with the search form added to it.
+   */
+  protected function addSearchForm(array $build, SearchApiPageInterface $search_api_page, $keys) {
+    $block_form = \Drupal::getContainer()->get('block_form.search_api_page');
+    $block_form->setPageId($search_api_page->id());
+    $args = [
+      'keys' => $keys,
+    ];
+    $build['#form'] = $this->formBuilder()->getForm($block_form, $args);
+    return $build;
+  }
 
-      /* @var $item \Drupal\search_api\Item\ItemInterface*/
-      $results = [];
-      foreach ($items as $item) {
-
-        try {
-          /** @var \Drupal\Core\Entity\EntityInterface $entity */
-          $entity = $item->getOriginalObject()->getValue();
-        }
-        catch (SearchApiException $e) {
-          continue;
-        }
-        if (!$entity) {
-          continue;
-        }
-
-        // Render as view modes.
-        if ($search_api_page->renderAsViewModes()) {
-          $key = 'entity:' . $entity->getEntityTypeId() . '_' . $entity->bundle();
-          $view_mode_configuration = $search_api_page->getViewModeConfiguration();
-          $view_mode = isset($view_mode_configuration[$key]) ? $view_mode_configuration[$key] : 'default';
-          $results[] = $this->entityTypeManager()->getViewBuilder($entity->getEntityTypeId())->view($entity, $view_mode);
-        }
-
-        // Render as snippets.
-        if ($search_api_page->renderAsSnippets()) {
-          $results[] = [
-            '#theme' => 'search_api_page_result',
-            '#item' => $item,
-            '#entity' => $entity,
-          ];
-        }
+  /**
+   * Creates a render array for the given result item.
+   *
+   * @param \Drupal\search_api\Item\ItemInterface $item
+   *   The item to render.
+   * @param \Drupal\search_api_page\SearchApiPageInterface $search_api_page
+   *   The search api page.
+   *
+   * @return array
+   *   A render array for the given result item.
+   */
+  protected function createItemRenderArray(ItemInterface $item, SearchApiPageInterface $search_api_page) {
+    try {
+      $originalObject = $item->getOriginalObject();
+      if ($originalObject === NULL) {
+        return [];
       }
+      /** @var \Drupal\Core\Entity\EntityInterface $entity */
+      $entity = $originalObject->getValue();
+    }
+    catch (SearchApiException $e) {
+      return [];
+    }
 
-      if (!empty($results)) {
+    if (!$entity) {
+      return [];
+    }
 
-        $build['#search_title'] = [
-          '#markup' => $this->t('Search results'),
-        ];
+    $viewedResult = [];
+    if ($search_api_page->renderAsViewModes()) {
+      $datasource_id = 'entity:' . $entity->getEntityTypeId();
+      $bundle = $entity->bundle();
+      $viewMode = $search_api_page->getViewModeConfig()
+        ->getViewMode($datasource_id, $bundle);
+      $viewedResult = $this->entityTypeManager()
+        ->getViewBuilder($entity->getEntityTypeId())
+        ->view($entity, $viewMode);
+      $viewedResult['#search_api_excerpt'] = $item->getExcerpt();
+    }
 
-        $build['#no_of_results'] = [
-          '#markup' => $this->formatPlural($result->getResultCount(), '1 result found', '@count results found'),
-        ];
+    if ($search_api_page->renderAsSnippets()) {
+      $viewedResult = [
+        '#theme' => 'search_api_page_result',
+        '#item' => $item,
+        '#entity' => $entity,
+      ];
+    }
 
-        $build['#results'] = $results;
+    $metadata = CacheableMetadata::createFromRenderArray($viewedResult);
+    $metadata->addCacheContexts(['url.path']);
+    $metadata->addCacheTags(['search_api_page.style']);
+    $metadata->applyTo($viewedResult);
+    return $viewedResult;
+  }
 
-        // Build pager.
-        pager_default_initialize($result->getResultCount(), $search_api_page->getLimit());
-        $build['#pager'] = [
-          '#type' => 'pager',
-        ];
-      }
-      elseif ($perform_search) {
-        $build['#no_results_found'] = [
-          '#markup' => $this->t('Your search yielded no results.'),
-        ];
+  /**
+   * Finishes the build.
+   *
+   * @param array $build
+   *   An array containing all page elements.
+   * @param \Drupal\search_api_page\SearchApiPageInterface $searchApiPage
+   *   The Search API page entity.
+   * @param \Drupal\search_api\Query\ResultSetInterface $result
+   *   Search API result.
+   *
+   * @return array
+   *   An array containing all page elements.
+   */
+  protected function finishBuild(array $build, SearchApiPageInterface $searchApiPage, ResultSetInterface $result = NULL) {
+    $this->moduleHandler()->alter('search_api_page', $build, $result, $searchApiPage);
 
-        $build['#search_help'] = [
-          '#markup' => $this->t('<ul>
+    $build['#cache'] = [
+      'contexts' => [
+        'url',
+      ],
+    ];
+    return $build;
+  }
+
+  /**
+   * Prepares the search query.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The request.
+   * @param \Drupal\search_api_page\SearchApiPageInterface $search_api_page
+   *   The search api page.
+   *
+   * @return \Drupal\search_api\Query\QueryInterface
+   *   The prepared query.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\search_api\SearchApiException
+   */
+  protected function prepareQuery(Request $request, SearchApiPageInterface $search_api_page) {
+    /* @var $search_api_index \Drupal\search_api\IndexInterface */
+    $search_api_index = $this->entityTypeManager()
+      ->getStorage('search_api_index')
+      ->load($search_api_page->getIndex());
+    $query = $search_api_index->query([
+      'limit' => $search_api_page->getLimit(),
+      'offset' => $request->get('page') !== NULL ? $request->get('page') * $search_api_page->getLimit() : 0,
+    ]);
+    $query->setSearchID('search_api_page:' . $search_api_page->id());
+
+    /** @var \Drupal\search_api\ParseMode\ParseModeInterface $parse_mode */
+    $parse_mode = $this->parseModePluginManager->createInstance($search_api_page->getParseMode());
+    $query->setParseMode($parse_mode);
+
+    // Add filter for current language.
+    $langcode = $this->languageManager()
+      ->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)
+      ->getId();
+    $query->setLanguages([
+      $langcode,
+      LanguageInterface::LANGCODE_NOT_SPECIFIED,
+    ]);
+
+    $query->setFulltextFields($search_api_page->getSearchedFields());
+
+    return $query;
+  }
+
+  /**
+   * Adds the no results text and then finishes the build.
+   *
+   * @param array $build
+   *   The build to finish.
+   * @param \Drupal\search_api_page\SearchApiPageInterface $searchApiPage
+   *   The Search API page entity.
+   *
+   * @return array
+   *   The finished build render array.
+   */
+  protected function finishBuildWithoutResults(array $build, SearchApiPageInterface $searchApiPage) {
+    $build['#no_results_found'] = [
+      '#markup' => $this->t('Your search yielded no results.'),
+    ];
+
+    $build['#search_help'] = [
+      '#markup' => $this->t('<ul>
 <li>Check if your spelling is correct.</li>
 <li>Remove quotes around phrases to search for each word individually. <em>bike shed</em> will often show more results than <em>&quot;bike shed&quot;</em>.</li>
 <li>Consider loosening your query with <em>OR</em>. <em>bike OR shed</em> will often show more results than <em>bike shed</em>.</li>
 </ul>'),
-        ];
-      }
-    }
+    ];
+    return $this->finishBuild($build, $searchApiPage);
+  }
 
-    $build['#theme'] = 'search_api_page';
+  /**
+   * Adds the results to the given build and then finishes it.
+   *
+   * @param array $build
+   *   The build.
+   * @param \Drupal\search_api\Query\ResultSetInterface $result
+   *   Search API result.
+   * @param array $results
+   *   The result item render arrays.
+   * @param \Drupal\search_api_page\SearchApiPageInterface $search_api_page
+   *   The search api page.
+   *
+   * @return array
+   *   The finished build.
+   */
+  protected function finishBuildWithResults(array $build, ResultSetInterface $result, array $results, SearchApiPageInterface $search_api_page) {
+    $build['#search_title'] = [
+      '#markup' => $this->t('Search results'),
+    ];
 
-    // Let other modules alter the search page.
-    \Drupal::moduleHandler()->alter('search_api_page', $build, $result);
+    $build['#no_of_results'] = [
+      '#markup' => $this->formatPlural($result->getResultCount(), '1 result found', '@count results found'),
+    ];
 
-    // TODO caching dependencies.
-    return $build;
+    $build['#results'] = $results;
+
+    $this->pagerManager->createPager($result->getResultCount(), $search_api_page->getLimit());
+    $build['#pager'] = [
+      '#type' => 'pager',
+    ];
+
+    return $this->finishBuild($build, $search_api_page, $result);
   }
 
   /**

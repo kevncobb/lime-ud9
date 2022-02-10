@@ -2,6 +2,9 @@
 
 namespace Drupal\Tests\search_api_page\Functional;
 
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\node\Entity\Node;
+
 /**
  * Provides web tests for Search API Pages.
  *
@@ -29,10 +32,33 @@ class IntegrationTest extends FunctionalTestBase {
     ];
     $this->drupalPostForm('admin/config/search/search-api-pages/add', $step1, 'Next');
 
+    // Test whether a leading slash leads to a form error.
+    $step2 = [
+      'path' => '/search',
+    ];
+    $this->drupalPostForm(NULL, $step2, 'Save');
+    $assert_session->responseContains('The path should not contain leading or trailing slashes.');
+
+    // Test whether a trailing slash leads to a form error.
+    $step2 = [
+      'path' => 'search/',
+    ];
+    $this->drupalPostForm(NULL, $step2, 'Save');
+    $assert_session->responseContains('The path should not contain leading or trailing slashes.');
+
+    // Test whether both a leading slash and a trailing slash leads to a form error.
+    $step2 = [
+      'path' => '/search/',
+    ];
+    $this->drupalPostForm(NULL, $step2, 'Save');
+    $assert_session->responseContains('The path should not contain leading or trailing slashes.');
+
     $step2 = [
       'path' => 'search',
     ];
     $this->drupalPostForm(NULL, $step2, 'Save');
+
+    $assert_session->responseNotContains('The path should not contain leading or trailing slashes.');
 
     $this->drupalGet('search');
     $assert_session->responseContains('Enter the terms you wish to search for.');
@@ -73,11 +99,44 @@ class IntegrationTest extends FunctionalTestBase {
     $assert_session->pageTextContains('1 result found');
     $assert_session->responseContains('name="keys" value="number11"');
 
-    // Cache should be cleared after the save.
-    // @todo Make this work.
-    // $this->drupalGet('search/number10');
-    // $assert_session->pageTextContains('1 result found');
-    // $assert_session->responseContains('name="keys" value="number10"');.
+    $this->drupalGet('search/number10');
+    $assert_session->pageTextContains('1 result found');
+    $assert_session->responseContains('name="keys" value="number10"');
+  }
+
+  /**
+   * Tests cacheability metadata.
+   */
+  public function testCacheability() {
+    $assert_session = $this->assertSession();
+    $this->drupalLogin($this->adminUser);
+    $this->setupSearchAPI();
+    $this->setUpPage($this->index);
+
+    $this->drupalGet('/search');
+    $this->assertSession()->statusCodeEquals(200);
+
+    $this->drupalPostForm(NULL, ['keys' => 'Owls'], 'Search');
+    $assert_session->statusCodeEquals(200);
+    $assert_session->pageTextContains('9 results found');
+    $assert_session->pageTextNotContains('49 results found');
+    $this->drupalPostForm(NULL, ['keys' => 'birds'], 'Search');
+    $assert_session->statusCodeEquals(200);
+    $assert_session->pageTextContains('9 results found');
+    $assert_session->pageTextNotContains('49 results found');
+    $this->drupalPostForm(NULL, ['keys' => 'Strigiformes'], 'Search');
+    $assert_session->statusCodeEquals(200);
+    $assert_session->pageTextContains('9 results found');
+    $assert_session->pageTextNotContains('49 results found');
+
+    $node = Node::load(3);
+    $node->setTitle('More Owls #3');
+    $node->save();
+    $this->indexItems($this->index->id());
+
+    $this->drupalPostForm(NULL, ['keys' => 'Owls'], 'Search');
+    $assert_session->statusCodeEquals(200);
+    $assert_session->pageTextContains('10 results found');
   }
 
   /**
@@ -86,18 +145,7 @@ class IntegrationTest extends FunctionalTestBase {
   public function testFramework() {
     $this->drupalLogin($this->adminUser);
     $this->setupSearchAPI();
-
-    $this->drupalGet('admin/config/search/search-api-pages');
-    $step1 = [
-      'label' => 'Search',
-      'id' => 'search',
-      'index' => $this->index->id(),
-    ];
-    $this->drupalPostForm('admin/config/search/search-api-pages/add', $step1, 'Next');
-    $step2 = [
-      'path' => 'search',
-    ];
-    $this->drupalPostForm(NULL, $step2, 'Save');
+    $this->setUpPage($this->index);
 
     $this->drupalGet('/search');
     $this->assertSession()->statusCodeEquals(200);
@@ -107,6 +155,7 @@ class IntegrationTest extends FunctionalTestBase {
     $this->checkMultipleWordSearch();
     $this->checkSpacesinSearch();
     $this->checkSlashSearch();
+    $this->checkUndefinedLanguageItemsAreFound();
   }
 
   /**
@@ -163,6 +212,27 @@ class IntegrationTest extends FunctionalTestBase {
     $assert_session->statusCodeEquals(200);
 
     $this->drupalPostForm(NULL, ['keys' => 'foo/bar'], 'Search');
+    $assert_session->statusCodeEquals(200);
+    $assert_session->pageTextContains('1 result found');
+  }
+
+  /**
+   * Regression test for #3053095.
+   */
+  protected function checkUndefinedLanguageItemsAreFound() {
+    $this->drupalCreateNode([
+      'title' => 'Another article',
+      'type' => 'article',
+      'body' => [['value' => 'Undefined language']],
+      'langcode' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
+    ]);
+
+    $this->indexItems($this->index->id());
+    $assert_session = $this->assertSession();
+    $this->drupalGet('/search');
+    $assert_session->statusCodeEquals(200);
+
+    $this->drupalPostForm(NULL, ['keys' => 'Undefined'], 'Search');
     $assert_session->statusCodeEquals(200);
     $assert_session->pageTextContains('1 result found');
   }

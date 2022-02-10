@@ -3,6 +3,7 @@
 namespace Drupal\Tests\search_api_page\Functional;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\search_api_page\Entity\SearchApiPage;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
@@ -21,12 +22,18 @@ abstract class FunctionalTestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = [
     'search_api_page',
     'node',
     'search_api',
     'search_api_db',
     'block',
+    'field_ui',
   ];
 
   /**
@@ -37,7 +44,7 @@ abstract class FunctionalTestBase extends BrowserTestBase {
   protected $adminUser;
 
   /**
-   * A user without any permission..
+   * A user without any permission.
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
@@ -80,6 +87,7 @@ abstract class FunctionalTestBase extends BrowserTestBase {
       'administer content types',
       'administer blocks',
       'view search api pages',
+      'administer node display',
     ]);
     $this->unauthorizedUser = $this->drupalCreateUser();
     $this->anonymousUser = $this->drupalCreateUser(['view search api pages']);
@@ -143,6 +151,8 @@ abstract class FunctionalTestBase extends BrowserTestBase {
               'entity:node' => [
                 'article' => 'default',
                 'page' => '',
+                'blog' => 'default',
+                'document' => 'teaser',
               ],
             ],
           ],
@@ -154,6 +164,26 @@ abstract class FunctionalTestBase extends BrowserTestBase {
     $task_manager = \Drupal::getContainer()->get('search_api.index_task_manager');
     $task_manager->addItemsAll(Index::load($this->index->id()));
     $this->indexItems($this->index->id());
+  }
+
+  /**
+   * Set up Search API Page entity.
+   *
+   * @param \Drupal\search_api\Entity\Index $index
+   *   The search index to create a page for.
+   * @param string $id
+   *   The machine name for the search page; defaults to "search".
+   * @param string $path
+   *   The path to use for the search page; defaults to "search".
+   */
+  protected function setUpPage($index, $id = 'search', $path = 'search') {
+    SearchApiPage::create([
+      'label' => ucfirst($id),
+      'id' => $id,
+      'path' => $path,
+      'index' => $index->id(),
+      'searched_fields' => $index->getFulltextFields(),
+    ])->save();
   }
 
 }

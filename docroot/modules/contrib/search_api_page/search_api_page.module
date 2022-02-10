@@ -19,11 +19,13 @@ use Drupal\user\EntityOwnerInterface;
  * @see \Drupal\search_api_page\Form\SearchApiPageBlockForm
  */
 function search_api_page_form_search_api_page_block_form_alter(&$form, FormStateInterface $form_state) {
-  if ($form['#method'] == 'get') {
-    $form['form_build_id']['#access'] = FALSE;
-    $form['form_token']['#access'] = FALSE;
-    $form['form_id']['#access'] = FALSE;
+  if ($form['#method'] !== 'get') {
+    return;
   }
+
+  $form['form_build_id']['#access'] = FALSE;
+  $form['form_token']['#access'] = FALSE;
+  $form['form_id']['#access'] = FALSE;
 }
 
 /**
@@ -115,8 +117,13 @@ function template_preprocess_search_api_page_result(&$variables) {
   $item = $variables['item'];
 
   $variables['snippet'] = ['#markup' => $item->getExcerpt()];
-  $variables['url'] = $entity->toUrl()->toString();
   $variables['title'] = $entity->label();
+  if ($entity instanceof \Drupal\file\Entity\File) {
+    $variables['url'] = $entity->createFileUrl();
+  }
+  else {
+    $variables['url'] = $entity->toUrl()->toString();
+  }
 
   $info = [];
   if ($entity instanceof EntityOwnerInterface) {

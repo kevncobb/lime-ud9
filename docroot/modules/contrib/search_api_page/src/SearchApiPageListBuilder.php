@@ -27,13 +27,14 @@ class SearchApiPageListBuilder extends ConfigEntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     /* @var $entity \Drupal\search_api_page\SearchApiPageInterface */
     $row['label'] = $entity->label();
+    $row['path'] = '';
+
     $path = $entity->getPath();
-    if (!empty($path)) {
-      $row['path'] = Link::fromTextAndUrl($entity->getPath(), Url::fromRoute('search_api_page.' . \Drupal::languageManager()->getDefaultLanguage()->getId() . '.' . $entity->id()));
+    if ($path !== '') {
+      $route = sprintf('search_api_page.%s.%s', \Drupal::languageManager()->getDefaultLanguage()->getId(), $entity->id());
+      $row['path'] = Link::createFromRoute($path, $route);
     }
-    else {
-      $row['path'] = '';
-    }
+
     return $row + parent::buildRow($entity);
   }
 

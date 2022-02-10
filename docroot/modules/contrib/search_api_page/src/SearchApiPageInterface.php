@@ -106,4 +106,19 @@ interface SearchApiPageInterface extends ConfigEntityInterface {
    */
   public function showAllResultsWhenNoSearchIsPerformed();
 
+  /**
+   * Get the view mode configuration object.
+   *
+   * @return \Drupal\search_api_page\Config\ViewMode
+   */
+  public function getViewModeConfig();
+
+  /**
+   * The parse mode to use for query keywords.
+   *
+   * @return string
+   *   Can be any ID of a parse mode plugin.
+   */
+  public function getParseMode();
+
 }

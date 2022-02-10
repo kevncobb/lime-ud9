@@ -80,11 +80,6 @@ class FacetsIntegrationTest extends FunctionalTestBase {
     $page->save();
     $this->createFacet('Eurasian Eagle-Owl', 'eagle_owl', 'type', 'owl_display', 'search_api_page');
 
-    // Clear the caches because creating a search page is not picked up by the
-    // routing otherwise.
-    // @todo: Fix that.
-    $this->resetAll();
-
     $this->drupalGet('bird_owl');
     $this->assertFacetBlocksAppear();
     $this->assertFacetLabel('page');

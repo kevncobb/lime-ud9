@@ -6,12 +6,15 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\PathProcessor\InboundPathProcessorInterface;
+use Drupal\Core\PathProcessor\OutboundPathProcessorInterface;
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Url;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class PathProcessorSearchApiPage.
  */
-class PathProcessorSearchApiPage implements InboundPathProcessorInterface {
+class PathProcessorSearchApiPage implements InboundPathProcessorInterface, OutboundPathProcessorInterface {
 
   /**
    * The entity type manager.
@@ -66,7 +69,8 @@ class PathProcessorSearchApiPage implements InboundPathProcessorInterface {
     $all_languages = $this->languageManager->getLanguages();
 
     /* @var $search_api_page \Drupal\search_api_page\SearchApiPageInterface */
-    foreach ($this->entityTypeManager->getStorage('search_api_page')->loadMultiple() as $search_api_page) {
+    foreach ($this->entityTypeManager->getStorage('search_api_page')
+               ->loadMultiple() as $search_api_page) {
       // Default path.
       $default_path = $search_api_page->getPath();
 
@@ -93,6 +97,47 @@ class PathProcessorSearchApiPage implements InboundPathProcessorInterface {
     }
 
     return $paths;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function processOutbound($path, &$options = [], Request $request = NULL, BubbleableMetadata $bubbleable_metadata = NULL) {
+    if ($request === NULL) {
+      return $path;
+    }
+
+    if (strpos($request->get('_route'), 'search_api_page.') !== 0) {
+      return $path;
+    }
+
+    // Skip processing of no 'Search API Page' routes.
+    $url_object = \Drupal::service('path.validator')->getUrlIfValid($path);
+    if ($url_object && strpos($url_object->getRouteName(), 'search_api_page.') !== 0) {
+      return $path;
+    }
+
+    if (!isset($options['language']) || empty($options['language'])) {
+      return $path;
+    }
+
+    $search_api_page_id = $request->get('search_api_page_name');
+    $config_name = 'search_api_page.search_api_page.' . $search_api_page_id;
+    $original_language = $this->languageManager->getConfigOverrideLanguage();
+    $this->languageManager->setConfigOverrideLanguage($options['language']);
+    $path = \Drupal::config($config_name)->get('path');
+    $this->languageManager->setConfigOverrideLanguage($original_language);
+
+    // Preserve keys when switching between languages.
+    if ($request->get('keys')) {
+      $path .= '/' . $request->get('keys');
+    }
+
+    if (strpos($path, '/') !== 0) {
+      return '/'.$path;
+    }
+
+    return $path;
   }
 
 }

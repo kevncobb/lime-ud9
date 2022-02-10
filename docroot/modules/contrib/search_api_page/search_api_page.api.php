@@ -15,14 +15,17 @@
  *   An array containing all page elements.
  * @param \Drupal\search_api\Query\ResultSet $query_result
  *   Search API query result.
+ * @param \Drupal\search_api_page\SearchApiPageInterface $search_api_page
+ *   The Search API Page entity object.
  *
  * @see \Drupal\search_api_page\Controller\SearchApiPageController
  */
-function hook_search_api_page_alter(&$build, $query_result) {
+function hook_search_api_page_alter(&$build, $query_result, $search_api_page) {
   $search_title = \Drupal::translation()->translate(
-    'Search results (@results)',
+    'There are @count Search results at @path.',
     [
-      '@results' => $query_result->getResultCount(),
+      '@count' => $query_result->getResultCount(),
+      '@path' => $search_api_page->getPath(),
     ]
   );
 

@@ -100,7 +100,7 @@ class SearchApiPageForm extends EntityForm {
       '#title' => $this->t('Path'),
       '#maxlength' => 255,
       '#default_value' => $search_api_page->getPath(),
-      '#description' => $this->t("Do not include a trailing slash."),
+      '#description' => $this->t('Do not include leading or trailing forward slash.'),
       '#required' => TRUE,
       '#access' => !empty($default_index),
       '#states' => $default_index_states,
@@ -164,36 +164,94 @@ class SearchApiPageForm extends EntityForm {
       '#states' => $default_index_states,
     ];
 
-    if (!empty($default_index)) {
-      $form['view_mode_configuration'] = [
-        '#type' => 'fieldset',
-        '#tree' => TRUE,
-        '#title' => $this->t('View modes'),
-        '#states' => [
-          'visible' => [':input[name="style"]' => ['value' => 'view_modes'], ':input[name="index"]' => ['value' => $default_index]],
+    $plugin_manager = \Drupal::service('plugin.manager.search_api.parse_mode');
+    $instances = $plugin_manager->getInstances();
+    $options = [];
+    foreach ($instances as $name => $instance) {
+      if ($instance->isHidden()) {
+        continue;
+      }
+      $options[$name] = $instance->label();
+    }
+
+    $form['page_fieldset']['parse_mode'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Parse mode'),
+      '#description' => $this->t('Parse mode for search keywords'),
+      '#options' => $options,
+      '#default_value' => $search_api_page->getParseMode(),
+      '#required' => TRUE,
+    ];
+
+    if (empty($default_index)) {
+      return $form;
+    }
+
+    $form['view_mode_configuration'] = [
+      '#type' => 'fieldset',
+      '#tree' => TRUE,
+      '#title' => $this->t('View modes'),
+      '#states' => [
+        'visible' => [
+          ':input[name="style"]' => ['value' => 'view_modes'],
+          ':input[name="index"]' => ['value' => $default_index],
         ],
+      ],
+    ];
+
+    /* @var $index \Drupal\search_api\IndexInterface */
+    $index = Index::load($search_api_page->getIndex());
+    $viewModeConfig = $search_api_page->getViewModeConfig();
+    foreach ($index->getDatasources() as $datasource_id => $datasource) {
+      $form['view_mode_configuration'][$datasource_id] = [
+        '#type' => 'fieldset',
+        '#title' => $datasource->label(),
       ];
 
-      /* @var $index \Drupal\search_api\IndexInterface */
-      $index = Index::load($search_api_page->getIndex());
-      $view_mode_configuration = $search_api_page->getViewModeConfiguration();
-      foreach ($index->getDatasources() as $datasource_id => $datasource) {
-        $bundles = $datasource->getBundles();
-        foreach ($bundles as $bundle_id => $bundle_label) {
-          $view_modes = $datasource->getViewModes($bundle_id);
-          $form['view_mode_configuration'][$datasource_id . '_' . $bundle_id] = [
-            '#type' => 'select',
-            '#title' => $this->t('View mode for %datasource » %bundle', ['%datasource' => $datasource->label(), '%bundle' => $bundle_label]),
-            '#options' => $view_modes,
-          ];
-          if (isset($view_mode_configuration[$datasource_id . '_' . $bundle_id])) {
-            $form['view_mode_configuration'][$datasource_id . '_' . $bundle_id]['#default_value'] = $view_mode_configuration[$datasource_id . '_' . $bundle_id];
-          }
+      $form['view_mode_configuration'][$datasource_id]['default'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Default View mode all %datasource bundles', ['%datasource' => $datasource->label()]),
+        '#options' => $datasource->getViewModes(),
+        '#default_value' => $viewModeConfig->getDefaultViewMode($datasource_id),
+      ];
+
+      $form['view_mode_configuration'][$datasource_id]['overrides'] = [
+        '#type' => 'details',
+        '#open' => $viewModeConfig->hasOverrides($datasource_id),
+        '#title' => $this->t('%datasource view mode overrides', ['%datasource' => $datasource->label()]),
+        '#options' => $datasource->getViewModes(),
+      ];
+
+      $bundles = $datasource->getBundles();
+      foreach ($bundles as $bundle_id => $bundle_label) {
+        $form['view_mode_configuration'][$datasource_id]['overrides'][$bundle_id] = [
+          '#type' => 'select',
+          '#title' => $this->t('View mode for %bundle', ['%bundle' => $bundle_label]),
+          '#options' => $datasource->getViewModes($bundle_id),
+          '#empty_option' => $this->t('-- Use default --'),
+        ];
+        if ($viewModeConfig->isOverridden($datasource_id, $bundle_id)) {
+          $form['view_mode_configuration'][$datasource_id]['overrides'][$bundle_id]['#default_value'] = $viewModeConfig->getViewMode($datasource_id, $bundle_id);
         }
       }
     }
 
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    $path = $form_state->getValue('path');
+
+    if (!empty($path)) {
+      $leading_slash = $path[0] === '/';
+      $trailing_slash = $path[strlen($path) - 1] === '/';
+      if ($leading_slash || $trailing_slash) {
+        $form_state->setErrorByName('path', $this->t('The path should not contain leading or trailing slashes.'));
+      }
+    }
   }
 
   /**
@@ -209,26 +267,27 @@ class SearchApiPageForm extends EntityForm {
     }
 
     $default_index = $search_api_page->getIndex();
-    if (!empty($default_index)) {
-
-      // Add an update button that shows up when changing the index.
-      $default_index_states_invisible = [
-        'invisible' => [
-          ':input[name="index"]' => ['value' => $default_index],
-        ],
-      ];
-      $actions['update'] = $actions['submit'];
-      $actions['update']['#value'] = $this->t('Update');
-      $actions['update']['#states'] = $default_index_states_invisible;
-
-      // Hide the Save button when the index changes.
-      $default_index_states_visible = [
-        'visible' => [
-          ':input[name="index"]' => ['value' => $default_index],
-        ],
-      ];
-      $actions['submit']['#states'] = $default_index_states_visible;
+    if (empty($default_index)) {
+      return $actions;
     }
+
+    // Add an update button that shows up when changing the index.
+    $default_index_states_invisible = [
+      'invisible' => [
+        ':input[name="index"]' => ['value' => $default_index],
+      ],
+    ];
+    $actions['update'] = $actions['submit'];
+    $actions['update']['#value'] = $this->t('Update');
+    $actions['update']['#states'] = $default_index_states_invisible;
+
+    // Hide the Save button when the index changes.
+    $default_index_states_visible = [
+      'visible' => [
+        ':input[name="index"]' => ['value' => $default_index],
+      ],
+    ];
+    $actions['submit']['#states'] = $default_index_states_visible;
 
     return $actions;
   }
@@ -270,30 +329,33 @@ class SearchApiPageForm extends EntityForm {
         break;
 
       default:
-        // Set redirect to overview if the index is the same, otherwise, go to
-        // the edit form again.
-        if ($form_state->getValue('index') == $form_state->getValue('previous_index')) {
+        $indexHasChanged = $form_state->getValue('index') !== $form_state->getValue('previous_index');
+        if (!$indexHasChanged) {
+          // Index is unchanged so we'll redirect to the overview.
           $form_state->setRedirectUrl($search_api_page->toUrl('collection'));
-          drupal_set_message($this->t('Saved the %label Search page.', [
+          $this->messenger()->addMessage($this->t('Saved the %label Search page.', [
             '%label' => $search_api_page->label(),
           ]));
         }
         else {
+          // Index has changed so we'll redirect to the edit form.
           $form_state->setRedirectUrl($search_api_page->toUrl('edit-form'));
-          drupal_set_message($this->t('Updated the index for the %label Search page.', [
+          $this->messenger()->addMessage($this->t('Updated the index for the %label Search page.', [
             '%label' => $search_api_page->label(),
           ]));
         }
 
     }
 
-    // Trigger a router rebuild if:
-    // - path is different than previous_path.
-    // - clean_url is different than previous_clean_url.
-    if ($form_state->getValue('path') != $form_state->getValue('previous_path') || $form_state->getValue('clean_url') != $form_state->getValue('previous_clean_url')) {
+    $pathHasChanged = $form_state->getValue('path') != $form_state->getValue('previous_path');
+    $cleanUrlHasChanged = $form_state->getValue('clean_url') != $form_state->getValue('previous_clean_url');
+    if ($pathHasChanged || $cleanUrlHasChanged) {
       \Drupal::service('router.builder')->rebuild();
     }
 
+    /** @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface $invalidator */
+    $invalidator = \Drupal::service('cache_tags.invalidator');
+    $invalidator->invalidateTags(['search_api_page.style']);
   }
 
 }

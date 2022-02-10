@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'ec7dd9e2e8bc465f87c87e5fdeb68475bcc90841',
+        'reference' => '362d3f6fcc99a48b6b4e6926b90408fc508b38d0',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -2545,6 +2545,17 @@
             'reference' => '8.x-1.23',
             'dev_requirement' => false,
         ),
+        'drupal/search_api_page' => array(
+            'pretty_version' => 'dev-1.x',
+            'version' => 'dev-1.x',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/search_api_page',
+            'aliases' => array(
+                0 => '1.x-dev',
+            ),
+            'reference' => 'd4c16db3b2cbbb830b569a9c3b2504d1ee2ca0ea',
+            'dev_requirement' => false,
+        ),
         'drupal/search_api_pantheon' => array(
             'pretty_version' => '8.0.0-beta9',
             'version' => '8.0.0.0-beta9',
@@ -5066,7 +5077,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'ec7dd9e2e8bc465f87c87e5fdeb68475bcc90841',
+            'reference' => '362d3f6fcc99a48b6b4e6926b90408fc508b38d0',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(
