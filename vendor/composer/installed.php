@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '66a8d368210e4de4001a2533d99434f05c774c08',
+        'reference' => '8dc2b97e0bd674099785d5520f9f4b9ecd0d76ef',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -1288,6 +1288,15 @@
             'reference' => '8.x-1.0',
             'dev_requirement' => false,
         ),
+        'drupal/draggableviews' => array(
+            'pretty_version' => '2.0.1',
+            'version' => '2.0.1.0',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/draggableviews',
+            'aliases' => array(),
+            'reference' => '2.0.1',
+            'dev_requirement' => false,
+        ),
         'drupal/drd_agent' => array(
             'pretty_version' => '3.13.0',
             'version' => '3.13.0.0',
@@ -1599,6 +1608,24 @@
             'reference' => '8.x-2.2',
             'dev_requirement' => false,
         ),
+        'drupal/file_mdm_exif' => array(
+            'pretty_version' => '2.2.0',
+            'version' => '2.2.0.0',
+            'type' => 'metapackage',
+            'install_path' => NULL,
+            'aliases' => array(),
+            'reference' => NULL,
+            'dev_requirement' => false,
+        ),
+        'drupal/file_mdm_font' => array(
+            'pretty_version' => '2.2.0',
+            'version' => '2.2.0.0',
+            'type' => 'metapackage',
+            'install_path' => NULL,
+            'aliases' => array(),
+            'reference' => NULL,
+            'dev_requirement' => false,
+        ),
         'drupal/filter' => array(
             'dev_requirement' => false,
             'replaced' => array(
@@ -1712,6 +1739,15 @@
             'replaced' => array(
                 0 => '9.3.5',
             ),
+        ),
+        'drupal/image_effects' => array(
+            'pretty_version' => '3.2.0',
+            'version' => '3.2.0.0',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/image_effects',
+            'aliases' => array(),
+            'reference' => '8.x-3.2',
+            'dev_requirement' => false,
         ),
         'drupal/image_resize_filter' => array(
             'pretty_version' => '1.1.0',
@@ -2158,6 +2194,15 @@
                 0 => '9.3.5',
             ),
         ),
+        'drupal/minifyhtml' => array(
+            'pretty_version' => '1.11.0',
+            'version' => '1.11.0.0',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/minifyhtml',
+            'aliases' => array(),
+            'reference' => '8.x-1.11',
+            'dev_requirement' => false,
+        ),
         'drupal/minimal' => array(
             'dev_requirement' => false,
             'replaced' => array(
@@ -2467,6 +2512,15 @@
             'reference' => '8.x-1.2',
             'dev_requirement' => false,
         ),
+        'drupal/robotstxt' => array(
+            'pretty_version' => '1.4.0',
+            'version' => '1.4.0.0',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/robotstxt',
+            'aliases' => array(),
+            'reference' => '8.x-1.4',
+            'dev_requirement' => false,
+        ),
         'drupal/roleassign' => array(
             'pretty_version' => '1.0.0-beta1',
             'version' => '1.0.0.0-beta1',
@@ -2655,12 +2709,12 @@
             'dev_requirement' => false,
         ),
         'drupal/simple_sitemap' => array(
-            'pretty_version' => '4.1.0',
-            'version' => '4.1.0.0',
+            'pretty_version' => '4.1.1',
+            'version' => '4.1.1.0',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/simple_sitemap',
             'aliases' => array(),
-            'reference' => '4.1.0',
+            'reference' => '4.1.1',
             'dev_requirement' => false,
         ),
         'drupal/slick' => array(
@@ -3068,12 +3122,12 @@
             'dev_requirement' => false,
         ),
         'drupal/varbase_media' => array(
-            'pretty_version' => '9.0.7',
-            'version' => '9.0.7.0',
+            'pretty_version' => '9.0.8',
+            'version' => '9.0.8.0',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/varbase_media',
             'aliases' => array(),
-            'reference' => '9.0.7',
+            'reference' => '9.0.8',
             'dev_requirement' => false,
         ),
         'drupal/varbase_search' => array(
@@ -5075,7 +5129,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '66a8d368210e4de4001a2533d99434f05c774c08',
+            'reference' => '8dc2b97e0bd674099785d5520f9f4b9ecd0d76ef',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(

@@ -64,7 +64,13 @@
     "pantheon-systems/search_api_pantheon": "^8",
     "drupal/devel_php": "1.x-dev@dev",
     "drupal/search_api_page": "1.x-dev@dev",
-    "drupal/search_api": "^1.23"
+    "drupal/search_api": "^1.23",
+    "drupal/draggableviews": "^2.0",
+    "drupal/image_effects": "^3.2",
+    "drupal/minifyhtml": "^1.11",
+    "drupal/robotstxt": "^1.4",
+    "drupal/simple_sitemap": "^4.1",
+    "drupal/varbase_media": "^9.0"
   },
   "require-dev": {
     "drupal/core-dev": "9.3.3",

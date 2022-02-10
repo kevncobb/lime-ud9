@@ -8,7 +8,7 @@ dependencies:
   - media_entity_twitter:media_entity_twitter
   - varbase_media:entity_browser_generic_embed
 
-# Information added by Drupal.org packaging script on 2022-01-23
-version: '9.0.7'
+# Information added by Drupal.org packaging script on 2022-02-09
+version: '9.0.8'
 project: 'varbase_media'
-datestamp: 1642946441
+datestamp: 1644431727
