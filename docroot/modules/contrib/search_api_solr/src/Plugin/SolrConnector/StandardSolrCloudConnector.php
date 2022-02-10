@@ -252,7 +252,7 @@ class StandardSolrCloudConnector extends SolrConnectorPluginBase implements Solr
       $action
         ->setFile($filename)
         ->setName($name)
-        ->setOverwrite(TRUE);
+        ->setOverwrite(true);
       $configsetsQuery->setAction($action);
       $response = $this->solr->configsets($configsetsQuery);
       return $response->getWasSuccessful();

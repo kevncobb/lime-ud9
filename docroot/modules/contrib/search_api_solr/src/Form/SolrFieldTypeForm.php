@@ -9,7 +9,9 @@ use Drupal\search_api_solr\Utility\Utility;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Form for Solr filed types.
+ * Class SolrFieldTypeForm.
+ *
+ * @package Drupal\search_api_solr\Form
  */
 class SolrFieldTypeForm extends EntityForm {
 

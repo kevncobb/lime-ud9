@@ -8,10 +8,8 @@ use Drupal\search_api_autocomplete\SearchInterface;
 /**
  * Defines an autocomplete interface for Solr search backend plugins.
  *
- * @deprecated in search_api_solr:4.2.4 and is removed from
- *   search_api_solr:4.3.0.
- *
- * @see https://www.drupal.org/node/3254186
+ * @deprecated These functions were moved to the autocomplete plugins. The
+ *             interface will be removed in Search API Solr 4.3.0.
  */
 interface SolrAutocompleteInterface {
 

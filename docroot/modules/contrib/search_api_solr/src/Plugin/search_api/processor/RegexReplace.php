@@ -124,5 +124,4 @@ class RegexReplace extends FieldsProcessorPluginBase {
       }
     }
   }
-
 }

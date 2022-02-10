@@ -24,19 +24,8 @@ use Drupal\search_api_solr\SolrFieldManagerInterface;
  */
 class SolrDocument extends DatasourcePluginBase implements PluginFormInterface {
 
-  /**
-   * Solr field property name.
-   *
-   * @var string
-   */
-  protected $solrField = 'solr_field';
-
-  /**
-   * Solr document property name.
-   *
-   * @var string
-   */
-  protected $solrDocument = 'solr_document';
+  protected $solr_field = 'solr_field';
+  protected $solr_document = 'solr_document';
 
   use PluginFormTrait;
   use LoggerTrait;
@@ -75,7 +64,7 @@ class SolrDocument extends DatasourcePluginBase implements PluginFormInterface {
    *   The Solr document factory.
    */
   public function getSolrDocumentFactory() {
-    return $this->solrDocumentFactory ?: \Drupal::getContainer()->get($this->solrDocument . '.factory');
+    return $this->solrDocumentFactory ?: \Drupal::getContainer()->get($this->solr_document . '.factory');
   }
 
   /**
@@ -98,7 +87,7 @@ class SolrDocument extends DatasourcePluginBase implements PluginFormInterface {
    *   The Solr field manager.
    */
   public function getSolrFieldManager() {
-    return $this->solrFieldManager ?: \Drupal::getContainer()->get($this->solrField . '.manager');
+    return $this->solrFieldManager ?: \Drupal::getContainer()->get($this->solr_field . '.manager');
   }
 
   /**

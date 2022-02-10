@@ -158,10 +158,7 @@ class DevelController extends ControllerBase {
     if ($entity && $entity instanceof EntityInterface) {
       foreach ($this->getBackends() as $backend_id) {
         /** @var \Drupal\search_api\ServerInterface[] $servers */
-        $servers = $this->storage->loadByProperties([
-          'backend' => $backend_id,
-          'status' => TRUE,
-        ]);
+        $servers = $this->storage->loadByProperties(['backend' => $backend_id, 'status' => TRUE]);
         foreach ($servers as $server) {
           /** @var \Drupal\search_api\ServerInterface $server */
           /** @var \Drupal\search_api_solr\SolrBackendInterface $backend */
@@ -181,7 +178,7 @@ class DevelController extends ControllerBase {
                     $items = [];
                     $base_summary_row = $this->getBaseRow($server, $index, $datasource_id, $entity, $langcode, $item_id);
 
-                    // @todo Run a timer on this process and report it?
+                    // @TODO: Run a timer on this process and report it?
                     $items[$item_id] = $this->fieldsHelper->createItemFromObject($index, $entity->getTranslation($langcode)->getTypedData(), $item_id);
                     // Alter and preprocess the items to indexed.
                     $index->alterIndexedItems($items);
@@ -228,7 +225,7 @@ class DevelController extends ControllerBase {
                       $query->setQuery('id:"' . $fields['id'] . '"');
                       $query->setFields('*');
                       try {
-                        // @todo Run a timer on this process and report it?
+                        // @TODO: Run a timer on this process and report it?
                         $results = $solr->execute($query, $backend->getCollectionEndpoint($index));
                         $num_found = $results->getNumFound();
                         $summary_row['solr_exists'] = $this->t('yes');

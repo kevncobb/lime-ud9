@@ -34,5 +34,4 @@ class ViewsTest extends SearchApiSolrViewsTest {
   public function testViewsAdmin() {
     $this->markTestSkipped('This test fails on Solr 3.6. It requires some more debugging.');
   }
-
 }

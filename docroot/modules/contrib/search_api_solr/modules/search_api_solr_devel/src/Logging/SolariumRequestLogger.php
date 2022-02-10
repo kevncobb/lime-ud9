@@ -59,6 +59,7 @@ class SolariumRequestLogger implements EventSubscriberInterface {
   public function postCreateQuery(PostCreateQuery $event) {
     $query = $event->getQuery();
     if ($query instanceof Query) {
+      /** @var $query */
       $query->getDebug();
       $query->addParam('echoParams', 'all')
         ->setOmitHeader(FALSE);
@@ -68,11 +69,11 @@ class SolariumRequestLogger implements EventSubscriberInterface {
   /**
    * Show debug message and a data object dump.
    *
-   * @param int $counter
+   * @param $counter int
    *   The current Solr query counter.
-   * @param mixed $data
+   * @param $data mixed
    *   Data to dump.
-   * @param string $message
+   * @param $message string
    *   Message to show.
    */
   public function showMessage($counter, $data, $message) {
@@ -83,7 +84,7 @@ class SolariumRequestLogger implements EventSubscriberInterface {
   /**
    * Start timer for a query.
    *
-   * @param int $counter
+   * @param $counter int
    *   The current Solr query counter.
    */
   public function timerStart($counter) {
@@ -93,9 +94,8 @@ class SolariumRequestLogger implements EventSubscriberInterface {
   /**
    * Returns timer for a query.
    *
-   * @param int $counter
+   * @param $counter int
    *   The current Solr query counter.
-   *
    * @return array
    *   The timer array.
    */
@@ -106,10 +106,9 @@ class SolariumRequestLogger implements EventSubscriberInterface {
   /**
    * Determine which Solr requests should be ignored.
    *
-   * @param string $handler
+   * @param $handler string
    *   The Solr handler. Examples: "admin/ping", "select", etc.
-   *
-   * @return bool
+   * @return boolean
    *   TRUE when we should skip debugging this query.
    */
   public function shouldIgnore($handler) {
@@ -182,5 +181,4 @@ class SolariumRequestLogger implements EventSubscriberInterface {
     // Log raw data to file (using NULL plugin)
     $this->develDumperManager->debug($debug, 'Search API Solr Debug: Response', 'default');
   }
-
 }
