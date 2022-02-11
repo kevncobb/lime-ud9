@@ -1,0 +1,90 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function symfony_mailer_bc_theme($existing, $type, $theme, $path) {
+  $templateDir = drupal_get_path('module', 'symfony_mailer_bc') . '/templates';
+  $hooks = [];
+  foreach (glob("$templateDir/email--*") as $template) {
+    $theme = strtr(basename($template, '.html.twig'), '-', '_');
+    $hooks[$theme] = ['base hook' => 'email'];
+  }
+
+  return $hooks;
+}
+
+/**
+ * Implements hook_mailer_builder_info_alter().
+ */
+function symfony_mailer_bc_mailer_builder_info_alter(array &$email_builders) {
+  // Add EmailBuilder definitions for any implementations of hook_mail() that
+  // don't already have one, using LegacyEmailBuilder.
+  $module_handler = \Drupal::moduleHandler();
+  $mail_hooks = $module_handler->getImplementations('mail');
+  $missing = array_diff($mail_hooks, array_keys($email_builders));
+
+  foreach ($missing as $type) {
+    $email_builders[$type] = [
+      'id' => $type,
+      'label' => $module_handler->getName($type),
+      'sub_types' => [],
+      'has_entity' => FALSE,
+      'class' => "Drupal\symfony_mailer_bc\Plugin\EmailBuilder\LegacyEmailBuilder",
+      'provider' => $type,
+    ];
+  }
+}
+
+/**
+ * Implements hook_mailer_bc_MODULE_alter() for contact.
+ */
+function symfony_mailer_bc_mailer_bc_contact_alter(string &$key, array &$params, array &$context) {
+  if (isset($params['contact_form'])) {
+    // Set the associated config entity.
+    $context['entity'] = $params['contact_form'];
+  }
+
+  // This creates two separate email types, so no longer need the key to
+  // contain page_ or user_.
+  $key = substr($key, 5);
+}
+
+/**
+ * Implements hook_mailer_bc_MODULE_alter() for simplenews.
+ */
+function symfony_mailer_bc_mailer_bc_simplenews_alter(string &$key, array &$params, array &$context) {
+  if ($key == 'node' || $key == 'test') {
+    // Set the associated config entity.
+    $context['entity'] = $params['simplenews_mail']->getNewsletter();
+  }
+  elseif ($key == 'subscribe_combined') {
+    $key = 'subscribe';
+  }
+}
+
+/**
+ * Implements hook_mailer_bc_MODULE_alter() for system.
+ */
+function symfony_mailer_bc_mailer_bc_system_alter(string &$key, array &$params, array &$context) {
+  // Simplify the params.
+  $params = $params['context'];
+}
+
+/**
+ * Implements hook_mailer_bc_MODULE_alter() for user.
+ */
+function symfony_mailer_bc_mailer_bc_user_alter(string &$key, array &$params, array &$context) {
+  // Use the entity type as the parameter key.
+  // @see \Drupal\symfony_mailer\EmailInterface::setParam()
+  $params = ['user' => $params['account']];
+}
+
+/**
+ * Implements hook_mailer_bc_MODULE_alter() for user_registrationpassword.
+ */
+function symfony_mailer_bc_mailer_bc_user_registrationpassword_alter(string &$key, array &$params, array &$context) {
+  // Use the entity type as the parameter key.
+  // @see \Drupal\symfony_mailer\EmailInterface::setParam()
+  $params = ['user' => $params['account']];
+}

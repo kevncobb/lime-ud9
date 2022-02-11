@@ -1,0 +1,11 @@
+symfony_mailer.mailer_transport.collection:
+  title: Transports
+  description: 'Listing of Mailer transports.'
+  base_route: entity.mailer_transport.collection
+  route_name: entity.mailer_transport.collection
+
+entity.mailer_policy.collection:
+  title: Policy
+  description: 'Listing of Mailer policy.'
+  base_route: entity.mailer_transport.collection
+  route_name: entity.mailer_policy.collection

@@ -1,0 +1,52 @@
+<?php
+
+namespace Drupal\symfony_mailer\Plugin\EmailAdjuster;
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\symfony_mailer\Processor\EmailAdjusterBase;
+use Drupal\symfony_mailer\EmailInterface;
+use Symfony\Component\Mime\Email;
+
+/**
+ * Defines the Priority header Email Adjuster.
+ *
+ * @EmailAdjuster(
+ *   id = "email_priority",
+ *   label = @Translation("Priority"),
+ *   description = @Translation("Sets the email priority."),
+ * )
+ */
+class PriorityEmailAdjuster extends EmailAdjusterBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function postRender(EmailInterface $email) {
+    $priority = $this->configuration['value'];
+    $email->setPriority($priority);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsForm(array $form, FormStateInterface $form_state) {
+    $options = [
+      Email::PRIORITY_HIGHEST => $this->t('Highest'),
+      Email::PRIORITY_HIGH => $this->t('High'),
+      Email::PRIORITY_NORMAL => $this->t('Normal'),
+      Email::PRIORITY_LOW => $this->t('Low'),
+      Email::PRIORITY_LOWEST => $this->t('Lowest'),
+    ];
+
+    $form['value'] = [
+      '#type' => 'select',
+      '#options' => $options,
+      '#default_value' => $this->configuration['value'] ?? NULL,
+      '#required' => TRUE,
+      '#description' => $this->t('Email priority.'),
+    ];
+
+    return $form;
+  }
+
+}

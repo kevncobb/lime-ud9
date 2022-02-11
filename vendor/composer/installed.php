@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '8dc2b97e0bd674099785d5520f9f4b9ecd0d76ef',
+        'reference' => '766e84f4968ab293bbcaf7ab9d2020ec7c669c17',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -2854,6 +2854,17 @@
             'reference' => '8.x-2.2',
             'dev_requirement' => false,
         ),
+        'drupal/symfony_mailer' => array(
+            'pretty_version' => 'dev-1.x',
+            'version' => 'dev-1.x',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/symfony_mailer',
+            'aliases' => array(
+                0 => '1.x-dev',
+            ),
+            'reference' => '51c26ee72876dfc80066118d510f995b044fd2e2',
+            'dev_requirement' => false,
+        ),
         'drupal/syslog' => array(
             'dev_requirement' => false,
             'replaced' => array(
@@ -4853,6 +4864,15 @@
             'reference' => 'fac900d30b6f37a1867237f79a3d4dab8df4a450',
             'dev_requirement' => true,
         ),
+        'symfony/mailer' => array(
+            'pretty_version' => 'v5.4.3',
+            'version' => '5.4.3.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../symfony/mailer',
+            'aliases' => array(),
+            'reference' => '391a2ac6bf8ab298caa7b63826edc9500412ed16',
+            'dev_requirement' => false,
+        ),
         'symfony/mime' => array(
             'pretty_version' => 'v5.4.3',
             'version' => '5.4.3.0',
@@ -5129,7 +5149,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '8dc2b97e0bd674099785d5520f9f4b9ecd0d76ef',
+            'reference' => '766e84f4968ab293bbcaf7ab9d2020ec7c669c17',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(
