@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "66f6eb4247bab464a81fe7bd517fae14",
+    "content-hash": "59a1b8d2998c3b07b546f86089552d47",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -12806,93 +12806,43 @@
         },
         {
             "name": "drupal/search_api_pantheon",
-            "version": "8.0.0-beta9",
+            "version": "3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/search_api_pantheon.git",
-                "reference": "8.0.0-beta9"
+                "reference": "3.0.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/search_api_pantheon-8.0.0-beta9.zip",
-                "reference": "8.0.0-beta9",
-                "shasum": "33f59a34f935b4df359c0e62f999d59ccac0919c"
+                "url": "https://ftp.drupal.org/files/projects/search_api_pantheon-3.0.1.zip",
+                "reference": "3.0.1",
+                "shasum": "e2c31672a2598a8ab4c1ac24914a1be99402271f"
             },
             "require": {
-                "drupal/core": "^8.8 || ^9",
+                "drupal/core": "^8 || ^9",
                 "drupal/search_api_solr": "^4.2",
-                "ext-curl": "*",
-                "ext-json": "*",
-                "ext-zip": "*",
-                "guzzlehttp/guzzle": "^6.5.2",
-                "http-interop/http-factory-guzzle": "^1.0",
-                "php": ">=7.4",
-                "php-http/guzzle6-adapter": "^2.0",
-                "psr/event-dispatcher": "^1.0"
+                "drupal/search_api_solr_legacy": "*"
             },
             "require-dev": {
-                "consolidation/robo": "^3.0",
-                "czproject/git-php": "^4.0",
-                "drupal/coder": "@stable",
-                "drupal/search_api_solr": "*",
-                "phpunit/phpunit": "@stable",
-                "psy/psysh": "@stable",
-                "squizlabs/php_codesniffer": "@stable",
-                "symfony/yaml": "^4"
-            },
-            "suggest": {
-                "drupal/facets": "^1.8",
-                "drupal/search_api_autocomplete": "^1",
-                "drupal/search_api_page": "^1.0",
-                "drupal/search_api_spellcheck": "^3",
-                "kint-php/kint": "@stable"
+                "drupal/coder": "2.0-beta1",
+                "drupal/drupal-extension": "^3.4",
+                "drush-ops/behat-drush-endpoint": "*",
+                "squizlabs/php_codesniffer": "2.0.*@dev"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.0.0-beta9",
-                    "datestamp": "1644382304",
+                    "version": "3.0.1",
+                    "datestamp": "1636645051",
                     "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Beta releases are not covered by Drupal security advisories."
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
                     }
-                },
-                "drush": {
-                    "services": {
-                        "drush.services.yml": "^10"
-                    }
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Drupal\\search_api_pantheon\\": "src/",
-                    "Drupal\\search_api_pantheon\\tests\\": "tests/",
-                    "Drupal\\search_api\\": "vendor/drupal/search_api/src/",
-                    "Drupal\\search_api_solr\\": "vendor/drupal/search_api_solr/src/"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
-            "scripts": {
-                "code:test": [
-                    "vendor/bin/phpunit -c ./phpunit.xml"
-                ],
-                "code:fix": [
-                    "vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer",
-                    "vendor/bin/phpcbf . --ignore=RoboFile.php"
-                ],
-                "code:lint": [
-                    "vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer",
-                    "vendor/bin/phpcs --ignore=RoboFile.php . "
-                ],
-                "pre-commit": [
-                    "composer validate --strict",
-                    "@code:fix",
-                    "@code:lint",
-                    "@code:test"
-                ]
-            },
             "license": [
-                "MIT"
+                "GPL-2.0-or-later"
             ],
             "authors": [
                 {
@@ -12912,7 +12862,7 @@
                     "homepage": "https://www.drupal.org/user/1074930"
                 }
             ],
-            "description": "Connection module for Pantheon Search (solr 8)",
+            "description": "Search API + Solr + Pantheon integration",
             "homepage": "https://www.drupal.org/project/search_api_pantheon",
             "support": {
                 "source": "https://git.drupalcode.org/project/search_api_pantheon"
@@ -13019,6 +12969,60 @@
                 "source": "http://git.drupal.org/project/search_api_solr.git",
                 "issues": "https://www.drupal.org/project/issues/search_api_solr",
                 "chat": "https://drupalchat.me/channel/search"
+            }
+        },
+        {
+            "name": "drupal/search_api_solr_legacy",
+            "version": "4.2.7",
+            "require": {
+                "drupal/core": "^9.2 || ^10.0",
+                "drupal/search_api_solr": "*"
+            },
+            "type": "metapackage",
+            "extra": {
+                "drupal": {
+                    "version": "4.2.7",
+                    "datestamp": "1643655324",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Berdir",
+                    "homepage": "https://www.drupal.org/user/214652"
+                },
+                {
+                    "name": "Nick_vh",
+                    "homepage": "https://www.drupal.org/user/122682"
+                },
+                {
+                    "name": "amateescu",
+                    "homepage": "https://www.drupal.org/user/729614"
+                },
+                {
+                    "name": "cspitzlay",
+                    "homepage": "https://www.drupal.org/user/419305"
+                },
+                {
+                    "name": "drunken monkey",
+                    "homepage": "https://www.drupal.org/user/205582"
+                },
+                {
+                    "name": "mkalkbrenner",
+                    "homepage": "https://www.drupal.org/user/124705"
+                }
+            ],
+            "description": "Add support for older unsupported Solr versions (3.6, >=4.5, 5.x).",
+            "homepage": "https://www.drupal.org/project/search_api_solr",
+            "support": {
+                "source": "https://git.drupalcode.org/project/search_api_solr"
             }
         },
         {
@@ -30356,7 +30360,6 @@
         "drupal/entity_update": 20,
         "drupal/feeds_ex": 20,
         "drupal/feeds": 20,
-        "drupal/search_api_pantheon": 10,
         "drupal/devel_php": 20,
         "drupal/search_api_page": 20,
         "drupal/symfony_mailer": 20
