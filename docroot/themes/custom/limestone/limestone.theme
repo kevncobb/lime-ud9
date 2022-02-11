@@ -243,3 +243,37 @@ function limestone_theme_suggestions_views_view_list_alter (&$suggestions, $vars
     'views_view_list__' . $vars['view']->id()
   ];
 }
+
+function limestone_preprocess_search_result(&$variables) {
+  $language_interface = \Drupal::languageManager()
+    ->getCurrentLanguage();
+  $result = $variables['result'];
+  $variables['url'] = UrlHelper::stripDangerousProtocols($result['link']);
+  $variables['title'] = $result['title'];
+  if (isset($result['langcode']) && $result['langcode'] != $language_interface
+      ->getId() && $result['langcode'] != LanguageInterface::LANGCODE_NOT_SPECIFIED) {
+    $variables['title_attributes']['lang'] = $result['langcode'];
+    $variables['content_attributes']['lang'] = $result['langcode'];
+  }
+  $info = [];
+  if (!empty($result['plugin_id'])) {
+    $info['plugin_id'] = $result['plugin_id'];
+  }
+  
+  if (isset($result['extra']) && is_array($result['extra'])) {
+    $info = array_merge($info, $result['extra']);
+  }
+
+  // Check for existence. User search does not include snippets.
+  $variables['snippet'] = $result['snippet'] ?? '';
+
+  // Provide separated and grouped meta information..
+  $variables['info_split'] = $info;
+  $variables['info'] = [
+    '#type' => 'inline_template',
+    '#template' => '{{ info|safe_join(" - ") }}',
+    '#context' => [
+      'info' => $info,
+    ],
+  ];
+}
