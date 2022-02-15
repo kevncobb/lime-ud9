@@ -98,7 +98,7 @@ view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class
 {% endif %}
 
 {# Prints div with classes, and content without Width and Background. #}
-<div{{ attributes.addClass(classes).addClass(layout_background_classes).setAttribute('id', paragraph_id) }} {% if VBP.field_overlay.value %} data-overlay="{{ VBP.field_overlay.value }}" {% endif %}>
+<div{{ attributes.addClass(classes).addClass(layout_background_classes).setAttribute('id', paragraph_id) }} {% if content.field_overlay.value %} data-overlay="{{ content.field_overlay.value }}" {% endif %}>
   {% if add_container %}<div class="container">{% endif %}
         {% if attributes.hasClass('cover-image') %}
           <div class="cover-image-inner">

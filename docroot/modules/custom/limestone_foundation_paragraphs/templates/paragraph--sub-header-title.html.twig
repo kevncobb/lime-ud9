@@ -110,7 +110,7 @@
 
 {# Prints div with classes, and content without Width and Background. #}
 <div{{ attributes.addClass(classes).setAttribute('id', paragraph_id) }} {% if VBP.background_image.url %} style="background-image:url('{{- VBP.background_image.url -}}');" {% endif %}
-  {% if VBP.field_overlay.value %} data-overlay="{{ VBP.field_overlay.value }}" {% endif %}>
+  {% if content.field_overlay.value %} data-overlay="{{ content.field_overlay.value }}" {% endif %}>
     {% if add_container %}
     <div class="grid-container">{% endif %}
         <div>
