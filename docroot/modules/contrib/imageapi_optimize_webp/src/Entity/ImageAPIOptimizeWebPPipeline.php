@@ -33,13 +33,16 @@ class ImageAPIOptimizeWebPPipeline extends ImageAPIOptimizePipeline {
       $webp_uri = $image_uri . '.webp';
       foreach ($this->temporaryFiles as $temp_image_uri) {
         $temp_webp_uri = $temp_image_uri . '.webp';
-        $temp_image_uri = \Drupal::service('file_system')->copy($temp_webp_uri, $webp_uri, FileSystemInterface::EXISTS_RENAME);
-        if ($temp_image_uri) {
-          $this->temporaryFiles[] = $temp_webp_uri;
-          break;
+        if (file_exists($temp_webp_uri)) {
+          $temp_image_uri = \Drupal::service('file_system')->copy($temp_webp_uri, $webp_uri, FileSystemInterface::EXISTS_RENAME);
+          if ($temp_image_uri) {
+            $this->temporaryFiles[] = $temp_webp_uri;
+            break;
+          }
         }
       }
     }
   }
+
 }
 

@@ -54,7 +54,7 @@ class ImageStyleDownloadController extends CoreImageStyleDownloadController {
             $uri = $image->getSource();
             $headers = [
               'Content-Type' => 'image/webp',
-              'Content-Length' => filesize($image->getToolkit()->getResource()),
+              'Content-Length' => $image->getFileSize(),
             ];
             return new BinaryFileResponse($uri, 200, $headers, $scheme !== 'private');
           }

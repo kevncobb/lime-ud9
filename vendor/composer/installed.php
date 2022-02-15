@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '3a18612f02687490860601aa14ba3c0141b278e5',
+        'reference' => '739ac29d63e8b751ab1bd562fd9319f1c03d227e',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -1767,6 +1767,15 @@
                 0 => '3.x-dev',
             ),
             'reference' => '0aee9762e39c94b0463e174a648216e2fec6ae12',
+            'dev_requirement' => false,
+        ),
+        'drupal/imageapi_optimize_webp' => array(
+            'pretty_version' => '2.0.0-beta3',
+            'version' => '2.0.0.0-beta3',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/imageapi_optimize_webp',
+            'aliases' => array(),
+            'reference' => '2.0.0-beta3',
             'dev_requirement' => false,
         ),
         'drupal/imagemagick' => array(
@@ -5160,7 +5169,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '3a18612f02687490860601aa14ba3c0141b278e5',
+            'reference' => '739ac29d63e8b751ab1bd562fd9319f1c03d227e',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(
