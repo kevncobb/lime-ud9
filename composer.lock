@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "59a1b8d2998c3b07b546f86089552d47",
+    "content-hash": "417afbdcc67b11f0fa3d63eb2a0a171a",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -13395,17 +13395,11 @@
         },
         {
             "name": "drupal/simple_sitemap",
-            "version": "4.1.1",
+            "version": "dev-4.x",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/simple_sitemap.git",
-                "reference": "4.1.1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/simple_sitemap-4.1.1.zip",
-                "reference": "4.1.1",
-                "shasum": "ac23939364505d2e6b9d8c741b306c1b84059dfc"
+                "reference": "25c8d5ffc87b58738e22e715e4e3d992915916c6"
             },
             "require": {
                 "drupal/core": "^8.7.7 || ^9",
@@ -13413,12 +13407,15 @@
             },
             "type": "drupal-module",
             "extra": {
+                "branch-alias": {
+                    "dev-4.x": "4.x-dev"
+                },
                 "drupal": {
-                    "version": "4.1.1",
-                    "datestamp": "1644396787",
+                    "version": "4.x-dev",
+                    "datestamp": "1644619378",
                     "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
+                        "status": "not-covered",
+                        "message": "Dev releases are not covered by Drupal security advisories."
                     }
                 },
                 "drush": {
@@ -30362,6 +30359,7 @@
         "drupal/feeds": 20,
         "drupal/devel_php": 20,
         "drupal/search_api_page": 20,
+        "drupal/simple_sitemap": 20,
         "drupal/symfony_mailer": 20
     },
     "prefer-stable": true,

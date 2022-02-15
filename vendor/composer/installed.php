@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '677652a55161e78380a8d55628f5234fa4f9cd89',
+        'reference' => 'f46b3ef8e23a0111da0a6f641abd9b8ea9a82f26',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -2718,12 +2718,14 @@
             'dev_requirement' => false,
         ),
         'drupal/simple_sitemap' => array(
-            'pretty_version' => '4.1.1',
-            'version' => '4.1.1.0',
+            'pretty_version' => 'dev-4.x',
+            'version' => 'dev-4.x',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/simple_sitemap',
-            'aliases' => array(),
-            'reference' => '4.1.1',
+            'aliases' => array(
+                0 => '4.x-dev',
+            ),
+            'reference' => '25c8d5ffc87b58738e22e715e4e3d992915916c6',
             'dev_requirement' => false,
         ),
         'drupal/slick' => array(
@@ -5158,7 +5160,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '677652a55161e78380a8d55628f5234fa4f9cd89',
+            'reference' => 'f46b3ef8e23a0111da0a6f641abd9b8ea9a82f26',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(

@@ -69,7 +69,7 @@
     "drupal/image_effects": "^3.2",
     "drupal/minifyhtml": "^1.11",
     "drupal/robotstxt": "^1.4",
-    "drupal/simple_sitemap": "^4.1",
+    "drupal/simple_sitemap": "4.x-dev@dev",
     "drupal/varbase_media": "^9.0",
     "drupal/symfony_mailer": "1.x-dev@dev"
   },

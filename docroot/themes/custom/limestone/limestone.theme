@@ -259,7 +259,7 @@ function limestone_preprocess_search_result(&$variables) {
   if (!empty($result['plugin_id'])) {
     $info['plugin_id'] = $result['plugin_id'];
   }
-  
+
   if (isset($result['extra']) && is_array($result['extra'])) {
     $info = array_merge($info, $result['extra']);
   }
