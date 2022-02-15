@@ -173,11 +173,8 @@
                         {% endspaceless %}
                     {% endif %}
                     <a id="main-content"></a>
-                    <section class="grid-container">
-                        {{ page.content|without('node.field_lp_paragraphs') }}
-                    </section>
                     <section>
-                        {{ page.content|without('node.field_below_body', 'body', 'field_header_background_image', 'field_image', 'field_staff_department', 'field_under_submenu') }}
+                        {{ page.content }}
                     </section>
                 </main>
             {% endif %}
