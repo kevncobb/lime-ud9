@@ -14,7 +14,7 @@ class CsvParserTest extends FeedsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'field',
     'node',
     'feeds',

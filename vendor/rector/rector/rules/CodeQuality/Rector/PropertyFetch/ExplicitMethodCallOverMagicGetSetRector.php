@@ -8,9 +8,13 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
+use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\ResolvedMethodReflection;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -153,6 +157,26 @@ CODE_SAMPLE
         if (!$propertyCallerType->hasMethod($setterMethodName)->yes()) {
             return null;
         }
+        if ($this->hasNoParamOrVariadic($propertyCallerType, $propertyFetch, $setterMethodName)) {
+            return null;
+        }
         return $this->nodeFactory->createMethodCall($propertyFetch->var, $setterMethodName, [$expr]);
+    }
+    private function hasNoParamOrVariadic(\PHPStan\Type\ObjectType $objectType, \PhpParser\Node\Expr\PropertyFetch $propertyFetch, string $setterMethodName) : bool
+    {
+        $scope = $propertyFetch->getAttribute(\Rector\NodeTypeResolver\Node\AttributeKey::SCOPE);
+        if (!$scope instanceof \PHPStan\Analyser\Scope) {
+            return \false;
+        }
+        $methodReflection = $objectType->getMethod($setterMethodName, $scope);
+        if (!$methodReflection instanceof \PHPStan\Reflection\ResolvedMethodReflection) {
+            return \false;
+        }
+        $parametersAcceptor = \PHPStan\Reflection\ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
+        $parameters = $parametersAcceptor->getParameters();
+        if (\count($parameters) !== 1) {
+            return \true;
+        }
+        return $parameters[0]->isVariadic();
     }
 }

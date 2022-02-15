@@ -1,4 +1,4 @@
-# 519 Rules Overview
+# 522 Rules Overview
 
 <br>
 
@@ -10,7 +10,7 @@
 
 - [CodeQuality](#codequality) (70)
 
-- [CodingStyle](#codingstyle) (34)
+- [CodingStyle](#codingstyle) (35)
 
 - [Compatibility](#compatibility) (1)
 
@@ -32,13 +32,13 @@
 
 - [DowngradePhp71](#downgradephp71) (10)
 
-- [DowngradePhp72](#downgradephp72) (5)
+- [DowngradePhp72](#downgradephp72) (6)
 
 - [DowngradePhp73](#downgradephp73) (6)
 
 - [DowngradePhp74](#downgradephp74) (12)
 
-- [DowngradePhp80](#downgradephp80) (27)
+- [DowngradePhp80](#downgradephp80) (28)
 
 - [DowngradePhp81](#downgradephp81) (8)
 
@@ -2248,6 +2248,22 @@ Non-magic PHP object methods cannot start with "__"
 -        $anotherObject->__getSurname();
 +        $anotherObject->getSurname();
      }
+ }
+```
+
+<br>
+
+### RemoveFinalFromConstRector
+
+Remove final from constants in classes defined as final
+
+- class: [`Rector\CodingStyle\Rector\ClassConst\RemoveFinalFromConstRector`](../rules/CodingStyle/Rector/ClassConst/RemoveFinalFromConstRector.php)
+
+```diff
+ final class SomeClass
+ {
+-    final public const NAME = 'value';
++    public const NAME = 'value';
  }
 ```
 
@@ -4795,6 +4811,19 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
 <br>
 
+### DowngradePhp72JsonConstRector
+
+Change Json constant that available only in php 7.2 to 0
+
+- class: [`Rector\DowngradePhp72\Rector\ConstFetch\DowngradePhp72JsonConstRector`](../rules/DowngradePhp72/Rector/ConstFetch/DowngradePhp72JsonConstRector.php)
+
+```diff
+-$inDecoder = new Decoder($connection, true, 512, \JSON_INVALID_UTF8_IGNORE);
++$inDecoder = new Decoder($connection, true, 512, 0);
+```
+
+<br>
+
 ### DowngradePregUnmatchedAsNullConstantRector
 
 Remove PREG_UNMATCHED_AS_NULL from preg_match and set null value on empty string matched on each match
@@ -5726,6 +5755,33 @@ Downgrade `str_starts_with()` to `strncmp()` version
 ```diff
 -str_starts_with($haystack, $needle);
 +strncmp($haystack, $needle, strlen($needle)) === 0;
+```
+
+<br>
+
+### DowngradeStringReturnTypeOnToStringRector
+
+Add "string" return on current `__toString()` method when parent method has string return on `__toString()` method
+
+- class: [`Rector\DowngradePhp80\Rector\ClassMethod\DowngradeStringReturnTypeOnToStringRector`](../rules/DowngradePhp80/Rector/ClassMethod/DowngradeStringReturnTypeOnToStringRector.php)
+
+```diff
+ abstract class ParentClass
+ {
+     public function __toString(): string
+     {
+         return 'value';
+     }
+ }
+
+ class ChildClass extends ParentClass
+ {
+-    public function __toString()
++    public function __toString(): string
+     {
+         return 'value';
+     }
+ }
 ```
 
 <br>
@@ -8024,7 +8080,25 @@ Add null default to properties with PHP 7.4 property nullable type
 
 Changes property `@var` annotations from annotation to type.
 
+:wrench: **configure it!**
+
 - class: [`Rector\Php74\Rector\Property\TypedPropertyRector`](../rules/Php74/Rector/Property/TypedPropertyRector.php)
+
+```php
+use Rector\Php74\Rector\Property\TypedPropertyRector;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+
+return static function (ContainerConfigurator $containerConfigurator): void {
+    $services = $containerConfigurator->services();
+
+    $services->set(TypedPropertyRector::class)
+        ->configure([
+            TypedPropertyRector::INLINE_PUBLIC => false,
+        ]);
+};
+```
+
+↓
 
 ```diff
  final class SomeClass
@@ -8482,7 +8556,7 @@ Change docs types to union types, where possible (properties are covered by Type
 
 ### FinalizePublicClassConstantRector
 
-Add final to constants that
+Add final to constants that does not have children
 
 - class: [`Rector\Php81\Rector\ClassConst\FinalizePublicClassConstantRector`](../rules/Php81/Rector/ClassConst/FinalizePublicClassConstantRector.php)
 

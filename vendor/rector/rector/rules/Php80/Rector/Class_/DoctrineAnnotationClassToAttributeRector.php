@@ -24,7 +24,7 @@ use Rector\PostRector\ValueObject\PropertyMetadata;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220126\Webmozart\Assert\Assert;
+use RectorPrefix20220209\Webmozart\Assert\Assert;
 /**
  * @changelog https://php.watch/articles/php-attributes#syntax
  *
@@ -36,7 +36,6 @@ use RectorPrefix20220126\Webmozart\Assert\Assert;
 final class DoctrineAnnotationClassToAttributeRector extends \Rector\Core\Rector\AbstractRector implements \Rector\Core\Contract\Rector\ConfigurableRectorInterface, \Rector\VersionBonding\Contract\MinPhpVersionInterface
 {
     /**
-     * @deprecated
      * @var string
      */
     public const REMOVE_ANNOTATIONS = 'remove_annotations';
@@ -167,8 +166,8 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $shouldRemoveAnnotations = $configuration[self::REMOVE_ANNOTATIONS] ?? \true;
-        \RectorPrefix20220126\Webmozart\Assert\Assert::boolean($shouldRemoveAnnotations);
+        $shouldRemoveAnnotations = $configuration[self::REMOVE_ANNOTATIONS] ?? (bool) \current($configuration);
+        \RectorPrefix20220209\Webmozart\Assert\Assert::boolean($shouldRemoveAnnotations);
         $this->shouldRemoveAnnotations = $shouldRemoveAnnotations;
     }
     private function decorateTarget(\Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo $phpDocInfo, \PhpParser\Node\AttributeGroup $attributeGroup) : void

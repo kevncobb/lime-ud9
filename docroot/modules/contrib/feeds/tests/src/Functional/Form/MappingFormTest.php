@@ -13,7 +13,7 @@ class MappingFormTest extends FeedsBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'feeds',
     'node',
     'user',
@@ -195,7 +195,7 @@ class MappingFormTest extends FeedsBrowserTestBase {
     ];
 
     $this->drupalPostForm('/admin/structure/feeds/manage/' . $feed_type->id() . '/mapping', $edit, 'Save');
-    $this->assertText('Invalid value.');
+    $this->assertSession()->responseContains('Invalid value.');
 
     // Assert that the dummy value was *not* saved for the parser.
     $feed_type = $this->reloadEntity($feed_type);

@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix20220126;
+namespace RectorPrefix20220209;
 
 use Rector\Composer\Rector\ChangePackageVersionComposerRector;
 use Rector\Composer\Rector\RemovePackageComposerRector;

@@ -3,7 +3,6 @@
 declare (strict_types=1);
 namespace Rector\Renaming\Rector\Namespace_;
 
-use RectorPrefix20220126\Nette\Utils\Strings;
 use PhpParser\Node;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Name;
@@ -18,7 +17,7 @@ use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Renaming\ValueObject\RenamedNamespace;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220126\Webmozart\Assert\Assert;
+use RectorPrefix20220209\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Renaming\Rector\Namespace_\RenameNamespaceRector\RenameNamespaceRectorTest
  */
@@ -103,20 +102,23 @@ final class RenameNamespaceRector extends \Rector\Core\Rector\AbstractRector imp
     public function configure(array $configuration) : void
     {
         $oldToNewNamespaces = $configuration[self::OLD_TO_NEW_NAMESPACES] ?? $configuration;
-        \RectorPrefix20220126\Webmozart\Assert\Assert::allString(\array_keys($oldToNewNamespaces));
-        \RectorPrefix20220126\Webmozart\Assert\Assert::allString($oldToNewNamespaces);
+        \RectorPrefix20220209\Webmozart\Assert\Assert::allString(\array_keys($oldToNewNamespaces));
+        \RectorPrefix20220209\Webmozart\Assert\Assert::allString($oldToNewNamespaces);
         /** @var array<string, string> $oldToNewNamespaces */
         $this->oldToNewNamespaces = $oldToNewNamespaces;
     }
     private function processFullyQualified(\PhpParser\Node\Name $name, \Rector\Renaming\ValueObject\RenamedNamespace $renamedNamespace) : ?\PhpParser\Node\Name\FullyQualified
     {
-        $newName = $this->isPartialNamespace($name) ? $this->resolvePartialNewName($name, $renamedNamespace) : $renamedNamespace->getNameInNewNamespace();
-        $values = \array_values($this->oldToNewNamespaces);
-        if (!isset($this->isChangedInNamespaces[$newName])) {
-            return new \PhpParser\Node\Name\FullyQualified($newName);
+        if (\strncmp($name->toString(), $renamedNamespace->getNewNamespace() . '\\', \strlen($renamedNamespace->getNewNamespace() . '\\')) === 0) {
+            return null;
         }
-        if (!\in_array($newName, $values, \true)) {
-            return new \PhpParser\Node\Name\FullyQualified($newName);
+        $nameInNewNamespace = $renamedNamespace->getNameInNewNamespace();
+        $values = \array_values($this->oldToNewNamespaces);
+        if (!isset($this->isChangedInNamespaces[$nameInNewNamespace])) {
+            return new \PhpParser\Node\Name\FullyQualified($nameInNewNamespace);
+        }
+        if (!\in_array($nameInNewNamespace, $values, \true)) {
+            return new \PhpParser\Node\Name\FullyQualified($nameInNewNamespace);
         }
         return null;
     }
@@ -137,23 +139,5 @@ final class RenameNamespaceRector extends \Rector\Core\Rector\AbstractRector imp
         $fullyQualifiedNode = $parentNode->class;
         $newClassName = $fullyQualifiedNode->toString();
         return \array_key_exists($newClassName, $this->oldToNewNamespaces);
-    }
-    private function isPartialNamespace(\PhpParser\Node\Name $name) : bool
-    {
-        $resolvedName = $name->getAttribute(\Rector\NodeTypeResolver\Node\AttributeKey::RESOLVED_NAME);
-        if (!$resolvedName instanceof \PhpParser\Node\Name) {
-            return \false;
-        }
-        if ($resolvedName instanceof \PhpParser\Node\Name\FullyQualified) {
-            return !$this->isName($name, $resolvedName->toString());
-        }
-        return \false;
-    }
-    private function resolvePartialNewName(\PhpParser\Node\Name $name, \Rector\Renaming\ValueObject\RenamedNamespace $renamedNamespace) : string
-    {
-        $nameInNewNamespace = $renamedNamespace->getNameInNewNamespace();
-        // first dummy implementation - improve
-        $cutOffFromTheLeft = \RectorPrefix20220126\Nette\Utils\Strings::length($nameInNewNamespace) - \RectorPrefix20220126\Nette\Utils\Strings::length($name->toString());
-        return \RectorPrefix20220126\Nette\Utils\Strings::substring($nameInNewNamespace, $cutOffFromTheLeft);
     }
 }

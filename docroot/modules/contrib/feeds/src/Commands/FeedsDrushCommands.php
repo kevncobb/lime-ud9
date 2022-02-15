@@ -75,7 +75,8 @@ class FeedsDrushCommands extends DrushCommands {
     'disabled' => FALSE,
     'format' => 'table',
   ]) {
-    $entityQuery = $this->entityTypeManager->getStorage('feeds_feed')->getQuery();
+    $entityQuery = $this->entityTypeManager->getStorage('feeds_feed')->getQuery()
+      ->accessCheck(FALSE);
     if (!empty($feed_type)) {
       $entityQuery->condition('type', $feed_type);
     }
@@ -252,7 +253,8 @@ class FeedsDrushCommands extends DrushCommands {
    *   In case something went wrong when importing the feeds.
    */
   public function importAllFeeds(array $feed_types, array $options = ['import-disabled' => FALSE]) {
-    $entityQuery = $this->entityTypeManager->getStorage('feeds_feed')->getQuery();
+    $entityQuery = $this->entityTypeManager->getStorage('feeds_feed')->getQuery()
+      ->accessCheck(FALSE);
     if (!empty($feed_types)) {
       $entityQuery->condition('type', $feed_types, 'IN');
     }

@@ -12,8 +12,7 @@ use Drupal\varbase\Config\ConfigBit;
 use Drupal\varbase\Form\ConfigureMultilingualForm;
 use Drupal\varbase\Form\AssemblerForm;
 use Drupal\varbase\Form\DevelopmentToolsAssemblerForm;
-use Drupal\varbase\Entity\VarbaseEntityDefinitionUpdateManager;
-use Drupal\node\Entity\Node;
+use Vardot\Entity\EntityDefinitionUpdateManager;
 use Drupal\path_alias\Entity\PathAlias;
 
 /**
@@ -122,6 +121,20 @@ function varbase_assemble_extra_components(array &$install_state) {
 
   if (isset($install_state['varbase']['extra_features_configs'])) {
     $selected_extra_features_configs = $install_state['varbase']['extra_features_configs'];
+  }
+
+  if (isset($selected_extra_features['varbase_heroslider_media'])
+  && $selected_extra_features['varbase_heroslider_media'] == TRUE) {
+    $batch['operations'][] = [
+      'varbase_install_component',
+      (array) 'enabled_varbase_heroslider_media_content',
+    ];
+  }
+  else {
+    $batch['operations'][] = [
+      'varbase_install_component',
+      (array) 'disabled_varbase_heroslider_media_content',
+    ];
   }
 
   // Get the list of extra features config bits.
@@ -250,28 +263,17 @@ function varbase_assemble_extra_components(array &$install_state) {
 
   if (isset($selected_extra_features['varbase_heroslider_media'])
     && $selected_extra_features['varbase_heroslider_media'] == TRUE) {
-    $batch['operations'][] = [
-      'varbase_install_component',
-      (array) 'enabled_varbase_heroslider_media_content',
-    ];
     $uninstall_components[] = 'enabled_varbase_heroslider_media_content';
   }
   else {
-    $batch['operations'][] = [
-      'varbase_install_component',
-      (array) 'disabled_varbase_heroslider_media_content',
-    ];
     $uninstall_components[] = 'disabled_varbase_heroslider_media_content';
   }
 
-  // Reset timestamp for nodes.
-  $node_ids = \Drupal::entityQuery('node')->execute();
-  if (isset($node_ids)
-    && is_array($node_ids)
-    && count($node_ids) > 0) {
-
-    $batch['operations'][] = ['varbase_reset_timestamp_for_nodes', $node_ids];
-  }
+  // Reset timestamp for default content.
+  $batch['operations'][] = [
+    'varbase_reset_timestamp_for_default_content',
+    (array) TRUE,
+  ];
 
   if (count($uninstall_components) > 0) {
     foreach ($uninstall_components as $uninstall_component) {
@@ -474,7 +476,7 @@ function varbase_configure_language_and_fetch_traslation($language_code) {
 function varbase_fix_entity_update($entity_update) {
   if ($entity_update) {
     \Drupal::classResolver()
-      ->getInstanceFromDefinition(VarbaseEntityDefinitionUpdateManager::class)
+      ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
       ->applyUpdates();
   }
 }
@@ -518,17 +520,60 @@ function varbase_uninstall_component($uninstall_component) {
 }
 
 /**
- * Batch to reset timestamp for selected nodes.
+ * Batch to reset timestamp for default content.
  *
- * @param array $node_ids
- *   The Node IDs.
+ * @param string|array $reset
+ *   To entity update or not.
  */
-function varbase_reset_timestamp_for_nodes(array $node_ids) {
-  foreach ($node_ids as $nid) {
-    $node = Node::load($nid);
-    if (isset($node)) {
-      $node->created = \Drupal::time()->getCurrentTime();
-      $node->save();
+function varbase_reset_timestamp_for_default_content($reset) {
+
+  if ($reset) {
+    // Reset timestamp for all file's default content.
+    $file_storage = \Drupal::service('entity_type.manager')->getStorage('file');
+    $file_ids = $file_storage->getQuery()->execute();
+    if (isset($file_ids)
+      && is_array($file_ids)
+      && count($file_ids) > 0) {
+
+      foreach ($file_ids as $fid) {
+        $file = \Drupal::service('entity_type.manager')->getStorage('file')->load($fid);
+        if (isset($file)) {
+          $file->set('created', \Drupal::time()->getCurrentTime());
+          $file->save();
+        }
+      }
+    }
+
+    // Reset timestamp for all Media's default content.
+    $media_storage = \Drupal::service('entity_type.manager')->getStorage('media');
+    $media_ids = $media_storage->getQuery()->execute();
+    if (isset($media_ids)
+      && is_array($media_ids)
+      && count($media_ids) > 0) {
+
+      foreach ($media_ids as $mid) {
+        $media = \Drupal::service('entity_type.manager')->getStorage('media')->load($mid);
+        if (isset($media)) {
+          $media->set('created', \Drupal::time()->getCurrentTime());
+          $media->save();
+        }
+      }
+    }
+
+    // Reset timestamp for all Node's default content.
+    $node_storage = \Drupal::service('entity_type.manager')->getStorage('node');
+    $node_ids = $node_storage->getQuery()->execute();
+    if (isset($node_ids)
+      && is_array($node_ids)
+      && count($node_ids) > 0) {
+
+      foreach ($node_ids as $nid) {
+        $node = \Drupal::service('entity_type.manager')->getStorage('node')->load($nid);
+        if (isset($node)) {
+          $node->set('created', \Drupal::time()->getCurrentTime());
+          $node->save();
+        }
+      }
     }
   }
 }
@@ -563,7 +608,7 @@ function varbase_after_install_finished(array &$install_state) {
   // Entity updates to clear up any mismatched entity and/or field definitions
   // And Fix changes were detected in the entity type and field definitions.
   \Drupal::classResolver()
-    ->getInstanceFromDefinition(VarbaseEntityDefinitionUpdateManager::class)
+    ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
     ->applyUpdates();
 
   // Full flash and clear cash and rebuilding newly created routes.

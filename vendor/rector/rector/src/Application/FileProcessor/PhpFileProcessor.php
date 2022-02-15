@@ -20,7 +20,7 @@ use Rector\Core\ValueObject\Reporting\FileDiff;
 use Rector\Parallel\ValueObject\Bridge;
 use Rector\PostRector\Application\PostFileProcessor;
 use Rector\Testing\PHPUnit\StaticPHPUnitEnvironment;
-use RectorPrefix20220126\Symfony\Component\Console\Style\SymfonyStyle;
+use RectorPrefix20220209\Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
 final class PhpFileProcessor implements \Rector\Core\Contract\Processor\FileProcessorInterface
 {
@@ -64,7 +64,7 @@ final class PhpFileProcessor implements \Rector\Core\Contract\Processor\FileProc
      * @var \Rector\ChangesReporting\ValueObjectFactory\ErrorFactory
      */
     private $errorFactory;
-    public function __construct(\Rector\Core\PhpParser\Printer\FormatPerservingPrinter $formatPerservingPrinter, \Rector\Core\Application\FileProcessor $fileProcessor, \Rector\Core\Application\FileSystem\RemovedAndAddedFilesCollector $removedAndAddedFilesCollector, \RectorPrefix20220126\Symfony\Component\Console\Style\SymfonyStyle $symfonyStyle, \Rector\Core\Application\FileDecorator\FileDiffFileDecorator $fileDiffFileDecorator, \Rector\Core\Provider\CurrentFileProvider $currentFileProvider, \Rector\PostRector\Application\PostFileProcessor $postFileProcessor, \Rector\ChangesReporting\ValueObjectFactory\ErrorFactory $errorFactory)
+    public function __construct(\Rector\Core\PhpParser\Printer\FormatPerservingPrinter $formatPerservingPrinter, \Rector\Core\Application\FileProcessor $fileProcessor, \Rector\Core\Application\FileSystem\RemovedAndAddedFilesCollector $removedAndAddedFilesCollector, \RectorPrefix20220209\Symfony\Component\Console\Style\SymfonyStyle $symfonyStyle, \Rector\Core\Application\FileDecorator\FileDiffFileDecorator $fileDiffFileDecorator, \Rector\Core\Provider\CurrentFileProvider $currentFileProvider, \Rector\PostRector\Application\PostFileProcessor $postFileProcessor, \Rector\ChangesReporting\ValueObjectFactory\ErrorFactory $errorFactory)
     {
         $this->formatPerservingPrinter = $formatPerservingPrinter;
         $this->fileProcessor = $fileProcessor;
@@ -90,13 +90,7 @@ final class PhpFileProcessor implements \Rector\Core\Contract\Processor\FileProc
             return $systemErrorsAndFileDiffs;
         }
         // 2. change nodes with Rectors
-        $loopCounter = 0;
         do {
-            ++$loopCounter;
-            if ($loopCounter === 10) {
-                // ensure no infinite loop
-                break;
-            }
             $file->changeHasChanged(\false);
             $this->refactorNodesWithRectors($file, $configuration);
             // 3. apply post rectors

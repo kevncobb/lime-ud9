@@ -30,7 +30,7 @@ abstract class FeedsJavascriptTestBase extends WebDriverTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'feeds',
     'node',
     'user',

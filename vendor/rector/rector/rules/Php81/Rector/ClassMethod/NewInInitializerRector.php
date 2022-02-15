@@ -13,9 +13,13 @@ use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Property;
+use PHPStan\Reflection\ClassReflection;
 use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Reflection\ReflectionResolver;
 use Rector\Core\ValueObject\MethodName;
 use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\FamilyTree\NodeAnalyzer\ClassChildAnalyzer;
+use Rector\Php81\NodeAnalyzer\ComplexNewAnalyzer;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -26,6 +30,27 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class NewInInitializerRector extends \Rector\Core\Rector\AbstractRector implements \Rector\VersionBonding\Contract\MinPhpVersionInterface
 {
+    /**
+     * @readonly
+     * @var \Rector\Php81\NodeAnalyzer\ComplexNewAnalyzer
+     */
+    private $complexNewAnalyzer;
+    /**
+     * @readonly
+     * @var \Rector\Core\Reflection\ReflectionResolver
+     */
+    private $reflectionResolver;
+    /**
+     * @readonly
+     * @var \Rector\FamilyTree\NodeAnalyzer\ClassChildAnalyzer
+     */
+    private $classChildAnalyzer;
+    public function __construct(\Rector\Php81\NodeAnalyzer\ComplexNewAnalyzer $complexNewAnalyzer, \Rector\Core\Reflection\ReflectionResolver $reflectionResolver, \Rector\FamilyTree\NodeAnalyzer\ClassChildAnalyzer $classChildAnalyzer)
+    {
+        $this->complexNewAnalyzer = $complexNewAnalyzer;
+        $this->reflectionResolver = $reflectionResolver;
+        $this->classChildAnalyzer = $classChildAnalyzer;
+    }
     public function getRuleDefinition() : \Symplify\RuleDocGenerator\ValueObject\RuleDefinition
     {
         return new \Symplify\RuleDocGenerator\ValueObject\RuleDefinition('Replace property declaration of new state with direct new', [new \Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample(<<<'CODE_SAMPLE'
@@ -67,27 +92,31 @@ CODE_SAMPLE
             return null;
         }
         $params = $this->matchConstructorParams($node);
-        if ($params === null) {
+        if ($params === []) {
+            return null;
+        }
+        if ($this->isOverrideAbstractMethod($node)) {
             return null;
         }
         foreach ($params as $param) {
-            if (!$param->type instanceof \PhpParser\Node\NullableType) {
-                continue;
-            }
             /** @var string $paramName */
             $paramName = $this->getName($param->var);
             $toPropertyAssigns = $this->betterNodeFinder->findClassMethodAssignsToLocalProperty($node, $paramName);
+            $toPropertyAssigns = \array_filter($toPropertyAssigns, function ($v) : bool {
+                return $v->expr instanceof \PhpParser\Node\Expr\BinaryOp\Coalesce;
+            });
             foreach ($toPropertyAssigns as $toPropertyAssign) {
-                if (!$toPropertyAssign->expr instanceof \PhpParser\Node\Expr\BinaryOp\Coalesce) {
+                /** @var Coalesce $coalesce */
+                $coalesce = $toPropertyAssign->expr;
+                if (!$coalesce->right instanceof \PhpParser\Node\Expr\New_) {
                     continue;
                 }
-                if (!$toPropertyAssign->expr->right instanceof \PhpParser\Node\Expr\New_) {
+                if ($this->complexNewAnalyzer->isDynamic($coalesce->right)) {
                     continue;
                 }
                 /** @var NullableType $currentParamType */
                 $currentParamType = $param->type;
                 $param->type = $currentParamType->type;
-                $coalesce = $toPropertyAssign->expr;
                 $param->default = $coalesce->right;
                 $this->removeNode($toPropertyAssign);
                 $this->processPropertyPromotion($node, $param, $paramName);
@@ -98,6 +127,12 @@ CODE_SAMPLE
     public function provideMinPhpVersion() : int
     {
         return \Rector\Core\ValueObject\PhpVersionFeature::NEW_INITIALIZERS;
+    }
+    private function isOverrideAbstractMethod(\PhpParser\Node\Stmt\ClassMethod $classMethod) : bool
+    {
+        $classReflection = $this->reflectionResolver->resolveClassReflectionFromClassMethod($classMethod);
+        $methodName = $this->nodeNameResolver->getName($classMethod);
+        return $classReflection instanceof \PHPStan\Reflection\ClassReflection && $this->classChildAnalyzer->hasAbstractParentClassMethod($classReflection, $methodName);
     }
     private function processPropertyPromotion(\PhpParser\Node\Stmt\ClassMethod $classMethod, \PhpParser\Node\Param $param, string $paramName) : void
     {
@@ -124,19 +159,21 @@ CODE_SAMPLE
         return \true;
     }
     /**
-     * @return mixed[]|null
+     * @return Param[]
      */
-    private function matchConstructorParams(\PhpParser\Node\Stmt\ClassMethod $classMethod)
+    private function matchConstructorParams(\PhpParser\Node\Stmt\ClassMethod $classMethod) : array
     {
         if (!$this->isName($classMethod, \Rector\Core\ValueObject\MethodName::CONSTRUCT)) {
-            return null;
+            return [];
         }
         if ($classMethod->params === []) {
-            return null;
+            return [];
         }
-        if ($classMethod->stmts === []) {
-            return null;
+        if ((array) $classMethod->stmts === []) {
+            return [];
         }
-        return $classMethod->params;
+        return \array_filter($classMethod->params, function ($v) : bool {
+            return $v->type instanceof \PhpParser\Node\NullableType;
+        });
     }
 }

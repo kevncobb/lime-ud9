@@ -4,8 +4,8 @@ declare (strict_types=1);
 namespace Rector\Core\ValueObject\Error;
 
 use Rector\Parallel\ValueObject\Name;
-use RectorPrefix20220126\Symplify\EasyParallel\Contract\SerializableInterface;
-final class SystemError implements \RectorPrefix20220126\Symplify\EasyParallel\Contract\SerializableInterface
+use RectorPrefix20220209\Symplify\EasyParallel\Contract\SerializableInterface;
+final class SystemError implements \RectorPrefix20220209\Symplify\EasyParallel\Contract\SerializableInterface
 {
     /**
      * @readonly
@@ -61,6 +61,10 @@ final class SystemError implements \RectorPrefix20220126\Symplify\EasyParallel\C
     {
         return $this->relativeFilePath . ':' . $this->line;
     }
+    public function getRelativeFilePath() : ?string
+    {
+        return $this->relativeFilePath;
+    }
     /**
      * @return array{message: string, relative_file_path: string|null, line: int|null, rector_class: string|null}
      */
@@ -71,7 +75,7 @@ final class SystemError implements \RectorPrefix20220126\Symplify\EasyParallel\C
     /**
      * @param mixed[] $json
      */
-    public static function decode(array $json) : \RectorPrefix20220126\Symplify\EasyParallel\Contract\SerializableInterface
+    public static function decode(array $json) : \RectorPrefix20220209\Symplify\EasyParallel\Contract\SerializableInterface
     {
         return new self($json[\Rector\Parallel\ValueObject\Name::MESSAGE], $json[\Rector\Parallel\ValueObject\Name::RELATIVE_FILE_PATH], $json[\Rector\Parallel\ValueObject\Name::LINE], $json[\Rector\Parallel\ValueObject\Name::RECTOR_CLASS]);
     }

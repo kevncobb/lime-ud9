@@ -107,7 +107,7 @@
         //event.stopPropagation();
         //event.preventDefault();
         var focus = function(){
-          $('form#search-block-form input.form-search').focus();
+          $('form#search-api-page-block-form-limestone-search-page input.form-search').focus();
         };
         setTimeout(focus, 500);
       });

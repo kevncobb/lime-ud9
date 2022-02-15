@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix20220126;
+namespace RectorPrefix20220209;
 
 use PHPStan\Type\StringType;
 use Rector\Renaming\Rector\ClassConstFetch\RenameClassConstFetchRector;

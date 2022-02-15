@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix20220126\Symfony\Component\Finder\Iterator;
+namespace RectorPrefix20220209\Symfony\Component\Finder\Iterator;
 
-use RectorPrefix20220126\Symfony\Component\Finder\Gitignore;
+use RectorPrefix20220209\Symfony\Component\Finder\Gitignore;
 final class VcsIgnoredFilterIterator extends \FilterIterator
 {
     /**
@@ -47,7 +47,6 @@ final class VcsIgnoredFilterIterator extends \FilterIterator
         $ignored = \false;
         foreach ($this->parentsDirectoryDownward($fileRealPath) as $parentDirectory) {
             if ($this->isIgnored($parentDirectory)) {
-                $ignored = \true;
                 // rules in ignored directories are ignored, no need to check further.
                 break;
             }
@@ -102,7 +101,7 @@ final class VcsIgnoredFilterIterator extends \FilterIterator
             throw new \RuntimeException("The \"ignoreVCSIgnored\" option cannot be used by the Finder as the \"{$path}\" file is not readable.");
         }
         $gitignoreFileContent = \file_get_contents($path);
-        return $this->gitignoreFilesCache[$path] = [\RectorPrefix20220126\Symfony\Component\Finder\Gitignore::toRegex($gitignoreFileContent), \RectorPrefix20220126\Symfony\Component\Finder\Gitignore::toRegexMatchingNegatedPatterns($gitignoreFileContent)];
+        return $this->gitignoreFilesCache[$path] = [\RectorPrefix20220209\Symfony\Component\Finder\Gitignore::toRegex($gitignoreFileContent), \RectorPrefix20220209\Symfony\Component\Finder\Gitignore::toRegexMatchingNegatedPatterns($gitignoreFileContent)];
     }
     private function normalizePath(string $path) : string
     {

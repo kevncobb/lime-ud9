@@ -20,7 +20,7 @@ composer create-project vardot/varbase:9.0.x-dev PROJECT_DIR_NAME --stability de
 ```
 cd path to your files of the project/PROJECT_DIR_NAME
 composer require --dev drupal/core-dev:~9.0
-composer require --dev drush/drush:~10
+composer require --dev drush/drush:~11.0
 composer require --dev drupal/drupal-extension:~4.0
 composer require --dev emuse/behat-html-formatter:^0.2.0
 
@@ -86,7 +86,7 @@ composer require drupal/drush_language:~1.0
 
 ### Add testing users.
 Change directory in the terminal to the path of the project
- and `/PROJECT_DIR_NAME/docroot/docroot/profiles/varbase/scripts`
+ and `/PROJECT_DIR_NAME/docroot/profiles/varbase/scripts`
 And run the following base command
 ```
   bash add-testing-users.sh

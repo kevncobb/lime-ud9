@@ -86,6 +86,7 @@ function feeds_help($route_name, RouteMatchInterface $route_match) {
  */
 function feeds_cron() {
   $ids = \Drupal::entityQuery('feeds_feed')
+    ->accessCheck(FALSE)
     ->condition('queued', 0)
     ->condition('next', \Drupal::time()->getRequestTime(), '<=')
     ->condition('next', -1, '<>')
@@ -102,6 +103,7 @@ function feeds_cron() {
 
   // Delete queued timestamp after 12 hours assuming the update has failed.
   $ids = \Drupal::entityQuery('feeds_feed')
+    ->accessCheck(FALSE)
     ->condition('queued', \Drupal::time()->getRequestTime() - (3600 * 12), '<')
     ->condition('queued', 0, '<>')
     ->execute();

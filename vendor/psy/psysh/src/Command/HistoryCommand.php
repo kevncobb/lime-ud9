@@ -156,7 +156,7 @@ HELP
      *
      * @return array [ start, end ]
      */
-    private function extractRange(string $range): array
+    private function extractRange($range)
     {
         if (\preg_match('/^\d+$/', $range)) {
             return [$range, $range + 1];
@@ -176,13 +176,13 @@ HELP
     /**
      * Retrieve a slice of the readline history.
      *
-     * @param string|null $show
-     * @param string|null $head
-     * @param string|null $tail
+     * @param string $show
+     * @param string $head
+     * @param string $tail
      *
-     * @return array A slice of history
+     * @return array A slilce of history
      */
-    private function getHistorySlice($show, $head, $tail): array
+    private function getHistorySlice($show, $head, $tail)
     {
         $history = $this->readline->listHistory();
 
@@ -241,7 +241,7 @@ HELP
         $this->readline->clearHistory();
     }
 
-    public static function escape(string $string): string
+    public static function escape($string)
     {
         return OutputFormatter::escape($string);
     }

@@ -23,7 +23,7 @@ use Rector\Core\PhpParser\Comparing\NodeComparator;
 use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use RectorPrefix20220126\Symplify\PackageBuilder\Php\TypeChecker;
+use RectorPrefix20220209\Symplify\PackageBuilder\Php\TypeChecker;
 final class AssignManipulator
 {
     /**
@@ -55,7 +55,7 @@ final class AssignManipulator
      * @var \Symplify\PackageBuilder\Php\TypeChecker
      */
     private $typeChecker;
-    public function __construct(\Rector\NodeNameResolver\NodeNameResolver $nodeNameResolver, \Rector\Core\PhpParser\Comparing\NodeComparator $nodeComparator, \Rector\Core\PhpParser\Node\BetterNodeFinder $betterNodeFinder, \Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer $propertyFetchAnalyzer, \RectorPrefix20220126\Symplify\PackageBuilder\Php\TypeChecker $typeChecker)
+    public function __construct(\Rector\NodeNameResolver\NodeNameResolver $nodeNameResolver, \Rector\Core\PhpParser\Comparing\NodeComparator $nodeComparator, \Rector\Core\PhpParser\Node\BetterNodeFinder $betterNodeFinder, \Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer $propertyFetchAnalyzer, \RectorPrefix20220209\Symplify\PackageBuilder\Php\TypeChecker $typeChecker)
     {
         $this->nodeNameResolver = $nodeNameResolver;
         $this->nodeComparator = $nodeComparator;
@@ -103,7 +103,7 @@ final class AssignManipulator
     {
         $previousNode = $node;
         $parentNode = $node->getAttribute(\Rector\NodeTypeResolver\Node\AttributeKey::PARENT_NODE);
-        while ($parentNode !== null && !$parentNode instanceof \PhpParser\Node\Stmt\Expression) {
+        while ($parentNode instanceof \PhpParser\Node && !$parentNode instanceof \PhpParser\Node\Stmt\Expression) {
             if ($parentNode instanceof \PhpParser\Node\Expr\Assign && $this->nodeComparator->areNodesEqual($parentNode->var, $previousNode)) {
                 return \true;
             }

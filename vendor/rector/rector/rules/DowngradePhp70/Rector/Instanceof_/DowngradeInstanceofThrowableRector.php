@@ -10,6 +10,8 @@ use PhpParser\Node\Expr\Instanceof_;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\Stmt;
+use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Naming\Naming\VariableNaming;
 use Rector\NodeCollector\BinaryOpConditionsCollector;
@@ -70,10 +72,6 @@ CODE_SAMPLE
         if (!($node->class instanceof \PhpParser\Node\Name && $this->nodeNameResolver->isName($node->class, 'Throwable'))) {
             return null;
         }
-        $createdByRule = $node->getAttribute(\Rector\NodeTypeResolver\Node\AttributeKey::CREATED_BY_RULE) ?? [];
-        if (\in_array(self::class, $createdByRule, \true)) {
-            return null;
-        }
         // Ensure the refactoring is idempotent.
         if ($this->isAlreadyTransformed($node)) {
             return null;
@@ -88,6 +86,9 @@ CODE_SAMPLE
     private function createVariable(\PhpParser\Node\Expr\Instanceof_ $instanceof) : \PhpParser\Node\Expr\Variable
     {
         $currentStmt = $instanceof->getAttribute(\Rector\NodeTypeResolver\Node\AttributeKey::CURRENT_STATEMENT);
+        if (!$currentStmt instanceof \PhpParser\Node\Stmt) {
+            throw new \Rector\Core\Exception\ShouldNotHappenException();
+        }
         $scope = $currentStmt->getAttribute(\Rector\NodeTypeResolver\Node\AttributeKey::SCOPE);
         return new \PhpParser\Node\Expr\Variable($this->variableNaming->createCountedValueName('throwable', $scope));
     }
