@@ -129,14 +129,14 @@ view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
         </button>
           {% if content.bp_modal_title|render %}
             <div class="modal-title" id="{{ paragraph_id_modal }}-label">
-                {{ content.bp_modal_title }}
+                {{ content.bp_modal_title.value }}
             </div>
           {% endif %}
       </div>
         {% if content.bp_modal_body|render %}
           <div class="modal-body">
             {% if key|first != '#' %}
-              {% for key, item in content.bp_modal_body %}
+              {% for key, item in content.bp_modal_body.value %}
                   {{ item }}
               {% endfor %}
             {% endif %}
@@ -145,7 +145,7 @@ view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
         {% if content.bp_modal_footer|render %}
           <div class="modal-footer">
             {% if key|first != '#' %}
-              {% for key, item in content.bp_modal_footer %}
+              {% for key, item in content.bp_modal_footer.value %}
                   {{ item }}
               {% endfor %}
             {% endif %}
