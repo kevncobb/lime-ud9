@@ -135,6 +135,9 @@ p {
   }
 }
 .paragraph--type--bp-image.cover {
+  .grid-x {
+    display: block;
+  }
   img {
     width: 100%;
     margin-bottom: 0;
