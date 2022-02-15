@@ -112,7 +112,7 @@ view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
           {{ title_suffix }}
           {# Button trigger modal #}
         <button type="button" class="button modal-button" data-open="{{ paragraph_id_modal }}">
-            {{ VBP.bp_modal_button_text.value }}
+            {{ content.bp_modal_button_text }}
         </button>
       </div>
     </div>
@@ -127,25 +127,25 @@ view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
         <button class="close-button" data-close aria-label="Close modal" type="button">
           <span aria-hidden="true">&times;</span>
         </button>
-          {% if content.bp_modal_title.value %}
+          {% if content.bp_modal_title|render %}
             <div class="modal-title" id="{{ paragraph_id_modal }}-label">
-                {{ VBP.bp_modal_title.value }}
+                {{ content.bp_modal_title }}
             </div>
           {% endif %}
       </div>
-        {% if content.bp_modal_body.value %}
+        {% if content.bp_modal_body|render %}
           <div class="modal-body">
             {% if key|first != '#' %}
-              {% for key, item in content.bp_modal_body.value %}
+              {% for key, item in content.bp_modal_body %}
                   {{ item }}
               {% endfor %}
             {% endif %}
           </div>
         {% endif %}
-        {% if content.bp_modal_footer.value %}
+        {% if content.bp_modal_footer|render %}
           <div class="modal-footer">
             {% if key|first != '#' %}
-              {% for key, item in content.bp_modal_footer.value %}
+              {% for key, item in content.bp_modal_footer %}
                   {{ item }}
               {% endfor %}
             {% endif %}
