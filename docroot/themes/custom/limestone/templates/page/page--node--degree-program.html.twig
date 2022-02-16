@@ -165,8 +165,8 @@
               </div>
               <div class="cell medium-5 sidebar">
                 {{ drupal_entity('block', 'degreemenu') }}
-                {{ drupal_field('field_optional_text_for_current_', 'node',  field.id) }}
-                {{ drupal_field('field_link_to_catalog_page', 'node',  field.id) }}
+                {{ drupal_field('field_optional_text_for_current_', 'node',  node.id) }}
+                {{ drupal_field('field_link_to_catalog_page', 'node',  node.id) }}
                 {% if ( node.field_display_day_financial_aid_.value == '1' ) or
                   ( node.field_display_o_e_financial_aid_.value == '1' ) or
                   ( node.field_display_grad_financial_aid.value == '1' ) %}
@@ -183,7 +183,7 @@
                 {% if node.field_display_grad_financial_aid.value == '1' %}
                   {{ drupal_entity('block', 'gradfinancialaidinfomodalbutton',  34) }}
                 {% endif %}
-                {{ drupal_field('field_related_minors', 'node',  field.id) }}
+                {{ drupal_field('field_related_minors', 'node',  node.id) }}
                 {% if node.field_display_related_news_below.value == '0' %}
                   {{ drupal_view('news', 'block_5', view.id) }}
                 {% endif %}
