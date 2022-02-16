@@ -93,6 +93,7 @@
         background-color: lighten($light-gray, 6%);
         border: thin solid #ccc;
         border-top: none;
+        transition: 100ms;
         &:focus, &:hover {
           background-color: #fffce2;
         }
@@ -219,6 +220,10 @@
         li > a {
           padding-left: 48px;
           background-color: #ffffff;
+          transition: 100ms;
+          &:hover, &:focus {
+            background-color: #fffce2;
+          }
         }
       }
     }

@@ -134,13 +134,20 @@ p {
     left: 0;
   }
 }
-.paragraph--type--bp-image.cover {
-  .grid-x {
-    display: block;
+.paragraph--type--bp-image {
+  &.cover {
+    .grid-x {
+      display: block;
+    }
+    img {
+      width: 100%;
+      margin-bottom: 0;
+    }
   }
-  img {
-    width: 100%;
-    margin-bottom: 0;
+  &.center {
+    .grid-x {
+      justify-content: center;
+    }
   }
 }
 .cover-image, .field-name-field-header-background-image {
