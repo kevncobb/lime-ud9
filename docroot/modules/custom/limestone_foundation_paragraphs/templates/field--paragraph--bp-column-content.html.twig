@@ -41,7 +41,7 @@
 
   {% set bp_col_value = (12/loop.length)|round %}
 
-  <div class="large-{{ bp_col_value }}" {% if content.background_image.url %} style="background-image:url({{- content.background_image.url -}});" {% endif %} data-equalizer-watch>
+  <div class="large-{{ bp_col_value }}" {% if VBP.background_image.url %} style="background-image:url({{- VBP.background_image.url -}});" {% endif %} data-equalizer-watch>
     {{ item.content }}
   </div>
 {%- endfor -%}
