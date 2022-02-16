@@ -93,7 +93,7 @@
             </div>
             {% if node.title.value %}
                 <div class="sub-page-header" role="heading">
-                    {{ drupal_field('field_header_background_image', 'node', node.id) }}
+                  {{ drupal_field('field_header_background_image', 'node', node.id, 'default') }}
                     {{ title_prefix }}
                     <h1 class="sub-header-title grid-container">{{ title }}</h1>
                     {{ title_suffix }}
