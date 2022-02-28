@@ -23,4 +23,11 @@ form.search-form {
   margin: 2rem 0.1rem;
   border-bottom: thin solid #cecece;
   padding-bottom: 1rem;
+  small {
+    font-size: 70%;
+    font-style: italic;
+  }
+  h3 {
+    margin: 0;
+  }
 }
