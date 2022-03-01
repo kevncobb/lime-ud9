@@ -112,7 +112,7 @@
                 {{ title_suffix }}
                 <ul class="accordion" data-accordion>
                     {# Loop through all of the accordion sections. #}
-                    {% if key|first != '#' %}{% for key, item in content.bp_accordion_section %}
+                    {% if key|first != '' %}{% for key, item in content.bp_accordion_section %}
                         {% set attributes = attributes.removeClass('bg-edge2edge') %}
                         <li class="accordion-item" role="tab" id="heading-{{ paragraph_id }}-{{ key + 1 }}"
                             data-accordion-item>
