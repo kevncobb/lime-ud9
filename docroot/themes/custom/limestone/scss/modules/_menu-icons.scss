@@ -33,7 +33,10 @@
   }
   a.menu-button {
     padding: 11px 10px 11px 28px;
-    margin: 0 0 0 10px;
+    margin: 0 0 0 2px;
+    @include breakpoint(smedium) {
+      margin: 0 0 0 10px;
+    }
     &::before {
       left: 6px;
       top: 8px;
