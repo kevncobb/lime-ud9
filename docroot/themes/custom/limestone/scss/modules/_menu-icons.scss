@@ -24,7 +24,6 @@
   }
 }
 .top-bar {
-
   [class^="menu-icon-"]::before, [class*=" menu-icon-"]::before {
     position: absolute;
     font-size: 17px;
@@ -32,9 +31,10 @@
     left: -23px;
   }
   a.menu-button {
-    padding: 11px 10px 11px 28px;
+    padding: 11px 9px 11px 27px;
     margin: 0 0 0 2px;
     @include breakpoint(smedium) {
+      padding: 11px 10px 11px 28px;
       margin: 0 0 0 10px;
     }
     &::before {
