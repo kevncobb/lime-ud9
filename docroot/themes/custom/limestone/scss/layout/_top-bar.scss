@@ -22,10 +22,7 @@
   }
   a {
     color: $white;
-    padding: 0.7rem 0.5rem;
-    @include breakpoint(smedium) {
-      padding: 0.7rem 1rem;
-    }
+
     &:focus, &:hover {
       color: $limestone-yellow;
       &::before {
@@ -40,6 +37,15 @@
     padding-right: 10px;
   }
 }
+
+.top-bar nav.block-topmenu ul.dropdown.menu a {
+  padding: 0.7rem 0.5rem;
+  @include breakpoint(smedium) {
+    padding: 0.7rem 1rem;
+  }
+}
+
+
 .top-bar ul.dropdown.menu, .top-bar ul {
   background-color: $black !important;
   li.is-active > a {
