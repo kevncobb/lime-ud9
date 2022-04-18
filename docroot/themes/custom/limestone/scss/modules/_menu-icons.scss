@@ -53,11 +53,11 @@
       }
     }
     &.green {
-      background: smart-scale($success-color, 5%, 5%) !important;
+      background: smart-scale($success-color, 9%, 9%) !important;
       color: white;
 
       &:hover, &:focus {
-        background: smart-scale($success-color, 12%, 12%) !important;
+        background: smart-scale($success-color, 15%, 15%) !important;
         color: white;
         &::before {
           color: white;

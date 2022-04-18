@@ -219,7 +219,7 @@ a.halo {
 }
 a.formstack {
   border: 2px solid #22b572;
-  color: #22b572;
+  color: #0b9857;
   font-weight: 400;
   text-decoration: none !important;
   font-size: 1.2rem;
@@ -256,8 +256,8 @@ a.formstack {
     display: none;
   }
   &:focus, &:hover {
-    border: 2px solid #22b572;
-    background-color: #22b572;
+    border: 2px solid #0b9857;
+    background-color: #0b9857;
     color: white;
     &::before {
       color: white;
