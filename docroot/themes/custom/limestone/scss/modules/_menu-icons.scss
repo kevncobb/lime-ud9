@@ -42,9 +42,10 @@
       top: 8px;
     }
     &.red {
-      background-color: $alert-color;
+      background: smart-scale($alert-color, 5%, 5%) !important;
+      color: white;
       &:hover, &:focus {
-        background: smart-scale($alert-color, 10%, 10%) !important;
+        background: smart-scale($alert-color, 12%, 12%) !important;
         color: white;
         &::before {
           color: white;
@@ -52,9 +53,11 @@
       }
     }
     &.green {
-      background-color: $success-color;
+      background: smart-scale($success-color, 5%, 5%) !important;
+      color: white;
+
       &:hover, &:focus {
-        background: smart-scale($success-color, 10%, 10%) !important;
+        background: smart-scale($success-color, 12%, 12%) !important;
         color: white;
         &::before {
           color: white;
