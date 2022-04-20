@@ -74,7 +74,7 @@
     {% set add_container = true %}
 {% endif %}
 
-{% set data_overlay = content.field_bp_overlay|render %}
+{% set data_overlay = content.field_overlay|render %}
 
 {% if VBP.background_image.url %}
     {% set attributes = attributes.addClass('background-style') %}

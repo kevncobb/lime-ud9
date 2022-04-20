@@ -73,7 +73,7 @@ view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class
   {% set add_container = true %}
 {% endif %}
 
-{% set data_overlay = content.field_bp_overlay|render %}
+{% set data_overlay = content.field_overlay|render %}
 
 {# Sets Unique ID for paragraph from Paragraph ID. #}
 {% set paragraph_id = 'vbp-' ~ paragraph.id.value %}
