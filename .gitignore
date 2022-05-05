@@ -5,6 +5,8 @@ docroot/themes/custom/blue_harvest/node_modules
 docroot/*/node_modules
 docroot/modules/custom/limestone_foundation_paragraphs/node_modules
 docroot/sites/*/files
+docroot/sites/default/settings.php
+docroot/sites/default/settings.pantheon.php
 docroot/sites/*/private
 docroot/sites/*/settings.local.php
 docroot/*/settings.local.php
