@@ -20,7 +20,7 @@ class TransportAddButtonForm extends FormBase {
   protected $manager;
 
   /**
-   * Constructs a new MailTransportAddForm.
+   * Constructs a new TransportAddButtonForm.
    *
    * @param \Drupal\symfony_mailer\TransportManager $manager
    *   The mailer transport plugin manager.

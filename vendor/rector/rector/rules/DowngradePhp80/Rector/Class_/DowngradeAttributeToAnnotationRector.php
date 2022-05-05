@@ -19,7 +19,7 @@ use Rector\DowngradePhp80\ValueObject\DowngradeAttributeToAnnotation;
 use Rector\PhpAttribute\Printer\DoctrineAnnotationFactory;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220209\Webmozart\Assert\Assert;
+use RectorPrefix20220303\Webmozart\Assert\Assert;
 /**
  * @changelog https://php.watch/articles/php-attributes#syntax
  *
@@ -28,14 +28,13 @@ use RectorPrefix20220209\Webmozart\Assert\Assert;
 final class DowngradeAttributeToAnnotationRector extends \Rector\Core\Rector\AbstractRector implements \Rector\Core\Contract\Rector\ConfigurableRectorInterface
 {
     /**
-     * @deprecated
-     * @var string
-     */
-    public const ATTRIBUTE_TO_ANNOTATION = 'attribute_to_annotation';
-    /**
      * @var DowngradeAttributeToAnnotation[]
      */
     private $attributesToAnnotations = [];
+    /**
+     * @var bool
+     */
+    private $isDowngraded = \false;
     /**
      * @readonly
      * @var \Rector\PhpAttribute\Printer\DoctrineAnnotationFactory
@@ -85,6 +84,7 @@ CODE_SAMPLE
      */
     public function refactor(\PhpParser\Node $node) : ?\PhpParser\Node
     {
+        $this->isDowngraded = \false;
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($node);
         foreach ($node->attrGroups as $attrGroup) {
             foreach ($attrGroup->attrs as $key => $attribute) {
@@ -99,10 +99,14 @@ CODE_SAMPLE
                     $doctrineAnnotation = $this->doctrineAnnotationFactory->createFromAttribute($attribute, $attributeToAnnotation->getTag());
                     $phpDocInfo->addTagValueNode($doctrineAnnotation);
                 }
+                $this->isDowngraded = \true;
             }
         }
         // cleanup empty attr groups
         $this->cleanupEmptyAttrGroups($node);
+        if (!$this->isDowngraded) {
+            return null;
+        }
         return $node;
     }
     /**
@@ -110,9 +114,8 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $attributesToAnnotations = $configuration[self::ATTRIBUTE_TO_ANNOTATION] ?? $configuration;
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allIsAOf($attributesToAnnotations, \Rector\DowngradePhp80\ValueObject\DowngradeAttributeToAnnotation::class);
-        $this->attributesToAnnotations = $attributesToAnnotations;
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allIsAOf($configuration, \Rector\DowngradePhp80\ValueObject\DowngradeAttributeToAnnotation::class);
+        $this->attributesToAnnotations = $configuration;
     }
     /**
      * @param \PhpParser\Node\Param|\PhpParser\Node\Stmt\Class_|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\Interface_|\PhpParser\Node\Stmt\Property $node
@@ -124,6 +127,7 @@ CODE_SAMPLE
                 continue;
             }
             unset($node->attrGroups[$key]);
+            $this->isDowngraded = \true;
         }
     }
     /**

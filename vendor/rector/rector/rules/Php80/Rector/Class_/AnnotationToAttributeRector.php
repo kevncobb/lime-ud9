@@ -29,10 +29,10 @@ use Rector\PhpAttribute\Printer\PhpAttributeGroupFactory;
 use Rector\PhpAttribute\RemovableAnnotationAnalyzer;
 use Rector\PhpAttribute\UnwrapableAnnotationAnalyzer;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
+use RectorPrefix20220303\Symplify\Astral\PhpDocParser\PhpDocNodeTraverser;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220209\Symplify\SimplePhpDocParser\PhpDocNodeTraverser;
-use RectorPrefix20220209\Webmozart\Assert\Assert;
+use RectorPrefix20220303\Webmozart\Assert\Assert;
 /**
  * @changelog https://wiki.php.net/rfc/attributes_v2
  *
@@ -40,11 +40,6 @@ use RectorPrefix20220209\Webmozart\Assert\Assert;
  */
 final class AnnotationToAttributeRector extends \Rector\Core\Rector\AbstractRector implements \Rector\Core\Contract\Rector\ConfigurableRectorInterface, \Rector\VersionBonding\Contract\MinPhpVersionInterface
 {
-    /**
-     * @deprecated
-     * @var string
-     */
-    public const ANNOTATION_TO_ATTRIBUTE = 'annotations_to_attributes';
     /**
      * @var AnnotationToAttribute[]
      */
@@ -148,11 +143,10 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $annotationsToAttributes = $configuration[self::ANNOTATION_TO_ATTRIBUTE] ?? $configuration;
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allIsAOf($annotationsToAttributes, \Rector\Php80\ValueObject\AnnotationToAttribute::class);
-        $this->annotationsToAttributes = $annotationsToAttributes;
-        $this->unwrapableAnnotationAnalyzer->configure($annotationsToAttributes);
-        $this->removableAnnotationAnalyzer->configure($annotationsToAttributes);
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allIsAOf($configuration, \Rector\Php80\ValueObject\AnnotationToAttribute::class);
+        $this->annotationsToAttributes = $configuration;
+        $this->unwrapableAnnotationAnalyzer->configure($configuration);
+        $this->removableAnnotationAnalyzer->configure($configuration);
     }
     public function provideMinPhpVersion() : int
     {
@@ -164,7 +158,7 @@ CODE_SAMPLE
     private function processGenericTags(\Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo $phpDocInfo) : array
     {
         $attributeGroups = [];
-        $phpDocNodeTraverser = new \RectorPrefix20220209\Symplify\SimplePhpDocParser\PhpDocNodeTraverser();
+        $phpDocNodeTraverser = new \RectorPrefix20220303\Symplify\Astral\PhpDocParser\PhpDocNodeTraverser();
         $phpDocNodeTraverser->traverseWithCallable($phpDocInfo->getPhpDocNode(), '', function (\PHPStan\PhpDocParser\Ast\Node $docNode) use(&$attributeGroups, $phpDocInfo) : ?int {
             if (!$docNode instanceof \PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode) {
                 return null;
@@ -184,7 +178,7 @@ CODE_SAMPLE
                 }
                 $attributeGroups[] = $this->phpAttributeGroupFactory->createFromSimpleTag($annotationToAttribute);
                 $phpDocInfo->markAsChanged();
-                return \RectorPrefix20220209\Symplify\SimplePhpDocParser\PhpDocNodeTraverser::NODE_REMOVE;
+                return \RectorPrefix20220303\Symplify\Astral\PhpDocParser\PhpDocNodeTraverser::NODE_REMOVE;
             }
             return null;
         });

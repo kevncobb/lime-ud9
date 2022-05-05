@@ -5,5 +5,4 @@ length_indicator:
   js:
     js/length-indicator.js: {}
   dependencies:
-    - core/jquery
-    - core/jquery.once
+    - core/once

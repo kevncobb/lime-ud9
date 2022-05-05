@@ -118,6 +118,7 @@ class MailerTransport extends ConfigEntityBase implements MailerTransportInterfa
    */
   public function setPluginId($plugin) {
     $this->plugin = $plugin;
+    return $this;
   }
 
   /**
@@ -132,6 +133,7 @@ class MailerTransport extends ConfigEntityBase implements MailerTransportInterfa
    */
   public function setAsDefault() {
     \Drupal::service('config.factory')->getEditable('symfony_mailer.settings')->set('default_transport', $this->id())->save();
+    return $this;
   }
 
   /**

@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\feeds\Unit\Feeds\Parser;
 
-use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\feeds\Exception\EmptyFeedException;
 use Drupal\feeds\FeedInterface;
 use Drupal\feeds\Feeds\Parser\CsvParser;
@@ -54,7 +53,7 @@ class CsvParserTest extends FeedsUnitTestCase {
 
     $this->feedType = $this->createMock(FeedTypeInterface::class);
     $configuration = ['feed_type' => $this->feedType, 'line_limit' => 3];
-    $this->parser = new CsvParser($configuration, 'csv', [], $this->createMock(PluginManagerInterface::class));
+    $this->parser = new CsvParser($configuration, 'csv', []);
     $this->parser->setStringTranslation($this->getStringTranslationStub());
 
     $this->state = new State();
@@ -164,7 +163,7 @@ class CsvParserTest extends FeedsUnitTestCase {
 
     // Set an high line limit.
     $configuration = ['feed_type' => $this->feedType, 'line_limit' => 100];
-    $this->parser = new CsvParser($configuration, 'csv', [], $this->createMock(PluginManagerInterface::class));
+    $this->parser = new CsvParser($configuration, 'csv', []);
     $this->parser->setStringTranslation($this->getStringTranslationStub());
 
     $this->feed->expects($this->any())

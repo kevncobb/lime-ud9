@@ -2,24 +2,20 @@
 
 namespace Drupal\symfony_mailer\Plugin\EmailAdjuster;
 
-use Drupal\symfony_mailer\EmailInterface;
-
 /**
  * Defines the To Email Adjuster.
  *
  * @EmailAdjuster(
  *   id = "email_to",
- *   label = @Translation("To header"),
+ *   label = @Translation("To"),
  *   description = @Translation("Sets the email to header."),
  * )
  */
 class ToEmailAdjuster extends AddressAdjusterBase {
 
   /**
-   * {@inheritdoc}
+   * The name of the associated header.
    */
-  protected function setAddress(EmailInterface $email, $address) {
-    $email->setTo($address);
-  }
+  protected const NAME = 'To';
 
 }

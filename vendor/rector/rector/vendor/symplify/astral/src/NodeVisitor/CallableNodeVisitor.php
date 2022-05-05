@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix20220209\Symplify\Astral\NodeVisitor;
+namespace RectorPrefix20220303\Symplify\Astral\NodeVisitor;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
@@ -11,9 +11,12 @@ use PhpParser\NodeVisitorAbstract;
 final class CallableNodeVisitor extends \PhpParser\NodeVisitorAbstract
 {
     /**
-     * @var callable
+     * @var callable(Node): (int|Node|null)
      */
     private $callable;
+    /**
+     * @param callable(Node $node): (int|Node|null) $callable
+     */
     public function __construct(callable $callable)
     {
         $this->callable = $callable;

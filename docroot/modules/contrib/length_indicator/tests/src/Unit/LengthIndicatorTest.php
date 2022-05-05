@@ -9,28 +9,15 @@ use Drupal\Tests\UnitTestCase;
  * Tests the code in length_indicator.module.
  *
  * @group length_indicator
- *
- * Note we load code, so isolate the test.
- *
- * @runInSeparateProcess
- * @preserveGlobalState disabled
  */
 class LengthIndicatorTest extends UnitTestCase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-    include_once __DIR__ . '/../../../length_indicator.module';
-  }
 
   /**
    * Tests _length_indicator_get_width_and_pos().
    *
    * @dataProvider providerTestLengthIndicatorGetWidthAndPos
    */
-  public function testLengthIndicatorGetWidthAndPos($optimin, $optimax, $tolerance, array $expected) {
+  public function testLengthIndicatorGetWidthAndPos(int $optimin, int $optimax, int $tolerance, array $expected): void {
     $service_length_indicator = new GetWidthPos();
     $this->assertEquals($expected, $service_length_indicator->getWidthAndPosition($optimin, $optimax, $tolerance));
   }
@@ -41,7 +28,7 @@ class LengthIndicatorTest extends UnitTestCase {
    * @return array
    *   An array with of arguments for testLengthIndicatorGetWidthAndPos().
    */
-  public function providerTestLengthIndicatorGetWidthAndPos() {
+  public function providerTestLengthIndicatorGetWidthAndPos(): array {
     return [
       [
         10, 15, 5,

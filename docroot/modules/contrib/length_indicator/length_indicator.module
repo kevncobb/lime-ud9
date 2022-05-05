@@ -18,7 +18,7 @@ use Drupal\Core\Field\WidgetInterface;
  * @return bool
  *   TRUE if the widget is supported, FALSE if not.
  */
-function _length_indicator_widget_is_supported($widget) {
+function _length_indicator_widget_is_supported(string $widget): bool {
   return in_array($widget, [
     'string_textfield',
     'string_textarea',
@@ -28,7 +28,7 @@ function _length_indicator_widget_is_supported($widget) {
 /**
  * Implements hook_theme().
  */
-function length_indicator_theme($existing, $type, $theme, $path) {
+function length_indicator_theme(): array {
   return [
     'length_indicator' => [
       'variables' => [
@@ -41,7 +41,7 @@ function length_indicator_theme($existing, $type, $theme, $path) {
 /**
  * Implements hook_field_widget_third_party_settings_form().
  */
-function length_indicator_field_widget_third_party_settings_form(WidgetInterface $plugin, FieldDefinitionInterface $field_definition, $form_mode, $form, FormStateInterface $form_state) {
+function length_indicator_field_widget_third_party_settings_form(WidgetInterface $plugin, FieldDefinitionInterface $field_definition, string $form_mode, array $form, FormStateInterface $form_state): array {
   $element = [];
 
   if (_length_indicator_widget_is_supported($plugin->getPluginId())) {
@@ -68,7 +68,7 @@ function length_indicator_field_widget_third_party_settings_form(WidgetInterface
     $element['indicator_opt']['optimin'] = [
       '#type' => 'number',
       '#title' => t('Optimum minimum'),
-      '#default_value' => isset($indicator_opt['optimin']) ? $indicator_opt['optimin'] : 10,
+      '#default_value' => $indicator_opt['optimin'] ?? 10,
       '#required' => TRUE,
       '#min' => 1,
     ];
@@ -76,7 +76,7 @@ function length_indicator_field_widget_third_party_settings_form(WidgetInterface
     $element['indicator_opt']['optimax'] = [
       '#type' => 'number',
       '#title' => t('Optimum maximum'),
-      '#default_value' => isset($indicator_opt['optimax']) ? $indicator_opt['optimax'] : 15,
+      '#default_value' => $indicator_opt['optimax'] ?? 15,
       '#required' => TRUE,
       '#min' => 5,
       '#element_validate' => ['_length_indicator_settings_optimax'],
@@ -85,7 +85,7 @@ function length_indicator_field_widget_third_party_settings_form(WidgetInterface
     $element['indicator_opt']['tolerance'] = [
       '#type' => 'number',
       '#title' => t('Tolerance'),
-      '#default_value' => isset($indicator_opt['tolerance']) ? $indicator_opt['tolerance'] : 5,
+      '#default_value' => $indicator_opt['tolerance'] ?? 5,
       '#required' => TRUE,
       '#min' => 0,
       '#element_validate' => ['_length_indicator_settings_tolerance'],
@@ -103,7 +103,7 @@ function length_indicator_field_widget_third_party_settings_form(WidgetInterface
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The state of the form.
  */
-function _length_indicator_settings_optimax(array $element, FormStateInterface &$form_state) {
+function _length_indicator_settings_optimax(array $element, FormStateInterface $form_state): void {
   $parents = array_slice($element['#parents'], 0, -1);
   $indicator_opt = $form_state->getValue($parents);
 
@@ -120,7 +120,7 @@ function _length_indicator_settings_optimax(array $element, FormStateInterface &
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The state of the form.
  */
-function _length_indicator_settings_tolerance(array $element, FormStateInterface &$form_state) {
+function _length_indicator_settings_tolerance(array $element, FormStateInterface $form_state): void {
   $parents = array_slice($element['#parents'], 0, -1);
   $indicator_opt = $form_state->getValue($parents);
 
@@ -132,7 +132,7 @@ function _length_indicator_settings_tolerance(array $element, FormStateInterface
 /**
  * Implements hook_field_widget_settings_summary_alter().
  */
-function length_indicator_field_widget_settings_summary_alter(&$summary, $context) {
+function length_indicator_field_widget_settings_summary_alter(array &$summary, array $context): void {
   if (_length_indicator_widget_is_supported($context['widget']->getPluginId())) {
     $indicator = $context['widget']->getThirdPartySetting('length_indicator', 'indicator');
     $indicator_string = $indicator ? 'On' : 'Off';
@@ -141,9 +141,9 @@ function length_indicator_field_widget_settings_summary_alter(&$summary, $contex
 }
 
 /**
- * Implements hook_field_widget_form_alter().
+ * Implements hook_field_widget_single_element_form_alter().
  */
-function length_indicator_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+function length_indicator_field_widget_single_element_form_alter(array &$element, FormStateInterface $form_state, array $context): void {
   if (_length_indicator_widget_is_supported($context['widget']->getPluginId())) {
     if ($context['widget']->getThirdPartySetting('length_indicator', 'indicator')) {
       $element['#attached']['library'][] = 'length_indicator/length_indicator';

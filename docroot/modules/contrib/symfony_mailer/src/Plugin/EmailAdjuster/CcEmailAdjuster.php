@@ -2,24 +2,20 @@
 
 namespace Drupal\symfony_mailer\Plugin\EmailAdjuster;
 
-use Drupal\symfony_mailer\EmailInterface;
-
 /**
  * Defines the Cc Email Adjuster.
  *
  * @EmailAdjuster(
  *   id = "email_cc",
- *   label = @Translation("Cc header"),
+ *   label = @Translation("Cc"),
  *   description = @Translation("Sets the email cc header."),
  * )
  */
 class CcEmailAdjuster extends AddressAdjusterBase {
 
   /**
-   * {@inheritdoc}
+   * The name of the associated header.
    */
-  protected function setAddress(EmailInterface $email, $address) {
-    $email->setCc($address);
-  }
+  protected const NAME = 'Cc';
 
 }

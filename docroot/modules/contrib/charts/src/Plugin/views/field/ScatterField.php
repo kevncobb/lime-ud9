@@ -4,8 +4,11 @@ namespace Drupal\charts\Plugin\views\field;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @file
@@ -18,7 +21,43 @@ use Drupal\views\ResultRow;
  * @ingroup views_field_handlers
  * @ViewsField("field_charts_fields_scatter")
  */
-class ScatterField extends FieldPluginBase {
+class ScatterField extends FieldPluginBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * The messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
+   * Constructs a \Drupal\views\Plugin\Block\ViewsBlockBase object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, MessengerInterface $messenger) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->messenger = $messenger;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('messenger')
+    );
+  }
 
   /**
    * Sets the initial field data at zero.
@@ -124,7 +163,7 @@ class ScatterField extends FieldPluginBase {
 
     // Ensure the input is numeric.
     if (!is_numeric($data)) {
-      \Drupal::messenger()->addError($this->t('Check the formatting of your
+      $this->messenger->addError($this->t('Check the formatting of your
         Scatter Field inputs: one or both of them are not numeric.'));
     }
 

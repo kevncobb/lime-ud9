@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\feeds\Unit\Feeds\Parser;
 
-use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\feeds\Exception\EmptyFeedException;
 use Drupal\feeds\Feeds\Parser\OpmlParser;
 use Drupal\feeds\Result\RawFetcherResult;
@@ -50,7 +49,7 @@ class OpmlParserTest extends FeedsUnitTestCase {
 
     $this->feedType = $this->createMock('Drupal\feeds\FeedTypeInterface');
     $configuration = ['feed_type' => $this->feedType];
-    $this->parser = new OpmlParser($configuration, 'sitemap', [], $this->createMock(PluginManagerInterface::class));
+    $this->parser = new OpmlParser($configuration, 'sitemap', []);
     $this->parser->setStringTranslation($this->getStringTranslationStub());
 
     $this->feed = $this->createMock('Drupal\feeds\FeedInterface');

@@ -28,7 +28,7 @@ class LengthIndicatorTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Create a field of each supported type.
@@ -54,7 +54,7 @@ class LengthIndicatorTest extends WebDriverTestBase {
    * @param string $widget_type
    *   The widget type.
    */
-  protected function createField($field_type, $widget_type) {
+  protected function createField(string $field_type, string $widget_type): void {
     // Use the field type as a name to make things simple.
     $field_name = $field_type;
 
@@ -84,7 +84,7 @@ class LengthIndicatorTest extends WebDriverTestBase {
   /**
    * Tests the length indicator.
    */
-  public function testLengthIndicator() {
+  public function testLengthIndicator(): void {
     // Create a test entity.
     $entity = EntityTest::create([
       'name' => 'The name for this entity',
@@ -98,7 +98,6 @@ class LengthIndicatorTest extends WebDriverTestBase {
     $entity->save();
     $form_display = EntityFormDisplay::load('entity_test.entity_test.default');
 
-    /** @var \Drupal\Core\Field\WidgetInterface $string */
     $values = $form_display->getComponent('string');
     $values['third_party_settings']['length_indicator'] = [
       'indicator' => TRUE,
@@ -150,19 +149,19 @@ class LengthIndicatorTest extends WebDriverTestBase {
    * @param string $value
    *   (optional) Set the field to this value before testing the indicator.
    */
-  protected function assertActiveElement($field_name, $class_modifier, $value = NULL) {
+  protected function assertActiveElement(string $field_name, string $class_modifier, $value = NULL): void {
     if (!is_null($value)) {
       $this->getSession()->getPage()->fillField($field_name . '[0][value]', $value);
     }
     $active_elements = $this->xpath('//*[@id="edit-' . str_replace('_', '-', $field_name) . '-wrapper"]/div[2]/span[contains(@class, "is-active")]');
     $this->assertCount(1, $active_elements);
-    $this->assertContains("length-indicator__indicator--$class_modifier", $active_elements[0]->getAttribute('class'), "$field_name field's active indicator has class modifier '$class_modifier'");
+    $this->assertStringContainsString("length-indicator__indicator--$class_modifier", $active_elements[0]->getAttribute('class'), "$field_name field's active indicator has class modifier '$class_modifier'");
   }
 
   /**
    * Tests the length indicator widget settings form.
    */
-  public function testLengthIndicatorSettings() {
+  public function testLengthIndicatorSettings(): void {
     $this->drupalGet('entity_test/structure/entity_test/form-display');
     $this->xpath('//input[@data-drupal-selector="edit-fields-string-settings-edit"]')[0]->click();
     $this->assertSession()->assertWaitOnAjaxRequest();

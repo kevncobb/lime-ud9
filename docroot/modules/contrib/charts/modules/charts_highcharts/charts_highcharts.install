@@ -5,8 +5,6 @@
  * Installation and update hooks for the Charts Highcharts module.
  */
 
-use Drupal\charts\Settings\ChartsDefaultSettings;
-
 /**
  * Implements hook_requirements().
  */
@@ -21,7 +19,7 @@ function charts_highcharts_requirements($phase) {
         $requirements['charts_highcharts_js'] = [
           'title' => t('Highcharts Library'),
           'value' => t('Not Installed'),
-          'severity' => REQUIREMENT_ERROR,
+          'severity' => REQUIREMENT_WARNING,
           'description' => t('You are missing the Highcharts library in your Drupal installation directory. Please see the README file inside charts_highcharts for instructions to install the library.'),
         ];
       }
@@ -55,7 +53,6 @@ function charts_highcharts_requirements($phase) {
  * @return string
  *   The location of the library, or FALSE if the library isn't installed.
  */
-
 function charts_highcharts_find_library() {
   // The following logic is taken from libraries_get_libraries()
   $searchdir = [];
@@ -69,7 +66,10 @@ function charts_highcharts_find_library() {
   $searchdir[] = 'libraries';
 
   // Also search sites/<domain>/*.
-  $searchdir[] = \Drupal::service('site.path') . '/libraries';
+  $site_path = \Drupal::getContainer()->getParameter('site.path');
+  $site_path = explode('/', $site_path);
+  $site_name = $site_path[1];
+  $searchdir[] = $site_name . '/libraries';
 
   foreach ($searchdir as $dir) {
     if (file_exists($dir . '/highcharts/highcharts.js')) {
@@ -78,57 +78,4 @@ function charts_highcharts_find_library() {
   }
 
   return FALSE;
-}
-
-/**
- * Move the highcharts config to the main settings and plugin configuration.
- */
-function charts_highcharts_update_8400() {
-  /** @var \Drupal\Core\Config\ConfigFactoryInterface $config_factory */
-  $config_factory = \Drupal::service('config.factory');
-  $highcharts_config = $config_factory->getEditable('charts_highcharts.settings');
-  $config_keys = [
-    'legend_layout',
-    'legend_background_color',
-    'legend_border_width',
-    'legend_shadow',
-    'item_style_color',
-    'text_overflow',
-  ];
-  $legend_configuration = [];
-  foreach ($config_keys as $key) {
-    if ($config_value = $highcharts_config->get($key)) {
-      $config_value = ChartsDefaultSettings::transformBoolStringValueToBool($config_value);
-      if (substr($key, 0, 6) === 'legend') {
-        // Stripping legend_.
-        $new_key_map = substr($key, 7, strlen($key));
-        $legend_configuration[$new_key_map] = $config_value;
-      }
-      elseif ($key === 'item_style_color') {
-        $legend_configuration['item_style']['color'] = $config_value;
-      }
-      elseif ($key === 'text_overflow') {
-        $config_value = $config_value ?: '';
-        $legend_configuration['item_style']['text_overflow'] = $config_value;
-      }
-    }
-  }
-
-  if ($legend_configuration) {
-    $library_form = 'highcharts_settings';
-
-    // Get the main settings.
-    $charts_config = $config_factory->getEditable('charts.settings');
-    $settings = $charts_config->get('charts_default_settings') ?: [];
-
-    // Add the plugin configuration as part of it.
-    $settings[$library_form]['legend'] = $legend_configuration;
-
-    // Update the main config.
-    $charts_config->set('charts_default_settings', $settings)
-      ->save();
-
-    // Delete the highcharts configuration.
-    $highcharts_config->delete();
-  }
 }

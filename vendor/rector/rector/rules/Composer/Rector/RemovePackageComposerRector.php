@@ -4,25 +4,20 @@ declare (strict_types=1);
 namespace Rector\Composer\Rector;
 
 use Rector\Composer\Contract\Rector\ComposerRectorInterface;
-use RectorPrefix20220209\Symplify\ComposerJsonManipulator\ValueObject\ComposerJson;
+use RectorPrefix20220303\Symplify\ComposerJsonManipulator\ValueObject\ComposerJson;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220209\Webmozart\Assert\Assert;
+use RectorPrefix20220303\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Composer\Rector\RemovePackageComposerRector\RemovePackageComposerRectorTest
  */
 final class RemovePackageComposerRector implements \Rector\Composer\Contract\Rector\ComposerRectorInterface
 {
     /**
-     * @deprecated
-     * @var string
-     */
-    public const PACKAGE_NAMES = 'package_names';
-    /**
      * @var string[]
      */
     private $packageNames = [];
-    public function refactor(\RectorPrefix20220209\Symplify\ComposerJsonManipulator\ValueObject\ComposerJson $composerJson) : void
+    public function refactor(\RectorPrefix20220303\Symplify\ComposerJsonManipulator\ValueObject\ComposerJson $composerJson) : void
     {
         foreach ($this->packageNames as $packageName) {
             $composerJson->removePackage($packageName);
@@ -48,9 +43,7 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $packagesNames = $configuration[self::PACKAGE_NAMES] ?? $configuration;
-        \RectorPrefix20220209\Webmozart\Assert\Assert::isArray($packagesNames);
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allString($packagesNames);
-        $this->packageNames = $packagesNames;
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allString($configuration);
+        $this->packageNames = $configuration;
     }
 }

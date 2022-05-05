@@ -3,13 +3,7 @@
 namespace Drupal\symfony_mailer\Form;
 
 use Drupal\Core\Entity\EntityForm;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Form\SubformState;
-use Drupal\Core\Plugin\PluginFormFactoryInterface;
-use Drupal\Core\Plugin\PluginFormInterface;
-use Drupal\symfony_mailer\TransportPluginInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Mailer transport edit form.
@@ -19,7 +13,7 @@ class TransportForm extends EntityForm {
   /**
    * The transport plugin being configured.
    *
-   * @var \Drupal\symfony_mailer\TransportPluginInterface;
+   * @var \Drupal\symfony_mailer\TransportPluginInterface
    */
   protected $plugin;
 
@@ -45,6 +39,10 @@ class TransportForm extends EntityForm {
       '#disabled' => TRUE,
       '#default_value' => $definition['label'],
       '#description' => $definition['description'] ?? '',
+    ];
+
+    $form['warning'] = [
+      '#markup' => $definition['warning'] ?? '',
     ];
 
     $form['label'] = [

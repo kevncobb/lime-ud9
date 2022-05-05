@@ -14,6 +14,7 @@ use PhpParser\NodeAbstract;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\IterableType;
+use PHPStan\Type\MixedType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
@@ -34,7 +35,7 @@ use Rector\PHPStanStaticTypeMapper\TypeAnalyzer\BoolUnionTypeAnalyzer;
 use Rector\PHPStanStaticTypeMapper\TypeAnalyzer\UnionTypeAnalyzer;
 use Rector\PHPStanStaticTypeMapper\TypeAnalyzer\UnionTypeCommonTypeNarrower;
 use Rector\PHPStanStaticTypeMapper\ValueObject\UnionTypeAnalysis;
-use RectorPrefix20220209\Symfony\Contracts\Service\Attribute\Required;
+use RectorPrefix20220303\Symfony\Contracts\Service\Attribute\Required;
 /**
  * @implements TypeMapperInterface<UnionType>
  */
@@ -143,13 +144,14 @@ final class UnionTypeMapper implements \Rector\PHPStanStaticTypeMapper\Contract\
         if (!$nullabledTypeNode instanceof \PhpParser\Node) {
             return null;
         }
-        if ($nullabledTypeNode instanceof \PhpParser\Node\NullableType) {
+        if (\in_array(\get_class($nullabledTypeNode), [\PhpParser\Node\NullableType::class, \PhpParser\Node\ComplexType::class], \true)) {
             return $nullabledTypeNode;
         }
-        if ($nullabledTypeNode instanceof \PhpParser\Node\ComplexType) {
-            return $nullabledTypeNode;
+        /** @var Name $nullabledTypeNode */
+        if (!$this->nodeNameResolver->isName($nullabledTypeNode, 'false')) {
+            return new \PhpParser\Node\NullableType($nullabledTypeNode);
         }
-        return new \PhpParser\Node\NullableType($nullabledTypeNode);
+        return null;
     }
     private function shouldSkipIterable(\PHPStan\Type\UnionType $unionType) : bool
     {
@@ -244,18 +246,26 @@ final class UnionTypeMapper implements \Rector\PHPStanStaticTypeMapper\Contract\
         }
         $phpParserUnionedTypes = [];
         foreach ($unionType->getTypes() as $unionedType) {
-            // void type is not allowed in union
-            if ($unionedType instanceof \PHPStan\Type\VoidType) {
+            // void type and mixed type are not allowed in union
+            if (\in_array(\get_class($unionedType), [\PHPStan\Type\MixedType::class, \PHPStan\Type\VoidType::class], \true)) {
                 return null;
             }
-            /** @var Identifier|Name|null $phpParserNode */
-            $phpParserNode = $this->phpStanStaticTypeMapper->mapToPhpParserNode($unionedType, $typeKind);
+            /**
+             * NullType inside UnionType is allowed
+             * make it on TypeKind property as changing other type, eg: return type may conflict with parent child implementation
+             *
+             * @var Identifier|Name|null $phpParserNode
+             */
+            $phpParserNode = $unionedType instanceof \PHPStan\Type\NullType && $typeKind->equals(\Rector\PHPStanStaticTypeMapper\Enum\TypeKind::PROPERTY()) ? new \PhpParser\Node\Name('null') : $this->phpStanStaticTypeMapper->mapToPhpParserNode($unionedType, $typeKind);
             if ($phpParserNode === null) {
                 return null;
             }
             $phpParserUnionedTypes[] = $phpParserNode;
         }
         $phpParserUnionedTypes = \array_unique($phpParserUnionedTypes);
+        if (\count($phpParserUnionedTypes) < 2) {
+            return null;
+        }
         return new \PhpParser\Node\UnionType($phpParserUnionedTypes);
     }
     /**

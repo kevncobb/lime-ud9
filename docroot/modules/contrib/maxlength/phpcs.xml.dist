@@ -88,7 +88,6 @@
   <rule ref="Drupal.WhiteSpace.ObjectOperatorIndent"/>
   <rule ref="Drupal.WhiteSpace.ObjectOperatorSpacing"/>
   <rule ref="Drupal.WhiteSpace.OpenTagNewline"/>
-  <rule ref="Drupal.WhiteSpace.OperatorSpacing"/>
   <rule ref="Drupal.WhiteSpace.ScopeIndent"/>
 
   <!-- Generic sniffs -->

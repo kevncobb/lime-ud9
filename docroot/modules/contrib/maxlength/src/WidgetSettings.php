@@ -11,48 +11,48 @@ class WidgetSettings implements WidgetSettingsInterface {
    * {@inheritdoc}
    */
   public function getAllowedSettingsForAll() {
-    $settings = array(
-      'string_textfield' => array(
+    $settings = [
+      'string_textfield' => [
         'maxlength_setting' => TRUE,
         'summary_maxlength_setting' => FALSE,
         'truncate_setting' => FALSE,
-      ),
-      'string_textarea' => array(
+      ],
+      'string_textarea' => [
         'maxlength_setting' => TRUE,
         'summary_maxlength_setting' => FALSE,
         'truncate_setting' => TRUE,
-      ),
-      'text_textfield' => array(
+      ],
+      'text_textfield' => [
         'maxlength_setting' => TRUE,
         'summary_maxlength_setting' => FALSE,
         'truncate_setting' => FALSE,
-      ),
-      'text_textarea' => array(
+      ],
+      'text_textarea' => [
         'maxlength_setting' => TRUE,
         'summary_maxlength_setting' => FALSE,
         'truncate_setting' => TRUE,
-      ),
-      'text_textarea_with_summary' => array(
+      ],
+      'text_textarea_with_summary' => [
         'maxlength_setting' => TRUE,
         'summary_maxlength_setting' => TRUE,
         'truncate_setting' => TRUE,
-      ),
-      'key_value_textarea' => array(
+      ],
+      'key_value_textarea' => [
         'maxlength_setting' => TRUE,
         'summary_maxlength_setting' => TRUE,
         'truncate_setting' => TRUE,
-      ),
-      'link_default' => array(
+      ],
+      'link_default' => [
         'maxlength_setting' => TRUE,
         'summary_maxlength_setting' => FALSE,
         'truncate_setting' => FALSE,
-      ),
-      'linkit' => array(
+      ],
+      'linkit' => [
         'maxlength_setting' => TRUE,
         'summary_maxlength_setting' => FALSE,
         'truncate_setting' => FALSE,
-      ),
-    );
+      ],
+    ];
 
     $additional_widget_settings = \Drupal::moduleHandler()->invokeAll('maxlength_widget_settings') ?: [];
 
@@ -69,7 +69,7 @@ class WidgetSettings implements WidgetSettingsInterface {
     if (!empty($all_settings[$widget_plugin_id])) {
       return $all_settings[$widget_plugin_id];
     }
-    return array();
+    return [];
   }
 
 }

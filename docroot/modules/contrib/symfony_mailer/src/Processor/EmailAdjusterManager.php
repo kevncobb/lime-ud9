@@ -14,7 +14,7 @@ use Drupal\symfony_mailer\EmailInterface;
 class EmailAdjusterManager extends DefaultPluginManager {
 
   /**
-   * Constructs the EmailBuilderManager object.
+   * Constructs the EmailAdjusterManager object.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths
@@ -37,21 +37,13 @@ class EmailAdjusterManager extends DefaultPluginManager {
    *   The email.
    */
   public function applyPolicy(EmailInterface $email) {
-    // Load policies, including the root policy that applies to all messages.
-    $suggestions = array_merge(['_'], $email->getSuggestions('', '.'));
-    foreach ($suggestions as $id) {
-      if ($policy = MailerPolicy::load($id)) {
-        $policy_config[] = $policy->getConfiguration();
-      }
-    }
+    $suggestions = $email->getSuggestions('', '.');
+    $policy_config = MailerPolicy::loadInheritedConfig(end($suggestions));
 
     // Add adjusters.
-    if (isset($policy_config)) {
-      $policy_config = array_merge(...$policy_config);
-      foreach ($policy_config as $plugin_id => $config) {
-        if ($this->hasDefinition($plugin_id)) {
-          $email->addProcessor($this->createInstance($plugin_id, $config));
-        }
+    foreach ($policy_config as $plugin_id => $config) {
+      if ($this->hasDefinition($plugin_id)) {
+        $this->createInstance($plugin_id, $config)->init($email);
       }
     }
   }

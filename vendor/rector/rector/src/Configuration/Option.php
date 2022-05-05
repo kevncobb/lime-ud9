@@ -3,10 +3,10 @@
 declare (strict_types=1);
 namespace Rector\Core\Configuration;
 
-use RectorPrefix20220209\JetBrains\PhpStorm\Immutable;
+use RectorPrefix20220303\JetBrains\PhpStorm\Immutable;
 use Rector\Caching\Contract\ValueObject\Storage\CacheStorageInterface;
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
-use RectorPrefix20220209\Symplify\Skipper\ValueObject\Option as SkipperOption;
+use RectorPrefix20220303\Symplify\Skipper\ValueObject\Option as SkipperOption;
 #[Immutable]
 final class Option
 {
@@ -51,6 +51,7 @@ final class Option
      */
     public const IMPORT_SHORT_CLASSES = 'import_short_classes';
     /**
+     * @deprecated Narrow too complex import settings to more practical use.
      * @var string
      */
     public const IMPORT_DOC_BLOCKS = 'import_doc_blocks';
@@ -67,11 +68,6 @@ final class Option
      */
     public const PARALLEL = 'parallel';
     /**
-     * @deprecated Cache is enabled by default
-     * @var string
-     */
-    public const ENABLE_CACHE = 'enable_cache';
-    /**
      * @var string
      */
     public const PATHS = 'paths';
@@ -82,7 +78,7 @@ final class Option
     /**
      * @var string
      */
-    public const SKIP = \RectorPrefix20220209\Symplify\Skipper\ValueObject\Option::SKIP;
+    public const SKIP = \RectorPrefix20220303\Symplify\Skipper\ValueObject\Option::SKIP;
     /**
      * @var string
      */
@@ -118,10 +114,6 @@ final class Option
      * @var string
      */
     public const PHPSTAN_FOR_RECTOR_PATH = 'phpstan_for_rector_path';
-    /**
-     * @var string
-     */
-    public const TYPES_TO_REMOVE_STATIC_FROM = 'types_to_remove_static_from';
     /**
      * @var string
      */
@@ -166,10 +158,6 @@ final class Option
      * @var string
      */
     public const PARALLEL_TIMEOUT_IN_SECONDS = 'parallel-timeout-in-seconds';
-    /**
-     * @var string
-     */
-    public const PARALLEL_SYSTEM_ERROR_COUNT_LIMIT = 'parallel-system-error-count-limit';
     /**
      * @var string
      */

@@ -18,17 +18,12 @@ use Rector\PostRector\ValueObject\PropertyMetadata;
 use Rector\Transform\ValueObject\MethodCallToMethodCall;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220209\Webmozart\Assert\Assert;
+use RectorPrefix20220303\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Transform\Rector\MethodCall\MethodCallToMethodCallRector\MethodCallToMethodCallRectorTest
  */
 final class MethodCallToMethodCallRector extends \Rector\Core\Rector\AbstractRector implements \Rector\Core\Contract\Rector\ConfigurableRectorInterface
 {
-    /**
-     * @deprecated
-     * @var string
-     */
-    public const METHOD_CALLS_TO_METHOD_CALLS = 'method_calls_to_method_calls';
     /**
      * @var MethodCallToMethodCall[]
      */
@@ -130,9 +125,8 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $methodCallsToMethodsCalls = $configuration[self::METHOD_CALLS_TO_METHOD_CALLS] ?? $configuration;
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allIsAOf($methodCallsToMethodsCalls, \Rector\Transform\ValueObject\MethodCallToMethodCall::class);
-        $this->methodCallsToMethodsCalls = $methodCallsToMethodsCalls;
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allIsAOf($configuration, \Rector\Transform\ValueObject\MethodCallToMethodCall::class);
+        $this->methodCallsToMethodsCalls = $configuration;
     }
     private function isMatch(\PhpParser\Node\Expr\MethodCall $methodCall, \Rector\Transform\ValueObject\MethodCallToMethodCall $methodCallToMethodCall) : bool
     {

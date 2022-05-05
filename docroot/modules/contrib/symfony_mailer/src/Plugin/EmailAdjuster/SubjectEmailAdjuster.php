@@ -20,21 +20,9 @@ class SubjectEmailAdjuster extends EmailAdjusterBase {
   /**
    * {@inheritdoc}
    */
-  public function preRender(EmailInterface $email) {
+  public function build(EmailInterface $email) {
     $subject = $this->configuration['value'];
-
-    if ($variables = $email->getVariables()) {
-      // Apply TWIG template
-      $subject = [
-        '#type' => 'inline_template',
-        '#template' => $subject,
-        '#context' => $variables,
-      ];
-      $renderer = \Drupal::service('renderer');
-      $subject = $renderer->renderPlain($subject);
-    }
-
-    $email->setSubject($subject);
+    $email->setSubject($subject, TRUE);
   }
 
   /**
@@ -49,6 +37,13 @@ class SubjectEmailAdjuster extends EmailAdjusterBase {
     ];
 
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSummary() {
+    return $this->configuration['value'];
   }
 
 }

@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\DowngradePhp72\Rector\FuncCall;
 
-use RectorPrefix20220209\Nette\NotImplementedException;
+use RectorPrefix20220303\Nette\NotImplementedException;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\BinaryOp\BitwiseOr;
@@ -127,7 +127,7 @@ class SomeClass
 CODE_SAMPLE
 )]);
     }
-    private function refactorClassConst(\PhpParser\Node\Stmt\ClassConst $classConst) : \PhpParser\Node\Stmt\ClassConst
+    private function refactorClassConst(\PhpParser\Node\Stmt\ClassConst $classConst) : ?\PhpParser\Node\Stmt\ClassConst
     {
         foreach ($classConst->consts as $key => $singleClassConst) {
             if (!$singleClassConst->value instanceof \PhpParser\Node\Expr\ConstFetch) {
@@ -139,7 +139,7 @@ CODE_SAMPLE
             $classConst->consts[$key]->value = new \PhpParser\Node\Scalar\LNumber(512);
             return $classConst;
         }
-        return $classConst;
+        return null;
     }
     private function handleEmptyStringToNullMatch(\PhpParser\Node\Expr\FuncCall $funcCall, \PhpParser\Node\Expr\Variable $variable) : \PhpParser\Node\Expr\FuncCall
     {
@@ -166,11 +166,14 @@ CODE_SAMPLE
             return $this->processInIf($parent, $funcCall, $replaceEmptystringToNull);
         }
         if (!$parent instanceof \PhpParser\Node) {
-            throw new \RectorPrefix20220209\Nette\NotImplementedException();
+            throw new \RectorPrefix20220303\Nette\NotImplementedException();
         }
         $if = $parent->getAttribute(\Rector\NodeTypeResolver\Node\AttributeKey::PARENT_NODE);
         if ($parent instanceof \PhpParser\Node\Expr\BooleanNot) {
             return $this->processInIf($if, $funcCall, $replaceEmptystringToNull);
+        }
+        if ($parent instanceof \PhpParser\Node\Expr\Assign && $parent->expr === $funcCall) {
+            return $this->processInAssign($parent, $funcCall, $replaceEmptystringToNull);
         }
         if (!$parent instanceof \PhpParser\Node\Expr\BinaryOp\Identical) {
             throw new \Rector\Core\Exception\NotImplementedYetException();
@@ -179,6 +182,12 @@ CODE_SAMPLE
             throw new \Rector\Core\Exception\NotImplementedYetException();
         }
         return $this->processInIf($if, $funcCall, $replaceEmptystringToNull);
+    }
+    private function processInAssign(\PhpParser\Node\Expr\Assign $assign, \PhpParser\Node\Expr\FuncCall $funcCall, \PhpParser\Node\Expr\FuncCall $replaceEmptyStringToNull) : \PhpParser\Node\Expr\FuncCall
+    {
+        $currentStatement = $assign->getAttribute(\Rector\NodeTypeResolver\Node\AttributeKey::CURRENT_STATEMENT);
+        $this->nodesToAddCollector->addNodeAfterNode(new \PhpParser\Node\Stmt\Expression($replaceEmptyStringToNull), $currentStatement);
+        return $funcCall;
     }
     private function processInIf(\PhpParser\Node\Stmt\If_ $if, \PhpParser\Node\Expr\FuncCall $funcCall, \PhpParser\Node\Expr\FuncCall $replaceEmptyStringToNull) : \PhpParser\Node\Expr\FuncCall
     {
@@ -202,8 +211,8 @@ CODE_SAMPLE
         if ($if->stmts !== []) {
             $firstStmt = $if->stmts[0];
             $this->nodesToAddCollector->addNodeBeforeNode($funcCall, $firstStmt);
-        } else {
-            $if->stmts[0] = new \PhpParser\Node\Stmt\Expression($funcCall);
+            return;
         }
+        $if->stmts[0] = new \PhpParser\Node\Stmt\Expression($funcCall);
     }
 }

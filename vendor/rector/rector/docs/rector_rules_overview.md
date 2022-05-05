@@ -1,4 +1,4 @@
-# 522 Rules Overview
+# 514 Rules Overview
 
 <br>
 
@@ -6,9 +6,7 @@
 
 - [Arguments](#arguments) (4)
 
-- [Autodiscovery](#autodiscovery) (4)
-
-- [CodeQuality](#codequality) (70)
+- [CodeQuality](#codequality) (71)
 
 - [CodingStyle](#codingstyle) (35)
 
@@ -30,11 +28,11 @@
 
 - [DowngradePhp70](#downgradephp70) (19)
 
-- [DowngradePhp71](#downgradephp71) (10)
+- [DowngradePhp71](#downgradephp71) (11)
 
 - [DowngradePhp72](#downgradephp72) (6)
 
-- [DowngradePhp73](#downgradephp73) (6)
+- [DowngradePhp73](#downgradephp73) (7)
 
 - [DowngradePhp74](#downgradephp74) (12)
 
@@ -43,8 +41,6 @@
 - [DowngradePhp81](#downgradephp81) (8)
 
 - [EarlyReturn](#earlyreturn) (11)
-
-- [Generics](#generics) (1)
 
 - [MockeryToProphecy](#mockerytoprophecy) (2)
 
@@ -76,7 +72,7 @@
 
 - [Php74](#php74) (15)
 
-- [Php80](#php80) (18)
+- [Php80](#php80) (17)
 
 - [Php81](#php81) (9)
 
@@ -88,7 +84,7 @@
 
 - [Removing](#removing) (6)
 
-- [RemovingStatic](#removingstatic) (5)
+- [RemovingStatic](#removingstatic) (1)
 
 - [Renaming](#renaming) (11)
 
@@ -96,7 +92,7 @@
 
 - [Strict](#strict) (5)
 
-- [Transform](#transform) (37)
+- [Transform](#transform) (36)
 
 - [TypeDeclaration](#typedeclaration) (22)
 
@@ -239,136 +235,6 @@ return static function (ContainerConfigurator $containerConfigurator): void {
      {
 -        return some_function($one, $two);
 +        return some_function($two, $one);
-     }
- }
-```
-
-<br>
-
-## Autodiscovery
-
-### MoveEntitiesToEntityDirectoryRector
-
-Move entities to Entity namespace
-
-- class: [`Rector\Autodiscovery\Rector\Class_\MoveEntitiesToEntityDirectoryRector`](../rules/Autodiscovery/Rector/Class_/MoveEntitiesToEntityDirectoryRector.php)
-
-```diff
--// file: app/Controller/Product.php
-+// file: app/Entity/Product.php
-
--namespace App\Controller;
-+namespace App\Entity;
-
- use Doctrine\ORM\Mapping as ORM;
-
- /**
-  * @ORM\Entity
-  */
- class Product
- {
- }
-```
-
-<br>
-
-### MoveInterfacesToContractNamespaceDirectoryRector
-
-Move interface to "Contract" namespace
-
-- class: [`Rector\Autodiscovery\Rector\Interface_\MoveInterfacesToContractNamespaceDirectoryRector`](../rules/Autodiscovery/Rector/Interface_/MoveInterfacesToContractNamespaceDirectoryRector.php)
-
-```diff
--// file: app/Exception/Rule.php
-+// file: app/Contract/Rule.php
-
--namespace App\Exception;
-+namespace App\Contract;
-
- interface Rule
- {
- }
-```
-
-<br>
-
-### MoveServicesBySuffixToDirectoryRector
-
-Move classes by their suffix to their own group/directory
-
-:wrench: **configure it!**
-
-- class: [`Rector\Autodiscovery\Rector\Class_\MoveServicesBySuffixToDirectoryRector`](../rules/Autodiscovery/Rector/Class_/MoveServicesBySuffixToDirectoryRector.php)
-
-```php
-use Rector\Autodiscovery\Rector\Class_\MoveServicesBySuffixToDirectoryRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
-
-    $services->set(MoveServicesBySuffixToDirectoryRector::class)
-        ->configure(['Repository']);
-};
-```
-
-↓
-
-```diff
--// file: app/Entity/ProductRepository.php
-+// file: app/Repository/ProductRepository.php
-
--namespace App\Entity;
-+namespace App\Repository;
-
- class ProductRepository
- {
- }
-```
-
-<br>
-
-### MoveValueObjectsToValueObjectDirectoryRector
-
-Move value object to ValueObject namespace/directory
-
-:wrench: **configure it!**
-
-- class: [`Rector\Autodiscovery\Rector\Class_\MoveValueObjectsToValueObjectDirectoryRector`](../rules/Autodiscovery/Rector/Class_/MoveValueObjectsToValueObjectDirectoryRector.php)
-
-```php
-use Rector\Autodiscovery\Rector\Class_\MoveValueObjectsToValueObjectDirectoryRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
-
-    $services->set(MoveValueObjectsToValueObjectDirectoryRector::class)
-        ->configure([
-            MoveValueObjectsToValueObjectDirectoryRector::TYPES => ['ValueObjectInterfaceClassName'],
-            MoveValueObjectsToValueObjectDirectoryRector::SUFFIXES => ['Search'],
-            MoveValueObjectsToValueObjectDirectoryRector::ENABLE_VALUE_OBJECT_GUESSING => true,
-        ]);
-};
-```
-
-↓
-
-```diff
--// app/Exception/Name.php
-+// app/ValueObject/Name.php
- class Name
- {
-     private $name;
-
-     public function __construct(string $name)
-     {
-         $this->name = $name;
-     }
-
-     public function getName()
-     {
-         return $this->name;
      }
  }
 ```
@@ -1127,6 +993,24 @@ Change unsafe new `static()` to new `self()`
 
 <br>
 
+### OptionalParametersAfterRequiredRector
+
+Move required parameters after optional ones
+
+- class: [`Rector\CodeQuality\Rector\ClassMethod\OptionalParametersAfterRequiredRector`](../rules/CodeQuality/Rector/ClassMethod/OptionalParametersAfterRequiredRector.php)
+
+```diff
+ class SomeObject
+ {
+-    public function run($optional = 1, $required)
++    public function run($required, $optional = 1)
+     {
+     }
+ }
+```
+
+<br>
+
 ### RemoveAlwaysTrueConditionSetInConstructorRector
 
 If conditions is always true, perform the content right away
@@ -1349,6 +1233,7 @@ Simplify foreach with function filtering to array filter
 
 ```diff
 -$directories = [];
+-
  $possibleDirectories = [];
 -foreach ($possibleDirectories as $possibleDirectory) {
 -    if (file_exists($possibleDirectory)) {
@@ -3082,7 +2967,6 @@ Remove dead try/catch
 -        catch (Throwable $throwable) {
 -            throw $throwable;
 -        }
-+        // some code
      }
  }
 ```
@@ -3379,9 +3263,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services = $containerConfigurator->services();
 
     $services->set(RemovePhpVersionIdCheckRector::class)
-        ->configure([
-            RemovePhpVersionIdCheckRector::PHP_VERSION_CONSTRAINT => 80000,
-        ]);
+        ->configure([80000]);
 };
 ```
 
@@ -4663,6 +4545,19 @@ Remove the nullable type params, add `@param` tags instead
 
 <br>
 
+### DowngradePhp71JsonConstRector
+
+Remove Json constant that available only in php 7.1
+
+- class: [`Rector\DowngradePhp71\Rector\ConstFetch\DowngradePhp71JsonConstRector`](../rules/DowngradePhp71/Rector/ConstFetch/DowngradePhp71JsonConstRector.php)
+
+```diff
+-json_encode($content, JSON_UNESCAPED_LINE_TERMINATORS);
++json_encode($content, 0);
+```
+
+<br>
+
 ### DowngradePipeToMultiCatchExceptionRector
 
 Downgrade single one | separated to multi catch exception
@@ -4725,8 +4620,6 @@ Downgrade `json_decode()` with null associative argument function
 - class: [`Rector\DowngradePhp72\Rector\FuncCall\DowngradeJsonDecodeNullAssociativeArgRector`](../rules/DowngradePhp72/Rector/FuncCall/DowngradeJsonDecodeNullAssociativeArgRector.php)
 
 ```diff
- declare(strict_types=1);
-
  function exactlyNull(string $json)
  {
 -    $value = json_decode($json, null);
@@ -4735,10 +4628,8 @@ Downgrade `json_decode()` with null associative argument function
 
  function possiblyNull(string $json, ?bool $associative)
  {
-+    if ($associative === null) {
-+        $associative = true;
-+    }
-     $value = json_decode($json, $associative);
+-    $value = json_decode($json, $associative);
++    $value = json_decode($json, $associative === null ?: $associative);
  }
 ```
 
@@ -4813,12 +4704,14 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
 ### DowngradePhp72JsonConstRector
 
-Change Json constant that available only in php 7.2 to 0
+Remove Json constant that available only in php 7.2
 
 - class: [`Rector\DowngradePhp72\Rector\ConstFetch\DowngradePhp72JsonConstRector`](../rules/DowngradePhp72/Rector/ConstFetch/DowngradePhp72JsonConstRector.php)
 
 ```diff
 -$inDecoder = new Decoder($connection, true, 512, \JSON_INVALID_UTF8_IGNORE);
+-$inDecoder = new Decoder($connection, true, 512, \JSON_INVALID_UTF8_SUBSTITUTE);
++$inDecoder = new Decoder($connection, true, 512, 0);
 +$inDecoder = new Decoder($connection, true, 512, 0);
 ```
 
@@ -4968,6 +4861,19 @@ Convert the list reference assignment to its equivalent PHP 7.2 code
 +        $b =& $array[1];
      }
  }
+```
+
+<br>
+
+### DowngradePhp73JsonConstRector
+
+Remove Json constant that available only in php 7.3
+
+- class: [`Rector\DowngradePhp73\Rector\ConstFetch\DowngradePhp73JsonConstRector`](../rules/DowngradePhp73/Rector/ConstFetch/DowngradePhp73JsonConstRector.php)
+
+```diff
+-json_encode($content, JSON_THROW_ON_ERROR);
++json_encode($content, 0);
 ```
 
 <br>
@@ -6324,46 +6230,6 @@ Changes Single return of || to early returns
 +            return true;
 +        }
 +        return (bool) $this->somethingElse();
-     }
- }
-```
-
-<br>
-
-## Generics
-
-### GenericClassMethodParamRector
-
-Make class methods generic based on implemented interface
-
-:wrench: **configure it!**
-
-- class: [`Rector\Generics\Rector\ClassMethod\GenericClassMethodParamRector`](../rules/Generics/Rector/ClassMethod/GenericClassMethodParamRector.php)
-
-```php
-use Rector\Generics\Rector\ClassMethod\GenericClassMethodParamRector;
-use Rector\Generics\ValueObject\GenericClassMethodParam;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
-
-    $services->set(GenericClassMethodParamRector::class)
-        ->configure([new GenericClassMethodParam('SomeInterface', 'getParams', 0, 'ParamInterface')]);
-};
-```
-
-↓
-
-```diff
- final class SomeClass implements SomeInterface
- {
--    private method getParams(SomeSpecificType $someParam)
-+    /**
-+     * @param SomeSpecificType $someParam
-+     */
-+    public method getParams(ParamInterface $someParam)
-     {
      }
  }
 ```
@@ -8078,7 +7944,7 @@ Add null default to properties with PHP 7.4 property nullable type
 
 ### TypedPropertyRector
 
-Changes property `@var` annotations from annotation to type.
+Changes property type by `@var` annotations or default value.
 
 :wrench: **configure it!**
 
@@ -8108,6 +7974,9 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 -     */
 -    private $count;
 +    private int $count;
+
+-    private $isDone = false;
++    private bool $isDone = false;
  }
 ```
 
@@ -8317,24 +8186,6 @@ Change ternary type resolve to `get_debug_type()`
      {
 -        return is_object($value) ? get_class($value) : gettype($value);
 +        return get_debug_type($value);
-     }
- }
-```
-
-<br>
-
-### OptionalParametersAfterRequiredRector
-
-Move required parameters after optional ones
-
-- class: [`Rector\Php80\Rector\ClassMethod\OptionalParametersAfterRequiredRector`](../rules/Php80/Rector/ClassMethod/OptionalParametersAfterRequiredRector.php)
-
-```diff
- class SomeObject
- {
--    public function run($optional = 1, $required)
-+    public function run($required, $optional = 1)
-     {
      }
  }
 ```
@@ -9538,108 +9389,6 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 <br>
 
 ## RemovingStatic
-
-### DesiredClassTypeToDynamicRector
-
-Change full static service, to dynamic one
-
-- class: [`Rector\RemovingStatic\Rector\Class_\DesiredClassTypeToDynamicRector`](../rules/RemovingStatic/Rector/Class_/DesiredClassTypeToDynamicRector.php)
-
-```diff
- class AnotherClass
- {
-+    /**
-+     * @var SomeClass
-+     */
-+    private $someClass;
-+
-+    public fuction __construct(SomeClass $someClass)
-+    {
-+        $this->someClass = $someClass;
-+    }
-+
-     public function run()
-     {
-         SomeClass::someStatic();
-     }
- }
-
- class SomeClass
- {
--    public static function run()
-+    public function run()
-     {
--        self::someStatic();
-+        $this->someStatic();
-     }
-
--    private static function someStatic()
-+    private function someStatic()
-     {
-     }
- }
-```
-
-<br>
-
-### DesiredPropertyClassMethodTypeToDynamicRector
-
-Change defined static properties and methods to dynamic
-
-- class: [`Rector\RemovingStatic\Rector\Property\DesiredPropertyClassMethodTypeToDynamicRector`](../rules/RemovingStatic/Rector/Property/DesiredPropertyClassMethodTypeToDynamicRector.php)
-
-```diff
- final class SomeClass
- {
--    public static $name;
-+    public $name;
-
--    public static function go()
-+    public function go()
-     {
-     }
- }
-```
-
-<br>
-
-### DesiredStaticCallTypeToDynamicRector
-
-Change defined static service to dynamic one
-
-- class: [`Rector\RemovingStatic\Rector\StaticCall\DesiredStaticCallTypeToDynamicRector`](../rules/RemovingStatic/Rector/StaticCall/DesiredStaticCallTypeToDynamicRector.php)
-
-```diff
- final class SomeClass
- {
-     public function run()
-     {
--        SomeStaticMethod::someStatic();
-+        $this->someStaticMethod->someStatic();
-     }
- }
-```
-
-<br>
-
-### DesiredStaticPropertyFetchTypeToDynamicRector
-
-Change defined static service to dynamic one
-
-- class: [`Rector\RemovingStatic\Rector\StaticPropertyFetch\DesiredStaticPropertyFetchTypeToDynamicRector`](../rules/RemovingStatic/Rector/StaticPropertyFetch/DesiredStaticPropertyFetchTypeToDynamicRector.php)
-
-```diff
- final class SomeClass
- {
-     public function run()
-     {
--        SomeStaticMethod::$someStatic;
-+        $this->someStaticMethod->someStatic;
-     }
- }
-```
-
-<br>
 
 ### LocallyCalledStaticMethodToNonStaticRector
 
@@ -11483,46 +11232,6 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 -         return $this->anotherService;
 +        $anotherService = $this->anotherService;
 +        $anotherService->run();
-     }
- }
-```
-
-<br>
-
-### SingleToManyMethodRector
-
-Change method that returns single value to multiple values
-
-:wrench: **configure it!**
-
-- class: [`Rector\Transform\Rector\ClassMethod\SingleToManyMethodRector`](../rules/Transform/Rector/ClassMethod/SingleToManyMethodRector.php)
-
-```php
-use Rector\Transform\Rector\ClassMethod\SingleToManyMethodRector;
-use Rector\Transform\ValueObject\SingleToManyMethod;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
-
-    $services->set(SingleToManyMethodRector::class)
-        ->configure([new SingleToManyMethod('SomeClass', 'getNode', 'getNodes')]);
-};
-```
-
-↓
-
-```diff
- class SomeClass
- {
--    public function getNode(): string
-+    /**
-+     * @return string[]
-+     */
-+    public function getNodes(): array
-     {
--        return 'Echo_';
-+        return ['Echo_'];
      }
  }
 ```

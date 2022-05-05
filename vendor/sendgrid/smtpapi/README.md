@@ -13,8 +13,6 @@ Learn more about the SMTP API at [Twilio SendGrid's documentation](https://sendg
 
 <a name="announcements"></a>
 # Announcements
-**The default branch name for this repository has been changed to `main` as of 07/27/2020.**
-
 All the updates to this module are documented in our [CHANGELOG](CHANGELOG.md).
 
 # Table of Contents
@@ -32,7 +30,7 @@ All the updates to this module are documented in our [CHANGELOG](CHANGELOG.md).
 
 ## Prerequisites
 
-- PHP version 5.6, 7.0, 7.1, 7.2, 7.3, or 7.4
+- PHP version 7.3, 7.4, 8.0, or 8.1
 - The Twilio SendGrid service, starting at the [free level](https://sendgrid.com/free?source=smtpapi-php)
 
 ## Install with Composer
@@ -44,7 +42,7 @@ Add the following to your `composer.json` file.
 ```json
 {
     "require": {
-        "sendgrid/smtpapi": "^0.6.10"
+        "sendgrid/smtpapi": "^0.7.0"
     }
 }
 ```
@@ -57,9 +55,9 @@ require 'vendor/autoload.php';
 
 #### Alternative: Install package from zip
 
-If you are not using Composer, simply download and install the **[latest packaged release of the library as a zip](https://github.com/sendgrid/smtpapi-php/releases/download/0.6.10/smtpapi-php.zip)**.
+If you are not using Composer, simply download and install the **[latest packaged release of the library as a zip](https://github.com/sendgrid/smtpapi-php/releases/download/0.7.0/smtpapi-php.zip)**.
 
-[**⬇︎ Download Packaged Library ⬇︎**](https://github.com/sendgrid/smtpapi-php/releases/download/0.6.10/smtpapi-php.zip)
+[**⬇︎ Download Packaged Library ⬇︎**](https://github.com/sendgrid/smtpapi-php/releases/download/0.7.0/smtpapi-php.zip)
 
 Then require the library from package:
 

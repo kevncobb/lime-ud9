@@ -20,17 +20,12 @@ use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
 use Rector\TypeDeclaration\ValueObject\AddParamTypeDeclaration;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220209\Webmozart\Assert\Assert;
+use RectorPrefix20220303\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\TypeDeclaration\Rector\ClassMethod\AddParamTypeDeclarationRector\AddParamTypeDeclarationRectorTest
  */
 final class AddParamTypeDeclarationRector extends \Rector\Core\Rector\AbstractRector implements \Rector\Core\Contract\Rector\ConfigurableRectorInterface
 {
-    /**
-     * @deprecated
-     * @var string
-     */
-    public const PARAMETER_TYPEHINTS = 'parameter_typehints';
     /**
      * @var AddParamTypeDeclaration[]
      */
@@ -97,10 +92,8 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $parameterTypehints = $configuration[self::PARAMETER_TYPEHINTS] ?? $configuration;
-        \RectorPrefix20220209\Webmozart\Assert\Assert::isArray($parameterTypehints);
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allIsAOf($parameterTypehints, \Rector\TypeDeclaration\ValueObject\AddParamTypeDeclaration::class);
-        $this->addParamTypeDeclarations = $parameterTypehints;
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allIsAOf($configuration, \Rector\TypeDeclaration\ValueObject\AddParamTypeDeclaration::class);
+        $this->addParamTypeDeclarations = $configuration;
     }
     private function shouldSkip(\PhpParser\Node\Stmt\ClassMethod $classMethod) : bool
     {

@@ -5,8 +5,8 @@ namespace Drupal\symfony_mailer;
 /**
  * Interface for mailer service.
  */
-interface MailerInterface
-{
+interface MailerInterface {
+
   /**
    * Sends an email.
    *

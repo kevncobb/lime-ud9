@@ -2,8 +2,6 @@
 
 namespace Drupal\symfony_mailer\Form;
 
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\RemoveCommand;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -21,7 +19,6 @@ class PolicyEditForm extends EntityForm {
     // @todo Display the inherited adjusters and provide a way to block them.
     // @todo If an adjuster is inherited and not configurable, don't offer to add it.
     // @todo Show an adjuster description.
-
     // Get the adjusters and synchronise with any existing form state.
     $adjusters = $this->entity->adjusters();
     $config = $form_state->getValue('config');
@@ -32,6 +29,13 @@ class PolicyEditForm extends EntityForm {
     // Set a div to allow updating the entire form when the type is changed.
     $form['#prefix'] = '<div id="mailer-policy-edit-form">';
     $form['#suffix'] = '</div>';
+
+    $form['label'] = [
+      '#markup' => $this->entity->label(),
+      '#prefix' => '<h2>',
+      '#suffix' => '</h2>',
+      '#weight' => -2,
+    ];
 
     // Add adjuster button.
     $ajax = [
@@ -45,12 +49,22 @@ class PolicyEditForm extends EntityForm {
       '#attributes' => ['class' => ['container-inline']],
     ];
 
+    // Put the common adjusters first.
+    $common_adjusters = array_flip($this->entity->getCommonAdjusters());
+    $options = $options2 = [];
     foreach ($this->entity->adjusterDefinitions() as $name => $definition) {
       if (!$adjusters->has($name)) {
-        $options[$name] = $definition['label'];
+        if (isset($common_adjusters[$name])) {
+          $options[$name] = $definition['label'];
+        }
+        else {
+          $options2[$name] = $definition['label'];
+        }
       }
     }
     asort($options);
+    asort($options2);
+    $options += $options2;
 
     $form['add_actions']['add_select'] = [
       '#type' => 'select',

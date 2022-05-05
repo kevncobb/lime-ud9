@@ -4,6 +4,7 @@ namespace Drupal\charts_blocks\Plugin\Block;
 
 use Drupal\charts\Element\Chart;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -28,12 +29,20 @@ class ChartsBlock extends BlockBase implements ContainerFactoryPluginInterface {
   protected $configFactory;
 
   /**
+   * The UUID service.
+   *
+   * @var \Drupal\Component\Uuid\UuidInterface
+   */
+  protected $uuidService;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory, UuidInterface $uuidService) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->setConfiguration($configuration);
     $this->configFactory = $config_factory;
+    $this->uuidService = $uuidService;
   }
 
   /**
@@ -44,7 +53,8 @@ class ChartsBlock extends BlockBase implements ContainerFactoryPluginInterface {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('uuid')
     );
   }
 
@@ -93,8 +103,7 @@ class ChartsBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
     // Creates a UUID for the chart ID.
     $chart_id = 'charts_block__' . $this->configuration['id'];
-    $uuid_service = \Drupal::service('uuid');
-    $id = 'chart-' . $uuid_service->generate();
+    $id = 'chart-' . $this->uuidService->generate();
     $build = Chart::buildElement($chart_settings, $chart_id);
     $build['#id'] = $id;
     $build['#chart_id'] = $chart_id;

@@ -12,21 +12,15 @@ use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\Util\StringUtils;
 use Rector\Restoration\ValueObject\CompleteImportForPartialAnnotation;
-use RectorPrefix20220209\Symplify\Astral\ValueObject\NodeBuilder\UseBuilder;
+use RectorPrefix20220303\Symplify\Astral\ValueObject\NodeBuilder\UseBuilder;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220209\Webmozart\Assert\Assert;
+use RectorPrefix20220303\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Restoration\Rector\Namespace_\CompleteImportForPartialAnnotationRector\CompleteImportForPartialAnnotationRectorTest
  */
 final class CompleteImportForPartialAnnotationRector extends \Rector\Core\Rector\AbstractRector implements \Rector\Core\Contract\Rector\ConfigurableRectorInterface
 {
-    /**
-     * @api
-     * @deprecated
-     * @var string
-     */
-    public const USE_IMPORTS_TO_RESTORE = '$useImportsToRestore';
     /**
      * @var CompleteImportForPartialAnnotation[]
      */
@@ -72,12 +66,17 @@ CODE_SAMPLE
             return null;
         }
         $printedClass = $this->print($class);
+        $hasChanged = \false;
         foreach ($this->useImportsToRestore as $useImportToRestore) {
             $annotationToSeek = '#\\*\\s+\\@' . $useImportToRestore->getAlias() . '#';
             if (!\Rector\Core\Util\StringUtils::isMatch($printedClass, $annotationToSeek)) {
                 continue;
             }
             $node = $this->addImportToNamespaceIfMissing($node, $useImportToRestore);
+            $hasChanged = \true;
+        }
+        if (!$hasChanged) {
+            return null;
         }
         return $node;
     }
@@ -86,10 +85,9 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $useImportsToRestore = $configuration[self::USE_IMPORTS_TO_RESTORE] ?? $configuration;
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allIsAOf($useImportsToRestore, \Rector\Restoration\ValueObject\CompleteImportForPartialAnnotation::class);
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allIsAOf($configuration, \Rector\Restoration\ValueObject\CompleteImportForPartialAnnotation::class);
         $default = [new \Rector\Restoration\ValueObject\CompleteImportForPartialAnnotation('Doctrine\\ORM\\Mapping', 'ORM'), new \Rector\Restoration\ValueObject\CompleteImportForPartialAnnotation('Symfony\\Component\\Validator\\Constraints', 'Assert'), new \Rector\Restoration\ValueObject\CompleteImportForPartialAnnotation('JMS\\Serializer\\Annotation', 'Serializer')];
-        $this->useImportsToRestore = \array_merge($useImportsToRestore, $default);
+        $this->useImportsToRestore = \array_merge($configuration, $default);
     }
     private function addImportToNamespaceIfMissing(\PhpParser\Node\Stmt\Namespace_ $namespace, \Rector\Restoration\ValueObject\CompleteImportForPartialAnnotation $completeImportForPartialAnnotation) : \PhpParser\Node\Stmt\Namespace_
     {
@@ -111,7 +109,7 @@ CODE_SAMPLE
     }
     private function addImportToNamespace(\PhpParser\Node\Stmt\Namespace_ $namespace, \Rector\Restoration\ValueObject\CompleteImportForPartialAnnotation $completeImportForPartialAnnotation) : \PhpParser\Node\Stmt\Namespace_
     {
-        $useBuilder = new \RectorPrefix20220209\Symplify\Astral\ValueObject\NodeBuilder\UseBuilder($completeImportForPartialAnnotation->getUse());
+        $useBuilder = new \RectorPrefix20220303\Symplify\Astral\ValueObject\NodeBuilder\UseBuilder($completeImportForPartialAnnotation->getUse());
         if ($completeImportForPartialAnnotation->getAlias() !== '') {
             $useBuilder->as($completeImportForPartialAnnotation->getAlias());
         }

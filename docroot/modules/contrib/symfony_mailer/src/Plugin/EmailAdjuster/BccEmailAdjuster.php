@@ -2,24 +2,20 @@
 
 namespace Drupal\symfony_mailer\Plugin\EmailAdjuster;
 
-use Drupal\symfony_mailer\EmailInterface;
-
 /**
  * Defines the Bcc Email Adjuster.
  *
  * @EmailAdjuster(
  *   id = "email_bcc",
- *   label = @Translation("Bcc header"),
+ *   label = @Translation("Bcc"),
  *   description = @Translation("Sets the email bcc header."),
  * )
  */
 class BccEmailAdjuster extends AddressAdjusterBase {
 
   /**
-   * {@inheritdoc}
+   * The name of the associated header.
    */
-  protected function setAddress(EmailInterface $email, $address) {
-    $email->setBcc($address);
-  }
+  protected const NAME = 'Bcc';
 
 }

@@ -14,4 +14,8 @@ media_bulk_upload.media_bulk_config.*:
       type: sequence
       label: 'Media Types'
     form_mode:
+      label: 'Form Mode'
+      type: string
+    upload_location:
+      label: 'Upload Location'
       type: string

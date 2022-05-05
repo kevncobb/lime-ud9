@@ -5,7 +5,7 @@ core_version_requirement: ^8 || ^9
 package: Administration
 configure: admin_audit_trail.report_form
 
-# Information added by Drupal.org packaging script on 2021-08-28
-version: '1.0.0-beta1'
+# Information added by Drupal.org packaging script on 2022-03-19
+version: '1.0.0'
 project: 'admin_audit_trail'
-datestamp: 1630159922
+datestamp: 1647684255

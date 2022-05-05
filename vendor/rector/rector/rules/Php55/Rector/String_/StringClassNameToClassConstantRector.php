@@ -15,10 +15,10 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
-use RectorPrefix20220209\Symplify\PackageBuilder\Reflection\ClassLikeExistenceChecker;
+use RectorPrefix20220303\Symplify\PackageBuilder\Reflection\ClassLikeExistenceChecker;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220209\Webmozart\Assert\Assert;
+use RectorPrefix20220303\Webmozart\Assert\Assert;
 /**
  * @changelog https://wiki.php.net/rfc/class_name_scalars https://github.com/symfony/symfony/blob/2.8/UPGRADE-2.8.md#form
  *
@@ -26,12 +26,6 @@ use RectorPrefix20220209\Webmozart\Assert\Assert;
  */
 final class StringClassNameToClassConstantRector extends \Rector\Core\Rector\AbstractRector implements \Rector\Core\Contract\Rector\AllowEmptyConfigurableRectorInterface, \Rector\VersionBonding\Contract\MinPhpVersionInterface
 {
-    /**
-     * @api
-     * @deprecated
-     * @var string
-     */
-    public const CLASSES_TO_SKIP = 'classes_to_skip';
     /**
      * @var string[]
      */
@@ -45,7 +39,7 @@ final class StringClassNameToClassConstantRector extends \Rector\Core\Rector\Abs
      * @var \Symplify\PackageBuilder\Reflection\ClassLikeExistenceChecker
      */
     private $classLikeExistenceChecker;
-    public function __construct(\RectorPrefix20220209\Symplify\PackageBuilder\Reflection\ClassLikeExistenceChecker $classLikeExistenceChecker)
+    public function __construct(\RectorPrefix20220303\Symplify\PackageBuilder\Reflection\ClassLikeExistenceChecker $classLikeExistenceChecker)
     {
         $this->classLikeExistenceChecker = $classLikeExistenceChecker;
     }
@@ -108,10 +102,8 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $classesToSkip = $configuration[self::CLASSES_TO_SKIP] ?? $configuration;
-        \RectorPrefix20220209\Webmozart\Assert\Assert::isArray($classesToSkip);
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allString($classesToSkip);
-        $this->classesToSkip = $classesToSkip;
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allString($configuration);
+        $this->classesToSkip = $configuration;
     }
     public function provideMinPhpVersion() : int
     {

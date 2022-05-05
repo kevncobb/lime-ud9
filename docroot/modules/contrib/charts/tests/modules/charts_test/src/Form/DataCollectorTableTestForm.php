@@ -6,7 +6,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class DataCollectorTableTestForm.
+ * The data collector table test form to test the DataCollectorTable element.
  *
  * @package Drupal\charts_test\Form
  */

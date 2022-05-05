@@ -35,8 +35,6 @@ feeds.parser.xml:
 feeds_ex_parser_base:
   type: mapping
   mapping:
-    sources:
-      type: ignore
     context:
       type: mapping
       mapping:

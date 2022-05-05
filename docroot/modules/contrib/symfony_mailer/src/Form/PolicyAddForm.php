@@ -14,7 +14,7 @@ class PolicyAddForm extends EntityForm {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-	  $types = [];
+    $types = [];
     $emailBuilderManager = \Drupal::service('plugin.manager.email_builder');
     foreach ($emailBuilderManager->getDefinitions() as $id => $definition) {
       if (empty($definition['sub_type'])) {

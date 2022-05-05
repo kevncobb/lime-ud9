@@ -8,49 +8,56 @@
 use Drupal\symfony_mailer\EmailInterface;
 
 /**
- * Acts on an email message initialization.
+ * Acts on email in a phase.
+ *
+ * The phase names are defined in EmailInterface::PHASE_NAMES.
  *
  * @param \Drupal\symfony_mailer\EmailInterface $email
  *   The email.
  */
-function hook_mailer_init(EmailInterface $email) {
+function hook_mailer_PHASE(EmailInterface $email) {
+  // hook_mailer_init():
+  // - Add a class.
+  // - Re-use an EmailAdjuster.
+  (new CustomEmailProcessor())->init($email);
+  $config = ['message' => 'Unpopular user skipped'];
+  Drupal::service('plugin.manager.email_adjuster')->createInstance('email_skip_sending', $config)->init($email);
+
+  // hook_mailer_build():
+  $email->setTo('user@example.com');
+  $body = $email->getBody();
+  $body['extra'] = ['#markup' => 'Extra text'];
+  $email->setBody($body);
+
+  // hook_mailer_post_render():
+  $email->setHtmlBody($email->getHtmlBody() . '<p><b>More</b> extra text</p>');
+
+  // hook_mailer_post_send():
+  $to = $email->getHeaders()->get('To')->getBodyAsString();
+  \Drupal::messenger()->addMessage(t('Email sent to %to.', ['%to' => $to]));
 }
 
 /**
- * Acts on an email message prior to building.
+ * Acts on an email in a phase for a specific email type.
  *
- * The email is not yet built. Can alter the language or the configured email
- * builders.
+ * The phase names are defined in EmailInterface::PHASE_NAMES.
  *
  * @param \Drupal\symfony_mailer\EmailInterface $email
  *   The email.
  */
-function hook_mailer_pre_build(EmailInterface $email) {
+function hook_mailer_TYPE_PHASE(EmailInterface $email) {
 }
 
 /**
- * Acts on an email message prior to rendering.
+ * Acts on an email in a specific phase for a specific email type and sub-type.
  *
- * The email is now fully built, and the body/subject can be altered.
- *
- * @param \Drupal\symfony_mailer\EmailInterface $email
- *   The email.
- */
-function hook_mailer_pre_render(EmailInterface $email) {
-}
-
-/**
- * Acts on an email message after rendering.
- *
- * The email is now ready to send and any headers can be altered.
+ * The phase names are defined in EmailInterface::PHASE_NAMES.
  *
  * @param \Drupal\symfony_mailer\EmailInterface $email
  *   The email.
  */
-function hook_mailer_post_render(EmailInterface $email) {
+function hook_mailer_TYPE__SUBTYPE_PHASE(EmailInterface $email) {
 }
-
-// @todo Versions with __TYPE, __SUBTYPE
 
 /**
  * Alters email builder plug-in definitions.

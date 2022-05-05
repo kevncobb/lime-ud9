@@ -1,6 +1,7 @@
 name: 'Field formatter test'
 type: module
 description: 'Support module for the Field formatter module tests.'
+core_version_requirement: ^8.9 || ^9
 package: Testing
 dependencies:
   - drupal:taxonomy

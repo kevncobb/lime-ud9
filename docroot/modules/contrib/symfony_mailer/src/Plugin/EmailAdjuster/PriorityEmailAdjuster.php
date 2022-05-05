@@ -21,7 +21,7 @@ class PriorityEmailAdjuster extends EmailAdjusterBase {
   /**
    * {@inheritdoc}
    */
-  public function postRender(EmailInterface $email) {
+  public function build(EmailInterface $email) {
     $priority = $this->configuration['value'];
     $email->setPriority($priority);
   }
@@ -30,23 +30,38 @@ class PriorityEmailAdjuster extends EmailAdjusterBase {
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
-    $options = [
-      Email::PRIORITY_HIGHEST => $this->t('Highest'),
-      Email::PRIORITY_HIGH => $this->t('High'),
-      Email::PRIORITY_NORMAL => $this->t('Normal'),
-      Email::PRIORITY_LOW => $this->t('Low'),
-      Email::PRIORITY_LOWEST => $this->t('Lowest'),
-    ];
-
     $form['value'] = [
       '#type' => 'select',
-      '#options' => $options,
+      '#options' => $this->getPriorities(),
       '#default_value' => $this->configuration['value'] ?? NULL,
       '#required' => TRUE,
       '#description' => $this->t('Email priority.'),
     ];
 
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSummary() {
+    return $this->getPriorities()[$this->configuration['value']];
+  }
+
+  /**
+   * Returns a list of priority options.
+   *
+   * @return string[]
+   *   The priority options.
+   */
+  protected function getPriorities() {
+    return [
+      Email::PRIORITY_HIGHEST => $this->t('Highest'),
+      Email::PRIORITY_HIGH => $this->t('High'),
+      Email::PRIORITY_NORMAL => $this->t('Normal'),
+      Email::PRIORITY_LOW => $this->t('Low'),
+      Email::PRIORITY_LOWEST => $this->t('Lowest'),
+    ];
   }
 
 }

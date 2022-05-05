@@ -12,18 +12,12 @@ use Rector\NodeRemoval\BreakingRemovalGuard;
 use Rector\Removing\ValueObject\RemoveFuncCall;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220209\Webmozart\Assert\Assert;
+use RectorPrefix20220303\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Removing\Rector\FuncCall\RemoveFuncCallRector\RemoveFuncCallRectorTest
  */
 final class RemoveFuncCallRector extends \Rector\Core\Rector\AbstractRector implements \Rector\Core\Contract\Rector\ConfigurableRectorInterface
 {
-    /**
-     * @api
-     * @deprecated
-     * @var string
-     */
-    public const REMOVE_FUNC_CALLS = 'remove_func_calls';
     /**
      * @var RemoveFuncCall[]
      */
@@ -66,9 +60,12 @@ CODE_SAMPLE
             }
             if ($removeFuncCall->getArgumentPositionAndValues() === []) {
                 $this->removeNode($node);
-                return null;
+                return $node;
             }
-            $this->refactorFuncCallsWithPositions($node, $removeFuncCall);
+            $removedFuncCall = $this->refactorFuncCallsWithPositions($node, $removeFuncCall);
+            if ($removedFuncCall instanceof \PhpParser\Node\Expr\FuncCall) {
+                return $node;
+            }
         }
         return null;
     }
@@ -77,11 +74,10 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $removeFuncCalls = $configuration[self::REMOVE_FUNC_CALLS] ?? $configuration;
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allIsAOf($removeFuncCalls, \Rector\Removing\ValueObject\RemoveFuncCall::class);
-        $this->removeFuncCalls = $removeFuncCalls;
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allIsAOf($configuration, \Rector\Removing\ValueObject\RemoveFuncCall::class);
+        $this->removeFuncCalls = $configuration;
     }
-    private function refactorFuncCallsWithPositions(\PhpParser\Node\Expr\FuncCall $funcCall, \Rector\Removing\ValueObject\RemoveFuncCall $removeFuncCall) : void
+    private function refactorFuncCallsWithPositions(\PhpParser\Node\Expr\FuncCall $funcCall, \Rector\Removing\ValueObject\RemoveFuncCall $removeFuncCall) : ?\PhpParser\Node\Expr\FuncCall
     {
         foreach ($removeFuncCall->getArgumentPositionAndValues() as $argumentPosition => $values) {
             if (!$this->isArgumentPositionValueMatch($funcCall, $argumentPosition, $values)) {
@@ -89,8 +85,10 @@ CODE_SAMPLE
             }
             if ($this->breakingRemovalGuard->isLegalNodeRemoval($funcCall)) {
                 $this->removeNode($funcCall);
+                return $funcCall;
             }
         }
+        return null;
     }
     /**
      * @param mixed[] $values

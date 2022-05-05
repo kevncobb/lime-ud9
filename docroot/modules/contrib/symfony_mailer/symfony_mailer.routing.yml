@@ -1,8 +1,8 @@
 entity.mailer_transport.collection:
-  path: '/admin/config/system/mailer'
+  path: '/admin/config/system/mailer/transport'
   defaults:
     _entity_list: 'mailer_transport'
-    _title: 'Mailer'
+    _title: 'Mailer transport'
   requirements:
     _permission: 'administer mailer'
 
@@ -38,7 +38,7 @@ entity.mailer_transport.set_default:
     _permission: 'administer mailer'
 
 entity.mailer_policy.collection:
-  path: '/admin/config/system/mailer/policy'
+  path: '/admin/config/system/mailer'
   defaults:
     _entity_list: 'mailer_policy'
     _title: 'Mailer policy'
@@ -50,6 +50,13 @@ entity.mailer_policy.add_form:
   defaults:
     _entity_form: 'mailer_policy.add'
     _title: 'Add policy'
+  requirements:
+    _permission: 'administer mailer'
+
+entity.mailer_policy.add_id_form:
+  path: '/admin/config/system/mailer/policy/add/{policy_id}'
+  defaults:
+    _controller: '\Drupal\symfony_mailer\Controller\SymfonyMailerController::createPolicy'
   requirements:
     _permission: 'administer mailer'
 
@@ -68,3 +75,43 @@ entity.mailer_policy.delete_form:
     _title: 'Delete policy'
   requirements:
     _entity_access: 'mailer_policy.delete'
+
+symfony_mailer.import.status:
+  path: '/admin/config/system/mailer/import'
+  defaults:
+    _controller: '\Drupal\symfony_mailer\Controller\SymfonyMailerController::importStatus'
+    _title: 'Import configuration'
+  requirements:
+    _permission: 'administer mailer'
+
+symfony_mailer.import.all:
+  path: '/admin/config/system/mailer/import-all'
+  defaults:
+    _controller: '\Drupal\symfony_mailer\Controller\SymfonyMailerController::importAll'
+    _title: 'Import all'
+  requirements:
+    _permission: 'administer mailer'
+
+symfony_mailer.import.import:
+  path: '/admin/config/system/mailer/import/{id}'
+  defaults:
+    _controller: '\Drupal\symfony_mailer\Controller\SymfonyMailerController::import'
+    _title: 'Import'
+  requirements:
+    _permission: 'administer mailer'
+
+symfony_mailer.import.skip:
+  path: '/admin/config/system/mailer/import/{id}/skip'
+  defaults:
+    _controller: '\Drupal\symfony_mailer\Controller\SymfonyMailerController::skip'
+    _title: 'Skip'
+  requirements:
+    _permission: 'administer mailer'
+
+symfony_mailer.test:
+  path: '/admin/config/system/mailer/test'
+  defaults:
+    _form: '\Drupal\symfony_mailer\Form\TestEmailForm'
+    _title: 'Mailer test'
+  requirements:
+    _permission: 'administer mailer'

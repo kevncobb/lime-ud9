@@ -2,24 +2,20 @@
 
 namespace Drupal\symfony_mailer\Plugin\EmailAdjuster;
 
-use Drupal\symfony_mailer\EmailInterface;
-
 /**
  * Defines the From Email Adjuster.
  *
  * @EmailAdjuster(
  *   id = "email_from",
- *   label = @Translation("From header"),
+ *   label = @Translation("From"),
  *   description = @Translation("Sets the email from header."),
  * )
  */
 class FromEmailAdjuster extends AddressAdjusterBase {
 
   /**
-   * {@inheritdoc}
+   * The name of the associated header.
    */
-  protected function setAddress(EmailInterface $email, $address) {
-    $email->setFrom($address);
-  }
+  protected const NAME = 'From';
 
 }

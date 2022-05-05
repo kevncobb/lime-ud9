@@ -6,51 +6,18 @@
  */
 
 use Symfony\Component\Yaml\Yaml;
-use Drupal\Core\Config\InstallStorage;
-use Drupal\Core\Config\StorageInterface;
-use Drupal\Core\Config\FileStorage;
+use Vardot\Installer\ModuleInstallerFactory;
 
 /**
  * Implements hook_install().
  */
 function varbase_editor_install() {
 
-  $module_name = preg_replace('/_install$/', '', __FUNCTION__);
-  $module_path = Drupal::service('module_handler')->getModule($module_name)->getPath();
+  // Processer for install: in varbase_editor.info.yml file.
+  // --------------------------------------------------------------------------.
+  ModuleInstallerFactory::installList('varbase_editor');
 
-  // Processer for install: in [$module_name].info.yml file.
-  // ---------------------------------------------------------------------------.
-  $module_info_file = $module_path . '/' . $module_name . '.info.yml';
-  if (file_exists($module_info_file)) {
-    $module_info_data = (array) Yaml::parse(file_get_contents($module_info_file));
-    if (isset($module_info_data['install'])
-      && is_array($module_info_data['install'])) {
-      \Drupal::service('module_installer')->install($module_info_data['install'], TRUE);
-    }
-  }
-
-  // Install optional configs.
-  $optional_install_path = $module_path . '/' . InstallStorage::CONFIG_OPTIONAL_DIRECTORY;
-  if (is_dir($optional_install_path)) {
-    $config_installer = \Drupal::service('config.installer');
-    $config_installer->installDefaultConfig('module', $module_name);
-
-    // Install any optional config the module provides.
-    $storage = new FileStorage($optional_install_path, StorageInterface::DEFAULT_COLLECTION);
-    $config_installer->installOptionalConfig($storage, '');
-
-    // Have the .settings.yml configs into the active config.
-    $settings_config_files = \Drupal::service('file_system')->scanDirectory($optional_install_path, '/^.*\\.(settings.yml)$/i');
-    if (isset($settings_config_files) && is_array($settings_config_files)) {
-      foreach ($settings_config_files as $settings_config_file) {
-        $settings_config_file_content = file_get_contents(DRUPAL_ROOT . '/' . $settings_config_file->uri);
-        $settings_config_file_data = (array) Yaml::parse($settings_config_file_content);
-        $config_factory = \Drupal::configFactory()->getEditable($settings_config_file->name);
-        $config_factory->setData($settings_config_file_data)->save(TRUE);
-      }
-    }
-  }
-  // ---------------------------------------------------------------------------
+  ModuleInstallerFactory::importConfigsFromScanedDirectory('varbase_editor', '/^.*(settings.yml)$/i');
 }
 
 /**
@@ -346,4 +313,46 @@ function varbase_editor_update_90001() {
       $filter_format_code_html->set('filters', $filter_format_code_html_filters)->save(TRUE);
     }
   }
+}
+
+/**
+ * Issue #3264445: Add and enable CKEditor Paste Filter module.
+ */
+function varbase_editor_update_90002() {
+
+  // Enable CKEditor Paste Filter module if it was not enabled yet.
+  if (!\Drupal::moduleHandler()->moduleExists('ckeditor_paste_filter')) {
+    \Drupal::service('module_installer')->install(['ckeditor_paste_filter'], FALSE);
+  }
+
+  try {
+    // Flag the update checklist item as done.
+    // Only if Varbase Update Helper, and Varbase Core was enabled.
+    if (\Drupal::moduleHandler()->moduleExists('varbase_update_helper')
+      && \Drupal::moduleHandler()->moduleExists('varbase_core')) {
+
+      /** @var \Drupal\update_helper\Updater $updateHelper */
+      $updateHelper = \Drupal::service('update_helper.updater');
+
+      // Execute configuration update definitions with logging of success.
+      $updateHelper->executeUpdate('varbase_core', 'varbase_editor_update_90002');
+
+      // Output logged messages to related channel of update execution.
+      return $updateHelper->logger()->output();
+    }
+  }
+  catch (Exception $e) {
+    // Ignore exception when Varbase Editor is not used with Varbase Core.
+  }
+}
+
+/**
+ * Issue #3272283: Switch to use the Module Installer Factory.
+ *
+ * In the Varbase Editor module.
+ */
+function varbase_editor_update_90003() {
+  // Set the weight of the module after installation of list of modules.
+  // To make sure that any hook or event subscriber workes after all used modules.
+  ModuleInstallerFactory::setModuleWeightAfterInstallation('varbase_editor');
 }

@@ -4,7 +4,15 @@ namespace Drupal\symfony_mailer\Processor;
 
 use Drupal\Core\Form\FormStateInterface;
 
+/**
+ * Defines the base class for EmailAdjuster plug-ins.
+ */
 class EmailAdjusterBase extends EmailProcessorBase implements EmailAdjusterInterface {
+
+  /**
+   * The default weight for an email adjuster.
+   */
+  const DEFAULT_WEIGHT = 400;
 
   /**
    * {@inheritdoc}
@@ -18,6 +26,13 @@ class EmailAdjusterBase extends EmailProcessorBase implements EmailAdjusterInter
    */
   public function getLabel() {
     return $this->pluginDefinition['label'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSummary() {
+    return NULL;
   }
 
 }

@@ -24,10 +24,6 @@ symfony_mailer.mailer_transport.*:
     configuration:
       type: symfony_mailer.transport_plugin.[%parent.plugin]
 
-symfony_mailer.transport_plugin.native:
-  type: mapping
-  label: 'Native transport'
-
 symfony_mailer.transport_plugin.dsn:
   type: mapping
   label: 'DSN transport'
@@ -35,6 +31,27 @@ symfony_mailer.transport_plugin.dsn:
     dsn:
       type: string
       label: 'DSN'
+
+symfony_mailer.transport_plugin.native:
+  type: mapping
+  label: 'Native transport'
+
+symfony_mailer.transport_plugin.null:
+  type: mapping
+  label: 'Null transport'
+
+symfony_mailer.transport_plugin.sendmail:
+  type: mapping
+  label: 'Sendmail transport'
+  mapping:
+    query:
+      type: mapping
+      label: 'URL query parameters'
+      mapping:
+        command:
+          type: string
+          label: 'Sendmail command'
+
 
 symfony_mailer.transport_plugin.smtp:
   type: mapping
@@ -66,46 +83,42 @@ symfony_mailer.mailer_policy.*:
       sequence:
         type: symfony_mailer.email_adjuster_plugin.[%key]
 
-symfony_mailer.email_adjuster_plugin.email_bcc:
+symfony_mailer.address_adjuster_base:
   type: mapping
-  label: 'Bcc header'
+  label: 'SMTP transport'
   mapping:
-    value:
-      type: email
-      label: 'E-mail address'
-    display:
-      type: label
-      label: 'Display name'
+    addresses:
+      type: sequence
+      label: 'Addresses'
+      sequence:
+        type: mapping
+        mapping:
+          value:
+            type: email
+            label: 'E-mail address'
+          display:
+            type: label
+            label: 'Display name'
+
+symfony_mailer.email_adjuster_plugin.email_bcc:
+  label: 'Bcc header'
+  type: symfony_mailer.address_adjuster_base
 
 symfony_mailer.email_adjuster_plugin.email_body:
   type: mapping
   label: 'Body'
   mapping:
-    value:
-      type: text
-      label: 'Email body'
+    content:
+      type: text_format
+      label: 'Email body formatted text'
 
 symfony_mailer.email_adjuster_plugin.email_cc:
-  type: mapping
+  type: symfony_mailer.address_adjuster_base
   label: 'Cc header'
-  mapping:
-    value:
-      type: email
-      label: 'E-mail address'
-    display:
-      type: label
-      label: 'Display name'
 
 symfony_mailer.email_adjuster_plugin.email_from:
-  type: mapping
+  type: symfony_mailer.address_adjuster_base
   label: 'From header'
-  mapping:
-    value:
-      type: email
-      label: 'E-mail address'
-    display:
-      type: label
-      label: 'Display name'
 
 symfony_mailer.email_adjuster_plugin.email_plain:
   type: mapping
@@ -124,15 +137,8 @@ symfony_mailer.email_adjuster_plugin.email_priority:
       label: 'Email subject'
 
 symfony_mailer.email_adjuster_plugin.email_reply_to:
-  type: mapping
+  type: symfony_mailer.address_adjuster_base
   label: 'Reply-to header'
-  mapping:
-    value:
-      type: email
-      label: 'E-mail address'
-    display:
-      type: label
-      label: 'Display name'
 
 symfony_mailer.email_adjuster_plugin.email_skip_sending:
   type: mapping
@@ -159,15 +165,8 @@ symfony_mailer.email_adjuster_plugin.email_theme:
       label: 'Email theme'
 
 symfony_mailer.email_adjuster_plugin.email_to:
-  type: mapping
+  type: symfony_mailer.address_adjuster_base
   label: 'To header'
-  mapping:
-    value:
-      type: email
-      label: 'E-mail address'
-    display:
-      type: label
-      label: 'Display name'
 
 symfony_mailer.email_adjuster_plugin.email_transport:
   type: mapping

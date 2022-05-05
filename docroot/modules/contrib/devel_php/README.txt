@@ -55,4 +55,4 @@ Current maintainers:
  * Florent Torregrosa (Grimreaper) - https://www.drupal.org/user/2388214
 
 This project has been sponsored by:
- * WELLNET S.r.l. - https://www.drupal.org/wellnet-srl
+ * SparkFabrik - https://www.drupal.org/sparkfabrik

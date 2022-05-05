@@ -1,4 +1,4 @@
 name: 'Field formatter'
 description: 'Collection of general formatters that display a single field from the referenced entity.'
 type: module
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^8.9 || ^9

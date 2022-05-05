@@ -5,14 +5,14 @@ namespace Drupal\charts\Util;
 use Drupal\views\ViewExecutable;
 
 /**
- * Util.
+ * Utilities class containing various helper methods.
  */
 class Util {
 
   /**
    * Views Data.
    *
-   * @param \Drupal\views\ViewExecutable $view
+   * @param \Drupal\views\ViewExecutable|null $view
    *   View.
    * @param array $labelValues
    *   Label Values.
@@ -78,7 +78,7 @@ class Util {
   /**
    * Remove hidden fields.
    *
-   * @param \Drupal\Views\ViewExecutable $view
+   * @param \Drupal\views\ViewExecutable $view
    *   The view.
    * @param array $fieldValues
    *   Field values.

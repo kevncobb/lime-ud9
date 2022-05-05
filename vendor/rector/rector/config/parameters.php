@@ -1,8 +1,9 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix20220209;
+namespace RectorPrefix20220303;
 
+use RectorPrefix20220303\OndraM\CiDetector\CiDetector;
 use Rector\Caching\ValueObject\Storage\MemoryCacheStorage;
 use Rector\Core\Configuration\Option;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -19,7 +20,6 @@ return static function (\Symfony\Component\DependencyInjection\Loader\Configurat
     $parameters->set(\Rector\Core\Configuration\Option::PARALLEL_MAX_NUMBER_OF_PROCESSES, 16);
     $parameters->set(\Rector\Core\Configuration\Option::PARALLEL_JOB_SIZE, 20);
     $parameters->set(\Rector\Core\Configuration\Option::PARALLEL_TIMEOUT_IN_SECONDS, 120);
-    $parameters->set(\Rector\Core\Configuration\Option::PARALLEL_SYSTEM_ERROR_COUNT_LIMIT, 20);
     // FQN class importing
     $parameters->set(\Rector\Core\Configuration\Option::AUTO_IMPORT_NAMES, \false);
     $parameters->set(\Rector\Core\Configuration\Option::IMPORT_SHORT_CLASSES, \true);
@@ -32,8 +32,8 @@ return static function (\Symfony\Component\DependencyInjection\Loader\Configurat
     $parameters->set(\Rector\Core\Configuration\Option::CACHE_DIR, \sys_get_temp_dir() . '/rector_cached_files');
     // use faster in-memory cache in CI.
     // CI always starts from scratch, therefore IO intensive caching is not worth it
-    $runsInGithubAction = \getenv('GITHUB_ACTION');
-    if ($runsInGithubAction !== \false) {
+    $ciDetector = new \RectorPrefix20220303\OndraM\CiDetector\CiDetector();
+    if ($ciDetector->isCiDetected()) {
         $parameters->set(\Rector\Core\Configuration\Option::CACHE_CLASS, \Rector\Caching\ValueObject\Storage\MemoryCacheStorage::class);
     }
 };

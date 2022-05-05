@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\CodingStyle\ClassNameImport;
 
-use RectorPrefix20220209\Nette\Utils\Reflection;
+use RectorPrefix20220303\Nette\Utils\Reflection;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
@@ -22,9 +22,9 @@ use Rector\Core\ValueObject\Application\File;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use ReflectionClass;
-use RectorPrefix20220209\Symfony\Contracts\Service\Attribute\Required;
-use RectorPrefix20220209\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser;
-use RectorPrefix20220209\Symplify\SimplePhpDocParser\PhpDocNodeTraverser;
+use RectorPrefix20220303\Symfony\Contracts\Service\Attribute\Required;
+use RectorPrefix20220303\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser;
+use RectorPrefix20220303\Symplify\Astral\PhpDocParser\PhpDocNodeTraverser;
 /**
  * @see \Rector\Tests\CodingStyle\ClassNameImport\ShortNameResolver\ShortNameResolverTest
  */
@@ -68,7 +68,7 @@ final class ShortNameResolver
      * @var \Rector\CodingStyle\NodeAnalyzer\UseImportNameMatcher
      */
     private $useImportNameMatcher;
-    public function __construct(\RectorPrefix20220209\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser $simpleCallableNodeTraverser, \Rector\NodeNameResolver\NodeNameResolver $nodeNameResolver, \PHPStan\Reflection\ReflectionProvider $reflectionProvider, \Rector\Core\PhpParser\Node\BetterNodeFinder $betterNodeFinder, \Rector\CodingStyle\NodeAnalyzer\UseImportNameMatcher $useImportNameMatcher)
+    public function __construct(\RectorPrefix20220303\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser $simpleCallableNodeTraverser, \Rector\NodeNameResolver\NodeNameResolver $nodeNameResolver, \PHPStan\Reflection\ReflectionProvider $reflectionProvider, \Rector\Core\PhpParser\Node\BetterNodeFinder $betterNodeFinder, \Rector\CodingStyle\NodeAnalyzer\UseImportNameMatcher $useImportNameMatcher)
     {
         $this->simpleCallableNodeTraverser = $simpleCallableNodeTraverser;
         $this->nodeNameResolver = $nodeNameResolver;
@@ -123,29 +123,30 @@ final class ShortNameResolver
     private function resolveForStmts(array $stmts) : array
     {
         $shortNamesToFullyQualifiedNames = [];
-        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($stmts, function (\PhpParser\Node $node) use(&$shortNamesToFullyQualifiedNames) : void {
+        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($stmts, function (\PhpParser\Node $node) use(&$shortNamesToFullyQualifiedNames) {
             // class name is used!
             if ($node instanceof \PhpParser\Node\Stmt\ClassLike && $node->name instanceof \PhpParser\Node\Identifier) {
                 $fullyQualifiedName = $this->nodeNameResolver->getName($node);
                 if ($fullyQualifiedName === null) {
-                    return;
+                    return null;
                 }
                 $shortNamesToFullyQualifiedNames[$node->name->toString()] = $fullyQualifiedName;
-                return;
+                return null;
             }
             if (!$node instanceof \PhpParser\Node\Name) {
-                return;
+                return null;
             }
             $originalName = $node->getAttribute(\Rector\NodeTypeResolver\Node\AttributeKey::ORIGINAL_NAME);
             if (!$originalName instanceof \PhpParser\Node\Name) {
-                return;
+                return null;
             }
             // already short
             if (\strpos($originalName->toString(), '\\') !== \false) {
-                return;
+                return null;
             }
             $fullyQualifiedName = $this->nodeNameResolver->getName($node);
             $shortNamesToFullyQualifiedNames[$originalName->toString()] = $fullyQualifiedName;
+            return null;
         });
         $docBlockShortNamesToFullyQualifiedNames = $this->resolveFromStmtsDocBlocks($stmts);
         /** @var array<string, string> $result */
@@ -160,13 +161,13 @@ final class ShortNameResolver
     {
         $reflectionClass = $this->resolveNativeClassReflection($stmts);
         $shortNames = [];
-        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($stmts, function (\PhpParser\Node $node) use(&$shortNames) : void {
+        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($stmts, function (\PhpParser\Node $node) use(&$shortNames) {
             // speed up for nodes that are
             $phpDocInfo = $this->phpDocInfoFactory->createFromNode($node);
             if (!$phpDocInfo instanceof \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo) {
-                return;
+                return null;
             }
-            $phpDocNodeTraverser = new \RectorPrefix20220209\Symplify\SimplePhpDocParser\PhpDocNodeTraverser();
+            $phpDocNodeTraverser = new \RectorPrefix20220303\Symplify\Astral\PhpDocParser\PhpDocNodeTraverser();
             $phpDocNodeTraverser->traverseWithCallable($phpDocInfo->getPhpDocNode(), '', function ($node) use(&$shortNames) {
                 if ($node instanceof \PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode) {
                     $shortName = \trim($node->name, '@');
@@ -180,6 +181,7 @@ final class ShortNameResolver
                 }
                 return null;
             });
+            return null;
         });
         return $this->fqnizeShortNames($shortNames, $reflectionClass, $stmts);
     }
@@ -210,7 +212,7 @@ final class ShortNameResolver
         foreach ($shortNames as $shortName) {
             $stmtsMatchedName = $this->useImportNameMatcher->matchNameWithStmts($shortName, $stmts);
             if ($reflectionClass instanceof \ReflectionClass) {
-                $fullyQualifiedName = \RectorPrefix20220209\Nette\Utils\Reflection::expandClassName($shortName, $reflectionClass);
+                $fullyQualifiedName = \RectorPrefix20220303\Nette\Utils\Reflection::expandClassName($shortName, $reflectionClass);
             } elseif (\is_string($stmtsMatchedName)) {
                 $fullyQualifiedName = $stmtsMatchedName;
             } else {

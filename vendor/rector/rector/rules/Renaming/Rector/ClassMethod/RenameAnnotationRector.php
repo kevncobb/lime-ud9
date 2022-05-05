@@ -15,17 +15,12 @@ use Rector\Renaming\Contract\RenameAnnotationInterface;
 use Rector\Renaming\ValueObject\RenameAnnotationByType;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220209\Webmozart\Assert\Assert;
+use RectorPrefix20220303\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Renaming\Rector\ClassMethod\RenameAnnotationRector\RenameAnnotationRectorTest
  */
 final class RenameAnnotationRector extends \Rector\Core\Rector\AbstractRector implements \Rector\Core\Contract\Rector\ConfigurableRectorInterface
 {
-    /**
-     * @deprecated
-     * @var string
-     */
-    public const RENAMED_ANNOTATIONS = 'renamed_annotations';
     /**
      * @var RenameAnnotationInterface[]
      */
@@ -86,11 +81,16 @@ CODE_SAMPLE
             return null;
         }
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($node);
+        $hasChanged = \false;
         foreach ($this->renameAnnotations as $renameAnnotation) {
             if ($renameAnnotation instanceof \Rector\Renaming\ValueObject\RenameAnnotationByType && !$this->isObjectType($classLike, $renameAnnotation->getObjectType())) {
                 continue;
             }
             $this->docBlockTagReplacer->replaceTagByAnother($phpDocInfo, $renameAnnotation->getOldAnnotation(), $renameAnnotation->getNewAnnotation());
+            $hasChanged = \true;
+        }
+        if (!$hasChanged) {
+            return null;
         }
         return $node;
     }
@@ -99,9 +99,7 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $renamedAnnotations = $configuration[self::RENAMED_ANNOTATIONS] ?? $configuration;
-        \RectorPrefix20220209\Webmozart\Assert\Assert::isArray($renamedAnnotations);
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allIsAOf($renamedAnnotations, \Rector\Renaming\Contract\RenameAnnotationInterface::class);
-        $this->renameAnnotations = $renamedAnnotations;
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allIsAOf($configuration, \Rector\Renaming\Contract\RenameAnnotationInterface::class);
+        $this->renameAnnotations = $configuration;
     }
 }

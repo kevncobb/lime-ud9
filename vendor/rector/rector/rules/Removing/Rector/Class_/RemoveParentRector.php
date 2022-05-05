@@ -12,18 +12,12 @@ use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220209\Webmozart\Assert\Assert;
+use RectorPrefix20220303\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Removing\Rector\Class_\RemoveParentRector\RemoveParentRectorTest
  */
 final class RemoveParentRector extends \Rector\Core\Rector\AbstractRector implements \Rector\Core\Contract\Rector\ConfigurableRectorInterface
 {
-    /**
-     * @api
-     * @deprecated
-     * @var string
-     */
-    public const PARENT_TYPES_TO_REMOVE = 'parents_types_to_remove';
     /**
      * @var string[]
      */
@@ -83,9 +77,7 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $parentTypesToRemove = $configuration[self::PARENT_TYPES_TO_REMOVE] ?? $configuration;
-        \RectorPrefix20220209\Webmozart\Assert\Assert::isArray($parentTypesToRemove);
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allString($parentTypesToRemove);
-        $this->parentClassesToRemove = $parentTypesToRemove;
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allString($configuration);
+        $this->parentClassesToRemove = $configuration;
     }
 }

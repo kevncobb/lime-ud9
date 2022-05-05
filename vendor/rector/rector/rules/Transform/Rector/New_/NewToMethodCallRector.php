@@ -18,17 +18,12 @@ use Rector\PostRector\ValueObject\PropertyMetadata;
 use Rector\Transform\ValueObject\NewToMethodCall;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220209\Webmozart\Assert\Assert;
+use RectorPrefix20220303\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Transform\Rector\New_\NewToMethodCallRector\NewToMethodCallRectorTest
  */
 final class NewToMethodCallRector extends \Rector\Core\Rector\AbstractRector implements \Rector\Core\Contract\Rector\ConfigurableRectorInterface
 {
-    /**
-     * @deprecated
-     * @var string
-     */
-    public const NEWS_TO_METHOD_CALLS = 'news_to_method_calls';
     /**
      * @var NewToMethodCall[]
      */
@@ -119,10 +114,8 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $newsToMethodCalls = $configuration[self::NEWS_TO_METHOD_CALLS] ?? $configuration;
-        \RectorPrefix20220209\Webmozart\Assert\Assert::isArray($newsToMethodCalls);
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allIsAOf($newsToMethodCalls, \Rector\Transform\ValueObject\NewToMethodCall::class);
-        $this->newsToMethodCalls = $newsToMethodCalls;
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allIsAOf($configuration, \Rector\Transform\ValueObject\NewToMethodCall::class);
+        $this->newsToMethodCalls = $configuration;
     }
     private function getExistingFactoryPropertyName(\PhpParser\Node\Stmt\Class_ $class, \PHPStan\Type\ObjectType $factoryObjectType) : ?string
     {

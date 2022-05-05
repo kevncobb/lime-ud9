@@ -2,8 +2,6 @@
 
 namespace Drupal\symfony_mailer;
 
-use Symfony\Component\Mime\Address;
-use Symfony\Component\Mime\Email as SymfonyEmail;
 use Symfony\Component\Mime\Header\Headers;
 
 /**
@@ -19,131 +17,168 @@ trait BaseEmailTrait {
   protected $inner;
 
   /**
-   * The email subject.
+   * The addresses.
    *
-   * @var \Drupal\Component\Render\MarkupInterface|string
+   * @var array
    */
-  protected $subject;
+  protected $addresses = [
+    'From' => [],
+    'Reply-To' => [],
+    'To' => [],
+    'Cc' => [],
+    'Bcc' => [],
+  ];
 
-  public function setSubject($subject) {
-    // We must not force conversion of the subject to a string as this could
-    // cause translation before switching to the correct language.
-    $this->subject = $subject;
-    return $this;
-  }
+  /**
+   * The sender.
+   *
+   * @var \Drupal\symfony_mailer\AddressInterface
+   */
+  protected $sender;
 
-  public function getSubject() {
-    return $this->subject;
-  }
-
+  /**
+   * {@inheritdoc}
+   */
   public function setSender($address) {
-    $this->inner->sender($address);
+    $this->sender = Address::create($address);
     return $this;
   }
 
-  public function getSender(): ?Address {
-    return $this->inner->getSender();
+  /**
+   * {@inheritdoc}
+   */
+  public function getSender(): ?AddressInterface {
+    return $this->sender;
   }
 
-  public function addFrom(...$addresses) {
-    $this->inner->addFrom(...$addresses);
+  /**
+   * {@inheritdoc}
+   */
+  public function setAddress(string $name, $addresses) {
+    assert(isset($this->addresses[$name]));
+    $this->addresses[$name] = Address::convert($addresses);
     return $this;
   }
 
-  public function setFrom(...$addresses) {
-    $this->inner->from(...$addresses);
-    return $this;
+  /**
+   * {@inheritdoc}
+   */
+  public function setFrom($addresses) {
+    return $this->setAddress('From', $addresses);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFrom(): array {
-    return $this->inner->getFrom();
+    return $this->addresses['From'];
   }
 
-  public function addReplyTo(...$addresses) {
-    $this->inner->addReplyTo(...$addresses);
-    return $this;
+  /**
+   * {@inheritdoc}
+   */
+  public function setReplyTo($addresses) {
+    return $this->setAddress('Reply-To', $addresses);
   }
 
-  public function setReplyTo(...$addresses) {
-    $this->inner->replyTo(...$addresses);
-    return $this;
-  }
-
+  /**
+   * {@inheritdoc}
+   */
   public function getReplyTo(): array {
-    return $this->inner->getReplyTo();
+    return $this->addresses['Reply-To'];
   }
 
-  public function addTo(...$addresses) {
-    $this->inner->addTo(...$addresses);
-    return $this;
+  /**
+   * {@inheritdoc}
+   */
+  public function setTo($addresses) {
+    $this->valid(self::PHASE_BUILD);
+    return $this->setAddress('To', $addresses);
   }
 
-  public function setTo(...$addresses) {
-    $this->inner->to(...$addresses);
-    return $this;
-  }
-
+  /**
+   * {@inheritdoc}
+   */
   public function getTo(): array {
-    return $this->inner->getTo();
+    return $this->addresses['To'];
   }
 
-  public function addCc(...$addresses) {
-    $this->inner->addCc(...$addresses);
-    return $this;
+  /**
+   * {@inheritdoc}
+   */
+  public function setCc($addresses) {
+    return $this->setAddress('Cc', $addresses);
   }
 
-  public function setCc(...$addresses) {
-    $this->inner->cc(...$addresses);
-    return $this;
-  }
-
+  /**
+   * {@inheritdoc}
+   */
   public function getCc(): array {
-    return $this->inner->getCc();
+    return $this->addresses['Cc'];
   }
 
-  public function addBcc(...$addresses) {
-    $this->inner->addBcc(...$addresses);
-    return $this;
+  /**
+   * {@inheritdoc}
+   */
+  public function setBcc($addresses) {
+    return $this->setAddress('Bcc', $addresses);
   }
 
-  public function setBcc(...$addresses) {
-    $this->inner->bcc(...$addresses);
-    return $this;
-  }
-
+  /**
+   * {@inheritdoc}
+   */
   public function getBcc(): array {
-    return $this->inner->getBcc();
+    return $this->addresses['Bcc'];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setPriority(int $priority) {
     $this->inner->priority($priority);
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getPriority(): int {
     return $this->inner->getPriority();
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setTextBody(string $body) {
     $this->inner->text($body);
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getTextBody(): ?string {
     return $this->inner->getTextBody();
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setHtmlBody(?string $body) {
-    $this->valid('postRender');
+    $this->valid(self::PHASE_POST_RENDER, self::PHASE_POST_RENDER);
     $this->inner->html($body);
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getHtmlBody(): ?string {
-    $this->valid('postRender');
+    $this->valid(self::PHASE_POST_SEND, self::PHASE_POST_RENDER);
     return $this->inner->getHtmlBody();
   }
 
+  // @codingStandardsIgnoreStart
   // public function attach(string $body, string $name = null, string $contentType = null);
 
   // public function attachFromPath(string $path, string $name = null, string $contentType = null);
@@ -155,11 +190,18 @@ trait BaseEmailTrait {
   // public function attachPart(DataPart $part);
 
   // public function getAttachments();
+  // @codingStandardsIgnoreEnd
 
+  /**
+   * {@inheritdoc}
+   */
   public function getHeaders(): Headers {
     return $this->inner->getHeaders();
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function addTextHeader(string $name, string $value) {
     $this->getHeaders()->addTextHeader($name, $value);
     return $this;

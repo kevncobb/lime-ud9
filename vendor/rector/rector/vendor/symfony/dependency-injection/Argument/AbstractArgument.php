@@ -8,15 +8,21 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix20220209\Symfony\Component\DependencyInjection\Argument;
+namespace RectorPrefix20220303\Symfony\Component\DependencyInjection\Argument;
 
 /**
  * Represents an abstract service argument, which have to be set by a compiler pass or a DI extension.
  */
 final class AbstractArgument
 {
+    /**
+     * @var string
+     */
     private $text;
-    private $context;
+    /**
+     * @var string
+     */
+    private $context = '';
     public function __construct(string $text = '')
     {
         $this->text = \trim($text, '. ');

@@ -64,9 +64,9 @@ class MailerTransportListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['label'] = $entity->label();
     $definition = $entity->getPlugin()->getPluginDefinition();
-    $row['plugin'] = $definition['label'];
+    $row['label'] = $definition['label'];
+    $row['plugin'] = $entity->label();
     $row['default'] = $entity->isDefault() ? $this->t('Default') : '';
     return $row + parent::buildRow($entity);
   }
@@ -98,7 +98,7 @@ class MailerTransportListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function render() {
-    $build['transport_add_form'] =  [
+    $build['transport_add_form'] = [
       '#type' => 'container',
       '#attributes' => ['class' => ['container-inline']],
     ];

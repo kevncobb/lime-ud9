@@ -4,7 +4,17 @@ namespace Drupal\symfony_mailer\Processor;
 
 use Drupal\Core\Form\FormStateInterface;
 
+/**
+ * Defines the interface for EmailAdjuster plug-ins.
+ */
 interface EmailAdjusterInterface extends EmailProcessorInterface {
+
+  /**
+   * The maximum length of a summary, beyond which it will be truncated.
+   *
+   * @var int
+   */
+  const MAX_SUMMARY = 50;
 
   /**
    * Generates an adjuster's settings form.
@@ -24,7 +34,16 @@ interface EmailAdjusterInterface extends EmailProcessorInterface {
    * Returns the administrative label for this plugin.
    *
    * @return string
+   *   The label.
    */
   public function getLabel();
+
+  /**
+   * Returns a summary for this plugin.
+   *
+   * @return string
+   *   The summary, which will be truncated to length self::MAX_SUMMARY.
+   */
+  public function getSummary();
 
 }

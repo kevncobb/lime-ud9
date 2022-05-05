@@ -141,6 +141,13 @@ charts_views_field_data_provider:
       type: integer
       label: 'Weight'
 
+charts_views_field_entity_grouping_selected_method_colors:
+  type: mapping
+  mapping:
+    color:
+      type: string
+      label: Color
+
 charts_config:
   type: mapping
   mapping:
@@ -165,6 +172,25 @@ charts_config:
           label: 'Data providers'
           sequence:
             type: charts_views_field_data_provider
+        entity_grouping:
+          type: mapping
+          label: 'Entity grouping settings'
+          mapping:
+            color_selection_method:
+              type: string
+              label: 'Color selection method'
+            selected_method:
+              type: mapping
+              label: 'Selected method'
+              mapping:
+                color_field_name:
+                  type: string
+                  label: 'Color field name'
+                colors:
+                  type: sequence
+                  label: 'Colors'
+                  sequence:
+                    type: charts_views_field_entity_grouping_selected_method_colors
     display:
       type: charts_display
       label: 'Display'

@@ -6,8 +6,11 @@ use Drupal\charts\Plugin\chart\Library\ChartBase;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Render\ElementInfoManagerInterface;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Define a concrete class for a Chart.
@@ -17,7 +20,43 @@ use Drupal\Core\Url;
  *   name = @Translation("C3")
  * )
  */
-class C3 extends ChartBase {
+class C3 extends ChartBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * The element info manager.
+   *
+   * @var \Drupal\Core\Render\ElementInfoManagerInterface
+   */
+  protected $elementInfo;
+
+  /**
+   * Constructs a \Drupal\views\Plugin\Block\ViewsBlockBase object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Render\ElementInfoManagerInterface $element_info
+   *   The element info manager.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ElementInfoManagerInterface $element_info) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->elementInfo = $element_info;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('element_info')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -144,7 +183,7 @@ class C3 extends ChartBase {
     $type = $this->getType($element['#chart_type']);
     $chart_definition['title']['text'] = $element['#title'] ?? '';
     $chart_definition['legend']['show'] = !empty($element['#legend_position']);
-    if ($type !== 'scatter') {
+    if (!in_array($type, ['scatter', 'bubble'])) {
       $chart_definition['axis']['x']['type'] = 'category';
     }
     $chart_definition['data']['labels'] = (bool) $element['#data_labels'];
@@ -186,7 +225,10 @@ class C3 extends ChartBase {
     $chart_definition['data']['type'] = $type;
     // Merge in chart raw options.
     if (!empty($element['#raw_options'])) {
-      $chart_definition = NestedArray::mergeDeepArray([$element['#raw_options'], $chart_definition]);
+      $chart_definition = NestedArray::mergeDeepArray([
+        $element['#raw_options'],
+        $chart_definition,
+      ]);
     }
 
     return $chart_definition;
@@ -204,40 +246,35 @@ class C3 extends ChartBase {
    *   Return chart definition.
    */
   private function populateAxes(array $element, array $chart_definition) {
-    /** @var \Drupal\Core\Render\ElementInfoManagerInterface $element_info */
-    $element_info = \Drupal::service('element_info');
     $children = Element::children($element);
-    $axes = array_filter($children, function ($child) use ($element) {
+    foreach ($children as $child) {
       $type = $element[$child]['#type'];
-      return $type === 'chart_xaxis' || $type === 'chart_yaxis';
-    });
-    $chart_type = $this->getType($element['#chart_type']);
-    if ($axes) {
-      foreach ($axes as $key) {
-        // Make sure defaults are loaded.
-        if (empty($element[$key]['#defaults_loaded'])) {
-          $element[$key] += $element_info->getInfo($element[$key]['#type']);
-        }
-        $axis_type = $element[$key]['#type'] === 'chart_xaxis' ? 'x' : 'y';
-        if ($axis_type === 'x') {
-          $categories = $element[$key]['#labels'] ? array_map('strip_tags', $element[$key]['#labels']) : [];
-          if (!in_array($chart_type, ['pie', 'donut'])) {
-            if ($chart_type === 'scatter') {
-              //
-            }
-            else {
-              $chart_definition['data']['columns'][] = ['x'];
-              $chart_definition['data']['x'] = 'x';
-              $categories_keys = array_keys($chart_definition['data']['columns']);
-              $categories_key = end($categories_keys);
-              foreach ($categories as $category) {
-                $chart_definition['data']['columns'][$categories_key][] = $category;
-              }
-            }
+      if ($type === 'chart_xaxis') {
+        $x_axis_key = $child;
+        $chart_type = $this->getType($element['#chart_type']);
+        $categories = $element[$x_axis_key]['#labels'] ? array_map('strip_tags', $element[$x_axis_key]['#labels']) : [];
+        if (!in_array($chart_type, ['pie', 'donut'])) {
+          if ($chart_type === 'scatter' || $chart_type === 'bubble') {
+            // Scatter is not supported: https://github.com/c3js/c3/issues/1902
           }
           else {
-            $chart_definition['data']['columns'] = array_map(NULL, $categories, $chart_definition['data']['columns']);;
+            $chart_definition['data']['columns'][] = ['x'];
+            $chart_definition['data']['x'] = 'x';
+            $categories_keys = array_keys($chart_definition['data']['columns']);
+            $categories_key = end($categories_keys);
+            foreach ($categories as $category) {
+              $chart_definition['data']['columns'][$categories_key][] = $category;
+            }
           }
+        }
+        else {
+          $chart_definition['data']['columns'] = array_map(NULL, $categories, $chart_definition['data']['columns']);
+        }
+      }
+      if ($type === 'chart_yaxis') {
+        $y_axis_key = $child;
+        if (!empty($element[$y_axis_key]['#opposite']) && $element[$y_axis_key]['#opposite'] === TRUE) {
+          $chart_definition['axis']['y2']['show'] = TRUE;
         }
       }
     }
@@ -259,21 +296,26 @@ class C3 extends ChartBase {
   private function populateData(array &$element, array $chart_definition) {
     $type = $this->getType($element['#chart_type']);
     $types = [];
-    /** @var \Drupal\Core\Render\ElementInfoManagerInterface $element_info */
-    $element_info = \Drupal::service('element_info');
     $children = Element::children($element);
-    $children = array_filter($children, function ($child) use ($element) {
+    $y_axes = [];
+    foreach ($children as $child) {
+      $element_type = $element[$child]['#type'];
+      if ($element_type === 'chart_yaxis') {
+        $y_axes[] = $child;
+      }
+    }
+    $data_elements = array_filter($children, function ($child) use ($element) {
       return $element[$child]['#type'] === 'chart_data';
     });
 
     $columns = $chart_definition['data']['columns'] ?? [];
     $column_keys = array_keys($columns);
     $columns_key_start = $columns ? end($column_keys) + 1 : 0;
-    foreach ($children as $key) {
+    foreach ($data_elements as $key) {
       $child_element = $element[$key];
       // Make sure defaults are loaded.
       if (empty($child_element['#defaults_loaded'])) {
-        $child_element += $element_info->getInfo($child_element['#type']);
+        $child_element += $this->elementInfo->getInfo($child_element['#type']);
       }
       if ($child_element['#color'] && $type !== 'gauge') {
         $chart_definition['color']['pattern'][] = $child_element['#color'];
@@ -281,7 +323,7 @@ class C3 extends ChartBase {
       if (!in_array($type, ['pie', 'donut'])) {
         $series_title = strip_tags($child_element['#title']);
         $types[$series_title] = $child_element['#chart_type'] ? $this->getType($child_element['#chart_type']) : $type;
-        if ($type !== 'scatter') {
+        if (!in_array($type, ['scatter', 'bubble'])) {
           $columns[$columns_key_start][] = $series_title;
           foreach ($child_element['#data'] as $datum) {
             if (gettype($datum) === 'array') {
@@ -304,7 +346,7 @@ class C3 extends ChartBase {
             $row[$series_title . '_x'][] = $datum[1];
           }
           $chart_definition['data']['xs'][$series_title] = $series_title . '_x';
-          foreach($row as $value) {
+          foreach ($row as $value) {
             $columns[] = $value;
           }
           $columns = array_values($columns);
@@ -323,6 +365,15 @@ class C3 extends ChartBase {
     }
     $chart_definition['data']['types'] = $types;
     $chart_definition['data']['columns'] = $columns;
+
+    if (count($y_axes) >= 2) {
+      foreach ($columns as $index => $column) {
+        if ($index <= 1) {
+          $axis = ($index + 1) === 2 ? 2 : '';
+          $chart_definition['data']['axes'][$column[0]] = 'y' . $axis;
+        }
+      }
+    }
 
     return $chart_definition;
   }

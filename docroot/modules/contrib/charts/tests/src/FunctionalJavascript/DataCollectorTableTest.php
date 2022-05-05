@@ -25,7 +25,7 @@ class DataCollectorTableTest extends WebDriverTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'charts',
     'charts_test',
   ];
@@ -220,12 +220,9 @@ class DataCollectorTableTest extends WebDriverTestBase {
    *   The selector.
    */
   protected function pressAjaxButton($selector) {
-    $button = $this->getSession()
-      ->getPage()
-      ->find('css', $selector);
-    $this->getSession()->executeScript("jQuery('" . $selector . "').trigger('mouseleave')");
-    $button->mouseOver();
-    $button->press();
+    $button = $this->assertSession()->waitForElementVisible('css', $selector);
+    $this->assertNotEmpty($button);
+    $button->click();
   }
 
   /**
@@ -253,9 +250,8 @@ class DataCollectorTableTest extends WebDriverTestBase {
    *   The url.
    */
   protected function getResourcesUrl() {
-    $resources_path = drupal_get_path('module', 'charts') . '/tests/resources';
+    $resources_path = \Drupal::service('extension.list.module')->getPath('charts') . '/tests/resources';
     return Url::fromUri('internal:/' . $resources_path)->toString();
-    // ->setAbsolute()
   }
 
 }

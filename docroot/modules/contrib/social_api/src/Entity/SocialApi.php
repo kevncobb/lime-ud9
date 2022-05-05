@@ -104,7 +104,7 @@ class SocialApi extends ContentEntityBase implements ContentEntityInterface {
 
     // Split the encrypted data from our IV - our unique separator used was
     // "::".
-    list($encrypted_data, $iv) = explode('::', base64_decode($token), 2);
+    [$encrypted_data, $iv] = explode('::', base64_decode($token), 2);
 
     return openssl_decrypt($encrypted_data, 'aes-256-cbc', $encryption_key, 0, $iv);
   }

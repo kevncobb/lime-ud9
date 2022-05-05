@@ -16,13 +16,15 @@ abstract class TransportBase extends PluginBase implements TransportPluginInterf
    */
   public function getDsn() {
     $cfg = $this->configuration;
+    $query = !empty($cfg['query']) ? array_filter($cfg['query']) : [];
+
     $dsn = $this->getPluginId() . '://' .
       (isset($cfg['user']) ? urlencode($cfg['user']) : '') .
       (isset($cfg['pass']) ? ':' . urlencode($cfg['pass']) : '') .
       (isset($cfg['user']) ? '@' : '') .
       (urlencode($cfg['host'] ?? 'default')) .
       (isset($cfg['port']) ? ':' . $cfg['port'] : '') .
-      (!empty($cfg['query']) ? '?' . http_build_query($cfg['query']) : '');
+      ($query ? '?' . http_build_query($query) : '');
 
     return $dsn;
   }
@@ -39,6 +41,12 @@ abstract class TransportBase extends PluginBase implements TransportPluginInterf
    */
   public function setConfiguration(array $configuration) {
     $this->configuration = $configuration + $this->defaultConfiguration();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
   }
 
 }

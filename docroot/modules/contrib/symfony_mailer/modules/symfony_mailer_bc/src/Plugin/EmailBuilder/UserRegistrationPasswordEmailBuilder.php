@@ -2,8 +2,6 @@
 
 namespace Drupal\symfony_mailer_bc\Plugin\EmailBuilder;
 
-use Drupal\symfony_mailer\Processor\EmailProcessorBase;
-use Drupal\symfony_mailer\Processor\TokenProcessorTrait;
 use Drupal\symfony_mailer\EmailInterface;
 
 /**
@@ -16,15 +14,17 @@ use Drupal\symfony_mailer\EmailInterface;
  *   },
  * )
  */
-class UserRegistrationPasswordEmailBuilder extends EmailProcessorBase {
-
-  use TokenProcessorTrait;
+class UserRegistrationPasswordEmailBuilder extends UserEmailBuilder {
 
   /**
    * {@inheritdoc}
    */
-  public function preRender(EmailInterface $email) {
-    $this->tokenOptions(['callback' => 'user_registrationpassword_mail_tokens', 'clear' => TRUE]);
+  public function build(EmailInterface $email) {
+    parent::build($email);
+    $this->tokenOptions([
+      'callback' => 'user_registrationpassword_mail_tokens',
+      'clear' => TRUE,
+    ]);
   }
 
 }

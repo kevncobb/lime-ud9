@@ -12,7 +12,6 @@ use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\Stmt\Trait_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Type\Generic\TemplateType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\Type;
@@ -121,19 +120,23 @@ final class TypedPropertyRector extends \Rector\Core\Rector\AbstractRector imple
     }
     public function getRuleDefinition() : \Symplify\RuleDocGenerator\ValueObject\RuleDefinition
     {
-        return new \Symplify\RuleDocGenerator\ValueObject\RuleDefinition('Changes property `@var` annotations from annotation to type.', [new \Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample(<<<'CODE_SAMPLE'
+        return new \Symplify\RuleDocGenerator\ValueObject\RuleDefinition('Changes property type by `@var` annotations or default value.', [new \Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample(<<<'CODE_SAMPLE'
 final class SomeClass
 {
     /**
      * @var int
      */
     private $count;
+
+    private $isDone = false;
 }
 CODE_SAMPLE
 , <<<'CODE_SAMPLE'
 final class SomeClass
 {
     private int $count;
+
+    private bool $isDone = false;
 }
 CODE_SAMPLE
 , [self::INLINE_PUBLIC => \false])]);
@@ -160,14 +163,6 @@ CODE_SAMPLE
         $varType = $this->varDocPropertyTypeInferer->inferProperty($node);
         if ($varType instanceof \PHPStan\Type\MixedType) {
             return null;
-        }
-        if ($varType instanceof \PHPStan\Type\UnionType) {
-            $types = $varType->getTypes();
-            if (\count($types) === 2 && $types[1] instanceof \PHPStan\Type\Generic\TemplateType) {
-                $templateType = $types[1];
-                $node->type = $this->staticTypeMapper->mapPHPStanTypeToPhpParserNode($templateType->getBound(), \Rector\PHPStanStaticTypeMapper\Enum\TypeKind::PROPERTY());
-                return $node;
-            }
         }
         if ($this->objectTypeAnalyzer->isSpecial($varType)) {
             return null;

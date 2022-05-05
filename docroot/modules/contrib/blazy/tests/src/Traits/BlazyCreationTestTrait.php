@@ -9,9 +9,10 @@ use Drupal\node\Entity\NodeType;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
+use Drupal\file\FileInterface;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\image\Plugin\Field\FieldType\ImageItem;
-use Drupal\blazy\BlazyFile;
+use Drupal\blazy\Media\BlazyFile;
 
 /**
  * A Trait common for Blazy tests.
@@ -44,10 +45,8 @@ trait BlazyCreationTestTrait {
     $field_name = empty($data['field_name']) ? $this->testFieldName : $data['field_name'];
     $settings   = empty($data['settings']) ? [] : $data['settings'];
     $display_id = $this->entityType . '.' . $bundle . '.' . $view_mode;
-    $storage    = $this->blazyManager->getEntityTypeManager()->getStorage('entity_view_display');
+    $storage    = $this->blazyManager->getStorage('entity_view_display');
     $display    = $storage->load($display_id);
-
-    $this->blazyManager->getCommonSettings($settings);
 
     if (!$display) {
       $values = [
@@ -60,7 +59,7 @@ trait BlazyCreationTestTrait {
       $display = $storage->create($values);
     }
 
-    $settings['current_view_mode'] = $settings['view_mode'] = $view_mode;
+    $settings['view_mode'] = $view_mode;
     $display->setComponent($field_name, [
       'type'     => $plugin_id,
       'settings' => $settings,
@@ -501,8 +500,6 @@ trait BlazyCreationTestTrait {
       'settings' => $this->getFormatterSettings(),
       'item'     => $item,
     ];
-
-    $this->imageFactory = $this->container->get('image.factory');
   }
 
   /**
@@ -540,7 +537,7 @@ trait BlazyCreationTestTrait {
     $item = File::create([
       'uri' => $uri,
       'uid' => 1,
-      'status' => FILE_STATUS_PERMANENT,
+      'status' => FileInterface::STATUS_PERMANENT,
       'filename' => $name,
     ]);
 

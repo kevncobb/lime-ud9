@@ -1,3 +1,46 @@
+### [2.2.12] 2022-04-13
+
+  * Security: Fixed command injection vulnerability in HgDriver/GitDriver (GHSA-x7cr-6qr6-2hh6 / CVE-2022-24828)
+  * Fixed curl downloader not retrying when a DNS resolution failure occurs (#10716)
+  * Fixed composer.lock file still being used/read when the `lock` config option is disabled (#10726)
+  * Fixed `validate` command checking the lock file even if the `lock` option is disabled (#10723)
+
+### [2.2.11] 2022-04-01
+
+  * Added missing config.bitbucket-oauth in composer-schema.json
+  * Added --2.2 flag to `self-update` to pin the Composer version to the 2.2 LTS range (#10682)
+  * Updated semver, jsonlint deps for minor fixes
+  * Fixed generation of autoload crashing if a package has a broken path (#10688)
+  * Removed dev-master=>dev-main alias from #10372 as it does not work when reloading from lock file and extracting dev deps (#10651)
+
+### [2.2.10] 2022-03-29
+
+  * Fixed Bitbucket authorization detection due to API changes (#10657)
+  * Fixed validate command warning about dist/source keys if defined (#10655)
+  * Fixed deletion/handling of corrupted 0-bytes zip archives (#10666)
+
+### [2.2.9] 2022-03-15
+
+  * Fixed regression with plugins that modify install path of packages, [see docs](https://getcomposer.org/doc/articles/plugins.md#plugin-modifies-install-path) if you are authoring such a plugin (#10621)
+
+### [2.2.8] 2022-03-15
+
+  * Fixed `files` autoloading sort order to be fully deterministic (#10617)
+  * Fixed pool optimization pass edge cases (#10579)
+  * Fixed `require` command failing when `self.version` is used as constraint (#10593)
+  * Fixed --no-ansi / undecorated output still showing color in repo warnings (#10601)
+  * Performance improvement in pool optimization step (composer/semver#131)
+
+### [2.2.7] 2022-02-25
+
+  * Allow installation together with composer/xdebug-handler ^3 (#10528)
+  * Fixed support for packages with no licenses in `licenses` command output (#10537)
+  * Fixed handling of `allow-plugins: false` which kept warning (#10530)
+  * Fixed enum parsing in classmap generation when the enum keyword is not lowercased (#10521)
+  * Fixed author parsing in `init` command requiring an email whereas the schema allows a name only (#10538)
+  * Fixed issues in `require` command when requiring packages which do not exist (but are provided by something else you require) (#10541)
+  * Performance improvement in pool optimization step (#10546)
+
 ### [2.2.6] 2022-02-04
 
   * BC Break: due to an oversight, the `COMPOSER_BIN_DIR` env var for binaries added in Composer 2.2.2 had to be renamed to `COMPOSER_RUNTIME_BIN_DIR` (#10512)
@@ -1384,6 +1427,12 @@
 
   * Initial release
 
+[2.2.12]: https://github.com/composer/composer/compare/2.2.11...2.2.12
+[2.2.11]: https://github.com/composer/composer/compare/2.2.10...2.2.11
+[2.2.10]: https://github.com/composer/composer/compare/2.2.9...2.2.10
+[2.2.9]: https://github.com/composer/composer/compare/2.2.8...2.2.9
+[2.2.8]: https://github.com/composer/composer/compare/2.2.7...2.2.8
+[2.2.7]: https://github.com/composer/composer/compare/2.2.6...2.2.7
 [2.2.6]: https://github.com/composer/composer/compare/2.2.5...2.2.6
 [2.2.5]: https://github.com/composer/composer/compare/2.2.4...2.2.5
 [2.2.4]: https://github.com/composer/composer/compare/2.2.3...2.2.4

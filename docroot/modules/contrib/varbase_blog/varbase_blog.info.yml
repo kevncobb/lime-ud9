@@ -18,7 +18,7 @@ install:
   - varbase_layout_builder
   - vlplb
 
-# Information added by Drupal.org packaging script on 2022-01-12
-version: '9.0.5'
+# Information added by Drupal.org packaging script on 2022-04-21
+version: '9.0.6'
 project: 'varbase_blog'
-datestamp: 1641996415
+datestamp: 1650548982

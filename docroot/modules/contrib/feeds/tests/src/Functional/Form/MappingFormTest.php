@@ -125,6 +125,47 @@ class MappingFormTest extends FeedsBrowserTestBase {
   }
 
   /**
+   * Tests adding a blank source for a parser that does not extend ParserBase.
+   */
+  public function testAddBlankSourceForBasicParser() {
+    // Create a feed type with the parser "Parser with mapping form".
+    // That parser does not extend \Drupal\feeds\Feeds\Parser\ParserBase.
+    $feed_type = $this->createFeedType([
+      'parser' => 'parser_with_mapping_form',
+      'mappings' => [],
+    ]);
+
+    // Add a new target and set field specific for this parser.
+    $edit = [
+      'dummy' => 'dummyValue',
+      'add_target' => 'title',
+    ];
+    $this->drupalGet('/admin/structure/feeds/manage/' . $feed_type->id() . '/mapping');
+    $this->submitForm($edit, 'Save');
+
+    // Create a new blank source and map that.
+    $edit = [
+      'mappings[0][map][value][select]' => 'custom__blank',
+      'mappings[0][map][value][custom__blank][value]' => 'title',
+      'mappings[0][map][value][custom__blank][machine_name]' => 'title',
+    ];
+    $this->submitForm($edit, 'Save');
+
+    // Reload feed type and assert that a custom source of type "blank" was
+    // added.
+    $feed_type = $this->reloadEntity($feed_type);
+    $expected = [
+      'title' => [
+        'value' => 'title',
+        'label' => 'title',
+        'type' => 'blank',
+        'machine_name' => 'title',
+      ],
+    ];
+    $this->assertEquals($expected, $feed_type->getCustomSources());
+  }
+
+  /**
    * Tests that validation handlers on custom sources are ran.
    */
   public function testAddCustomSourceValidation() {

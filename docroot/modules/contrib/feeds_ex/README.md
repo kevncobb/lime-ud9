@@ -57,7 +57,7 @@ https://github.com/jmespath/jmespath.php
 To use the QueryPath parsers, you will need the QueryPath library. To require it
 with Composer:
 
-$ composer require querypath/QueryPath:^3.0
+$ composer require arthurkushman/query-path:^3.0
 
 The source code for this library can be found at:
 https://github.com/technosophos/querypath

@@ -11,7 +11,7 @@ dependencies:
   - field_group:field_group
   - smart_trim:smart_trim
 
-# Information added by Drupal.org packaging script on 2020-12-08
-version: '8.x-2.9'
+# Information added by Drupal.org packaging script on 2022-04-07
+version: '8.x-2.10'
 project: 'vmi'
-datestamp: 1607423477
+datestamp: 1649352549

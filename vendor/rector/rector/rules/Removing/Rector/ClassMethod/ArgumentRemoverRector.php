@@ -14,17 +14,12 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\Removing\ValueObject\ArgumentRemover;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220209\Webmozart\Assert\Assert;
+use RectorPrefix20220303\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Removing\Rector\ClassMethod\ArgumentRemoverRector\ArgumentRemoverRectorTest
  */
 final class ArgumentRemoverRector extends \Rector\Core\Rector\AbstractRector implements \Rector\Core\Contract\Rector\ConfigurableRectorInterface
 {
-    /**
-     * @deprecated
-     * @var string
-     */
-    public const REMOVED_ARGUMENTS = 'removed_arguments';
     /**
      * @var ArgumentRemover[]
      */
@@ -70,9 +65,8 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $removedArguments = $configuration[self::REMOVED_ARGUMENTS] ?? $configuration;
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allIsAOf($removedArguments, \Rector\Removing\ValueObject\ArgumentRemover::class);
-        $this->removedArguments = $removedArguments;
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allIsAOf($configuration, \Rector\Removing\ValueObject\ArgumentRemover::class);
+        $this->removedArguments = $configuration;
     }
     /**
      * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Stmt\ClassMethod $node

@@ -165,6 +165,13 @@ body {
     }
   }
 
+  // Remvoe warning message location icon in layout builder.
+  .layout-builder__message--overrides {
+    .messages {
+      background-image: none;
+    }
+  }
+
   .layout-builder__layout,
   .layout-builder-block,
   .layout-builder__add-block {
@@ -401,7 +408,6 @@ body {
               padding: 8px;
               margin: 2px;
               width: calc(100% - 4px);
-              display: flex;
               align-items: center;
               justify-content: center;
               text-align: center;
@@ -530,6 +536,12 @@ body {
     }
   }
 
+  // To make varbase layout builder search blocks field take a full width.
+  fieldset {
+    &.form-type-search {
+      width: 100% !important;
+    }
+  }
 }
 
 #layout-builder-modal {
@@ -592,6 +604,20 @@ body {
     td {
       border: 0;
     }
+  }
+
+  fieldset.fieldset {
+    background-color: #383a40;
+
+    .media-library-widget-empty-text,
+    .fieldset__description,
+    .form-item__description {
+      color: #fff !important;
+    }
+  }
+
+  .fieldset__label {
+    color: #fff !important;
   }
 
 }

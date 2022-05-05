@@ -15,17 +15,12 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220209\Webmozart\Assert\Assert;
+use RectorPrefix20220303\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\DependencyInjection\Rector\ClassMethod\AddMethodParentCallRector\AddMethodParentCallRectorTest
  */
 final class AddMethodParentCallRector extends \Rector\Core\Rector\AbstractRector implements \Rector\Core\Contract\Rector\ConfigurableRectorInterface
 {
-    /**
-     * @deprecated
-     * @var string
-     */
-    public const METHODS_BY_PARENT_TYPES = 'methods_by_parent_type';
     /**
      * @var array<string, string>
      */
@@ -92,11 +87,10 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $methodsByParentTypes = $configuration[self::METHODS_BY_PARENT_TYPES] ?? $configuration;
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allString(\array_keys($methodsByParentTypes));
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allString($methodsByParentTypes);
-        /** @var array<string, string> $methodsByParentTypes */
-        $this->methodByParentTypes = $methodsByParentTypes;
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allString(\array_keys($configuration));
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allString($configuration);
+        /** @var array<string, string> $configuration */
+        $this->methodByParentTypes = $configuration;
     }
     private function shouldSkipMethod(\PhpParser\Node\Stmt\ClassMethod $classMethod, string $method) : bool
     {

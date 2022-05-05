@@ -6,9 +6,7 @@ namespace Drupal\devel_php\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\devel\DevelDumperManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Defines a form that allows privileged users to execute arbitrary PHP code.
@@ -25,14 +23,14 @@ class ExecutePHP extends FormBase {
    *
    * @var \Drupal\devel\DevelDumperManagerInterface
    */
-  protected DevelDumperManagerInterface $develDumper;
+  protected $develDumper;
 
   /**
    * The session service.
    *
    * @var \Symfony\Component\HttpFoundation\Session\SessionInterface
    */
-  protected SessionInterface $session;
+  protected $session;
 
   /**
    * {@inheritdoc}

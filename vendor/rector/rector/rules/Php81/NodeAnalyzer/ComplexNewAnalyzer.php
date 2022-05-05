@@ -8,17 +8,23 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Name\FullyQualified;
-use PhpParser\Node\Scalar;
 use Rector\Core\NodeAnalyzer\ExprAnalyzer;
+use Rector\Core\NodeManipulator\ArrayManipulator;
 final class ComplexNewAnalyzer
 {
+    /**
+     * @readonly
+     * @var \Rector\Core\NodeManipulator\ArrayManipulator
+     */
+    private $arrayManipulator;
     /**
      * @readonly
      * @var \Rector\Core\NodeAnalyzer\ExprAnalyzer
      */
     private $exprAnalyzer;
-    public function __construct(\Rector\Core\NodeAnalyzer\ExprAnalyzer $exprAnalyzer)
+    public function __construct(\Rector\Core\NodeManipulator\ArrayManipulator $arrayManipulator, \Rector\Core\NodeAnalyzer\ExprAnalyzer $exprAnalyzer)
     {
+        $this->arrayManipulator = $arrayManipulator;
         $this->exprAnalyzer = $exprAnalyzer;
     }
     public function isDynamic(\PhpParser\Node\Expr\New_ $new) : bool
@@ -32,10 +38,11 @@ final class ComplexNewAnalyzer
             if ($this->isAllowedNew($value)) {
                 continue;
             }
+            // new inside array is allowed for New in initializer
             if ($value instanceof \PhpParser\Node\Expr\Array_ && $this->isAllowedArray($value)) {
                 continue;
             }
-            if ($value instanceof \PhpParser\Node\Scalar) {
+            if (!$this->exprAnalyzer->isDynamicValue($value)) {
                 continue;
             }
             return \true;
@@ -51,7 +58,7 @@ final class ComplexNewAnalyzer
     }
     private function isAllowedArray(\PhpParser\Node\Expr\Array_ $array) : bool
     {
-        if (!$this->exprAnalyzer->isDynamicArray($array)) {
+        if (!$this->arrayManipulator->isDynamicArray($array)) {
             return \true;
         }
         $arrayItems = $array->items;

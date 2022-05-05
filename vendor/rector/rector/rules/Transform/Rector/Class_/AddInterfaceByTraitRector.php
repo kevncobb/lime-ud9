@@ -13,17 +13,12 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220209\Webmozart\Assert\Assert;
+use RectorPrefix20220303\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Transform\Rector\Class_\AddInterfaceByTraitRector\AddInterfaceByTraitRectorTest
  */
 final class AddInterfaceByTraitRector extends \Rector\Core\Rector\AbstractRector implements \Rector\Core\Contract\Rector\ConfigurableRectorInterface
 {
-    /**
-     * @deprecated
-     * @var string
-     */
-    public const INTERFACE_BY_TRAIT = 'interface_by_trait';
     /**
      * @var array<string, string>
      */
@@ -62,6 +57,7 @@ CODE_SAMPLE
         if (!$classReflection instanceof \PHPStan\Reflection\ClassReflection) {
             return null;
         }
+        $hasChanged = \false;
         foreach ($this->interfaceByTrait as $traitName => $interfaceName) {
             if (!$classReflection->hasTraitUse($traitName)) {
                 continue;
@@ -72,6 +68,10 @@ CODE_SAMPLE
                 }
             }
             $node->implements[] = new \PhpParser\Node\Name\FullyQualified($interfaceName);
+            $hasChanged = \true;
+        }
+        if (!$hasChanged) {
+            return null;
         }
         return $node;
     }
@@ -81,10 +81,8 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $interfaceByTrait = $configuration[self::INTERFACE_BY_TRAIT] ?? $configuration;
-        \RectorPrefix20220209\Webmozart\Assert\Assert::isArray($interfaceByTrait);
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allString(\array_keys($interfaceByTrait));
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allString($interfaceByTrait);
-        $this->interfaceByTrait = $interfaceByTrait;
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allString(\array_keys($configuration));
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allString($configuration);
+        $this->interfaceByTrait = $configuration;
     }
 }

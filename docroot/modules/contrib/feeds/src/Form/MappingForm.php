@@ -418,6 +418,11 @@ class MappingForm extends FormBase {
         '#weight' => -1,
       ];
     }
+
+    // Add the appropriate new custom source options to the select source
+    // dropdown.
+    $options = $element['select']['#options'] ?? [];
+    $element['select']['#options'] = $this->getCustomSourceOptions() + $options;
   }
 
   /**
@@ -583,6 +588,38 @@ class MappingForm extends FormBase {
 
     // Name does not exist yet for custom source.
     return FALSE;
+  }
+
+  /**
+   * Returns a list of custom source options, used by the mapping form.
+   *
+   * @return array
+   *   A list of custom source options using id => label.
+   */
+  protected function getCustomSourceOptions(): array {
+    $custom_sources = [];
+    $supported_custom_source_plugins = $this->feedType->getParser()->getSupportedCustomSourcePlugins();
+    // The blank source plugin is available for all parsers.
+    $supported_custom_source_plugins[] = 'blank';
+
+    foreach ($supported_custom_source_plugins as $custom_source_plugin_id) {
+      $custom_source_plugin = $this->customSourcePluginManager->createInstance($custom_source_plugin_id, [
+        'feed_type' => $this->feedType,
+      ]);
+      $custom_sources['custom__' . $custom_source_plugin_id] = $this->t('New @type source...', [
+        '@type' => $custom_source_plugin->getLabel(),
+      ]);
+    }
+
+    // In the UI, clearly separate the options for adding new sources from the
+    // options for existing sources.
+    if (!empty($custom_sources)) {
+      $custom_sources_delimiter = ['----' => '----'];
+    }
+    else {
+      $custom_sources_delimiter = [];
+    }
+    return $custom_sources + $custom_sources_delimiter;
   }
 
   /**

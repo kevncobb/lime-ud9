@@ -3,9 +3,10 @@
 declare (strict_types=1);
 namespace Rector\BetterPhpDocParser\PhpDocNodeFinder;
 
+use PHPStan\PhpDocParser\Ast\Node;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocNode;
 use Rector\BetterPhpDocParser\PhpDoc\DoctrineAnnotationTagValueNode;
-use RectorPrefix20220209\Symplify\SimplePhpDocParser\PhpDocNodeTraverser;
+use RectorPrefix20220303\Symplify\Astral\PhpDocParser\PhpDocNodeTraverser;
 /**
  * @template TNode as \PHPStan\PhpDocParser\Ast\Node
  */
@@ -17,9 +18,9 @@ final class PhpDocNodeByTypeFinder
      */
     public function findByType(\PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocNode $phpDocNode, string $desiredType) : array
     {
-        $phpDocNodeTraverser = new \RectorPrefix20220209\Symplify\SimplePhpDocParser\PhpDocNodeTraverser();
+        $phpDocNodeTraverser = new \RectorPrefix20220303\Symplify\Astral\PhpDocParser\PhpDocNodeTraverser();
         $foundNodes = [];
-        $phpDocNodeTraverser->traverseWithCallable($phpDocNode, '', function ($node) use(&$foundNodes, $desiredType) {
+        $phpDocNodeTraverser->traverseWithCallable($phpDocNode, '', function ($node) use(&$foundNodes, $desiredType) : Node {
             if (!\is_a($node, $desiredType, \true)) {
                 return $node;
             }

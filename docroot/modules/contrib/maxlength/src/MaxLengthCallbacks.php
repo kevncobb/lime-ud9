@@ -10,6 +10,9 @@ use Drupal\Core\Security\TrustedCallbackInterface;
  */
 class MaxLengthCallbacks implements TrustedCallbackInterface {
 
+  /**
+   * {@inheritDoc}
+   */
   public static function trustedCallbacks() {
     return ['maxlengthPreRender', 'processElement'];
   }
@@ -17,19 +20,26 @@ class MaxLengthCallbacks implements TrustedCallbackInterface {
   /**
    * Pre render function to set maxlength attributes.
    *
-   * @param array $element
+   * @param array|mixed $element
    *   The render array.
    *
    * @return array
    *   The processed render array.
    */
   public static function maxlengthPreRender($element) {
+    if (\Drupal::currentUser()->hasPermission('bypass maxlength')) {
+      if (isset($element['#attributes']['maxlength'])) {
+        $element['#attributes']['maxlength'] = $element['#maxlength'] ?? -1;
+      }
+      return $element;
+    }
+
     if (isset($element['#maxlength_js']) && $element['#maxlength_js'] === TRUE) {
-      if (((isset($element['#attributes']['maxlength']) && $element['#attributes']['maxlength'] > 0))) {
+      if (isset($element['#attributes']['data-maxlength']) && $element['#attributes']['data-maxlength'] > 0) {
         $element['#attributes']['class'][] = 'maxlength';
         $element['#attached']['library'][] = 'maxlength/maxlength';
       }
-      if (((isset($element['summary']['#attributes']['maxlength']) && $element['summary']['#attributes']['maxlength'] > 0))) {
+      if (isset($element['summary']['#attributes']['data-maxlength']) && $element['summary']['#attributes']['data-maxlength'] > 0) {
         $element['summary']['#attributes']['class'][] = 'maxlength';
         $element['summary']['#attached']['library'][] = 'maxlength/maxlength';
       }
@@ -40,7 +50,7 @@ class MaxLengthCallbacks implements TrustedCallbackInterface {
   /**
    * Process handler for the form elements that can have maxlength attribute.
    *
-   * @param array $element
+   * @param array|mixed $element
    *   The render array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Form state.
@@ -57,6 +67,5 @@ class MaxLengthCallbacks implements TrustedCallbackInterface {
     }
     return $element;
   }
-
 
 }

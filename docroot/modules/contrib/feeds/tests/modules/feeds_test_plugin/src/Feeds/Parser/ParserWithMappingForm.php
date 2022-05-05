@@ -14,6 +14,10 @@ use Drupal\feeds\StateInterface;
 /**
  * Dummy parser to test integration with the Feeds mapping form.
  *
+ * This parser deliberately does not extend
+ * \Drupal\feeds\Feeds\Parser\ParserBase, in order to have tests for parsers
+ * that only implement \Drupal\feeds\Plugin\Type\Parser\ParserInterface.
+ *
  * @FeedsParser(
  *   id = "parser_with_mapping_form",
  *   title = "Parser with mapping form",

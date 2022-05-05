@@ -2,10 +2,10 @@
 
 namespace Drupal\charts\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * The TypesInfoEvent.
+ * Provides getters and setters for the type.
  */
 class TypesInfoEvent extends Event {
 

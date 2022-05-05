@@ -93,6 +93,11 @@ class ChartsConfigForm extends ConfigFormBase {
       unset($settings['defaults']);
     }
 
+    // Process the default colors to remove unneeded data.
+    foreach ($settings['display']['colors'] as $color_index => $color_item) {
+      $settings['display']['colors'][$color_index] = $color_item['color'];
+    }
+
     // Save the main settings.
     $config = $this->config('charts.settings');
     $config->set('charts_default_settings', $settings)

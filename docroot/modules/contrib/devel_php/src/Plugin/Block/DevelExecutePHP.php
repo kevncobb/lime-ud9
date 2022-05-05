@@ -26,7 +26,7 @@ class DevelExecutePHP extends BlockBase implements ContainerFactoryPluginInterfa
    *
    * @var \Drupal\Core\Form\FormBuilderInterface
    */
-  protected FormBuilderInterface $formBuilder;
+  protected $formBuilder;
 
   /**
    * Constructor.

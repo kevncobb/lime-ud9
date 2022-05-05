@@ -106,11 +106,11 @@ function _pathologic_filter($text, $settings, $hash) {
   $cached_settings['current_settings'] = &$cached_settings[$hash];
 
   // Now that we have all of our settings prepared, attempt to process all
-  // paths in href, src, action or longdesc HTML attributes. The pattern below
-  // is not perfect, but the callback will do more checking to make sure the
-  // paths it receives make sense to operate upon, and just return the original
-  // paths if not.
-  return preg_replace_callback('~ (href|src|action|longdesc)="([^"]+)~i', '_pathologic_replace', $text);
+  // paths in href, src, srcset, action or longdesc HTML attributes. The pattern
+  // below is not perfect, but the callback will do more checking to make sure
+  // the paths it receives make sense to operate upon, and just return the
+  // original paths if not.
+  return preg_replace_callback('~ (href|src|srcset|action|longdesc)="([^"]+)~i', '_pathologic_replace', $text);
 }
 
 /**
@@ -161,7 +161,7 @@ function _pathologic_replace($matches) {
       // @see http://drupal.org/node/1834308
       // Default value is ['http', 'https', 'files', 'internal']
       // "files" and "internal" are for Path Filter compatibility.
-      && !in_array($parts['scheme'], \Drupal::config('pathologic.settings')->get('scheme_whitelist'))
+      && !in_array($parts['scheme'], \Drupal::config('pathologic.settings')->get('scheme_whitelist') ?? [])
     )
     // Bail out if it looks like there's only a fragment part.
     || (isset($parts['fragment']) && count($parts) === 1)
@@ -325,7 +325,9 @@ function _pathologic_replace($matches) {
   $url_params = [
     'path' => $parts['path'],
     'options' => [
-      'query' => $parts['qparts'],
+      // Force the query to an array if it's unspecified.
+      'query' => $parts['qparts'] ?: [],
+      'path_processing' => TRUE,
       'fragment' => isset($parts['fragment']) ? $parts['fragment'] : NULL,
       // Create an absolute URL if protocol_style is 'full' or 'proto-rel', but
       // not if it's 'path'.
@@ -358,9 +360,9 @@ function _pathologic_replace($matches) {
     $url = Url::fromRoute('<front>', [], $url_params['options'])->toString();
   }
   else {
+    $path = (empty($url_params['options']['external']) ? 'base:/' : '') . $url_params['path'];
     try {
-      $url = Url::fromUri('base://' . $url_params['path'], $url_params['options'])
-        ->toString();
+      $url = Url::fromUri($path, $url_params['options'])->toString();
     }
     catch (\Exception $e) {
       // In case of an error, e.g. completely invalid URL, return it unchanged.
@@ -401,4 +403,16 @@ function _pathologic_replace($matches) {
  */
 function _pathologic_url_to_protocol_relative($url) {
   return preg_replace('~^https?://~', '//', $url);
+}
+
+/**
+ * Implements hook_migration_plugins_alter().
+ */
+function pathologic_migration_plugins_alter(array &$migrations) {
+  if (isset($migrations['d7_filter_format'])) {
+    $migration = &$migrations['d7_filter_format'];
+
+    // Add mapping from pathologic to filter_pathologic for D7 migrations.
+    $migration['process']['filters']['process']['id']['map']['pathologic'] = 'filter_pathologic';
+  }
 }

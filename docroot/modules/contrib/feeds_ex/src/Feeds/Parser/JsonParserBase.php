@@ -2,7 +2,6 @@
 
 namespace Drupal\feeds_ex\Feeds\Parser;
 
-use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\feeds\FeedInterface;
 use Drupal\feeds\Result\FetcherResultInterface;
@@ -31,14 +30,12 @@ abstract class JsonParserBase extends ParserBase implements ContainerFactoryPlug
    *   The plugin id.
    * @param array $plugin_definition
    *   The plugin definition.
-   * @param \Drupal\Component\Plugin\PluginManagerInterface $custom_source_plugin_manager
-   *   The custom source plugin manager.
    * @param \Drupal\feeds_ex\Utility\JsonUtility $utility
    *   The JSON helper class.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, PluginManagerInterface $custom_source_plugin_manager, JsonUtility $utility) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, JsonUtility $utility) {
     $this->utility = $utility;
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $custom_source_plugin_manager);
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
   /**
@@ -49,7 +46,6 @@ abstract class JsonParserBase extends ParserBase implements ContainerFactoryPlug
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('plugin.manager.feeds.custom_source'),
       $container->get('feeds_ex.json_utility')
     );
   }

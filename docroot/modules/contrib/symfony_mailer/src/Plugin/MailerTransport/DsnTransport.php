@@ -3,7 +3,6 @@
 namespace Drupal\symfony_mailer\Plugin\MailerTransport;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\symfony_mailer\TransportPluginInterface;
 use Symfony\Component\Mailer\Transport;
 
 /**
@@ -36,7 +35,7 @@ class DsnTransport extends TransportBase {
       '#type' => 'textfield',
       '#title' => $this->t('DSN'),
       '#maxlength' => 255,
-      '#default_value' => $this->configuration['dsn'] ?? '',
+      '#default_value' => $this->configuration['dsn'],
       '#description' => $this->t('DSN for the Transport, see <a href=":docs">documentation</a>.', [':docs' => static::DOCS_URL]),
       '#required' => TRUE,
     ];
@@ -48,8 +47,14 @@ class DsnTransport extends TransportBase {
    * {@inheritdoc}
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
+    $dsn = $form_state->getValue('dsn');
+    if (parse_url($dsn, PHP_URL_SCHEME) == 'sendmail') {
+      // Don't allow bypassing of the checks done by the Sendmail transport.
+      $form_state->setErrorByName('dsn', $this->t('Use the Sendmail transport.'));
+    }
+
     try {
-      Transport::fromDsn($form_state->getValue('dsn'));
+      Transport::fromDsn($dsn);
     }
     catch (\Exception $e) {
       $form_state->setErrorByName('dsn', $this->t('Invalid DSN.'));

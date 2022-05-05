@@ -197,8 +197,8 @@ class PathologicTest extends BrowserTestBase {
       t('Path Filter compatibility (files:)')
     );
     $this->assertEqual(
-      check_markup('<a href="http://example.com/qux/foo"><img src="http://example.org/bar.jpeg" longdesc="/bananas/baz" /></a>', $format_id),
-      '<a href="' . _pathologic_content_url('foo', ['absolute' => TRUE]) . '"><img src="' . _pathologic_content_url('bar.jpeg', ['absolute' => TRUE]) . '" longdesc="' . _pathologic_content_url('baz', ['absolute' => TRUE]) . '" /></a>',
+      check_markup('<a href="http://example.com/qux/foo"><picture><source srcset="http://example.org/bar.jpeg" /><img src="http://example.org/bar.jpeg" longdesc="/bananas/baz" /></picture></a>', $format_id),
+      '<a href="' . _pathologic_content_url('foo', ['absolute' => TRUE]) . '"><picture><source srcset="' . _pathologic_content_url('bar.jpeg', ['absolute' => TRUE]) . '" /><img src="' . _pathologic_content_url('bar.jpeg', ['absolute' => TRUE]) . '" longdesc="' . _pathologic_content_url('baz', ['absolute' => TRUE]) . '" /></picture></a>',
       t('"All base paths for this site" functionality')
     );
     $this->assertEqual(
@@ -216,6 +216,10 @@ class PathologicTest extends BrowserTestBase {
       check_markup('<a href="bar?test=use_original">', $format_id),
       '<a href="bar?test=use_original">',
       t('hook_pathologic_alter(): Passthrough with use_original option')
+    );
+    $this->assertEquals(
+      '<a href="http://cdn.example.com/bar?test=external">',
+      check_markup('<a href="bar?test=external">', $format_id),
     );
 
     // Test paths to existing files when clean URLs are disabled.
@@ -246,17 +250,11 @@ class PathologicTest extends BrowserTestBase {
     // Test really broken URLs.
     // @see https://www.drupal.org/node/2602312
     $original = '<a href="/Epic:failure">foo</a>';
-    $message = t('Fails sensibly when \Drupal\Core\Url::fromUri() throws exception');
     try {
       $filtered = check_markup($original, $format_id);
-      $this->assertEqual(
-        $original,
-        $filtered,
-        $message
-      );
     }
     catch (\Exception $e) {
-      $this->fail($message);
+      $this->fail('Fails miserably when \Drupal\Core\Url::fromUri() throws exception');
     }
 
   }

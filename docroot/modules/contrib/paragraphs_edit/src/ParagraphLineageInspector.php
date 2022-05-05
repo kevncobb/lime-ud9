@@ -113,7 +113,7 @@ class ParagraphLineageInspector {
       $parent_field = $this->getParentField($paragraph);
       $parent_field_label = $parent_field->getFieldDefinition()->getLabel();
       $parent_field_item = $this->getParentFieldItem($paragraph, $parent_field);
-      $parent_field_delta = $parent_field_item->getName() + 1;
+      $parent_field_delta = $parent_field_item ? $parent_field_item->getName() + 1 : 1;
 
       $string = ' > ' . $parent_field_label . ' #' . $parent_field_delta . $string;
 

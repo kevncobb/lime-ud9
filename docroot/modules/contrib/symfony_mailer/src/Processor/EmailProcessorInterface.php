@@ -4,42 +4,29 @@ namespace Drupal\symfony_mailer\Processor;
 
 use Drupal\symfony_mailer\EmailInterface;
 
+/**
+ * Defines the interface for Email Processors.
+ */
 interface EmailProcessorInterface {
 
   /**
-   * Runs the pre-build function on an email message.
+   * Mapping from phase to default function name.
    *
-   * @param \Drupal\symfony_mailer\EmailInterface $email
-   *   The email to process.
+   * @var string[]
    */
-  public function preBuild(EmailInterface $email);
+  public const FUNCTION_NAMES = [
+    EmailInterface::PHASE_BUILD => 'build',
+    EmailInterface::PHASE_PRE_RENDER => 'preRender',
+    EmailInterface::PHASE_POST_RENDER => 'postRender',
+    EmailInterface::PHASE_POST_SEND => 'postSend',
+  ];
 
   /**
-   * Runs the pre-render function on an email message.
+   * Initializes an email to call this email processor.
    *
    * @param \Drupal\symfony_mailer\EmailInterface $email
-   *   The email to process.
+   *   The email to initialize.
    */
-  public function preRender(EmailInterface $email);
-
-  /**
-   * Runs the post-render function on an email message.
-   *
-   * @param \Drupal\symfony_mailer\EmailInterface $email
-   *   The email to process.
-   */
-  public function postRender(EmailInterface $email);
-
-  /**
-   * Gets the weight of the email processor.
-   *
-   * @param string $function
-   *   The function that will be called: 'preBuild', 'preRender' or
-   *   'postRender'.
-   *
-   * @return int
-   *   The weight.
-   */
-  public function getWeight(string $function);
+  public function init(EmailInterface $email);
 
 }

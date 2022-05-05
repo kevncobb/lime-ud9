@@ -22,7 +22,12 @@
     },
     "autoload": {
         "psr-4": {
-            "RectorPrefix20220209\\Psr\\Container\\": "src\/"
+            "RectorPrefix20220303\\Psr\\Container\\": "src\/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
         }
     }
 }

@@ -3,15 +3,19 @@
 namespace Drupal\charts\Plugin\views\style;
 
 use Drupal\charts\Plugin\chart\Library\ChartInterface;
-use Drupal\charts\Services\ChartAttachmentServiceInterface;
 use Drupal\charts\ChartManager;
+use Drupal\charts\TypeManager;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\core\form\FormStateInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Template\TwigEnvironment;
+use Drupal\views\Plugin\views\field\EntityField;
 use Drupal\views\Plugin\views\style\StylePluginBase;
+use Drupal\views\ResultRow;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -34,37 +38,56 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * Fields.
    *
-   * @var usesFields
+   * @var \Drupal\views\Plugin\views\style\StylePluginBase
    */
   protected $usesFields = TRUE;
 
   /**
    * RowPlugin.
    *
-   * @var usesRowPlugin
+   * @var \Drupal\views\Plugin\views\style\StylePluginBase
    */
   protected $usesRowPlugin = TRUE;
-
-  /**
-   * The attachment service.
-   *
-   * @var \Drupal\charts\Services\ChartAttachmentService
-   */
-  protected $attachmentService;
 
   /**
    * The chart manager service.
    *
    * @var \Drupal\charts\ChartManager
    */
-  protected $chartManager;
+  protected ChartManager $chartManager;
 
-  protected $labelFieldKey;
+  /**
+   * The chart type manager.
+   *
+   * @var \Drupal\charts\TypeManager
+   */
+  protected TypeManager $chartTypeManager;
+
+  /**
+   * The label field key.
+   *
+   * @var string
+   */
+  protected string $labelFieldKey;
+
+  /**
+   * The current route match.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected RouteMatchInterface $routeMatch;
+
+  /**
+   * The Twig environment.
+   *
+   * @var \Drupal\Core\Template\TwigEnvironment
+   */
+  protected TwigEnvironment $twig;
 
   /**
    * Constructs a ChartsPluginStyleChart object.
@@ -77,16 +100,22 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
    *   The plugin implementation definition.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory service.
-   * @param \Drupal\charts\Services\ChartAttachmentServiceInterface $attachment_service
-   *   The attachment service.
    * @param \Drupal\charts\ChartManager $chart_manager
    *   The chart manager service.
+   * @param \Drupal\charts\TypeManager $chart_type_manager
+   *   The chart type manager.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   The current route match.
+   * @param \Drupal\Core\Template\TwigEnvironment $twig
+   *   The Twig environment.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory, ChartAttachmentServiceInterface $attachment_service, ChartManager $chart_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory, ChartManager $chart_manager, TypeManager $chart_type_manager, RouteMatchInterface $route_match, TwigEnvironment $twig) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->attachmentService = $attachment_service;
-    $this->chartManager = $chart_manager;
     $this->configFactory = $config_factory;
+    $this->chartManager = $chart_manager;
+    $this->chartTypeManager = $chart_type_manager;
+    $this->routeMatch = $route_match;
+    $this->twig = $twig;
   }
 
   /**
@@ -98,8 +127,10 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
       $plugin_id,
       $plugin_definition,
       $container->get('config.factory'),
-      $container->get('charts.charts_attachment'),
       $container->get('plugin.manager.charts'),
+      $container->get('plugin.manager.charts_type'),
+      $container->get('current_route_match'),
+      $container->get('twig')
     );
   }
 
@@ -117,7 +148,7 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
 
     $options['chart_settings']['library'] = '';
 
-    // @todo: ensure that chart extensions inherit defaults from parent
+    // @todo ensure that chart extensions inherit defaults from parent
     // Remove the default setting for chart type so it can be inherited if this
     // is a chart extension type.
     if ($this->view->style_plugin === 'chart_extension') {
@@ -140,6 +171,7 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
       return;
     }
 
+    $settings_wrapper = 'views-charts-plugin-style-chart-options-settings-wrapper';
     // Limit grouping options (we only support one grouping field).
     if (isset($form['grouping'][0])) {
       $form['grouping'][0]['field']['#title'] = $this->t('Grouping field');
@@ -148,6 +180,13 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
       // Grouping by rendered version has no effect in charts. Hide the options.
       $form['grouping'][0]['rendered']['#access'] = FALSE;
       $form['grouping'][0]['rendered_strip']['#access'] = FALSE;
+
+      // Add ajax related to grouping to allow taxonomy colors selection when
+      // the field is an entity reference.
+      $form['grouping'][0]['field']['#ajax'] = [
+        'wrapper' => $settings_wrapper,
+        'callback' => [get_called_class(), 'groupingChartSettingsAjaxCallback'],
+      ];
     }
     if (isset($form['grouping'][1])) {
       $form['grouping'][1]['#access'] = FALSE;
@@ -157,11 +196,14 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
     $field_options = $this->displayHandler->getFieldLabels();
     $form_state->set('default_options', $this->options);
     $form['chart_settings'] = [
+      '#prefix' => '<div id="' . $settings_wrapper . '">',
       '#type' => 'charts_settings',
       '#used_in' => 'view_form',
       '#required' => TRUE,
       '#field_options' => $field_options,
       '#default_value' => $this->options['chart_settings'],
+      '#suffix' => '</div>',
+      '#view_charts_style_plugin' => $this,
     ];
   }
 
@@ -171,10 +213,10 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
   public function validate() {
     $errors = parent::validate();
     $chart_settings = $this->options['chart_settings'];
-    $selected_data_fields = is_array($chart_settings['fields']['data_providers']) ? $this->getSelectedDataFields($chart_settings['fields']['data_providers']) : NULL;
+    $selected_data_fields = !empty($chart_settings['fields']['data_providers']) && is_array($chart_settings['fields']['data_providers']) ? $this->getSelectedDataFields($chart_settings['fields']['data_providers']) : NULL;
 
-    // Avoid calling validation before arriving on the view edit page.
-    if (\Drupal::routeMatch()->getRouteName() != 'views_ui.add' && empty($selected_data_fields)) {
+    // Avoid calling validation before arriving at the view edit page.
+    if ($this->routeMatch->getRouteName() != 'views_ui.add' && empty($selected_data_fields)) {
       $errors[] = $this->t('At least one data field must be selected in the chart configuration before this chart may be shown');
     }
 
@@ -247,9 +289,7 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
       '#view' => $this->view,
     ];
 
-    /** @var \Drupal\charts\TypeManager $chart_type_plugin_manager */
-    $chart_type_plugin_manager = \Drupal::service('plugin.manager.charts_type');
-    $chart_type = $chart_type_plugin_manager->getDefinition($chart_settings['type']);
+    $chart_type = $this->chartTypeManager->getDefinition($chart_settings['type']);
     if ($chart_type['axis'] === ChartInterface::SINGLE_AXIS) {
       $data_field_key = key($data_fields);
       $data_field = $data_fields[$data_field_key];
@@ -273,7 +313,7 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
         foreach ($renders as $row_number => $row) {
           $data_row = [];
           if ($label_field_key) {
-            // Labels need to be decoded, as the charting library will re-encode.
+            // Labels need to be decoded; the charting library will re-encode.
             $data_row[] = strip_tags($this->getField($row_number, $label_field_key), ENT_QUOTES);
           }
           $data_row[] = $this->processNumberValueFromField($row_number, $data_field_key);
@@ -281,7 +321,7 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
         }
       }
 
-      // @todo: create a textfield for chart legend title.
+      // @todo create a textfield for chart legend title.
       // if ($chart_fields['label']) {
       // $chart['#legend_title'] = $chart_fields['label'];
       // }
@@ -329,8 +369,8 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
           }
 
           // Grouped results come back indexed by their original result number
-          // from before the grouping, so we need to keep our own row number when
-          // looping through the rows.
+          // from before the grouping, so we need to keep our own row number
+          // when looping through the rows.
           foreach ($data_set['rows'] as $result_number => $row) {
             $xaxis_label = strip_tags($this->getField($result_number, $label_field_key));
             if ($label_field_key) {
@@ -343,6 +383,10 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
               $element_key = $this->view->current_display . '__' . $field_key . '_' . $series_index;
               $value = $this->processNumberValueFromField($result_number, $field_key);
               $chart[$element_key]['#data'][] = $value;
+              $chart[$element_key]['#mapped_data'][$xaxis_label] = $value;
+              if (strpos($field_handler['id'], 'field_charts_fields_scatter') === 0 || strpos($field_handler['id'], 'field_charts_fields_bubble') === 0) {
+                $chart['xaxis']['#labels'] = [];
+              }
             }
           }
 
@@ -407,6 +451,13 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
       // Merge in the child chart data.
       foreach (Element::children($subchart) as $key) {
         if ($subchart[$key]['#type'] === 'chart_data') {
+          // This ensures that chart attachment data are placed correctly,
+          // but it doesn't allow for chart attachment data to have x-axis
+          // labels not already present in the parent chart.
+          if (!empty($chart['xaxis']['#labels'])) {
+            $processed_data = $this->alignSubchartData($chart['xaxis']['#labels'], $subchart[$key]['#mapped_data'], $subchart[$key]['#data']);
+            $subchart[$key]['#data'] = $processed_data;
+          }
           $chart[$key] = $subchart[$key];
           // If the subchart is a different type than the parent chart, set
           // the #chart_type property on the individual chart data elements.
@@ -419,7 +470,6 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
         }
       }
     }
-    $this->attachmentService->setAttachmentViews($attachments);
 
     // Print the chart.
     return $chart;
@@ -442,6 +492,8 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
     $grouping_field_info = $groupings[$grouping_level];
     $grouping_field = $grouping_field_info['field'];
     $xaxis_label_field_key = $this->getLabelFieldKey();
+    $chart_settings = $this->options['chart_settings'];
+    $color_selection_method = $chart_settings['fields']['entity_grouping']['color_selection_method'] ?? '';
 
     foreach ($records as $index => $row) {
       $set = &$sets;
@@ -466,14 +518,28 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
 
       // Create the group if it does not exist yet.
       if (empty($set[$grouping])) {
+        $grouping_entity_field = $this->view->field[$grouping_field];
+        $group_field_name = $grouping_entity_field ? ($grouping_entity_field->definition['field_name'] ?? '') : '';
+        if ($color_selection_method && $group_field_name && $grouping_entity_field instanceof EntityField && $row instanceof ResultRow) {
+          switch ($color_selection_method) {
+            case 'by_entities_on_entity_reference':
+              $set[$grouping]['color'] = $this->extractGroupedSelectedColorByEntity($grouping_entity_field, $row, $group_field_name);
+              break;
+
+            case 'by_field_on_referenced_entity':
+              $set[$grouping]['color'] = $this->extractGroupedSelectedColorOnReferencedEntityField($grouping_entity_field, $row, $group_field_name);
+              break;
+          }
+        }
+
         $set[$grouping]['group'] = $group_content;
         $set[$grouping]['level'] = $grouping_level;
         $set[$grouping]['rows'] = [];
       }
 
-      // Move the set reference into the row set of the group we just determined.
+      // Move the set reference into the set of the group we just determined.
       $set = &$set[$grouping]['rows'];
-      // Add the row to the hierarchically positioned row set we just determined.
+      // Add the row to the hierarchically positioned set we just determined.
       $set[$index] = $row;
     }
 
@@ -482,17 +548,6 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
     $sets['_charts_xaxis_labels'] = $xaxis_labels;
 
     return $sets;
-  }
-
-  /**
-   * Utility function to check if this chart has a parent display.
-   *
-   * @return bool
-   *   Parent Display.
-   */
-  public function getParentChartDisplay() {
-    $parent_display = FALSE;
-    return $parent_display;
   }
 
   /**
@@ -510,9 +565,8 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
         unset($children_displays[$key]);
       }
     }
-    $children_displays = array_values($children_displays);
 
-    return $children_displays;
+    return array_values($children_displays);
   }
 
   /**
@@ -547,10 +601,10 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
     else {
       $value = $this->getField($number, $field);
     }
-    if (\Drupal::service('twig')->isDebug()) {
+    if ($this->twig->isDebug()) {
       $value = trim(strip_tags($value));
     }
-    if (strpos($field, 'field_charts_fields_scatter') === 0) {
+    if (strpos($field, 'field_charts_fields_scatter') === 0 || strpos($field, 'field_charts_fields_bubble') === 0) {
 
       return Json::decode($value);
     }
@@ -582,6 +636,12 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
     });
   }
 
+  /**
+   * Returns the key of the Label Field.
+   *
+   * @return string
+   *   The Label Field key.
+   */
   private function getLabelFieldKey() {
     if (!isset($this->labelFieldKey)) {
       $field_handlers = $this->view->getHandlers('field');
@@ -590,10 +650,22 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
       $label_field = $field_handlers[$chart_fields['label']] ?? '';
       $this->labelFieldKey = $label_field ? $chart_fields['label'] : '';
     }
+
     return $this->labelFieldKey;
   }
 
-  private function groupedChartElementBuild(&$chart, $sets, $data_fields) {
+  /**
+   * Helper method to build the chart data elements of a grouped chart.
+   *
+   * @param array $chart
+   *   The main chart element.
+   * @param array $sets
+   *   The grouped record set.
+   * @param array $data_fields
+   *   The selected data fields on the chart style options.
+   */
+  private function groupedChartElementBuild(array &$chart, array $sets, array $data_fields) {
+    $original_xaxis = $chart['xaxis'];
     $xaxis_labels = [];
     $label_field_key = $this->getLabelFieldKey();
     if (!empty($sets['_charts_xaxis_labels'])) {
@@ -604,22 +676,23 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
     }
 
     $series_index = 0;
+    $element_key_prefix = $this->view->current_display . '__' . $label_field_key;
+    $chart_settings = $this->options['chart_settings'];
     foreach ($sets as $set_label => $data_set) {
-      $element_key_prefix = $this->view->current_display . '__' . $label_field_key;
-
-      /** Drupal\views\ResultRow $row */
       $name = strtolower(Html::cleanCssIdentifier($set_label));
       $element_key = $element_key_prefix . '__' . $name;
       $chart[$element_key] = [
         '#type' => 'chart_data',
-        '#data' => $xaxis_labels ? array_fill(0, count($xaxis_labels), 0) : [],
+        '#data' => $xaxis_labels ? array_fill(0, count($xaxis_labels), NULL) : [],
         // If using a grouping field, inherit from the chart level colors.
-        //'#color' => ($set_label === '' && isset($chart_fields['data_providers'][$field_key])) ? $chart_fields['data_providers'][$field_key]['color'] : '',
         '#title' => $set_label,
         '#prefix' => $chart_settings['yaxis']['prefix'] ?? NULL,
         '#suffix' => $chart_settings['yaxis']['suffix'] ?? NULL,
         '#decimal_count' => $chart_settings['yaxis']['decimal_count'] ?? '',
       ];
+      if (!empty($data_set['color'])) {
+        $chart[$element_key]['#color'] = $data_set['color'];
+      }
 
       foreach ($data_set['rows'] as $result_number => $row) {
         $set_id = $row->xaxis_label_index ?? $series_index;
@@ -629,13 +702,125 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
             continue;
           }
           $value = $this->processNumberValueFromField($result_number, $field_key);
-          $chart[$element_key]['#data'][$set_id] = $value;
+          if (strpos($field_handler['id'], 'field_charts_fields_scatter') === 0 || strpos($field_handler['id'], 'field_charts_fields_bubble') === 0) {
+            $chart[$element_key]['#data'] = [];
+            $chart[$element_key]['#data'][] = $value;
+            $chart['xaxis'] = $original_xaxis;
+          }
+          else {
+            $chart[$element_key]['#data'][$set_id] = $value;
+            $chart[$element_key]['#mapped_data'][$set_id] = $value;
+          }
         }
       }
 
       // Incrementing series index.
       $series_index++;
     }
+  }
+
+  /**
+   * Grouping chart settings ajax callback.
+   *
+   * @param array $form
+   *   The form.
+   * @param \Drupal\core\form\FormStateInterface $form_state
+   *   The form state.
+   *
+   * @return array
+   *   The render array of the chart settings.
+   */
+  public static function groupingChartSettingsAjaxCallback(array $form, FormStateInterface $form_state) {
+    return $form['options']['style_options']['chart_settings'];
+  }
+
+  /**
+   * Returns the selected color.
+   *
+   * @param \Drupal\views\Plugin\views\field\EntityField $view_entity_field
+   *   The view entity field.
+   * @param \Drupal\views\ResultRow $row
+   *   The result row.
+   * @param string $group_field_name
+   *   The grouping field name.
+   *
+   * @return string
+   *   The color.
+   */
+  private function extractGroupedSelectedColorByEntity(EntityField $view_entity_field, ResultRow $row, string $group_field_name) {
+    $chart_settings = $this->options['chart_settings'];
+    $colors_settings = $chart_settings['fields']['entity_grouping']['selected_method']['colors'] ?? [];
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $host_entity */
+    $host_entity = $view_entity_field->getEntity($row);
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $referenced_entity */
+    $referenced_entity = $host_entity->get($group_field_name)->entity;
+    if (!$referenced_entity || !$colors_settings) {
+      return '';
+    }
+
+    $entity_type = $referenced_entity->getEntityType();
+    $has_uuid_key = $entity_type->hasKey('uuid');
+    $color_id_key = $has_uuid_key ? $referenced_entity->get('uuid')->value : $referenced_entity->id();
+    return $colors_settings[$color_id_key]['color'] ?? '';
+  }
+
+  /**
+   * Returns the color from the referenced entity field.
+   *
+   * @param \Drupal\views\Plugin\views\field\EntityField $view_entity_field
+   *   The view entity field.
+   * @param \Drupal\views\ResultRow $row
+   *   The result row.
+   * @param string $group_field_name
+   *   The grouping field name.
+   *
+   * @return string
+   *   The color.
+   */
+  private function extractGroupedSelectedColorOnReferencedEntityField(EntityField $view_entity_field, ResultRow $row, string $group_field_name) {
+    $chart_settings = $this->options['chart_settings'];
+    $color_field_name = $chart_settings['fields']['entity_grouping']['selected_method']['color_field_name'] ?? '';
+    if (!$color_field_name) {
+      return '';
+    }
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $host_entity */
+    $host_entity = $view_entity_field->getEntity($row);
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $referenced_entity */
+    $referenced_entity = $host_entity->get($group_field_name)->entity;
+    $field_item_list = $referenced_entity ? $referenced_entity->get($color_field_name) : NULL;
+    if (!$field_item_list || $field_item_list->isEmpty()) {
+      return '';
+    }
+
+    /** @var \Drupal\color_field\Plugin\Field\FieldType\ColorFieldType $color_field */
+    $color_field = $field_item_list->first();
+    return $color_field->getFieldDefinition()->getType() === 'color_field_type' ? $color_field->color : '';
+  }
+
+  /**
+   * Ensures chart attachments are placed correctly on chart.
+   *
+   * @param array $parent_labels
+   *   The parent labels.
+   * @param array $child_mapped_data
+   *   The mapped data of the child display.
+   * @param array $data
+   *   The data.
+   *
+   * @return array
+   *   $processed_data
+   */
+  private function alignSubchartData(array $parent_labels, array $child_mapped_data, array $data) {
+    $child_labels = array_keys($child_mapped_data);
+    if ($parent_labels === $child_labels) {
+      return $data;
+    }
+    $processed_data = [];
+    foreach ($parent_labels as $parent_label) {
+      $processed_data[] = $child_mapped_data[$parent_label] ?? NULL;
+    }
+
+    return $processed_data;
   }
 
 }

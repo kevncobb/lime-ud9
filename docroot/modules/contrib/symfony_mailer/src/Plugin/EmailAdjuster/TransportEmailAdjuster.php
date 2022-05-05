@@ -21,7 +21,7 @@ class TransportEmailAdjuster extends EmailAdjusterBase {
   /**
    * {@inheritdoc}
    */
-  public function postRender(EmailInterface $email) {
+  public function build(EmailInterface $email) {
     if ($transport = MailerTransport::load($this->configuration['value'])) {
       $email->setTransportDsn($transport->getDsn());
     }
@@ -45,6 +45,15 @@ class TransportEmailAdjuster extends EmailAdjusterBase {
     ];
 
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSummary() {
+    if ($transport = MailerTransport::load($this->configuration['value'])) {
+      return $transport->label();
+    }
   }
 
 }

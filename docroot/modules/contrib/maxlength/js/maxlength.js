@@ -27,7 +27,7 @@
     },
     detach: function(context, settings) {
       var $context = $(context);
-      $context.find('.maxlength').removeOnce('maxlength').each(function () {
+      $context.find('.maxlength').removeOnce('data-maxlength').each(function () {
         $(this).charCount({
           action: 'detach'
         });
@@ -52,7 +52,7 @@
    */
   ml.calculate = function(obj, options, count, wysiwyg, getter, setter) {
     var counter = $('#' + obj.attr('id') + '-' + options.css);
-    var limit = parseInt(obj.attr('maxlength'));
+    var limit = parseInt(obj.attr('data-maxlength'));
 
     if (count == undefined) {
       if (options.truncateHtml) {
@@ -258,7 +258,7 @@
     ml.options[$(this).attr('id')] = options;
 
     if (options.action == 'detach') {
-      $(this).removeOnce('maxlength');
+      $(this).removeOnce('data-maxlength');
       $('#' + $(this).attr('id') + '-' + options.css).remove();
       delete ml.options[$(this).attr('id')];
       return 'removed';
@@ -349,15 +349,22 @@
 
   // Sets the data into a ckeditor.
   ml.ckeditorSetData = function(e, data) {
-    // Calling setData() will place the cursor at the beginning, so we need to
-    // implement a callback to place it at the end, which is where the text is
-    // being truncated.
-    e.editor.setData(data, {callback: function() {
-      e.editor.focus();
-      var range = e.editor.createRange();
-      range.moveToElementEditablePosition(e.editor.editable(), true);
-      e.editor.getSelection().selectRanges([range]);
-    }});
+    // WYSIWYG can convert '\r\n' to '\n' and insert '\n' after some tags, this
+    // can result in circular changes as what is attempted to be inserted and
+    // what is actually inserted is different. We save the last inserted value
+    // on the editor to stop this issue.
+    if (e.editor.mlLastBeforeInsert !== e.editor.getData()) {
+      e.editor.mlLastBeforeInsert = e.editor.getData();
+      // Calling setData() will place the cursor at the beginning, so we need to
+      // implement a callback to place it at the end, which is where the text is
+      // being truncated.
+      e.editor.setData(data, {callback: function() {
+        e.editor.focus();
+        var range = e.editor.createRange();
+        range.moveToElementEditablePosition(e.editor.editable(), true);
+        e.editor.getSelection().selectRanges([range]);
+      }});
+    }
   }
 
 })(jQuery, Drupal);

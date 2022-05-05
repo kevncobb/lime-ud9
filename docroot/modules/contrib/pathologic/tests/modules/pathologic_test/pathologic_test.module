@@ -15,5 +15,9 @@ function pathologic_test_pathologic_alter(&$url_params, $parts, $settings) {
     elseif ($parts['qparts']['test'] === 'use_original') {
       $url_params['options']['use_original'] = TRUE;
     }
+    elseif ($parts['qparts']['test'] === 'external') {
+      $url_params['path'] = 'http://cdn.example.com/' . $url_params['path'];
+      $url_params['options']['external'] = TRUE;
+    }
   }
 }

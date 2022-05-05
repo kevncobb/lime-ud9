@@ -8,6 +8,11 @@ bar:
   axis: 'xy'
   axis_inverted: true
   stacking: true
+bubble:
+  label: 'Bubble'
+  axis: 'xy'
+  axis_inverted: false
+  stacking: false
 column:
   label: 'Column'
   axis: 'xy'

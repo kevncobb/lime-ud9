@@ -1,60 +1,58 @@
-(function (Drupal, $) {
+((Drupal, once) => {
   'use strict';
 
-  Drupal.behaviors.length_indicator = {
-    attach: function (context, settings) {
-      $(context)
-        .find('[length-indicator-enabled]')
-        .once('length-indicator')
-        .each(function (index, element) {
-          var $el = $(element);
-          var total = $el.data('length-indicator-total');
+  Drupal.behaviors.lengthIndicatorInit = {
+    attach: (context) => {
+      const elements = once('length-indicator', '[length-indicator-enabled]', context);
+      Object.values(elements || {}).forEach((element) => {
+        const wrapper = element.closest('.form-wrapper');
+        const config = {
+          element,
+          cursor: wrapper.querySelector('.length-indicator__cursor'),
+          allIndicators: wrapper.querySelectorAll('.length-indicator__indicator'),
+          dir: document.querySelector('html').attributes.dir.value
+        }
 
-          new Indicator($el, $el.closest('.form-wrapper'), total);
+        element.addEventListener('input', () => {
+          setCursorAndActiveIndicator(config);
         });
+        setCursorAndActiveIndicator(config);
+      });
     }
   };
 
-  function Indicator($el, $context, total) {
-    this.$el = $el;
+  /**
+   * Sets the cursor and highlights the active indicator part.
+   *
+   * @param config
+   *   Config object.
+   */
+  const setCursorAndActiveIndicator = (config) => {
+    const { element, cursor, allIndicators, dir} = config;
+    const total = element.dataset.lengthIndicatorTotal;
 
-    this.total = total;
-
-    this.allIndicators = $context.find('.length-indicator__indicator');
-    this.cursor = $context.find('.length-indicator__cursor');
-
-    var self = this;
-    this.$el.on('input', function (e) {
-      self.setCursorAndActiveIndicator();
-    });
-    this.setCursorAndActiveIndicator();
-  }
-
-  Indicator.prototype.setCursorAndActiveIndicator = function () {
-    var length = this.$el.val().length;
-    var position = (length / this.total) * 100;
-
-    var positionDir = 'left';
-    if ($('html').attr('dir') === 'rtl') {
-      positionDir = 'right';
-    }
-
+    const length = element.value.length;
+    let position = (length / total) * 100;
     position = position < 100 ? position : 100;
-    this.cursor.css(positionDir, position + '%');
 
-    this.allIndicators.removeClass('is-active');
+    const positionDir = dir === 'rtl' ? 'right' : 'left';
+    cursor.style[positionDir] = position + '%';
 
-    var coloredIndicator = this.allIndicators.eq(0);
-    for (var i = 1; i < this.allIndicators.length; i++) {
-      var indicator = this.allIndicators.eq(i);
-      if (length >= indicator.data('pos')) {
+    allIndicators.forEach((elem) => {
+      elem.classList.remove("is-active");
+    });
+
+    let coloredIndicator = allIndicators[0];
+    for (let i = 1; i < allIndicators.length; i++) {
+      let indicator = allIndicators[i];
+      if (length >= indicator.dataset.pos) {
         coloredIndicator = indicator;
       }
       else {
         break;
       }
     }
-    coloredIndicator.addClass('is-active');
-  };
+    coloredIndicator.classList.add('is-active');
+  }
 
-})(Drupal, jQuery);
+})(Drupal, once);

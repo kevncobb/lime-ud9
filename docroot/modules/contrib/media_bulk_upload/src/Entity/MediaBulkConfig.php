@@ -38,6 +38,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "show_alt",
  *     "show_title",
  *     "form_mode",
+ *     "upload_location",
  *   },
  *   links = {
  *     "canonical" = "/admin/config/media/media-bulk-config/{media_bulk_config}",

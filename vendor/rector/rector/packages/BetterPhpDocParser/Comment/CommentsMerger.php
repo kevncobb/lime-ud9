@@ -6,7 +6,7 @@ namespace Rector\BetterPhpDocParser\Comment;
 use PhpParser\Comment;
 use PhpParser\Node;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use RectorPrefix20220209\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser;
+use RectorPrefix20220303\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser;
 final class CommentsMerger
 {
     /**
@@ -14,7 +14,7 @@ final class CommentsMerger
      * @var \Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser
      */
     private $simpleCallableNodeTraverser;
-    public function __construct(\RectorPrefix20220209\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser $simpleCallableNodeTraverser)
+    public function __construct(\RectorPrefix20220303\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser $simpleCallableNodeTraverser)
     {
         $this->simpleCallableNodeTraverser = $simpleCallableNodeTraverser;
     }
@@ -66,11 +66,12 @@ final class CommentsMerger
     private function collectChildrenComments(\PhpParser\Node $node) : array
     {
         $childrenComments = [];
-        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($node, function (\PhpParser\Node $node) use(&$childrenComments) : void {
+        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($node, function (\PhpParser\Node $node) use(&$childrenComments) {
             $comments = $node->getComments();
             if ($comments !== []) {
                 $childrenComments = \array_merge($childrenComments, $comments);
             }
+            return null;
         });
         return $childrenComments;
     }

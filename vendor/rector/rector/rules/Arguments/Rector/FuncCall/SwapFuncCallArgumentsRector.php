@@ -11,17 +11,12 @@ use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220209\Webmozart\Assert\Assert;
+use RectorPrefix20220303\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Arguments\Rector\FuncCall\SwapFuncCallArgumentsRector\SwapFuncCallArgumentsRectorTest
  */
 final class SwapFuncCallArgumentsRector extends \Rector\Core\Rector\AbstractRector implements \Rector\Core\Contract\Rector\ConfigurableRectorInterface
 {
-    /**
-     * @deprecated
-     * @var string
-     */
-    public const FUNCTION_ARGUMENT_SWAPS = 'new_argument_positions_by_function_name';
     /**
      * @var string
      */
@@ -89,9 +84,8 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $functionArgumentSwaps = $configuration[self::FUNCTION_ARGUMENT_SWAPS] ?? $configuration;
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allIsAOf($functionArgumentSwaps, \Rector\Arguments\ValueObject\SwapFuncCallArguments::class);
-        $this->functionArgumentSwaps = $functionArgumentSwaps;
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allIsAOf($configuration, \Rector\Arguments\ValueObject\SwapFuncCallArguments::class);
+        $this->functionArgumentSwaps = $configuration;
     }
     /**
      * @return array<int, Node\Arg>

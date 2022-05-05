@@ -16,17 +16,12 @@ use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
 use Rector\TypeDeclaration\ValueObject\AddReturnTypeDeclaration;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220209\Webmozart\Assert\Assert;
+use RectorPrefix20220303\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\TypeDeclaration\Rector\ClassMethod\AddReturnTypeDeclarationRector\AddReturnTypeDeclarationRectorTest
  */
 final class AddReturnTypeDeclarationRector extends \Rector\Core\Rector\AbstractRector implements \Rector\Core\Contract\Rector\ConfigurableRectorInterface
 {
-    /**
-     * @deprecated
-     * @var string
-     */
-    public const METHOD_RETURN_TYPES = 'method_return_types';
     /**
      * @var AddReturnTypeDeclaration[]
      */
@@ -90,10 +85,8 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $methodReturnTypes = $configuration[self::METHOD_RETURN_TYPES] ?? $configuration;
-        \RectorPrefix20220209\Webmozart\Assert\Assert::isArray($methodReturnTypes);
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allIsAOf($methodReturnTypes, \Rector\TypeDeclaration\ValueObject\AddReturnTypeDeclaration::class);
-        $this->methodReturnTypes = $methodReturnTypes;
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allIsAOf($configuration, \Rector\TypeDeclaration\ValueObject\AddReturnTypeDeclaration::class);
+        $this->methodReturnTypes = $configuration;
     }
     private function processClassMethodNodeWithTypehints(\PhpParser\Node\Stmt\ClassMethod $classMethod, \PHPStan\Type\Type $newType) : void
     {

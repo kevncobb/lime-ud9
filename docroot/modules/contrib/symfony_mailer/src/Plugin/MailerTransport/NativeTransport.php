@@ -3,7 +3,6 @@
 namespace Drupal\symfony_mailer\Plugin\MailerTransport;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\symfony_mailer\TransportPluginInterface;
 
 /**
  * Defines the native Mail Transport plug-in.
@@ -11,19 +10,17 @@ use Drupal\symfony_mailer\TransportPluginInterface;
  * @MailerTransport(
  *   id = "native",
  *   label = @Translation("Native"),
+ *   description = @Translation("Use the sendmail binary and options configured in the sendmail_path setting of php.ini."),
+ *   warning = @Translation("<b>Not recommended</b>, prefer Sendmail. If php.ini uses the sendmail -t command, you won't have error reporting and Bcc headers won't be removed."),
  * )
  */
 class NativeTransport extends TransportBase {
-
-  // @todo Maybe should override the options to pass -bs.
-  // @see https://swiftmailer.symfony.com/docs/sending.html
 
   /**
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return [
-    ];
+    return [];
   }
 
   /**
@@ -31,12 +28,6 @@ class NativeTransport extends TransportBase {
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
   }
 
   /**

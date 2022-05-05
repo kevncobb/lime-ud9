@@ -3,7 +3,6 @@
 namespace Drupal\symfony_mailer;
 
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\symfony_mailer\Processor\EmailProcessorInterface;
 
 /**
  * Defines the interface for an Email.
@@ -11,31 +10,82 @@ use Drupal\symfony_mailer\Processor\EmailProcessorInterface;
 interface EmailInterface extends BaseEmailInterface {
 
   /**
-   * Add an email processor.
-   *
-   * Valid: before building.
-   *
-   * @param \Drupal\symfony_mailer\Processor\EmailProcessorInterface $processor
-   *   The email processor.
-   *
-   * @return $this
+   * The default weight for an email processor.
    */
-  public function addProcessor(EmailProcessorInterface $processor);
+  const DEFAULT_WEIGHT = 500;
 
   /**
-   * Sets the langcode.
+   * Initialisation phase: set the processing that will occur.
    *
-   * Valid: before building.
+   * Set processors and parameters.
+   */
+  const PHASE_INIT = 0;
+
+  /**
+   * Build phase: construct the email.
    *
-   * @param string $langcode
-   *   Language code to use to compose the email.
+   * Must not trigger any rendering because cannot yet rely on the correct
+   * language, theme, and account. For example, must not cast a translatable
+   * string into a plain string, or replace tokens.
+   */
+  const PHASE_BUILD = 1;
+
+  /**
+   * Pre-render phase: preparation for rendering.
+   *
+   * Not normally needed. Only if there is a rendering step that needs to be
+   * done before the main rendering call.
+   */
+  const PHASE_PRE_RENDER = 2;
+
+  /**
+   * Post-render phase: adjusting of rendered output.
+   *
+   * Act on the rendered HTML, or any header.
+   */
+  const PHASE_POST_RENDER = 3;
+
+  /**
+   * Post-send phase: no further alterations allowed.
+   */
+  const PHASE_POST_SEND = 4;
+
+  /**
+   * Names of the email phases.
+   */
+  const PHASE_NAMES = [
+    self::PHASE_INIT => 'init',
+    self::PHASE_BUILD => 'build',
+    self::PHASE_PRE_RENDER => 'pre_render',
+    self::PHASE_POST_RENDER => 'post_render',
+    self::PHASE_POST_SEND => 'post_send',
+  ];
+
+  /**
+   * Add an email processor.
+   *
+   * Valid: initialisation.
+   *
+   * @param callable $function
+   *   The function to call.
+   * @param int $phase
+   *   (Optional) The phase to run in, one of the EmailInterface::PHASE_
+   *   constants.
+   * @param int $weight
+   *   (Optional) The weight, lower values run earlier.
+   * @param string $id
+   *   (Optional) An ID that can be used to alter or debug.
    *
    * @return $this
    */
-  public function setLangcode(string $langcode);
+  public function addProcessor(callable $function, int $phase = self::PHASE_BUILD, int $weight = self::DEFAULT_WEIGHT, string $id = NULL);
 
   /**
    * Gets the langcode.
+   *
+   * The langcode is calculated automatically from the to address.
+   *
+   * Valid: after rendering.
    *
    * @return string
    *   Language code to use to compose the email.
@@ -45,7 +95,7 @@ interface EmailInterface extends BaseEmailInterface {
   /**
    * Sets parameters used for building the email.
    *
-   * Valid: before building.
+   * Valid: initialisation.
    *
    * @param array $params
    *   (optional) An array of keyed objects or configuration.
@@ -60,11 +110,11 @@ interface EmailInterface extends BaseEmailInterface {
    * If the value is an entity, then the key should be the entity type ID.
    * Otherwise the value is typically a setting that alters the email build.
    *
-   * Valid: before building.
+   * Valid: initialisation.
    *
    * @param string $key
    *   Parameter key to set.
-   * @param $value
+   * @param mixed $value
    *   Parameter value to set.
    *
    * @return $this
@@ -93,7 +143,7 @@ interface EmailInterface extends BaseEmailInterface {
   /**
    * Sends the email.
    *
-   * Valid: before building.
+   * Valid: initialisation.
    *
    * @return bool
    *   Whether successful.
@@ -101,7 +151,19 @@ interface EmailInterface extends BaseEmailInterface {
   public function send();
 
   /**
-   * Sets the unrendered email body.
+   * Gets the account associated with the recipient of this email.
+   *
+   * The account is calculated automatically from the to address.
+   *
+   * Valid: after rendering.
+   *
+   * @return \Drupal\Core\Session\AccountInterface
+   *   The account.
+   */
+  public function getAccount();
+
+  /**
+   * Sets the unrendered email body array.
    *
    * The email body will be rendered using a template, then used to form both
    * the HTML and plain text body parts. This process can be customised by the
@@ -109,27 +171,15 @@ interface EmailInterface extends BaseEmailInterface {
    *
    * Valid: before rendering.
    *
-   * @param $body
-   *   Unrendered email body.
+   * @param mixed $body
+   *   Unrendered email body array.
    *
    * @return $this
    */
   public function setBody($body);
 
   /**
-   * Appends content to the email body.
-   *
-   * Valid: before rendering.
-   *
-   * @param $body
-   *   Unrendered body part to append to the existing body array.
-   *
-   * @return $this
-   */
-  public function appendBody($body);
-
-  /**
-   * Appends a rendered entity to the email body.
+   * Builds the email body array from an entity.
    *
    * Valid: before rendering.
    *
@@ -140,10 +190,10 @@ interface EmailInterface extends BaseEmailInterface {
    *
    * @return $this
    */
-  public function appendBodyEntity(EntityInterface $entity, $view_mode = 'full');
+  public function setBodyEntity(EntityInterface $entity, $view_mode = 'full');
 
   /**
-   * Gets the unrendered email body.
+   * Gets the unrendered email body array.
    *
    * Valid: before rendering.
    *
@@ -153,9 +203,29 @@ interface EmailInterface extends BaseEmailInterface {
   public function getBody();
 
   /**
+   * Sets the email subject.
+   *
+   * @param \Drupal\Component\Render\MarkupInterface|string $subject
+   *   The email subject.
+   * @param bool $replace
+   *   (Optional) TRUE to replace variables in the email subject.
+   *
+   * @return $this
+   */
+  public function setSubject($subject, bool $replace = FALSE);
+
+  /**
+   * Gets the email subject.
+   *
+   * @return \Drupal\Component\Render\MarkupInterface|string
+   *   The email subject, or NULL if not set.
+   */
+  public function getSubject();
+
+  /**
    * Sets variables available in the email template.
    *
-   * Valid: before rendering.
+   * Valid: build.
    *
    * @param array $variables
    *   An array of keyed variables.
@@ -167,11 +237,11 @@ interface EmailInterface extends BaseEmailInterface {
   /**
    * Sets a variable available in the email template.
    *
-   * Valid: before rendering.
+   * Valid: build.
    *
    * @param string $key
    *   Variable key to set.
-   * @param $value
+   * @param mixed $value
    *   Variable value to set.
    *
    * @return $this
@@ -215,7 +285,7 @@ interface EmailInterface extends BaseEmailInterface {
    * The ID of this entity can be used to select a specific template or apply
    * specific policy configuration.
    *
-   * @return ?\Drupal\Core\Config\Entity\ConfigEntityInterface.
+   * @return \Drupal\Core\Config\Entity\ConfigEntityInterface
    *   Entity, or NULL if there is no associated entity.
    */
   public function getEntity();
@@ -240,7 +310,7 @@ interface EmailInterface extends BaseEmailInterface {
   /**
    * Sets the email theme.
    *
-   * Valid: before building.
+   * Valid: build.
    *
    * @param string $theme_name
    *   The theme name to use for email.
@@ -259,6 +329,8 @@ interface EmailInterface extends BaseEmailInterface {
 
   /**
    * Adds an asset library to use as mail CSS.
+   *
+   * Valid: before rendering.
    *
    * @param string $library
    *   Library name, in the form "THEME/LIBRARY".
@@ -291,6 +363,6 @@ interface EmailInterface extends BaseEmailInterface {
    * @return string
    *   Transport DSN.
    */
-  public function getTransportDSN();
+  public function getTransportDsn();
 
 }

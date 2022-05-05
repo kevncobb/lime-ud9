@@ -2,8 +2,8 @@
 
 namespace Drupal\charts\Element;
 
+use Drupal\charts\ColorHelperTrait;
 use Drupal\charts\Plugin\chart\Library\ChartInterface;
-use Drupal\charts\Settings\ChartsDefaultColors;
 use Drupal\Component\Utility\Environment;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
@@ -17,6 +17,10 @@ use Drupal\Core\Render\Element\FormElement;
  * @FormElement("chart_data_collector_table")
  */
 class ChartDataCollectorTable extends FormElement {
+
+  use ColorHelperTrait;
+  use ElementFormStateTrait;
+
   const FIRST_COLUMN = 'first_column';
   const FIRST_ROW = 'first_row';
 
@@ -199,7 +203,7 @@ class ChartDataCollectorTable extends FormElement {
             '#attributes' => ['TYPE' => 'color'],
             '#size' => 10,
             '#maxlength' => 7,
-            '#default_value' => $column['color'] ?? ChartsDefaultColors::randomColor(),
+            '#default_value' => $column['color'] ?? self::randomColor(),
           ];
         }
       }
@@ -471,37 +475,6 @@ class ChartDataCollectorTable extends FormElement {
   }
 
   /**
-   * Gets the element state.
-   *
-   * @param array $parents
-   *   The element parents.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   *
-   * @return array
-   *   The element state.
-   */
-  public static function getElementState(array $parents, FormStateInterface $form_state) {
-    $parents = array_merge(['element_state', '#parents'], $parents);
-    return NestedArray::getValue($form_state->getStorage(), $parents);
-  }
-
-  /**
-   * Sets the element state.
-   *
-   * @param array $parents
-   *   The element parents.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   * @param array $element_state
-   *   The element state.
-   */
-  public static function setElementState(array $parents, FormStateInterface $form_state, array $element_state) {
-    $parents = array_merge(['element_state', '#parents'], $parents);
-    NestedArray::setValue($form_state->getStorage(), $parents, $element_state);
-  }
-
-  /**
    * Utility method to build a button render array for the various data table.
    *
    * Operation.
@@ -575,7 +548,7 @@ class ChartDataCollectorTable extends FormElement {
         $is_category_cell = $table_first_col && $table_first_row;
         $data[$i][$j]['data'] = '';
         if (!$is_category_cell && (($is_first_column && $i === $first_row_key) || (!$is_first_column && $j === $first_col_key))) {
-          $data[$i][$j]['color'] = ChartsDefaultColors::randomColor();
+          $data[$i][$j]['color'] = self::randomColor();
         }
       }
     }
@@ -726,13 +699,15 @@ class ChartDataCollectorTable extends FormElement {
    *
    * @param array $data
    *   The data.
+   * @param string $type
+   *   The chart type.
    *
    * @return array
    *   The category label and data.
    */
-  public static function getCategoriesFromCollectedTable(array $data) {
+  public static function getCategoriesFromCollectedTable(array $data, $type) {
     $categories_identifier = $data['table_categories_identifier'];
-    $table = $data_table = $data['data_collector_table'];
+    $table = $data['data_collector_table'];
     $categories = [
       'label' => '',
       'data' => [],
@@ -744,10 +719,18 @@ class ChartDataCollectorTable extends FormElement {
     $categories['label'] = $first_row[$category_col_key];
     $data = [];
     if ($is_first_column) {
-      // Extracting the categories data.
-      $col_cells = array_column($table, $category_col_key);
-      foreach ($col_cells as $cell) {
-        $data[] = is_array($cell) ? $cell['data'] : $cell;
+      if (!in_array($type, ['pie', 'donut'])) {
+        // Extracting the categories data.
+        $col_cells = array_column($table, $category_col_key);
+        foreach ($col_cells as $cell) {
+          $data[] = is_array($cell) ? $cell['data'] : $cell;
+        }
+      }
+      else {
+        $col_cells = array_values($first_row);
+        foreach ($col_cells as $cell) {
+          $data[] = is_array($cell) ? $cell['data'] : $cell;
+        }
       }
     }
     else {
@@ -806,11 +789,27 @@ class ChartDataCollectorTable extends FormElement {
         unset($row[$name_key]);
         foreach (array_values($row) as $column) {
           // Get all the data in this column and break out of this loop.
-          if (is_numeric($column) || is_string($column)) {
-            $series[$i]['data'][] = self::castValueToNumeric($column);
+          if ($is_single_axis) {
+            if (is_numeric($column) || is_string($column)) {
+              $series[$i]['data'][] = [
+                $series[$i]['name'],
+                self::castValueToNumeric($column),
+              ];
+            }
+            elseif (is_array($column) && isset($column['data'])) {
+              $series[$i]['data'][] = [
+                $series[$i]['name'],
+                self::castValueToNumeric($column['data']),
+              ];
+            }
           }
-          elseif (is_array($column) && isset($column['data'])) {
-            $series[$i]['data'][] = self::castValueToNumeric($column['data']);
+          else {
+            if (is_numeric($column) || is_string($column)) {
+              $series[$i]['data'][] = self::castValueToNumeric($column);
+            }
+            elseif (is_array($column) && isset($column['data'])) {
+              $series[$i]['data'][] = self::castValueToNumeric($column['data']);
+            }
           }
         }
       }
@@ -824,14 +823,15 @@ class ChartDataCollectorTable extends FormElement {
           elseif ($i === 0) {
             // This is the first row which holds the data names.
             $series[$j]['name'] = $column['data'] ?? $column;
-            $series[$j]['color'] = $column['color'] ?? ChartsDefaultColors::randomColor();
+            $series[$j]['color'] = $column['color'] ?? self::randomColor();
           }
           else {
             // Get all the data in this column and break out of this loop.
             $cell_value = is_array($column) && isset($column['data']) ? $column['data'] : $column;
             $cell_value = self::castValueToNumeric($cell_value);
             if ($is_single_axis) {
-              $series[$j]['data'][] = [$row[$j]['data'], $cell_value];
+              $series[$j]['data'][] = [$series[$j]['name'], $cell_value];
+              $series[$j]['title'][] = $row[0]['data'];
             }
             else {
               $series[$j]['data'][] = $cell_value;

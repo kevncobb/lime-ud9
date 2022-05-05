@@ -10,6 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @MailerTransport(
  *   id = "smtp",
  *   label = @Translation("SMTP"),
+ *   description = @Translation("Use an SMTP server to send emails."),
  * )
  */
 class SmtpTransport extends TransportBase {
@@ -24,6 +25,16 @@ class SmtpTransport extends TransportBase {
       'host' => '',
       'port' => '',
     ];
+
+    // @todo Support extra options
+    // - local_domain: The domain name to use in HELO command.
+    // - restart_threshold: The maximum number of messages to send before
+    //   re-starting the transport.
+    // - restart_threshold_sleep The number of seconds to sleep between
+    //   stopping and re-starting the transport.
+    // - ping_threshold: The minimum number of seconds between two messages
+    //   required to ping the server.
+    // - verify_peer: Disable TLS peer verification (not recommended).
   }
 
   /**
@@ -33,21 +44,21 @@ class SmtpTransport extends TransportBase {
     $form['user'] = [
       '#type' => 'textfield',
       '#title' => $this->t('User name'),
-      '#default_value' => $this->configuration['user'] ?? '',
+      '#default_value' => $this->configuration['user'],
       '#description' => $this->t('User name to log in'),
     ];
 
     $form['pass'] = [
       '#type' => 'password',
       '#title' => $this->t('Password'),
-      '#default_value' => $this->configuration['pass'] ?? '',
+      '#default_value' => $this->configuration['pass'],
       '#description' => $this->t('Password to log in'),
     ];
 
     $form['host'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Host name'),
-      '#default_value' => $this->configuration['host'] ?? '',
+      '#default_value' => $this->configuration['host'],
       '#description' => $this->t('SMTP host name'),
       '#required' => TRUE,
     ];
@@ -55,19 +66,13 @@ class SmtpTransport extends TransportBase {
     $form['port'] = [
       '#type' => 'number',
       '#title' => $this->t('Port'),
-      '#default_value' => $this->configuration['port'] ?? '',
+      '#default_value' => $this->configuration['port'],
       '#description' => $this->t('SMTP port'),
       '#min' => 0,
       '#max' => 65535,
     ];
 
     return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
   }
 
   /**

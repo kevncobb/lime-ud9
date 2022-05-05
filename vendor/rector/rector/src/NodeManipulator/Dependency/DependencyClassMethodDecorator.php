@@ -15,7 +15,7 @@ use Rector\Core\PhpParser\AstResolver;
 use Rector\Core\PhpParser\Node\NodeFactory;
 use Rector\Core\ValueObject\MethodName;
 use Rector\NodeNameResolver\NodeNameResolver;
-use RectorPrefix20220209\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser;
+use RectorPrefix20220303\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser;
 final class DependencyClassMethodDecorator
 {
     /**
@@ -48,7 +48,7 @@ final class DependencyClassMethodDecorator
      * @var \Rector\NodeNameResolver\NodeNameResolver
      */
     private $nodeNameResolver;
-    public function __construct(\Rector\Core\PhpParser\Node\NodeFactory $nodeFactory, \Rector\Core\NodeAnalyzer\PromotedPropertyParamCleaner $promotedPropertyParamCleaner, \PHPStan\Reflection\ReflectionProvider $reflectionProvider, \Rector\Core\PhpParser\AstResolver $astResolver, \RectorPrefix20220209\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser $simpleCallableNodeTraverser, \Rector\NodeNameResolver\NodeNameResolver $nodeNameResolver)
+    public function __construct(\Rector\Core\PhpParser\Node\NodeFactory $nodeFactory, \Rector\Core\NodeAnalyzer\PromotedPropertyParamCleaner $promotedPropertyParamCleaner, \PHPStan\Reflection\ReflectionProvider $reflectionProvider, \Rector\Core\PhpParser\AstResolver $astResolver, \RectorPrefix20220303\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser $simpleCallableNodeTraverser, \Rector\NodeNameResolver\NodeNameResolver $nodeNameResolver)
     {
         $this->nodeFactory = $nodeFactory;
         $this->promotedPropertyParamCleaner = $promotedPropertyParamCleaner;
@@ -105,8 +105,9 @@ final class DependencyClassMethodDecorator
     {
         $cleanParams = $this->promotedPropertyParamCleaner->cleanFromFlags($params);
         // remove deep attributes to avoid bugs with nested tokens re-print
-        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($cleanParams, function (\PhpParser\Node $node) : void {
+        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($cleanParams, function (\PhpParser\Node $node) {
             $node->setAttributes([]);
+            return null;
         });
         return $cleanParams;
     }

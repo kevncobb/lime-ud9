@@ -2,13 +2,13 @@
 
 namespace Drupal\symfony_mailer;
 
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageDefault;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Render\RenderContext;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\Core\Theme\ThemeInitializationInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -16,6 +16,7 @@ use Drupal\Core\StringTranslation\TranslationManager;
 use Drupal\Core\Url;
 use Drupal\symfony_mailer\Exception\MissingTransportException;
 use Drupal\symfony_mailer\Exception\SkipMailException;
+use Drupal\user\Entity\User;
 use Symfony\Component\Mailer\Mailer as SymfonyMailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -40,13 +41,6 @@ class Mailer implements MailerInterface {
    * @var \Drupal\Core\Render\RendererInterface
    */
   protected $renderer;
-
-  /**
-   * The module handler to invoke the alter hook.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
-   */
-  protected $moduleHandler;
 
   /**
    * The language default.
@@ -91,15 +85,20 @@ class Mailer implements MailerInterface {
   protected $themeInitialization;
 
   /**
+   * Account switcher.
+   *
+   * @var \Drupal\Core\Session\AccountSwitcherInterface
+   */
+  protected $accountSwitcher;
+
+  /**
    * Constructs the Mailer object.
    *
    * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $dispatcher
    *   The event dispatcher.
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler to invoke the alter hook with.
-   * @param \Drupal\Core\Language\LanguageDefault $default_language
+   * @param \Drupal\Core\Language\LanguageDefault $language_default
    *   The default language.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
@@ -111,17 +110,19 @@ class Mailer implements MailerInterface {
    *   The theme manager.
    * @param \Drupal\Core\Theme\ThemeInitializationInterface $theme_initialization
    *   The theme initialization.
+   * @param \Drupal\Core\Session\AccountSwitcherInterface $account_switcher
+   *   The account switcher service.
    */
-  public function __construct(EventDispatcherInterface $dispatcher, RendererInterface $renderer, ModuleHandlerInterface $module_handler, LanguageDefault $language_default, LanguageManagerInterface $language_manager, LoggerChannelFactoryInterface $logger_factory, AccountInterface $account, ThemeManagerInterface $theme_manager, ThemeInitializationInterface $theme_initialization) {
+  public function __construct(EventDispatcherInterface $dispatcher, RendererInterface $renderer, LanguageDefault $language_default, LanguageManagerInterface $language_manager, LoggerChannelFactoryInterface $logger_factory, AccountInterface $account, ThemeManagerInterface $theme_manager, ThemeInitializationInterface $theme_initialization, AccountSwitcherInterface $account_switcher) {
     $this->dispatcher = $dispatcher;
     $this->renderer = $renderer;
-    $this->moduleHandler = $module_handler;
     $this->languageDefault = $language_default;
     $this->languageManager = $language_manager;
     $this->loggerFactory = $logger_factory;
     $this->account = $account;
     $this->themeManager = $theme_manager;
     $this->themeInitialization = $theme_initialization;
+    $this->accountSwitcher = $account_switcher;
   }
 
   /**
@@ -159,13 +160,10 @@ class Mailer implements MailerInterface {
    * @internal
    */
   public function doSend(InternalEmailInterface $email) {
-    // Call hooks.
-    $this->invokeAll('init', $email);
+    // Process the build phase.
+    $email->process();
 
-    // Call hooks/processors.
-    $email->process('preBuild');
-    $this->invokeAll('pre_build', $email);
-
+    // Do switching.
     $theme_name = $email->getTheme();
     $active_theme_name = $this->themeManager->getActiveTheme()->getName();
     $must_switch_theme = $theme_name !== $active_theme_name;
@@ -174,24 +172,55 @@ class Mailer implements MailerInterface {
       $this->changeTheme($theme_name);
     }
 
-    $langcode = $email->getLangcode();
+    // Determine langcode and account from the to address, if there is
+    // agreement.
+    $langcodes = $accounts = [];
+    foreach ($email->getTo() as $to) {
+      if ($loop_langcode = $to->getLangcode()) {
+        $langcodes[$loop_langcode] = $loop_langcode;
+      }
+      if ($loop_account = $to->getAccount()) {
+        $accounts[$loop_account->id()] = $loop_account;
+      }
+    }
+    $langcode = (count($langcodes) == 1) ? reset($langcodes) : $this->languageManager->getDefaultLanguage()->getId();
+    $account = (count($accounts) == 1) ? reset($accounts) : User::getAnonymousUser();
+    $email->customize($langcode, $account);
+
+    $must_switch_account = $account->id() != $this->account->id();
+
+    if ($must_switch_account) {
+      $this->accountSwitcher->switchTo($account);
+    }
+
     $current_langcode = $this->languageManager->getCurrentLanguage()->getId();
-    $must_switch_language = isset($langcode) && $langcode !== $current_langcode;
+    $must_switch_language = $langcode !== $current_langcode;
 
     if ($must_switch_language) {
       $this->changeActiveLanguage($langcode);
     }
 
-    // Call hooks/processors.
-    $email->process('preRender');
-    $this->invokeAll('pre_render', $email);
+    // Process the pre-render phase.
+    $email->process();
 
     // Render.
     $email->render();
 
-    // Call hooks/processors.
-    $email->process('postRender');
-    $this->invokeAll('post_render', $email);
+    // Process the post-render phase.
+    $email->process();
+
+    // Switch back.
+    if ($must_switch_account) {
+      $this->accountSwitcher->switchBack();
+    }
+
+    if ($must_switch_language) {
+      $this->changeActiveLanguage($current_langcode);
+    }
+
+    if ($must_switch_theme) {
+      $this->changeTheme($active_theme_name);
+    }
 
     try {
       // Send.
@@ -202,9 +231,10 @@ class Mailer implements MailerInterface {
 
       $transport = Transport::fromDsn($transport_dsn);
       $mailer = new SymfonyMailer($transport, NULL, $this->dispatcher);
+      $symfony_email = $email->getSymfonyEmail();
 
-      //ksm($email, $email->getHeaders());
-      $mailer->send($email->getSymfonyEmail());
+      // ksm($email, $symfony_email->getHeaders());
+      $mailer->send($symfony_email);
       $result = TRUE;
     }
     catch (\Exception $e) {
@@ -231,13 +261,8 @@ class Mailer implements MailerInterface {
       $result = FALSE;
     }
 
-    if ($must_switch_language) {
-      $this->changeActiveLanguage($current_langcode);
-    }
-
-    if ($must_switch_theme) {
-      $this->changeTheme($active_theme_name);
-    }
+    // Process the post-send phase.
+    $email->process();
 
     return $result;
   }
@@ -287,20 +312,6 @@ class Mailer implements MailerInterface {
    */
   protected function changeTheme(string $theme_name) {
     $this->themeManager->setActiveTheme($this->themeInitialization->initTheme($theme_name));
-  }
-
-  /**
-   * Invoke hooks.
-   *
-   * @param string $hook
-   *   The hook to call.
-   * @param \Drupal\symfony_mailer\EmailInterface $email
-   *   The email.
-   */
-  protected function invokeAll(string $hook, EmailInterface $email) {
-    foreach ($email->getSuggestions("mailer_$hook", '_') as $hook_variant) {
-      $this->moduleHandler->invokeAll($hook_variant, [$email]);
-    }
   }
 
 }

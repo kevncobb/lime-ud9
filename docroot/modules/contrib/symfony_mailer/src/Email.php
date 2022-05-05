@@ -4,15 +4,20 @@ namespace Drupal\symfony_mailer;
 
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Component\Render\PlainTextOutput;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\Core\Render\RendererInterface;
-use Drupal\symfony_mailer\Processor\EmailProcessorInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Mime\Email as SymfonyEmail;
 
+/**
+ * Defines the email class.
+ */
 class Email implements InternalEmailInterface {
 
   use BaseEmailTrait;
@@ -45,7 +50,6 @@ class Email implements InternalEmailInterface {
    */
   protected $themeManager;
 
-
   /**
    * @var string
    */
@@ -57,19 +61,35 @@ class Email implements InternalEmailInterface {
   protected $subType;
 
   /**
-   * @var string
+   * @var \Drupal\Core\Config\Entity\ConfigEntityInterface
    */
-  protected $entity_id;
+  protected $entity;
 
   /**
-   * @var string
+   * Current phase, one of the PHASE_ constants.
+   *
+   * @var int
    */
-  protected $phase = 'preBuild';
+  protected $phase = self::PHASE_INIT;
 
   /**
-   * @var \Drupal\symfony_mailer\Processor\EmailProcessorInterface[]
+   * @var array
    */
   protected $body = [];
+
+  /**
+   * The email subject.
+   *
+   * @var \Drupal\Component\Render\MarkupInterface|string
+   */
+  protected $subject;
+
+  /**
+   * Whether to replace variables in the email subject.
+   *
+   * @var bool
+   */
+  protected $replaceSubject;
 
   /**
    * @var array
@@ -90,6 +110,13 @@ class Email implements InternalEmailInterface {
    * @var string[]
    */
   protected $variables = [];
+
+  /**
+   * The account for the recipient (can be anonymous).
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $account;
 
   /**
    * @var string
@@ -119,18 +146,21 @@ class Email implements InternalEmailInterface {
    *   The entity type manager.
    * @param \Drupal\Core\Theme\ThemeManagerInterface $theme_manager
    *   The theme manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory.
    * @param string $type
-   *   Type. @see \Drupal\symfony_mailer\BaseEmailInterface::getType()
+   *   Type. @see self::getType()
    * @param string $sub_type
-   *   Sub-type. @see \Drupal\symfony_mailer\BaseEmailInterface::getSubType()
-   * @param ?\Drupal\Core\Config\Entity\ConfigEntityInterface $entity
-   *   Entity. @see \Drupal\symfony_mailer\BaseEmailInterface::getEntity()
+   *   Sub-type. @see self::getSubType()
+   * @param \Drupal\Core\Config\Entity\ConfigEntityInterface|null $entity
+   *   (optional) Entity. @see self::getEntity()
    */
-  public function __construct(MailerInterface $mailer, RendererInterface $renderer, EntityTypeManagerInterface $entity_type_manager, ThemeManagerInterface $theme_manager, string $type, string $sub_type, ?ConfigEntityInterface $entity) {
+  public function __construct(MailerInterface $mailer, RendererInterface $renderer, EntityTypeManagerInterface $entity_type_manager, ThemeManagerInterface $theme_manager, ConfigFactoryInterface $config_factory, string $type, string $sub_type, ?ConfigEntityInterface $entity) {
     $this->mailer = $mailer;
     $this->renderer = $renderer;
     $this->entityTypeManager = $entity_type_manager;
     $this->themeManager = $theme_manager;
+    $this->configFactory = $config_factory;
     $this->type = $type;
     $this->subType = $sub_type;
     $this->entity = $entity;
@@ -145,11 +175,11 @@ class Email implements InternalEmailInterface {
    * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
    *   The current service container.
    * @param string $type
-   *   Type. @see \Drupal\symfony_mailer\BaseEmailInterface::getType()
+   *   Type. @see self::getType()
    * @param string $sub_type
-   *   Sub-type. @see \Drupal\symfony_mailer\BaseEmailInterface::getSubType()
-   * @param ?\Drupal\Core\Config\Entity\ConfigEntityInterface $entity
-   *   Entity. @see \Drupal\symfony_mailer\BaseEmailInterface::getEntity()
+   *   Sub-type. @see self::getSubType()
+   * @param \Drupal\Core\Config\Entity\ConfigEntityInterface|null $entity
+   *   (optional) Entity. @see self::getEntity()
    *
    * @return static
    *   A new email object.
@@ -160,6 +190,7 @@ class Email implements InternalEmailInterface {
       $container->get('renderer'),
       $container->get('entity_type.manager'),
       $container->get('theme.manager'),
+      $container->get('config.factory'),
       $type,
       $sub_type,
       $entity
@@ -169,18 +200,13 @@ class Email implements InternalEmailInterface {
   /**
    * {@inheritdoc}
    */
-  public function addProcessor(EmailProcessorInterface $processor) {
-    $this->valid('preBuild');
-    $this->processors[] = $processor;
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setLangcode(string $langcode) {
-    $this->valid('preBuild');
-    $this->langcode = $langcode;
+  public function addProcessor(callable $function, int $phase = self::PHASE_BUILD, int $weight = self::DEFAULT_WEIGHT, string $id = NULL) {
+    $this->valid(self::PHASE_INIT, self::PHASE_INIT);
+    $this->processors[$phase][] = [
+      'function' => $function,
+      'weight' => $weight,
+      'id' => $id,
+    ];
     return $this;
   }
 
@@ -188,6 +214,7 @@ class Email implements InternalEmailInterface {
    * {@inheritdoc}
    */
   public function getLangcode() {
+    $this->valid(self::PHASE_POST_SEND, self::PHASE_PRE_RENDER);
     return $this->langcode;
   }
 
@@ -195,7 +222,7 @@ class Email implements InternalEmailInterface {
    * {@inheritdoc}
    */
   public function setParams(array $params = []) {
-    $this->valid('preBuild');
+    $this->valid(self::PHASE_INIT, self::PHASE_INIT);
     $this->params = $params;
     return $this;
   }
@@ -204,7 +231,7 @@ class Email implements InternalEmailInterface {
    * {@inheritdoc}
    */
   public function setParam(string $key, $value) {
-    $this->valid('preBuild');
+    $this->valid(self::PHASE_INIT, self::PHASE_INIT);
     $this->params[$key] = $value;
     return $this;
   }
@@ -227,15 +254,23 @@ class Email implements InternalEmailInterface {
    * {@inheritdoc}
    */
   public function send() {
-    $this->valid('preBuild');
+    $this->valid(self::PHASE_BUILD);
     return $this->mailer->send($this);
   }
 
   /**
    * {@inheritdoc}
    */
+  public function getAccount() {
+    $this->valid(self::PHASE_POST_SEND, self::PHASE_PRE_RENDER);
+    return $this->account;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setBody($body) {
-    $this->valid('preRender', 'preBuild');
+    $this->valid(self::PHASE_PRE_RENDER);
     $this->body = $body;
     return $this;
   }
@@ -243,26 +278,11 @@ class Email implements InternalEmailInterface {
   /**
    * {@inheritdoc}
    */
-  public function appendBody($body) {
-    $this->valid('preRender', 'preBuild');
-    $name = 'n' . count($this->body);
-    $this->body[$name] = $body;
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity to render.
-   * @param string $view_mode
-   *   (optional) The view mode that should be used to render the entity.
-   */
-  public function appendBodyEntity(EntityInterface $entity, $view_mode = 'full') {
-    $this->valid('preRender', 'preBuild');
+  public function setBodyEntity(EntityInterface $entity, $view_mode = 'full') {
+    $this->valid(self::PHASE_PRE_RENDER);
     $build = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId())
       ->view($entity, $view_mode);
-
-    $this->appendBody($build);
+    $this->setBody($build);
     return $this;
   }
 
@@ -270,15 +290,33 @@ class Email implements InternalEmailInterface {
    * {@inheritdoc}
    */
   public function getBody() {
-    $this->valid('preRender', 'preBuild');
+    $this->valid(self::PHASE_PRE_RENDER);
     return $this->body;
   }
 
   /**
    * {@inheritdoc}
    */
+  public function setSubject($subject, bool $replace = FALSE) {
+    // We must not force conversion of the subject to a string as this could
+    // cause translation before switching to the correct language.
+    $this->subject = $subject;
+    $this->subjectReplace = $replace;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSubject() {
+    return $this->subject;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setVariables(array $variables) {
-    $this->valid('preRender', 'preBuild');
+    $this->valid(self::PHASE_BUILD, self::PHASE_INIT);
     $this->variables = $variables;
     return $this;
   }
@@ -287,7 +325,7 @@ class Email implements InternalEmailInterface {
    * {@inheritdoc}
    */
   public function setVariable(string $key, $value) {
-    $this->valid('preRender', 'preBuild');
+    $this->valid(self::PHASE_BUILD, self::PHASE_INIT);
     $this->variables[$key] = $value;
     return $this;
   }
@@ -344,7 +382,7 @@ class Email implements InternalEmailInterface {
    * {@inheritdoc}
    */
   public function setTheme(string $theme_name) {
-    $this->valid('preBuild');
+    $this->valid(self::PHASE_BUILD);
     $this->theme = $theme_name;
     return $this;
   }
@@ -392,21 +430,14 @@ class Email implements InternalEmailInterface {
   /**
    * {@inheritdoc}
    */
-  public function process(string $function) {
-    if ($function == 'preRender') {
-      $this->valid('preBuild');
-      $this->phase = 'preRender';
-    }
-    else {
-      $this->valid($function);
-    }
-
-    usort($this->processors, function ($a, $b) use ($function) {
-      return $a->getWeight($function) <=> $b->getWeight($function);
+  public function process() {
+    $processors = $this->processors[$this->phase] ?? [];
+    usort($processors, function ($a, $b) {
+      return $a['weight'] <=> $b['weight'];
     });
 
-    foreach ($this->processors as $processor) {
-      call_user_func([$processor, $function], $this);
+    foreach ($processors as $processor) {
+      call_user_func($processor['function'], $this);
     }
 
     return $this;
@@ -415,10 +446,37 @@ class Email implements InternalEmailInterface {
   /**
    * {@inheritdoc}
    */
+  public function initDone() {
+    $this->valid(self::PHASE_INIT, self::PHASE_INIT);
+    $this->phase = self::PHASE_BUILD;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function customize(string $langcode, AccountInterface $account) {
+    $this->valid(self::PHASE_BUILD);
+    $this->langcode = $langcode;
+    $this->account = $account;
+    $this->phase = self::PHASE_PRE_RENDER;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function render() {
-    $this->valid('preRender');
+    $this->valid(self::PHASE_PRE_RENDER, self::PHASE_PRE_RENDER);
 
     // Render subject.
+    if ($this->subjectReplace && $this->variables) {
+      $subject = [
+        '#type' => 'inline_template',
+        '#template' => $this->subject,
+        '#context' => $this->variables,
+      ];
+      $this->subject = $this->renderer->renderPlain($subject);
+    }
+
     if ($this->subject instanceof MarkupInterface) {
       $this->subject = PlainTextOutput::renderFromHtml($this->subject);
     }
@@ -426,7 +484,7 @@ class Email implements InternalEmailInterface {
     // Render body.
     $body = ['#theme' => 'email', '#email' => $this];
     $html = $this->renderer->renderPlain($body);
-    $this->phase = 'postRender';
+    $this->phase = self::PHASE_POST_RENDER;
     $this->setHtmlBody($html);
     $this->body = [];
 
@@ -436,30 +494,80 @@ class Email implements InternalEmailInterface {
   /**
    * {@inheritdoc}
    */
+  public function getPhase() {
+    return $this->phase;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSymfonyEmail() {
-    $this->inner->subject($this->subject);
-    // No further alterations allowed.
-    $this->phase = 'postSend';
+    $this->valid(self::PHASE_POST_RENDER, self::PHASE_POST_RENDER);
+
+    if ($this->subject) {
+      $this->inner->subject($this->subject);
+    }
+
+    $this->inner->sender($this->sender->getSymfony());
+    $headers = $this->getHeaders();
+    foreach ($this->addresses as $name => $addresses) {
+      $value = [];
+      foreach ($addresses as $address) {
+        $value[] = $address->getSymfony();
+      }
+      if ($value) {
+        $headers->addMailboxListHeader($name, $value);
+      }
+    }
+
+    $this->phase = self::PHASE_POST_SEND;
     return $this->inner;
   }
 
   /**
    * Checks that a function was called in the correct phase.
    *
-   * @param string $phase
-   *   The correct phase.
-   * @param string $alt_phase
-   *   An alternative allowed phase.
+   * @param int $max_phase
+   *   Latest allowed phase, one of the PHASE_ constants.
+   * @param int $min_phase
+   *   (Optional) Earliest allowed phase, one of the PHASE_ constants.
    *
    * @return $this
    */
-  protected function valid(string $phase, string $alt_phase = '') {
-    $valid = ($this->phase == $phase) || ($this->phase == $alt_phase);
+  protected function valid(int $max_phase, int $min_phase = self::PHASE_BUILD) {
+    $valid = ($this->phase <= $max_phase) && ($this->phase >= $min_phase);
+
     if (!$valid) {
       $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['function'];
-      throw new \LogicException("$caller function is only valid in the $phase phase");
+      throw new \LogicException("$caller function is only valid in phases $min_phase-$max_phase, called in $this->phase.");
     }
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * Serialization is intended only for testing.
+   *
+   * @internal
+   */
+  public function __serialize() {
+    // Exclude $this->params, $this->variables as they may not serialize.
+    return [$this->type, $this->subType, $this->entity ? $this->entity->id() : '', $this->phase, $this->subject, $this->langcode, $this->account ? $this->account->id() : '', $this->theme, $this->libraries, $this->transportDsn, $this->inner, $this->addresses, $this->sender];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __unserialize(array $data) {
+    [$this->type, $this->subType, $entity_id, $this->phase, $this->subject, $this->langcode, $account_id, $this->theme, $this->libraries, $this->transportDsn, $this->inner, $this->addresses, $this->sender] = $data;
+
+    if ($entity_id) {
+      $this->entity = $this->configFactory->get($entity_id);
+    }
+    if ($account_id) {
+      $this->account = User::load($account_id);
+    }
   }
 
 }

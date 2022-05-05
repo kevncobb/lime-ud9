@@ -3,7 +3,6 @@
 namespace Drupal\feeds_ex\Feeds\Parser;
 
 use Exception;
-use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
@@ -78,16 +77,14 @@ abstract class ParserBase extends FeedsParserBase implements ParserInterface, Pl
    *   The plugin id.
    * @param array $plugin_definition
    *   The plugin definition.
-   * @param \Drupal\Component\Plugin\PluginManagerInterface $custom_source_plugin_manager
-   *   The custom source plugin manager.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, PluginManagerInterface $custom_source_plugin_manager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
     if (!$this->hasConfigForm()) {
       unset($plugin_definition['form']['configuration']);
     }
     $this->sources = [];
 
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $custom_source_plugin_manager);
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
   /**

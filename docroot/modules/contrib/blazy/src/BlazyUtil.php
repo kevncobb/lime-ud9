@@ -2,106 +2,54 @@
 
 namespace Drupal\blazy;
 
-use Drupal\Component\Utility\Html;
+use Drupal\blazy\Media\BlazyFile;
+use Drupal\blazy\Media\BlazyImage;
+use Drupal\blazy\Theme\BlazyAttribute;
 
 /**
- * Provides internal Blazy utilities, hardly re-usable outside blazy.module.
+ * Provides internal Blazy utilities, called by SlickFilter till removed.
  *
  * @internal
  *   This is an internal part of the Blazy system and should only be used by
  *   blazy-related code in Blazy module.
+ *
+ * @todo remove this class after sub-modules anytime before 3.x.
  */
 class BlazyUtil {
 
   /**
-   * Generates an SVG Placeholder.
-   *
-   * @param string $width
-   *   The image width.
-   * @param string $height
-   *   The image height.
-   *
-   * @return string
-   *   Returns a string containing an SVG.
-   */
-  public static function generatePlaceholder($width, $height): string {
-    $width = $width ?: 100;
-    $height = $height ?: 100;
-    return 'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D\'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg\'%20viewBox%3D\'0%200%20' . $width . '%20' . $height . '\'%2F%3E';
-  }
-
-  /**
    * Returns the sanitized attributes for user-defined (UGC Blazy Filter).
    *
-   * When IMG and IFRAME are allowed for untrusted users, trojan horses are
-   * welcome. Hence sanitize attributes relevant for BlazyFilter. The rest
-   * should be taken care of by HTML filters after Blazy.
-   *
-   * @param array $attributes
-   *   The given attributes to sanitize.
-   * @param bool $escaped
-   *   Sets to FALSE to avoid double escapes, for further processing.
-   *
-   * @return array
-   *   The sanitized $attributes suitable for UGC, such as Blazy filter.
+   * @todo deprecated at 2.9 and removed < 3.x. Use
+   * BlazyAttribute::sanitize() instead.
    */
   public static function sanitize(array $attributes = [], $escaped = TRUE): array {
-    $clean_attributes = [];
-    $tags = ['href', 'poster', 'src', 'about', 'data', 'action', 'formaction'];
-    foreach ($attributes as $key => $value) {
-      if (is_array($value)) {
-        // Respects array item containing space delimited classes: aaa bbb ccc.
-        $value = implode(' ', $value);
-        $clean_attributes[$key] = array_map('\Drupal\Component\Utility\Html::cleanCssIdentifier', explode(' ', $value));
-      }
-      else {
-        // Since Blazy is lazyloading known URLs, sanitize attributes which
-        // make no sense to stick around within IMG or IFRAME tags.
-        $kid = mb_substr($key, 0, 2) === 'on' || in_array($key, $tags);
-        $key = $kid ? 'data-' . $key : $key;
-        $escaped_value = $escaped ? Html::escape($value) : $value;
-        $clean_attributes[$key] = $kid ? Html::cleanCssIdentifier($value) : $escaped_value;
-      }
-    }
-    return $clean_attributes;
-  }
-
-  /**
-   * Checks if extension should not use image style: apng svg gif, etc.
-   */
-  public static function unstyled(array $settings): bool {
-    $extensions = ['svg'];
-    if (isset($settings['unstyled_extensions']) && $unstyled = $settings['unstyled_extensions']) {
-      $extensions = array_merge($extensions, array_map('trim', explode(' ', mb_strtolower($unstyled))));
-      $extensions = array_unique($extensions);
-    }
-    return isset($settings['extension']) && in_array($settings['extension'], $extensions);
+    return BlazyAttribute::sanitize($attributes, $escaped);
   }
 
   /**
    * Provides original unstyled image dimensions based on the given image item.
    *
-   * @todo deprecate and removed at 3.+. Use BlazyFile::imageDimensions()
-   * instead.
+   * @todo deprecated and removed < 3.x. Use BlazyImage::dimensions() instead.
    */
   public static function imageDimensions(array &$settings, $item = NULL, $initial = FALSE) {
-    BlazyFile::imageDimensions($settings, $item, $initial);
+    BlazyImage::dimensions($settings, $item, $initial);
   }
 
   /**
    * A wrapper for ImageStyle::transformDimensions().
    *
-   * @todo deprecate and removed at 3.+. Use BlazyFile::transformDimensions()
+   * @todo deprecated and removed < 3.x. Use BlazyImage::transformDimensions()
    * instead.
    */
   public static function transformDimensions($style, array $data, $initial = FALSE) {
-    return BlazyFile::transformDimensions($style, $data, $initial);
+    return BlazyImage::transformDimensions($style, $data, $initial);
   }
 
   /**
    * A wrapper for ::transformRelative() to pass tests anywhere else.
    *
-   * @todo deprecate at 2.5 and removed at 3.+. Use
+   * @todo deprecated at 2.5 and removed < 3.x. Use
    * BlazyFile::transformRelative() instead.
    */
   public static function transformRelative($uri, $style = NULL) {
@@ -111,17 +59,17 @@ class BlazyUtil {
   /**
    * Returns the URI from the given image URL, relevant for unmanaged files.
    *
-   * @todo deprecate at 2.5 and removed at 3.+. Use BlazyFile::buildUri()
+   * @todo deprecated at 2.5 and removed < 3.x. Use BlazyFile::buildUri()
    * instead.
    */
-  public static function buildUri($image_url) {
-    return BlazyFile::buildUri($image_url);
+  public static function buildUri($url) {
+    return BlazyFile::buildUri($url);
   }
 
   /**
    * Determines whether the URI has a valid scheme for file API operations.
    *
-   * @todo deprecate at 2.5 and removed at 3.+. Use BlazyFile::isValidUri()
+   * @todo deprecated at 2.5 and removed < 3.x. Use BlazyFile::isValidUri()
    * instead.
    */
   public static function isValidUri($uri) {
@@ -129,13 +77,14 @@ class BlazyUtil {
   }
 
   /**
-   * Provides image url based on the given settings.
+   * Generates an SVG Placeholder.
    *
-   * @todo deprecate at 2.5 and removed at 3.+. Use BlazyFile::imageUrl()
-   * instead.
+   * @todo deprecated at 2.7 and removed < 3.x. Use Placeholder::generate().
    */
-  public static function imageUrl(array &$settings) {
-    BlazyFile::imageUrl($settings);
+  public static function generatePlaceholder($width, $height): string {
+    $width = $width ?: 100;
+    $height = $height ?: 100;
+    return 'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D\'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg\'%20viewBox%3D\'0%200%20' . $width . '%20' . $height . '\'%2F%3E';
   }
 
 }

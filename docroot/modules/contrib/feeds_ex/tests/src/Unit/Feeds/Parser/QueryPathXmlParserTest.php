@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\feeds_ex\Unit\Feeds\Parser;
 
-use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\feeds\Result\RawFetcherResult;
 use Drupal\feeds_ex\Feeds\Parser\QueryPathXmlParser;
 use Drupal\feeds_ex\Messenger\TestMessenger;
@@ -23,7 +22,7 @@ class QueryPathXmlParserTest extends ParserTestBase {
     $configuration = ['feed_type' => $this->feedType];
     $utility = new XmlUtility();
     $utility->setStringTranslation($this->getStringTranslationStub());
-    $this->parser = new QueryPathXmlParser($configuration, 'querypathxml', [], $this->createMock(PluginManagerInterface::class), $utility);
+    $this->parser = new QueryPathXmlParser($configuration, 'querypathxml', [], $utility);
     $this->parser->setStringTranslation($this->getStringTranslationStub());
     $this->parser->setFeedsExMessenger(new TestMessenger());
   }

@@ -2,7 +2,6 @@
 
 namespace Drupal\charts\Plugin\chart\Library;
 
-use Drupal\charts\Settings\ChartsDefaultSettings;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
@@ -131,84 +130,6 @@ abstract class ChartBase extends PluginBase implements ChartInterface {
       '#c42525',
       '#a6c96a',
     ];
-  }
-
-  /**
-   * Gets options properties.
-   *
-   * @param array $element
-   *   The element.
-   *
-   * @return array
-   *   The options.
-   */
-  protected function getOptionsFromElementProperties(array $element) {
-    $options = [];
-    $properties_mapping = ChartsDefaultSettings::getLegacySettingsMappingKeys();
-    // Remove properties which don't have a mapping.
-    $filtered_element = array_filter($element, function ($property) use ($properties_mapping) {
-      $property = ltrim($property, '#');
-      return isset($properties_mapping[$property]);
-    });
-
-    foreach ($filtered_element as $property => $value) {
-      $property = ltrim($property, '#');
-      $property_map = $properties_mapping[$property];
-
-      if (substr($property_map, 0, 7) === 'display') {
-        // Stripping the 'display_' in front of the mapping key.
-        $property_map = substr($property_map, 8, strlen($property_map));
-        if (substr($property_map, 0, 10) === 'dimensions') {
-          // Stripping dimensions_.
-          $property_map = substr($property_map, 11, strlen($property_map));
-          $options['display']['dimensions'][$property_map] = $value;
-        }
-        elseif (substr($property_map, 0, 5) === 'gauge') {
-          // Stripping gauge_.
-          $property_map = substr($property_map, 6, strlen($property_map));
-          $options['display']['gauge'][$property_map] = $value;
-        }
-        else {
-          $options['display'][$property_map] = $value;
-        }
-      }
-      elseif (substr($property_map, 0, 5) === 'xaxis') {
-        // Stripping xaxis_.
-        $property_map = substr($property_map, 6, strlen($property_map));
-        $options['xaxis'][$property_map] = $value;
-      }
-      elseif (substr($property_map, 0, 5) === 'yaxis') {
-        // Stripping yaxis_.
-        $property_map = substr($property_map, 6, strlen($property_map));
-        if (substr($property_map, 0, 9) === 'secondary') {
-          // Stripping gauge_.
-          $property_map = substr($property_map, 10, strlen($property_map));
-          $options['yaxis']['secondary'][$property_map] = $value;
-        }
-        else {
-          $options['yaxis'][$property_map] = $value;
-        }
-      }
-      elseif (substr($property_map, 0, 6) === 'fields') {
-        // Stripping fields_.
-        $property_map = substr($property_map, 7, strlen($property_map));
-        if ($property_map === 'data_providers' && is_array($value)) {
-          $data_providers = !empty($options['fields']['data_providers']) ? $options['fields']['data_providers'] : [];
-          if ($property === 'data_fields' || $property == 'field_colors') {
-            $options['fields']['data_providers'] = ChartsDefaultSettings::getFieldsDataProviders($data_providers, $value);
-          }
-        }
-        else {
-          $options['fields'][$property_map] = $value;
-        }
-      }
-      else {
-        // We make sure that we handle the color unneeded array.
-        $options[$property_map] = $property_map !== 'color' ? $value : $value[0];
-      }
-    }
-
-    return $options;
   }
 
 }

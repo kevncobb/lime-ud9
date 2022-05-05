@@ -10,8 +10,8 @@ use Drupal\editor\Entity\Editor;
 use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyAlter;
 use Drupal\blazy\BlazyDefault;
-use Drupal\blazy\BlazyTheme;
-use Drupal\blazy\BlazyViews;
+use Drupal\blazy\Theme\BlazyTheme;
+use Drupal\blazy\Theme\BlazyViews;
 use Drupal\blazy\Utility\BlazyMarkdown;
 
 /**
@@ -45,6 +45,18 @@ function template_preprocess_blazy(&$variables) {
 }
 
 /**
+ * Overrides variables for image.html.twig templates.
+ *
+ * @todo remove when core makes `loading` attribute optional.
+ */
+function blazy_preprocess_image(&$variables) {
+  $attributes = &$variables['attributes'];
+  if (isset($attributes['data-b-unloading'])) {
+    unset($attributes['loading'], $attributes['data-b-unloading']);
+  }
+}
+
+/**
  * Overrides variables for responsive-image.html.twig templates.
  */
 function blazy_preprocess_responsive_image(&$variables) {
@@ -73,7 +85,8 @@ function blazy_preprocess_media_oembed_iframe(array &$variables) {
  * Implements hook_preprocess_field().
  */
 function blazy_preprocess_field(array &$variables) {
-  if (isset($variables['element']['#blazy']) || !empty($variables['element']['#third_party_settings']['blazy']['blazy'])) {
+  if (isset($variables['element']['#blazy'])
+    || !empty($variables['element']['#third_party_settings']['blazy']['blazy'])) {
     BlazyTheme::field($variables);
   }
 }
@@ -82,7 +95,8 @@ function blazy_preprocess_field(array &$variables) {
  * Implements hook_preprocess_views_view().
  */
 function blazy_preprocess_views_view(array &$variables) {
-  if (!empty($variables['css_class']) && strpos($variables['css_class'], 'blazy--') !== FALSE) {
+  if (!empty($variables['css_class'])
+    && strpos($variables['css_class'], 'blazy--') !== FALSE) {
     if ($lightboxes = blazy()->getLightboxes()) {
       BlazyViews::preprocessViewsView($variables, $lightboxes);
     }
@@ -109,8 +123,8 @@ function blazy_config_schema_info_alter(array &$definitions) {
  * Implements hook_library_info_alter().
  */
 function blazy_library_info_alter(&$libraries, $extension) {
-  $debounce = $extension === 'core' && isset($libraries['drupal.debounce']);
-  if ($extension === 'blazy' || $extension === 'media'  || $debounce) {
+  $core = $extension === 'core' && (isset($libraries['once']) || isset($libraries['drupal.debounce']));
+  if ($extension === 'blazy' || $extension === 'media' || $core) {
     BlazyAlter::libraryInfoAlter($libraries, $extension);
   }
 }
@@ -168,15 +182,44 @@ function blazy_parse_markdown($string) {
  * Provides a wrapper to replace deprecated libraries_get_path() at ease.
  */
 function blazy_libraries_get_path($name, $base_path = FALSE) {
-  $function = 'libraries_get_path';
-  if (\Drupal::hasService('library.libraries_directory_file_finder')) {
-    return \Drupal::service('library.libraries_directory_file_finder')->find($name);
-  }
-  elseif (is_callable($function)) {
-    return $function($name, $base_path);
+  return Blazy::getLibrariesPath($name, $base_path);
+}
+
+/**
+ * Cleans out unclean module filter references.
+ *
+ * @todo remove when core filter takes care of its own plugins removal cleanly.
+ */
+function blazy_filter_cleanup($module = 'blazy') {
+  $config_factory = \Drupal::configFactory();
+  $config_storage = \Drupal::service('config.storage');
+
+  $filter = "filters.{$module}_filter";
+
+  // Removes unclean [module]_filter references, see #3257390.
+  foreach ($config_storage->listAll('filter.format') as $config_name) {
+    $config = $config_factory->getEditable($config_name);
+
+    if ($plugin = $config->get($filter)) {
+      $dependencies = $config->get('dependencies');
+      $modules = array_diff($dependencies['module'], [$module]);
+
+      $config
+        ->clear($filter)
+        ->set('dependencies.module', $modules)
+        ->save(TRUE);
+    }
   }
 
-  return FALSE;
+  // Just to be safe and sure, reset filter_formats cache, etc.
+  if (function_exists('drupal_static_reset')) {
+    drupal_static_reset('filter_formats');
+  }
+
+  blazy()->getStorage('filter_format')->resetCache();
+
+  // Clear plugin manager caches.
+  \Drupal::getContainer()->get('plugin.cache_clearer')->clearCachedDefinitions();
 }
 
 /**

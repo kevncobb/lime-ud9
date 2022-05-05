@@ -12,7 +12,7 @@ use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use RectorPrefix20220209\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser;
+use RectorPrefix20220303\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser;
 final class PhpSpecMockCollector
 {
     /**
@@ -42,7 +42,7 @@ final class PhpSpecMockCollector
      * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
      */
     private $betterNodeFinder;
-    public function __construct(\RectorPrefix20220209\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser $simpleCallableNodeTraverser, \Rector\NodeNameResolver\NodeNameResolver $nodeNameResolver, \Rector\Core\PhpParser\Node\BetterNodeFinder $betterNodeFinder)
+    public function __construct(\RectorPrefix20220303\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser $simpleCallableNodeTraverser, \Rector\NodeNameResolver\NodeNameResolver $nodeNameResolver, \Rector\Core\PhpParser\Node\BetterNodeFinder $betterNodeFinder)
     {
         $this->simpleCallableNodeTraverser = $simpleCallableNodeTraverser;
         $this->nodeNameResolver = $nodeNameResolver;
@@ -57,16 +57,17 @@ final class PhpSpecMockCollector
         if (isset($this->mocks[$className]) && $this->mocks[$className] !== []) {
             return $this->mocks[$className];
         }
-        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($class, function (\PhpParser\Node $node) use($class) : void {
+        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($class, function (\PhpParser\Node $node) use($class) {
             if (!$node instanceof \PhpParser\Node\Stmt\ClassMethod) {
-                return;
+                return null;
             }
             if (!$node->isPublic()) {
-                return;
+                return null;
             }
             foreach ($node->params as $param) {
                 $this->addMockFromParam($class, $param);
             }
+            return null;
         });
         // set default value if none was found
         if (!isset($this->mocks[$className])) {

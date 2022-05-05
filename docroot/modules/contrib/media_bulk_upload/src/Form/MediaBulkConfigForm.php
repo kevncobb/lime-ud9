@@ -84,6 +84,7 @@ class MediaBulkConfigForm extends EntityForm implements ContainerInjectionInterf
       '#default_value' => isset($media_types) ? $media_types : [],
       '#size' => 20,
       '#multiple' => TRUE,
+      '#required' => TRUE,
     ];
 
     $form['form_mode'] = [
@@ -95,6 +96,14 @@ class MediaBulkConfigForm extends EntityForm implements ContainerInjectionInterf
       '#options' => $this->entityDisplayRepository->getFormModeOptions('media'),
       "#empty_option" => t('- None -'),
       '#default_value' => $mediaBulkConfig->get('form_mode'),
+    ];
+
+    $form['upload_location'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Upload location'),
+      '#description' => $this->t('Location to initially upload the files before they are moved to the determined
+      location in the media types.'),
+      '#default_value' => $mediaBulkConfig->get('upload_location'),
     ];
 
     return $form;

@@ -13,7 +13,7 @@ interface WidgetSettingsInterface {
    * @param string $widget_plugin_id
    *   The plugin id of a widget.
    *
-   * @return array()
+   * @return array
    *   An array with all the settings which are allowed for a plugin id.
    */
   public function getAllowedSettings($widget_plugin_id);

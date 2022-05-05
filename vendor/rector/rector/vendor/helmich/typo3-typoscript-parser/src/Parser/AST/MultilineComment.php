@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix20220209\Helmich\TypoScriptParser\Parser\AST;
+namespace RectorPrefix20220303\Helmich\TypoScriptParser\Parser\AST;
 
 final class MultilineComment extends \Helmich\TypoScriptParser\Parser\AST\Statement
 {
@@ -12,6 +12,6 @@ final class MultilineComment extends \Helmich\TypoScriptParser\Parser\AST\Statem
     public function __construct(string $comment, int $sourceLine)
     {
         parent::__construct($sourceLine);
-        $this->comment = \preg_replace('/[ \\0\\r\\x0B\\t]/', '', $comment);
+        $this->comment = \preg_replace('/[\\0\\r\\x0B\\t]/', '', $comment);
     }
 }

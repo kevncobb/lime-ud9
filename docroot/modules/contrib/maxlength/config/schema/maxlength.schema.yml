@@ -1,4 +1,3 @@
-langcode: 'en'
 field.widget.third_party.maxlength:
   type: mapping
   label: 'maxlength settings'
@@ -14,4 +13,8 @@ field.widget.third_party.maxlength:
     maxlength_js_enforce:
       type: boolean
     maxlength_js_truncate_html:
+      type: boolean
+    maxlength_js_enforce_attribute:
+      type: boolean
+    maxlength_js_summary_enforce_attribute:
       type: boolean

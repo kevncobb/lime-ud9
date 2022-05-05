@@ -2,12 +2,11 @@
 
 namespace Drupal\feeds_ex\Feeds\Parser;
 
-use RuntimeException;
-use QueryPath;
 use Drupal\Component\Render\HtmlEscapedText;
 use Drupal\feeds\FeedInterface;
 use Drupal\feeds\Result\FetcherResultInterface;
 use Drupal\feeds\StateInterface;
+use QueryPath\QueryPath;
 use QueryPath\DOMQuery;
 use QueryPath\CSS\ParseException;
 
@@ -144,22 +143,8 @@ class QueryPathXmlParser extends XmlParser {
    * {@inheritdoc}
    */
   protected function loadLibrary() {
-    if (!class_exists('QueryPath')) {
-      // Check if the querypath library is installed manually.
-      $ns = \Drupal::service('container.namespaces');
-      if (!empty($ns['QueryPath']) && is_dir($ns['QueryPath'])) {
-        // The querypath namespace is expected to point to
-        // feeds_ex/lib/querypath-QueryPath/v3.0.5/src/QueryPath. The file to
-        // require should be feeds_ex/lib/querypath-QueryPath/v3.0.5/src/qp.php.
-        $path = dirname($ns['QueryPath']) . '/qp.php';
-        if (is_file($path)) {
-          require_once $path;
-        }
-      }
-    }
-
-    if (!class_exists('QueryPath')) {
-      throw new RuntimeException($this->t('The QueryPath library is not installed.'));
+    if (!class_exists(QueryPath::class)) {
+      throw new \RuntimeException($this->t('The QueryPath library is not installed.'));
     }
   }
 

@@ -2,9 +2,8 @@
 
 namespace Drupal\symfony_mailer\Plugin\EmailAdjuster;
 
-use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Markup;
+use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\symfony_mailer\Processor\EmailAdjusterBase;
 use Drupal\symfony_mailer\EmailInterface;
 
@@ -17,34 +16,34 @@ use Drupal\symfony_mailer\EmailInterface;
  *   description = @Translation("Sets the email body."),
  * )
  */
-class BodyEmailAdjuster extends EmailAdjusterBase {
+class BodyEmailAdjuster extends EmailAdjusterBase implements TrustedCallbackInterface {
 
   /**
    * {@inheritdoc}
    */
-  public function preRender(EmailInterface $email) {
-    $body = $this->configuration['value'];
+  public function build(EmailInterface $email) {
+    $content = $this->configuration['content'];
+
+    $body = [
+      '#type' => 'processed_text',
+      '#text' => $content['value'],
+      '#format' => $content['format'] ?? filter_default_format(),
+    ];
 
     $variables = $email->getVariables();
     if ($existing_body = $email->getBody()) {
       $variables['body'] = $existing_body;
     }
 
-    // There is little need for filtering because the output is an email, and
-    // mail clients block dangerous content such as scripts. Furthermore, any
-    // filtering, even Xss:filterAdmin(), will corrupt any tokens inside links
-    // from the removal of 'unsafe protocols'.
     if ($variables) {
-      // Apply TWIG template
-      $body = [
-        '#type' => 'inline_template',
-        '#template' => $body,
+      $body += [
+        '#pre_render' => [
+          // Preserve the default pre_render from the element.
+          [$this, 'preRenderVariables'],
+          ['Drupal\filter\Element\ProcessedText', 'preRenderText'],
+        ],
         '#context' => $variables,
       ];
-    }
-    else {
-      // Text is already markup, so ensure that it is not escaped again.
-      $body = Markup::create($body);
     }
 
     $email->setBody($body);
@@ -54,14 +53,36 @@ class BodyEmailAdjuster extends EmailAdjusterBase {
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
-    $form['value'] = [
-      '#type' => 'textarea',
-      '#default_value' => $this->configuration['value'] ?? NULL,
+    $content = $this->configuration['content'];
+
+    $form['content'] = [
+      '#title' => $this->t('Content'),
+      '#type' => 'text_format',
+      '#default_value' => $content['value'],
+      '#format' => $content['format'] ?? filter_default_format(),
       '#required' => TRUE,
+      '#rows' => 10,
       '#description' => $this->t('Email body. This field may support tokens or Twig template syntax – please check the supplied default policy for possible values.'),
     ];
 
+    // @todo Show the available Twig variables / token browser.
     return $form;
+  }
+
+  /**
+   * Pre-render callback for replacing twig variables.
+   */
+  public function preRenderVariables(array $body) {
+    $twig_service = \Drupal::service('twig');
+    $body['#text'] = $twig_service->renderInline($body['#text'], $body['#context']);
+    return $body;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['preRenderVariables'];
   }
 
 }

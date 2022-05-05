@@ -226,6 +226,28 @@ trait FeedsCommonTrait {
   }
 
   /**
+   * Runs specified number of items from one queue.
+   *
+   * @param string $queue_name
+   *   The name of the queue to run all items from.
+   * @param int $number
+   *   The number of items to process from the queue.
+   */
+  protected function runQueue(string $queue_name, int $number) {
+    // Create queue.
+    $queue = $this->container->get('queue')->get($queue_name);
+    $queue->createQueue();
+    $queue_worker = $this->container->get('plugin.manager.queue_worker')->createInstance($queue_name);
+
+    // Process all items of the queue.
+    for ($i = 0; $i < $number; $i++) {
+      $item = $queue->claimItem();
+      $queue_worker->processItem($item->data);
+      $queue->deleteItem($item);
+    }
+  }
+
+  /**
    * Prints messages useful for debugging.
    */
   protected function printMessages() {

@@ -25,7 +25,7 @@ use Rector\Core\NodeAnalyzer\ParamAnalyzer;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\NodeTypeResolver\NodeTypeResolver;
-use RectorPrefix20220209\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser;
+use RectorPrefix20220303\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser;
 final class ClassMethodParameterTypeManipulator
 {
     /**
@@ -58,7 +58,7 @@ final class ClassMethodParameterTypeManipulator
      * @var \Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser
      */
     private $simpleCallableNodeTraverser;
-    public function __construct(\Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory $phpDocInfoFactory, \Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTypeChanger $phpDocTypeChanger, \Rector\NodeTypeResolver\NodeTypeResolver $nodeTypeResolver, \Rector\Core\NodeAnalyzer\ParamAnalyzer $paramAnalyzer, \Rector\NodeNameResolver\NodeNameResolver $nodeNameResolver, \RectorPrefix20220209\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser $simpleCallableNodeTraverser)
+    public function __construct(\Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory $phpDocInfoFactory, \Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTypeChanger $phpDocTypeChanger, \Rector\NodeTypeResolver\NodeTypeResolver $nodeTypeResolver, \Rector\Core\NodeAnalyzer\ParamAnalyzer $paramAnalyzer, \Rector\NodeNameResolver\NodeNameResolver $nodeNameResolver, \RectorPrefix20220303\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser $simpleCallableNodeTraverser)
     {
         $this->phpDocInfoFactory = $phpDocInfoFactory;
         $this->phpDocTypeChanger = $phpDocTypeChanger;
@@ -122,11 +122,12 @@ final class ClassMethodParameterTypeManipulator
         if ($classMethod->stmts === null) {
             return;
         }
-        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($classMethod->stmts, function (\PhpParser\Node $node) use($param, $methodsReturningClassInstance) : void {
+        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($classMethod->stmts, function (\PhpParser\Node $node) use($param, $methodsReturningClassInstance) {
             if (!$node instanceof \PhpParser\Node\Expr\MethodCall) {
-                return;
+                return null;
             }
             $this->refactorMethodCall($param, $node, $methodsReturningClassInstance);
+            return null;
         });
     }
     /**

@@ -13,17 +13,12 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\Transform\ValueObject\PropertyFetchToMethodCall;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220209\Webmozart\Assert\Assert;
+use RectorPrefix20220303\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Transform\Rector\Assign\PropertyFetchToMethodCallRector\PropertyFetchToMethodCallRectorTest
  */
 final class PropertyFetchToMethodCallRector extends \Rector\Core\Rector\AbstractRector implements \Rector\Core\Contract\Rector\ConfigurableRectorInterface
 {
-    /**
-     * @deprecated
-     * @var string
-     */
-    public const PROPERTIES_TO_METHOD_CALLS = 'properties_to_method_calls';
     /**
      * @var PropertyFetchToMethodCall[]
      */
@@ -69,9 +64,8 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $propertiesToMethodCalls = $configuration[self::PROPERTIES_TO_METHOD_CALLS] ?? $configuration;
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allIsAOf($propertiesToMethodCalls, \Rector\Transform\ValueObject\PropertyFetchToMethodCall::class);
-        $this->propertiesToMethodCalls = $propertiesToMethodCalls;
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allIsAOf($configuration, \Rector\Transform\ValueObject\PropertyFetchToMethodCall::class);
+        $this->propertiesToMethodCalls = $configuration;
     }
     private function processSetter(\PhpParser\Node\Expr\Assign $assign) : ?\PhpParser\Node
     {

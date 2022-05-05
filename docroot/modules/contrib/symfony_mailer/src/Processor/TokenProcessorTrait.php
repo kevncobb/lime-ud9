@@ -4,7 +4,6 @@ namespace Drupal\symfony_mailer\Processor;
 
 use Drupal\Component\Render\PlainTextOutput;
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Utility\Token;
 use Drupal\symfony_mailer\EmailInterface;
 
 /**

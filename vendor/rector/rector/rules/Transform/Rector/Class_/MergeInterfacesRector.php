@@ -10,7 +10,7 @@ use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220209\Webmozart\Assert\Assert;
+use RectorPrefix20220303\Webmozart\Assert\Assert;
 /**
  * Covers cases like
  * - https://github.com/FriendsOfPHP/PHP-CS-Fixer/commit/a1cdb4d2dd8f45d731244eed406e1d537218cc66
@@ -20,12 +20,6 @@ use RectorPrefix20220209\Webmozart\Assert\Assert;
  */
 final class MergeInterfacesRector extends \Rector\Core\Rector\AbstractRector implements \Rector\Core\Contract\Rector\ConfigurableRectorInterface
 {
-    /**
-     * @api
-     * @deprecated
-     * @var string
-     */
-    public const OLD_TO_NEW_INTERFACES = 'old_to_new_interfaces';
     /**
      * @var array<string, string>
      */
@@ -59,6 +53,7 @@ CODE_SAMPLE
         if ($node->implements === []) {
             return null;
         }
+        $hasChanged = \false;
         foreach ($node->implements as $key => $implement) {
             $oldInterfaces = \array_keys($this->oldToNewInterfaces);
             if (!$this->isNames($implement, $oldInterfaces)) {
@@ -66,6 +61,10 @@ CODE_SAMPLE
             }
             $interface = $this->getName($implement);
             $node->implements[$key] = new \PhpParser\Node\Name($this->oldToNewInterfaces[$interface]);
+            $hasChanged = \true;
+        }
+        if (!$hasChanged) {
+            return null;
         }
         $this->makeImplementsUnique($node);
         return $node;
@@ -75,11 +74,9 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        $oldToNewInterfaces = $configuration[self::OLD_TO_NEW_INTERFACES] ?? $configuration;
-        \RectorPrefix20220209\Webmozart\Assert\Assert::isArray($oldToNewInterfaces);
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allString(\array_keys($oldToNewInterfaces));
-        \RectorPrefix20220209\Webmozart\Assert\Assert::allString($oldToNewInterfaces);
-        $this->oldToNewInterfaces = $oldToNewInterfaces;
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allString(\array_keys($configuration));
+        \RectorPrefix20220303\Webmozart\Assert\Assert::allString($configuration);
+        $this->oldToNewInterfaces = $configuration;
     }
     private function makeImplementsUnique(\PhpParser\Node\Stmt\Class_ $class) : void
     {

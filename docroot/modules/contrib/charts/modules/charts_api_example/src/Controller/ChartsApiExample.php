@@ -3,6 +3,7 @@
 namespace Drupal\charts_api_example\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Messenger\MessengerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Component\Uuid\UuidInterface;
@@ -27,16 +28,26 @@ class ChartsApiExample extends ControllerBase {
   protected $uuidService;
 
   /**
+   * The module extension list.
+   *
+   * @var \Drupal\Core\Extension\ModuleExtensionList
+   */
+  protected $moduleList;
+
+  /**
    * Construct.
    *
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger service.
    * @param \Drupal\Component\Uuid\UuidInterface $uuidService
    *   The UUID service.
+   * @param \Drupal\Core\Extension\ModuleExtensionList $module_list
+   *   The module list.
    */
-  public function __construct(MessengerInterface $messenger, UuidInterface $uuidService) {
+  public function __construct(MessengerInterface $messenger, UuidInterface $uuidService, ModuleExtensionList $module_list) {
     $this->messenger = $messenger;
     $this->uuidService = $uuidService;
+    $this->moduleList = $module_list;
   }
 
   /**
@@ -45,7 +56,8 @@ class ChartsApiExample extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('messenger'),
-      $container->get('uuid')
+      $container->get('uuid'),
+      $container->get('extension.list.module')
     );
   }
 
@@ -91,7 +103,12 @@ class ChartsApiExample extends ControllerBase {
     $xaxis = [
       '#type' => 'chart_xaxis',
       '#title' => $this->t('Months'),
-      '#labels' => [$this->t('January 2021'), $this->t('February 2021'), $this->t('March 2021'), $this->t('April 2021')],
+      '#labels' => [
+        $this->t('January 2021'),
+        $this->t('February 2021'),
+        $this->t('March 2021'),
+        $this->t('April 2021'),
+      ],
     ];
 
     // Define a y-axis to be used in multiple examples.
@@ -105,12 +122,16 @@ class ChartsApiExample extends ControllerBase {
       $charts_container['content'][$type] = [
         '#type' => 'chart',
         '#tooltips' => $charts_settings->get('charts_default_settings.display.tooltips'),
-        '#title' => $this->t('@library @type Chart', ['@library' => ucfirst($library), '@type' => ucfirst($type)]),
+        '#title' => $this->t('@library @type Chart', [
+          '@library' => ucfirst($library),
+          '@type' => ucfirst($type),
+        ]),
         '#chart_type' => $type,
         'series' => $series,
         'x_axis' => $xaxis,
         'y_axis' => $yaxis,
-        '#raw_options' => [], // e.g. ['chart' => ['backgroundColor' => '#000000']],
+        '#raw_options' => [],
+        // e.g. ['chart' => ['backgroundColor' => '#000000']].
       ];
     }
 
@@ -129,7 +150,7 @@ class ChartsApiExample extends ControllerBase {
       ],
       'x_axis' => $xaxis,
       'y_axis' => $yaxis,
-      '#raw_options' => [], // e.g. ['chart' => ['backgroundColor' => '#000000']],
+      '#raw_options' => [],
     ];
 
     // Stacked Area Chart from a local CSV file.
@@ -176,7 +197,8 @@ class ChartsApiExample extends ControllerBase {
           'scales' => [
             'x' => [
               'ticks' => [
-                'autoSkip' => TRUE],
+                'autoSkip' => TRUE,
+              ],
             ],
           ],
         ],
@@ -210,7 +232,7 @@ class ChartsApiExample extends ControllerBase {
       'x_axis' => $xaxis,
       'y_axis' => $yaxis,
       '#stacking' => TRUE,
-      '#raw_options' => [], // e.g. ['chart' => ['backgroundColor' => '#000000']],
+      '#raw_options' => [],
     ];
 
     // Combination chart (column and line).
@@ -229,7 +251,32 @@ class ChartsApiExample extends ControllerBase {
       ],
       'x_axis' => $xaxis,
       'y_axis' => $yaxis,
-      '#raw_options' => [], // e.g. ['chart' => ['backgroundColor' => '#000000']],
+      '#raw_options' => [],
+    ];
+
+    // Combination chart (column and line) with secondary Y-Axis.
+    $charts_container['content']['combo_dual_yaxes'] = [
+      '#type' => 'chart',
+      '#tooltips' => $charts_settings->get('charts_default_settings.display.tooltips'),
+      '#title' => $this->t('@library Combination Chart with Secondary Y-Axis', ['@library' => ucfirst($library)]),
+      '#chart_type' => 'column',
+      'series_one' => $series,
+      'series_two' => [
+        '#type' => 'chart_data',
+        '#chart_type' => 'line',
+        '#title' => $this->t('8.x-3.x'),
+        '#data' => [4330, 4413, 4212, 4431],
+        '#color' => '#77b259',
+        '#target_axis' => 'y_axis_secondary',
+      ],
+      'x_axis' => $xaxis,
+      'y_axis' => $yaxis,
+      'y_axis_secondary' => [
+        '#type' => 'chart_yaxis',
+        '#title' => $this->t('Secondary Y-Axis'),
+        '#opposite' => TRUE,
+      ],
+      '#raw_options' => [],
     ];
 
     // Radar chart. Not supported by C3.js or Google Charts (natively).
@@ -243,7 +290,7 @@ class ChartsApiExample extends ControllerBase {
         'x_axis' => $xaxis,
         'y_axis' => $yaxis,
         '#polar' => TRUE,
-        '#raw_options' => [], // e.g. ['chart' => ['backgroundColor' => '#000000']],
+        '#raw_options' => [],
       ];
     }
 
@@ -268,7 +315,7 @@ class ChartsApiExample extends ControllerBase {
           '#title' => $this->t('Speed'),
           '#data' => [65],
         ],
-        '#raw_options' => [], // e.g. ['chart' => ['backgroundColor' => '#000000']],
+        '#raw_options' => [],
       ];
     }
 
@@ -286,23 +333,54 @@ class ChartsApiExample extends ControllerBase {
       'x_axis' => [
         '#type' => 'chart_xaxis',
         '#title' => $this->t('Height'),
+        '#labels' => [],
       ],
       'y_axis' => [
         '#type' => 'chart_yaxis',
         '#title' => $this->t('Weight'),
       ],
       '#stacking' => TRUE,
-      '#raw_options' => [], // e.g. ['chart' => ['backgroundColor' => '#000000']],
+      '#raw_options' => [],
     ];
+
+    if ($library === 'highcharts') {
+      $charts_container['content']['php_override'] = [
+        '#chart_id' => 'exampleidphp',
+        '#type' => 'chart',
+        '#tooltips' => $charts_settings->get('charts_default_settings.display.tooltips'),
+        '#title' => $this->t('@library Chart, Overridden By PHP Hook', ['@library' => ucfirst($library)]),
+        '#chart_type' => 'column',
+        'series' => $series,
+        'x_axis' => $xaxis,
+        'y_axis' => $yaxis,
+        '#raw_options' => [],
+      ];
+
+      $charts_container['content']['js_override'] = [
+        '#id' => 'exampleidjs',
+        '#chart_id' => 'exampleidjschart',
+        '#type' => 'chart',
+        '#tooltips' => $charts_settings->get('charts_default_settings.display.tooltips'),
+        '#title' => $this->t('@library Chart, Overridden By JS Function', ['@library' => ucfirst($library)]),
+        '#chart_type' => 'column',
+        'series' => $series,
+        'x_axis' => $xaxis,
+        'y_axis' => $yaxis,
+        '#raw_options' => [],
+      ];
+    }
 
     return $charts_container;
   }
 
   /**
-   * @return array $all_rows
+   * Returns the CSV contents in an array with data organized by column.
+   *
+   * @return array
+   *   The array of rows.
    */
   private function getCsvContents() {
-    $file_path = drupal_get_path('module', 'charts_api_example');
+    $file_path = $this->moduleList->getPath('charts_api_example');
     $file_name = $file_path . '/fixtures/charts_api_example_file.csv';
     $handle = fopen($file_name, 'r');
     $all_rows = [];

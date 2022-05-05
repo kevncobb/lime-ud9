@@ -4,10 +4,10 @@ declare (strict_types=1);
 namespace Rector\Core\Configuration;
 
 use Rector\ChangesReporting\Output\ConsoleOutputFormatter;
+use Rector\Core\Contract\Console\OutputStyleInterface;
 use Rector\Core\ValueObject\Configuration;
-use RectorPrefix20220209\Symfony\Component\Console\Input\InputInterface;
-use RectorPrefix20220209\Symfony\Component\Console\Style\SymfonyStyle;
-use RectorPrefix20220209\Symplify\PackageBuilder\Parameter\ParameterProvider;
+use RectorPrefix20220303\Symfony\Component\Console\Input\InputInterface;
+use RectorPrefix20220303\Symplify\PackageBuilder\Parameter\ParameterProvider;
 final class ConfigurationFactory
 {
     /**
@@ -17,13 +17,13 @@ final class ConfigurationFactory
     private $parameterProvider;
     /**
      * @readonly
-     * @var \Symfony\Component\Console\Style\SymfonyStyle
+     * @var \Rector\Core\Contract\Console\OutputStyleInterface
      */
-    private $symfonyStyle;
-    public function __construct(\RectorPrefix20220209\Symplify\PackageBuilder\Parameter\ParameterProvider $parameterProvider, \RectorPrefix20220209\Symfony\Component\Console\Style\SymfonyStyle $symfonyStyle)
+    private $rectorOutputStyle;
+    public function __construct(\RectorPrefix20220303\Symplify\PackageBuilder\Parameter\ParameterProvider $parameterProvider, \Rector\Core\Contract\Console\OutputStyleInterface $rectorOutputStyle)
     {
         $this->parameterProvider = $parameterProvider;
-        $this->symfonyStyle = $symfonyStyle;
+        $this->rectorOutputStyle = $rectorOutputStyle;
     }
     /**
      * @param string[] $paths
@@ -36,7 +36,7 @@ final class ConfigurationFactory
     /**
      * Needs to run in the start of the life cycle, since the rest of workflow uses it.
      */
-    public function createFromInput(\RectorPrefix20220209\Symfony\Component\Console\Input\InputInterface $input) : \Rector\Core\ValueObject\Configuration
+    public function createFromInput(\RectorPrefix20220303\Symfony\Component\Console\Input\InputInterface $input) : \Rector\Core\ValueObject\Configuration
     {
         $isDryRun = (bool) $input->getOption(\Rector\Core\Configuration\Option::DRY_RUN);
         $shouldClearCache = (bool) $input->getOption(\Rector\Core\Configuration\Option::CLEAR_CACHE);
@@ -52,13 +52,13 @@ final class ConfigurationFactory
         $memoryLimit = $input->getOption(\Rector\Core\Configuration\Option::MEMORY_LIMIT);
         return new \Rector\Core\ValueObject\Configuration($isDryRun, $showProgressBar, $shouldClearCache, $outputFormat, $fileExtensions, $paths, $showDiffs, $parallelPort, $parallelIdentifier, $isParallel, $memoryLimit);
     }
-    private function shouldShowProgressBar(\RectorPrefix20220209\Symfony\Component\Console\Input\InputInterface $input, string $outputFormat) : bool
+    private function shouldShowProgressBar(\RectorPrefix20220303\Symfony\Component\Console\Input\InputInterface $input, string $outputFormat) : bool
     {
         $noProgressBar = (bool) $input->getOption(\Rector\Core\Configuration\Option::NO_PROGRESS_BAR);
         if ($noProgressBar) {
             return \false;
         }
-        if ($this->symfonyStyle->isVerbose()) {
+        if ($this->rectorOutputStyle->isVerbose()) {
             return \false;
         }
         return $outputFormat === \Rector\ChangesReporting\Output\ConsoleOutputFormatter::NAME;
@@ -80,7 +80,7 @@ final class ConfigurationFactory
     /**
      * @return string[]|mixed[]
      */
-    private function resolvePaths(\RectorPrefix20220209\Symfony\Component\Console\Input\InputInterface $input) : array
+    private function resolvePaths(\RectorPrefix20220303\Symfony\Component\Console\Input\InputInterface $input) : array
     {
         $commandLinePaths = (array) $input->getArgument(\Rector\Core\Configuration\Option::SOURCE);
         // command line has priority

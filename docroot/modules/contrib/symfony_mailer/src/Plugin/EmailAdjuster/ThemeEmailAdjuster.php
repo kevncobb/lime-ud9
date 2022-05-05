@@ -9,7 +9,6 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\Core\Extension\ThemeHandlerInterface;
-use Drupal\Core\Asset\LibraryDiscoveryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -47,14 +46,6 @@ class ThemeEmailAdjuster extends EmailAdjusterBase implements ContainerFactoryPl
   protected $themeHandler;
 
   /**
-   * The library discovery service.
-   *
-   * @var \Drupal\Core\Asset\LibraryDiscoveryInterface
-   */
-  protected $libraryDiscovery;
-
-
-  /**
    * Constructs a new ThemeEmailAdjuster object.
    *
    * @param array $configuration
@@ -69,15 +60,12 @@ class ThemeEmailAdjuster extends EmailAdjusterBase implements ContainerFactoryPl
    *   The theme manager.
    * @param \Drupal\Core\Extension\ThemeHandlerInterface $theme_handler
    *   The theme handler.
-   * @param \Drupal\Core\Asset\LibraryDiscoveryInterface $library_discovery
-   *   The library discovery service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory, ThemeManagerInterface $theme_manager, ThemeHandlerInterface $theme_handler, LibraryDiscoveryInterface $library_discovery) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory, ThemeManagerInterface $theme_manager, ThemeHandlerInterface $theme_handler) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->configFactory = $config_factory;
     $this->themeManager = $theme_manager;
     $this->themeHandler = $theme_handler;
-    $this->libraryDiscovery = $library_discovery;
   }
 
   /**
@@ -98,7 +86,7 @@ class ThemeEmailAdjuster extends EmailAdjusterBase implements ContainerFactoryPl
   /**
    * {@inheritdoc}
    */
-  public function preBuild(EmailInterface $email) {
+  public function build(EmailInterface $email) {
     $theme_name = $this->getEmailTheme();
     $email->setTheme($theme_name);
   }
@@ -145,23 +133,29 @@ class ThemeEmailAdjuster extends EmailAdjusterBase implements ContainerFactoryPl
    */
   protected function getEmailTheme() {
     $theme = $this->configuration['theme'];
+    $theme_config = $this->configFactory->get('system.theme');
 
     switch ($theme) {
       case '_default':
-        $theme = $this->configFactory->get('system.theme')->get('default');
+        $theme = $theme_config->get('default');
         break;
 
       case '_active_fallback':
         $theme = $this->themeManager->getActiveTheme()->getName();
-        if (!$this->libraryDiscovery->getLibraryByName($theme, 'email')) {
-          $default_theme = $this->configFactory->get('system.theme')->get('default');
-          $theme = $this->libraryDiscovery->getLibraryByName($default_theme, 'email') ?
-            $default_theme : $theme;
+        if ($theme == $theme_config->get('admin')) {
+          $theme = $theme_config->get('default');
         }
         break;
     }
 
     return $theme;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSummary() {
+    return $this->getThemes()[$this->configuration['theme']];
   }
 
 }

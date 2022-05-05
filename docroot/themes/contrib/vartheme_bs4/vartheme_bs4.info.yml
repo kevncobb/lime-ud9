@@ -117,7 +117,7 @@ ckeditor_stylesheets:
   # Theme
   - css/theme/content.theme.css
 
-# Information added by Drupal.org packaging script on 2022-02-10
-version: '9.0.11'
+# Information added by Drupal.org packaging script on 2022-04-22
+version: '9.0.14'
 project: 'vartheme_bs4'
-datestamp: 1644510039
+datestamp: 1650615179

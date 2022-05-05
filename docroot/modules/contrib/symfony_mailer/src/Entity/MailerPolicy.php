@@ -6,7 +6,9 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\symfony_mailer\Annotation\EmailBuilder;
 use Drupal\symfony_mailer\Processor\AdjusterPluginCollection;
+use Drupal\symfony_mailer\Processor\EmailAdjusterInterface;
 
 /**
  * Defines a Mailer Policy configuration entity class.
@@ -38,6 +40,7 @@ use Drupal\symfony_mailer\Processor\AdjusterPluginCollection;
  * )
  */
 class MailerPolicy extends ConfigEntityBase implements EntityWithPluginCollectionInterface {
+
   use StringTranslationTrait;
 
   /**
@@ -50,7 +53,7 @@ class MailerPolicy extends ConfigEntityBase implements EntityWithPluginCollectio
   /**
    * The email builder manager.
    *
-   * @var \Drupal\symfony_mailer\Processor\EmailBuilderManager
+   * @var \Drupal\symfony_mailer\Processor\EmailBuilderManagerInterface
    */
   protected $emailBuilderManager;
 
@@ -61,10 +64,12 @@ class MailerPolicy extends ConfigEntityBase implements EntityWithPluginCollectio
    */
   protected $emailAdjusterManager;
 
+  protected $labelUnknown;
+  protected $labelAll;
   protected $type;
   protected $subType;
+  protected $entityId;
   protected $entity;
-  protected $entityLabel;
   protected $builderDefinition;
 
   /**
@@ -72,13 +77,15 @@ class MailerPolicy extends ConfigEntityBase implements EntityWithPluginCollectio
    *
    * An associative array of email adjuster configuration, keyed by the plug-in
    * ID with value as an array of configured settings.
+   *
+   * @var array
    */
   protected $configuration = [];
 
   /**
    * The collection of email adjuster plug-ins configured in this policy.
    *
-   * @var \Drupal\Core\Plugin\DefaultLazyPluginCollection;
+   * @var \Drupal\Core\Plugin\DefaultLazyPluginCollection
    */
   protected $pluginCollection;
 
@@ -91,28 +98,27 @@ class MailerPolicy extends ConfigEntityBase implements EntityWithPluginCollectio
     $this->emailAdjusterManager = \Drupal::service('plugin.manager.email_adjuster');
     $this->labelUnknown = $this->t('Unknown');
     $this->labelAll = $this->t('<b>*All*</b>');
-    $this->labelInvalid = $this->t('<b>*Invalid*</b>');
 
     // The root policy with ID '_' applies to all types.
     if (!$this->id || ($this->id == '_')) {
-      $this->builderDefinition = ['label' => $this->labelAll];
+      $this->builderDefinition = (new EmailBuilder(['label' => $this->labelAll]))->get();
       return;
     }
 
-    list($this->type, $this->subType, $entityId) = array_pad(explode('.', $this->id), 3, NULL);
+    [$this->type, $this->subType, $this->entityId] = array_pad(explode('.', $this->id), 3, NULL);
     $this->builderDefinition = $this->emailBuilderManager->getDefinition($this->type, FALSE);
     if (!$this->builderDefinition) {
       $this->builderDefinition = ['label' => $this->labelUnknown];
     }
-    if ($entityId && !empty($this->builderDefinition['has_entity'])) {
-      $this->entity = $this->entityTypeManager()->getStorage($this->type)->load($entityId);
+    if ($this->entityId && !empty($this->builderDefinition['has_entity'])) {
+      $this->entity = $this->entityTypeManager()->getStorage($this->type)->load($this->entityId);
     }
   }
 
   /**
    * Gets the email type this policy applies to.
    *
-   * @return ?string
+   * @return string
    *   Email type, or NULL if the policy applies to all types.
    */
   public function getType() {
@@ -122,7 +128,7 @@ class MailerPolicy extends ConfigEntityBase implements EntityWithPluginCollectio
   /**
    * Gets the email sub-type this policy applies to.
    *
-   * @return ?string
+   * @return string
    *   Email sub-type, or NULL if the policy applies to all sub-types.
    */
   public function getSubType() {
@@ -132,7 +138,7 @@ class MailerPolicy extends ConfigEntityBase implements EntityWithPluginCollectio
   /**
    * Gets the config entity this policy applies to.
    *
-   * @return ?\Drupal\Core\Config\Entity\ConfigEntityInterface.
+   * @return \Drupal\Core\Config\Entity\ConfigEntityInterface
    *   Entity, or NULL if the policy applies to all entities.
    */
   public function getEntity() {
@@ -169,11 +175,29 @@ class MailerPolicy extends ConfigEntityBase implements EntityWithPluginCollectio
    * Gets a human-readable label for the config entity this policy applies to.
    *
    * @return string
-   *   Email config entity label, or NULL if the policy applies to all
+   *   Email config entity label, or NULL if the builder doesn't support
    *   entities.
    */
   public function getEntityLabel() {
-    return $this->entity ? $this->entity->label() : NULL;
+    if (empty($this->builderDefinition['has_entity'])) {
+      return NULL;
+    }
+    if ($this->entity) {
+      return $this->entity->label();
+    }
+    return $this->entityId ? $this->labelUnknown : $this->labelAll;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function label() {
+    $labels = [
+      $this->getTypeLabel(),
+      $this->getSubTypeLabel(),
+      $this->getEntityLabel(),
+    ];
+    return implode(' » ', array_filter($labels));
   }
 
   /**
@@ -230,17 +254,41 @@ class MailerPolicy extends ConfigEntityBase implements EntityWithPluginCollectio
   /**
    * Gets a short human-readable summary of the configured policy.
    *
+   * @param bool $expanded
+   *   (Optional) If FALSE return just the labels. If TRUE include a short
+   *   summary of each element.
+   *
    * @return string
    *   Summary text.
    */
-  public function getSummary() {
+  public function getSummary($expanded = FALSE) {
     $summary = [];
-    foreach (array_keys($this->getConfiguration()) as $plugin_id) {
-      if ($definition = $this->emailAdjusterManager->getDefinition($plugin_id, FALSE)) {
-        $summary[] = $definition['label'];
+    $separator = ', ';
+
+    foreach ($this->adjusters()->sort() as $adjuster) {
+      $element = $adjuster->getLabel();
+      if ($expanded && ($element_summary = $adjuster->getSummary())) {
+        if (strlen($element_summary) > EmailAdjusterInterface::MAX_SUMMARY) {
+          $element_summary = substr($element_summary, 0, EmailAdjusterInterface::MAX_SUMMARY) . '…';
+        }
+        $element .= ": $element_summary";
+        $separator = '<br>';
       }
+      $summary[] = $element;
+
     }
-    return implode(', ', $summary);
+
+    return implode($separator, $summary);
+  }
+
+  /**
+   * Returns the common adjusters for this policy.
+   *
+   * @return array
+   *   An array of common adjuster IDs.
+   */
+  public function getCommonAdjusters() {
+    return $this->builderDefinition ? $this->builderDefinition['common_adjusters'] : [];
   }
 
   /**
@@ -271,6 +319,118 @@ class MailerPolicy extends ConfigEntityBase implements EntityWithPluginCollectio
     return strnatcasecmp($a->getTypeLabel(), $b->getTypeLabel()) ?:
       strnatcasecmp($a->getSubTypeLabel(), $b->getSubTypeLabel()) ?:
       strnatcasecmp($a->getEntityLabel(), $b->getEntityLabel());
+  }
+
+  /**
+   * Loads a Mailer Policy, or creates a new one.
+   *
+   * @param string $id
+   *   The id of the policy to load or create.
+   *
+   * @return static
+   *   The policy object.
+   */
+  public static function loadOrCreate(string $id) {
+    return static::load($id) ?? static::create(['id' => $id]);
+  }
+
+  /**
+   * Loads config for a Mailer Policy including inherited policy.
+   *
+   * @param string $id
+   *   The id of the policy.
+   *
+   * @return array
+   *   The configuration array.
+   */
+  public static function loadInheritedConfig(string $id) {
+    $config = [];
+    for ($loop_id = $id; $loop_id; $loop_id = static::parentId($loop_id)) {
+      if ($policy = MailerPolicy::load($loop_id)) {
+        $config += $policy->getConfiguration();
+      }
+
+    }
+    return $config;
+  }
+
+  /**
+   * Imports a Mailer Policy from configuration.
+   *
+   * @param string $id
+   *   The id of the policy to import.
+   * @param array $configuration
+   *   An associative array of adjuster configuration, keyed by the plug-in ID
+   *   with value as an array of configured settings.
+   */
+  public static function import($id, array $configuration) {
+    $policy = static::loadOrCreate($id);
+    $configuration += $policy->getConfiguration();
+
+    $inherited = static::loadInheritedConfig(static::parentId($id));
+    foreach (array_keys($configuration) as $key) {
+      if (isset($inherited[$key]) && static::identicalArray($configuration[$key], $inherited[$key])) {
+        unset($configuration[$key]);
+      }
+    }
+
+    if ($configuration) {
+      $policy->setConfiguration($configuration)->save();
+    }
+    else {
+      $policy->delete();
+    }
+  }
+
+  /**
+   * Returns the parent ID.
+   *
+   * @param string $id
+   *   The initial id.
+   *
+   * @return string
+   *   The parent id.
+   */
+  protected static function parentId(string $id) {
+    if ($id == '_') {
+      return NULL;
+    }
+    $pos = strrpos($id, '.');
+    return $pos ? substr($id, 0, $pos) : '_';
+  }
+
+  /**
+   * Compares two arrays recursively.
+   *
+   * @param array $a
+   *   The first array.
+   * @param array $b
+   *   The second array.
+   *
+   * @return bool
+   *   TRUE if the arrays are identical.
+   */
+  protected static function identicalArray(array $a, array $b) {
+    if (count($a) != count($b)) {
+      return FALSE;
+    }
+
+    foreach ($a as $key => $value_a) {
+      if (!isset($b[$key])) {
+        return FALSE;
+      }
+      $value_b = $b[$key];
+      if (is_array($value_a) && is_array($value_b)) {
+        if (!static::identicalArray($value_a, $value_b)) {
+          return FALSE;
+        }
+      }
+      elseif ($value_a != $value_b) {
+        return FALSE;
+      }
+    }
+
+    return TRUE;
   }
 
 }

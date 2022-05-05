@@ -2,9 +2,7 @@
 
 namespace Drupal\symfony_mailer\Plugin\EmailAdjuster;
 
-use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Markup;
 use Drupal\symfony_mailer\Processor\EmailAdjusterBase;
 use Drupal\symfony_mailer\EmailInterface;
 
@@ -22,7 +20,7 @@ class PlainEmailAdjuster extends EmailAdjusterBase {
   /**
    * {@inheritdoc}
    */
-  public function postRender(EmailInterface $email) {
+  public function build(EmailInterface $email) {
     $email->setTextBody($this->configuration['value']);
   }
 
@@ -38,6 +36,13 @@ class PlainEmailAdjuster extends EmailAdjusterBase {
     ];
 
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSummary() {
+    return $this->configuration['value'];
   }
 
 }

@@ -4,7 +4,6 @@ namespace Drupal\feeds_ex\Feeds\Parser;
 
 use DOMNode;
 use DOMNodeList;
-use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\RfcLogLevel;
@@ -74,14 +73,12 @@ class XmlParser extends ParserBase implements ContainerFactoryPluginInterface {
    *   The plugin id.
    * @param array $plugin_definition
    *   The plugin definition.
-   * @param \Drupal\Component\Plugin\PluginManagerInterface $custom_source_plugin_manager
-   *   The custom source plugin manager.
    * @param \Drupal\feeds_ex\Utility\XmlUtility $utility
    *   The XML helper class.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, PluginManagerInterface $custom_source_plugin_manager, XmlUtility $utility) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, XmlUtility $utility) {
     $this->utility = $utility;
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $custom_source_plugin_manager);
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
   /**
@@ -92,7 +89,6 @@ class XmlParser extends ParserBase implements ContainerFactoryPluginInterface {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('plugin.manager.feeds.custom_source'),
       $container->get('feeds_ex.xml_utility')
     );
   }
@@ -304,10 +300,13 @@ class XmlParser extends ParserBase implements ContainerFactoryPluginInterface {
     libxml_clear_errors();
     $this->handleXmlErrors = libxml_use_internal_errors(TRUE);
 
-    // Only available in PHP >= 5.2.11.
+    // Only available in PHP >= 5.2.11 and < PHP 9.0. Since PHP 8.0 it is
+    // deprecated. This mitigates a security issue in libxml older than version
+    // 2.9.0.
     // See http://symfony.com/blog/security-release-symfony-2-0-17-released for
     // details.
-    if (function_exists('libxml_disable_entity_loader')) {
+    // @todo remove when Drupal 9 (and thus PHP 7) is no longer supported.
+    if (function_exists('libxml_disable_entity_loader') && \PHP_VERSION_ID < 80000) {
       $this->entityLoader = libxml_disable_entity_loader(TRUE);
     }
   }
@@ -320,7 +319,8 @@ class XmlParser extends ParserBase implements ContainerFactoryPluginInterface {
 
     libxml_clear_errors();
     libxml_use_internal_errors($this->handleXmlErrors);
-    if (function_exists('libxml_disable_entity_loader')) {
+    // @todo remove when Drupal 9 (and thus PHP 7) is no longer supported.
+    if (function_exists('libxml_disable_entity_loader') && \PHP_VERSION_ID < 80000) {
       libxml_disable_entity_loader($this->entityLoader);
     }
   }

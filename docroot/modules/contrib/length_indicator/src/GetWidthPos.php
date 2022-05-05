@@ -3,9 +3,7 @@
 namespace Drupal\length_indicator;
 
 /**
- * Class GetWidthPos.
- *
- * @package Drupal\length_indicator
+ * Gets the widths and positions for the indicator template.
  */
 class GetWidthPos {
 
@@ -24,7 +22,7 @@ class GetWidthPos {
    * @return array
    *   The widths and positions of the indicators.
    */
-  public function getWidthAndPosition($optimin, $optimax, $tolerance) {
+  public function getWidthAndPosition(int $optimin, int $optimax, int $tolerance): array {
     $indicators = [];
 
     $min = $optimin - $tolerance;

@@ -2,13 +2,16 @@
 
 namespace Drupal\charts\Element;
 
-use Drupal\charts\Settings\ChartsDefaultSettings;
+use Drupal\charts\ColorHelperTrait;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Entity\EntityPublishedInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\views\Views;
 
 /**
  * Provides a form element for setting a chart.
@@ -34,6 +37,9 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * @FormElement("charts_settings")
  */
 class BaseSettings extends FormElement {
+
+  use ColorHelperTrait;
+  use ElementFormStateTrait;
 
   /**
    * {@inheritdoc}
@@ -79,7 +85,7 @@ class BaseSettings extends FormElement {
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public static function processSettings(array &$element, FormStateInterface $form_state, array &$complete_form) {
+  public static function processSettings(array &$element, FormStateInterface $form_state, array &$complete_form = []) {
     $supported_usage = ['basic_form', 'config_form', 'view_form'];
     if (empty($element['#used_in']) || !in_array($element['#used_in'], $supported_usage)) {
       throw new \InvalidArgumentException('The chart_base_settings element can only be used in basic, config and view forms.');
@@ -90,20 +96,25 @@ class BaseSettings extends FormElement {
     $parents = $element['#parents'];
     $id_prefix = implode('-', $parents);
     $wrapper_id = Html::getUniqueId($id_prefix . '-ajax-wrapper');
-    $value = $element['#value'];
+    $value = $element['#value'] ?? [];
+
+    // Collect the main prefix and suffix just in case this element is wrapped
+    // with one.
+    $main_prefix = $element['#prefix'] ?? '';
+    $main_suffix = $element['#suffix'] ?? '';
 
     // Enforce tree.
     $element = [
       '#tree' => TRUE,
-      '#prefix' => '<div id="' . $wrapper_id . '">',
-      '#suffix' => '</div>',
+      '#prefix' => $main_prefix . '<div id="' . $wrapper_id . '">',
+      '#suffix' => '</div>' . $main_suffix,
       // Pass the id along to other methods.
       '#wrapper_id' => $wrapper_id,
     ] + $element;
     $used_in = $element['#used_in'] ?: '';
 
     $required = !empty($element['#required']) ? $element['#required'] : FALSE;
-    $options = $value ?? [];
+    $options = $value;
 
     $library_options = [];
     if ($used_in !== 'config_form') {
@@ -181,10 +192,10 @@ class BaseSettings extends FormElement {
     ];
 
     if ($used_in === 'view_form') {
-      $element = self::processViewForm($element, $options, $form_state);
+      $element = self::processViewForm($element, $options, $complete_form, $form_state);
     }
     elseif ($used_in === 'config_form') {
-      $element = self::processConfigForm($element, $options);
+      $element = self::processConfigForm($element, $options, $form_state);
     }
 
     $element['display']['title_position'] = [
@@ -582,23 +593,6 @@ class BaseSettings extends FormElement {
   }
 
   /**
-   * The default setting.
-   *
-   * @deprecated in charts:4.0.0-alpha1 and is removed from charts:4.0.0-alpha2.
-   *   Use
-   *   $config = \Drupal::config('charts.settings')['charts_default_settings'];
-   *   instead.
-   *   @see https://www.drupal.org/project/charts/issues/3167252
-   *
-   * @return array
-   *   Chart default settings.
-   */
-  public static function getDefaultSettings() {
-    $settings = new ChartsDefaultSettings();
-    return $settings->getDefaults();
-  }
-
-  /**
    * Attaches the #charts_library_settings_element_submit functionality.
    *
    * @param array $element
@@ -618,7 +612,10 @@ class BaseSettings extends FormElement {
     // The #validate callbacks of the complete form run last.
     // That allows executeElementSubmitHandlers() to be completely certain that
     // the form has passed validation before proceeding.
-    $complete_form['#validate'][] = [get_class(), 'executeLibraryElementSubmitHandlers'];
+    $complete_form['#validate'][] = [
+      get_class(),
+      'executeLibraryElementSubmitHandlers',
+    ];
     $complete_form['#charts_library_settings_element_submit_attached'] = TRUE;
 
     return $element;
@@ -806,16 +803,19 @@ class BaseSettings extends FormElement {
    *   The current element.
    * @param array $options
    *   The options.
+   * @param array $complete_form
+   *   The complete form where the element is attached to.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    *
    * @return array
    *   The element.
    */
-  private static function processViewForm(array $element, array $options, FormStateInterface $form_state) {
+  private static function processViewForm(array $element, array $options, array &$complete_form, FormStateInterface $form_state) {
     if (!is_array($element['#field_options'])) {
       throw new \InvalidArgumentException('The chart_base_settings element need valid field options when used as view form.');
     }
+
     $element['display']['#weight'] = 2;
     $element['xaxis']['#weight'] = 2;
     $element['yaxis']['#weight'] = 2;
@@ -845,7 +845,7 @@ class BaseSettings extends FormElement {
       '#type' => 'radios',
       '#title' => new TranslatableMarkup('Label field'),
       '#options' => $field_options + ['' => new TranslatableMarkup('No label field')],
-      '#default_value' => isset($options['fields']['label']) ? $options['fields']['label'] : $first_field,
+      '#default_value' => $options['fields']['label'] ?? $first_field,
     ];
 
     // Enable stacking.
@@ -876,10 +876,16 @@ class BaseSettings extends FormElement {
     // Taken from WidgetBase::formMultipleElements().
     $max_weight = count($field_options);
 
+    $field_options_count = 0;
+    $default_colors = $options['display']['colors'] ?? [];
     foreach ($field_options as $field_name => $field_label) {
       $field_option_element = &$element['fields']['data_providers'][$field_name];
       $default_value = $options['fields']['data_providers'][$field_name] ?? [];
       $default_weight = $default_value['weight'] ?? $max_weight;
+      $default_color = $default_value['color'] ?? '';
+      if (!$default_color) {
+        $default_color = $default_colors[$field_options_count] ?? '#000000';
+      }
 
       $field_option_element['#attributes']['class'][] = 'draggable';
       // Field option label.
@@ -908,7 +914,7 @@ class BaseSettings extends FormElement {
         '#title_display' => 'invisible',
         '#size' => 10,
         '#maxlength' => 7,
-        '#default_value' => $default_value['color'] ?? '#000000',
+        '#default_value' => $default_color,
       ];
 
       $field_option_element['weight'] = [
@@ -923,6 +929,103 @@ class BaseSettings extends FormElement {
       ];
 
       $field_option_element['#weight'] = $default_weight;
+      $field_options_count++;
+    }
+
+    $element['fields']['entity_grouping'] = [
+      '#title' => new TranslatableMarkup('Entity grouping settings'),
+      '#type' => 'fieldset',
+      '#collapsed' => TRUE,
+      '#collapsible' => TRUE,
+      '#weight' => 2,
+      '#description' => new TranslatableMarkup('When grouping by an entity reference field, you can set the colors by entities or by a <a href="@href">color field</a>  attached to the entity type bundle in question.', [
+        '@href' => 'https://drupal.org/project/color_field',
+      ]),
+      '#description_display' => 'before',
+    ];
+    $module_handler = \Drupal::moduleHandler();
+    if (empty($element['#view_charts_style_plugin'])) {
+      return $element;
+    }
+
+    // Entity grouping settings.
+    // Try to get it from $form_state.
+    $style_options_values = $form_state->getValue(['style_options'], []);
+    $grouping_field = $style_options_values['grouping'][0] ?? [];
+    $grouping_field_name = $grouping_field['field'] ?? '';
+    $grouping_field_element = $complete_form['options']['style_options']['grouping'][0]['field'] ?? [];
+    $triggering_element = $form_state->getTriggeringElement();
+    if (!$grouping_field_name && !$triggering_element && $grouping_field_element) {
+      // Get the grouping field name from default value property.
+      $grouping_field_name = $grouping_field_element['#default_value'] ?? '';
+    }
+    if (!$grouping_field_name) {
+      return $element;
+    }
+
+    // Check which selection method the user want to go with.
+    /** @var \Drupal\charts\Plugin\views\style\ChartsPluginStyleChart $style_plugin */
+    $style_plugin = $element['#view_charts_style_plugin'];
+    $view = $style_plugin->view;
+    $selection_method_wrapper_id = $view->id() . '--' . $view->current_display . '--' . $style_plugin->getPluginId() . '--fields--entity-grouping--color-selection-method';
+    $selected_method = $options['fields']['entity_grouping']['color_selection_method'] ?? 'by_entities_on_entity_reference';
+    $element['fields']['entity_grouping']['color_selection_method'] = [
+      '#type' => 'radios',
+      '#title' => new TranslatableMarkup('Color selection method'),
+      '#required' => TRUE,
+      '#options' => [
+        'by_entities_on_entity_reference' => new TranslatableMarkup('Set color by entities on entity reference'),
+      ],
+      '#default_value' => $selected_method,
+      '#ajax' => [
+        'wrapper' => $selection_method_wrapper_id,
+        'callback' => [
+          get_called_class(),
+          'groupingChartSettingsSelectedMethodAjaxCallback',
+        ],
+      ],
+      '#limit_validation_errors' => [],
+    ];
+    if ($module_handler->moduleExists('color_field')) {
+      $element['fields']['entity_grouping']['color_selection_method']['#options']['by_field_on_referenced_entity'] = new TranslatableMarkup('Set color based on a color field on entity reference');
+    }
+    $element['fields']['entity_grouping']['selected_method'] = [
+      '#type' => 'container',
+      '#prefix' => '<div id="' . $selection_method_wrapper_id . '">',
+      '#suffix' => '</div>',
+      'colors' => [
+        // Empty placeholder.
+        '#markup' => '',
+      ],
+      'color_field_name' => [
+        // Empty placeholder.
+        '#markup' => '',
+      ],
+    ];
+
+    $fields = $style_plugin->displayHandler->getOption('fields');
+    $grouping_field_info = $fields[$grouping_field_name];
+    // Get the entity type id of the reference field.
+    if (!($entity_type_id = static::getReferenceEntityTypeId($grouping_field_info, $selected_method)) || empty($grouping_field_info['field'])) {
+      return $element;
+    }
+
+    $metadata = [
+      'grouping_field_name' => $grouping_field_info['field'],
+      'selected_method' => $selected_method,
+      'entity_type_id' => $entity_type_id,
+    ];
+    $entity_type_manager = \Drupal::entityTypeManager();
+    switch ($selected_method) {
+      case 'by_entities_on_entity_reference':
+        $metadata['colors'] = $options['fields']['entity_grouping']['selected_method']['colors'] ?? [];
+        $element['fields']['entity_grouping']['selected_method']['colors'] = static::buildColorsSelectionSubFormByEntities($metadata, $entity_type_manager);
+        break;
+
+      case 'by_field_on_referenced_entity':
+        $metadata['color_field_name'] = $options['fields']['entity_grouping']['selected_method']['color_field_name'] ?? '';
+        $element['fields']['entity_grouping']['selected_method']['color_field_name'] = static::buildColorsSelectionSubFormByFieldOnReferencedEntity($metadata, $entity_type_manager);
+        break;
     }
 
     return $element;
@@ -935,13 +1038,16 @@ class BaseSettings extends FormElement {
    *   The current element.
    * @param array $options
    *   Options.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
    *
    * @return array
    *   The element.
    */
-  private static function processConfigForm(array $element, array $options) {
-    $tab_group = implode('][', array_merge($element['#parents'], ['defaults']));
-    $display_parents = array_merge($element['#parents'], ['display']);
+  private static function processConfigForm(array $element, array $options, FormStateInterface $form_state): array {
+    $parents = $element['#parents'];
+    $tab_group = implode('][', array_merge($parents, ['defaults']));
+    $display_parents = array_merge($parents, ['display']);
     $element['defaults'] = [
       '#type' => 'vertical_tabs',
       '#default_tab' => 'edit-' . implode('-', $display_parents),
@@ -958,24 +1064,87 @@ class BaseSettings extends FormElement {
     $element['yaxis']['#weight'] = 3;
     $element['yaxis']['#group'] = $tab_group;
 
+    $id_prefix = implode('-', $parents);
+    $element_state = static::getElementState($parents, $form_state);
+    $state_color_indexes_key = $id_prefix . '__default_display_color_indexes';
+    $options_display_colors = $options['display']['colors'];
+    if (!$element_state) {
+      $element_state = $options;
+      $options_display_colors_indexes = array_keys($options_display_colors);
+      $element_state[$state_color_indexes_key] = $options_display_colors_indexes;
+      static::setElementState($parents, $form_state, $element_state);
+    }
+    else {
+      $options_display_colors_indexes = $element_state[$state_color_indexes_key];
+    }
+
+    $wrapper_id = $id_prefix . '--display-colors';
     $element['display']['colors'] = [
-      '#title' => new TranslatableMarkup('Chart colors'),
-      '#theme_wrappers' => ['form_element'],
-      '#prefix' => '<div class="chart-colors">',
+      '#type' => 'table',
+      '#header' => [
+        new TranslatableMarkup('Colors'),
+        new TranslatableMarkup('Operations'),
+      ],
+      '#prefix' => '<div id="' . $wrapper_id . '">',
       '#suffix' => '</div>',
     ];
 
-    for ($color_count = 0; $color_count < 10; $color_count++) {
-      $element['display']['colors'][$color_count] = [
+    // Using the default colors in the settings to populate the colors.
+    foreach ($options_display_colors_indexes as $color_index => $position) {
+      $element['display']['colors'][$color_index]['color'] = [
         '#type' => 'textfield',
+        '#title' => new TranslatableMarkup('Color'),
+        '#title_display' => 'invisible',
         '#attributes' => ['TYPE' => 'color'],
         '#size' => 10,
         '#maxlength' => 7,
         '#theme_wrappers' => [],
-        '#suffix' => ' ',
-        '#default_value' => $options['display']['colors'][$color_count] ?? '',
+      ];
+      if ($position !== '_new') {
+        $element['display']['colors'][$color_index]['color']['#default_value'] = $options_display_colors[$color_index];
+      }
+      else {
+        // Generating a random color for the new default color.
+        $element['display']['colors'][$color_index]['color']['#default_value'] = static::randomColor();
+      }
+      $element['display']['colors'][$color_index]['remove'] = [
+        '#type' => 'submit',
+        '#name' => 'remove_value_display_colors_color' . $color_index,
+        '#value' => new TranslatableMarkup('Remove'),
+        '#limit_validation_errors' => [],
+        '#submit' => [
+          [get_called_class(), 'removeDefaultDisplayColorItemSubmit'],
+        ],
+        '#color_index' => $color_index,
+        '#ajax' => [
+          'callback' => [get_called_class(), 'defaultDisplayColorItemsAjax'],
+          'wrapper' => $wrapper_id,
+        ],
+        '#operation' => 'remove',
+        '#state_color_indexes_key' => $state_color_indexes_key,
       ];
     }
+
+    $element['display']['colors']['_add_new'] = [
+      '#tree' => FALSE,
+    ];
+    $element['display']['colors']['_add_new']['add_item'] = [
+      '#type' => 'container',
+      '#wrapper_attributes' => ['colspan' => 2],
+      '#tree' => FALSE,
+    ];
+    $element['display']['colors']['_add_new']['add_item']['submit'] = [
+      '#type' => 'submit',
+      '#value' => new TranslatableMarkup('Add a new default color'),
+      '#submit' => [[get_called_class(), 'addDefaultDisplayColorItemSubmit']],
+      '#limit_validation_errors' => [],
+      '#ajax' => [
+        'callback' => [get_called_class(), 'defaultDisplayColorItemsAjax'],
+        'wrapper' => $wrapper_id,
+      ],
+      '#operation' => 'add',
+      '#state_color_indexes_key' => $state_color_indexes_key,
+    ];
 
     return $element;
   }
@@ -1091,6 +1260,64 @@ class BaseSettings extends FormElement {
   }
 
   /**
+   * Grouping chart settings ajax callback.
+   *
+   * @param array $form
+   *   The form.
+   * @param \Drupal\core\form\FormStateInterface $form_state
+   *   The form state.
+   *
+   * @return array
+   *   The render array of the chart settings.
+   */
+  public static function groupingChartSettingsSelectedMethodAjaxCallback(array $form, FormStateInterface $form_state) {
+    $triggering_element = $form_state->getTriggeringElement();
+    $entity_grouping_element = NestedArray::getValue($form, array_slice($triggering_element['#array_parents'], 0, -2));
+    return $entity_grouping_element['selected_method'];
+  }
+
+  /**
+   * Submit callback for adding a new default display color item value.
+   */
+  public static function addDefaultDisplayColorItemSubmit(array $form, FormStateInterface $form_state): void {
+    $triggering_element = $form_state->getTriggeringElement();
+    $element_parents = array_slice($triggering_element['#array_parents'], 0, -5);
+    $element_state = static::getElementState($element_parents, $form_state);
+
+    // Adding a new default color color item index.
+    $element_state[$triggering_element['#state_color_indexes_key']][] = '_new';
+    // Updating form state storage.
+    static::setElementState($element_parents, $form_state, $element_state);
+    $form_state->setRebuild();
+  }
+
+  /**
+   * Submit callback for removing a value.
+   */
+  public static function removeDefaultDisplayColorItemSubmit(array $form, FormStateInterface $form_state): void {
+    $triggering_element = $form_state->getTriggeringElement();
+    $element_parents = array_slice($triggering_element['#array_parents'], 0, -4);
+    $element_state = static::getElementState($element_parents, $form_state);
+    $color_index = $triggering_element['#color_index'];
+
+    // Removing the color item.
+    unset($element_state[$triggering_element['#state_color_indexes_key']][$color_index]);
+    // Updating form state storage.
+    static::setElementState($element_parents, $form_state, $element_state);
+    $form_state->setRebuild();
+  }
+
+  /**
+   * Ajax callback for then default display colors operations.
+   */
+  public static function defaultDisplayColorItemsAjax(array $form, FormStateInterface $form_state): array {
+    $triggering_element = $form_state->getTriggeringElement();
+    $slice_length = $triggering_element['#operation'] === 'add' ? -4 : -3;
+    $element = NestedArray::getValue($form, array_slice($triggering_element['#array_parents'], 0, $slice_length));
+    return $element['colors'];
+  }
+
+  /**
    * Builds the chart library configuration form into the settings.
    *
    * @param array $element
@@ -1111,7 +1338,7 @@ class BaseSettings extends FormElement {
     // Using plugins to get the available installed libraries.
     /** @var \Drupal\charts\ChartManager $plugin_manager */
     $plugin_manager = \Drupal::service('plugin.manager.charts');
-    /** @var \Drupal\charts\Plugin\chart\Library\ChartInterface $instance */
+    /** @var \Drupal\charts\Plugin\chart\Library\ChartInterface $plugin */
     $plugin = $plugin_manager->createInstance($library, $plugin_configuration);
     $element[$library_form] = [
       '#type' => 'details',
@@ -1123,6 +1350,196 @@ class BaseSettings extends FormElement {
     ];
     $element[$library_form] = $plugin->buildConfigurationForm($element[$library_form], $form_state);
     return $element;
+  }
+
+  /**
+   * Helper method to retrieve the referenced entity type id.
+   *
+   * @param array $field_info
+   *   The field info.
+   * @param string $selection_method
+   *   The selection method.
+   *
+   * @return string
+   *   The entity type id.
+   */
+  private static function getReferenceEntityTypeId(array $field_info, string $selection_method): string {
+    if (!$selection_method || empty($field_info['type']) || $field_info['type'] !== 'entity_reference_label' || empty($field_info['field'])) {
+      return '';
+    }
+    $table = Views::viewsData()->get($field_info['table']);
+    $field_machine_name = $field_info['field'];
+    return $table[$field_machine_name]['relationship']['entity type'] ?? '';
+  }
+
+  /**
+   * Helper method to build a color selection element by entities.
+   *
+   * @param array $metadata
+   *   The metadata information to use to retrieve the color options.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   *
+   * @return array
+   *   The color selection table or a markup message when the provided metadata
+   *   are incomplete.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  private static function buildColorsSelectionSubFormByEntities(array $metadata, EntityTypeManagerInterface $entity_type_manager): array {
+    $empty_entity_colors = new TranslatableMarkup("No grouping by an entity reference field was detected or the selected field didnt have any entity or color field attached.");
+    $colors = [
+      '#markup' => '<p>' . $empty_entity_colors . '</p>',
+    ];
+    if (empty($metadata['grouping_field_name']) || empty($metadata['entity_type_id'])) {
+      return $colors;
+    }
+
+    // Identifying the vocabulary this field could belong to.
+    $field_config_storage = $entity_type_manager->getStorage('field_config');
+    /** @var \Drupal\field\FieldConfigInterface[] $grouping_field_configs */
+    $grouping_field_configs = $field_config_storage->loadByProperties(['field_name' => $metadata['grouping_field_name']]);
+    $entity_type_id = $metadata['entity_type_id'];
+    $bundle_ids = [];
+    foreach ($grouping_field_configs as $key => $grouping_field_config) {
+      $field_settings = $grouping_field_config->getSettings();
+      if (empty($field_settings['target_type']) || $field_settings['target_type'] !== $entity_type_id) {
+        continue;
+      }
+      $target_bundles = $field_settings['handler_settings']['target_bundles'] ?? [];
+      foreach ($target_bundles as $bundle_id) {
+        $bundle_ids[$bundle_id] = $bundle_id;
+      }
+    }
+
+    // Load the entities by bundle.
+    $entity_storage = $entity_type_manager->getStorage($entity_type_id);
+    $entity_type = $entity_type_manager->getDefinition($entity_type_id);
+
+    $colors = [
+      '#type' => 'table',
+      '#empty'  => $empty_entity_colors,
+      '#header' => [
+        new TranslatableMarkup('Entity label'),
+        new TranslatableMarkup('Bundle'),
+        new TranslatableMarkup('Color'),
+      ],
+    ];
+    $bundle_key = $entity_type->getKey('bundle');
+    $query = $entity_storage->getQuery()
+      ->condition($bundle_key, $bundle_ids, 'IN');
+
+    if ($entity_type instanceof EntityPublishedInterface) {
+      $published_key = $entity_type->getKey('published');
+      $query->condition($published_key, TRUE);
+    }
+
+    // For now limiting to 150 entities.
+    $entity_ids = $query->range(0, 150)
+      ->execute();
+    $has_uuid_key = $entity_type->hasKey('uuid');
+    foreach ($entity_ids as $id) {
+      $entity = $entity_storage->load($id);
+      $color_id_key = $has_uuid_key ? $entity->get('uuid')->value : $entity->id();
+      $field_option_element = &$colors[$color_id_key];
+      $default_value = $metadata['colors'][$color_id_key]['color'] ?? '#000000';
+
+      $label = $entity->label();
+      $field_option_element['label'] = [
+        '#markup' => new TranslatableMarkup('@label', [
+          '@label' => $label,
+        ]),
+      ];
+      $field_option_element['bundle'] = [
+        '#markup' => new TranslatableMarkup('@bundle', [
+          '@bundle' => $entity->bundle(),
+        ]),
+      ];
+      $field_option_element['color'] = [
+        '#type' => 'textfield',
+        '#title' => new TranslatableMarkup('@label', ['@label' => $label]),
+        '#title_display' => 'invisible',
+        '#attributes' => [
+          'TYPE' => 'color',
+          'style' => 'min-width:50px;',
+        ],
+        '#size' => 10,
+        '#maxlength' => 7,
+        '#default_value' => $default_value,
+      ];
+    }
+
+    return $colors;
+  }
+
+  /**
+   * Method to build a color selection element by field on referenced entity.
+   *
+   * @param array $metadata
+   *   The metadata information to use to retrieve the color options.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   *
+   * @return array
+   *   The select element or the status message when no color options was
+   *   found.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  private static function buildColorsSelectionSubFormByFieldOnReferencedEntity(array $metadata, EntityTypeManagerInterface $entity_type_manager): array {
+    // Identifying the vocabulary this field could belong to.
+    $field_config_storage = $entity_type_manager->getStorage('field_config');
+    /** @var \Drupal\field\FieldConfigInterface[] $grouping_field_configs */
+    $grouping_field_configs = $field_config_storage->loadByProperties(['field_name' => $metadata['grouping_field_name']]);
+    $entity_type_id = $metadata['entity_type_id'];
+    $processed_bundle_ids = [];
+    /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager */
+    $entity_field_manager = \Drupal::service('entity_field.manager');
+    $color_field_options = [];
+    foreach ($grouping_field_configs as $key => $grouping_field_config) {
+      $field_settings = $grouping_field_config->getSettings();
+      if (empty($field_settings['target_type']) || $field_settings['target_type'] !== $entity_type_id) {
+        continue;
+      }
+
+      $target_bundles = $field_settings['handler_settings']['target_bundles'] ?? [];
+      foreach ($target_bundles as $bundle_id) {
+        if (in_array($bundle_id, $processed_bundle_ids)) {
+          continue;
+        }
+
+        // Extract fields from bundle fields.
+        foreach ($entity_field_manager->getFieldDefinitions($entity_type_id, $bundle_id) as $field_name => $field_definition) {
+          if ($field_definition->getType() !== 'color_field_type' || !empty($color_field_options[$field_name])) {
+            continue;
+          }
+          $color_field_options[$field_name] = $field_definition->getLabel();
+        }
+        $processed_bundle_ids[] = $bundle_id;
+      }
+    }
+
+    if (!$color_field_options) {
+      $empty_entity_field_name = new TranslatableMarkup("You can't set the color using the selected method because the referenced entity doesn't have any color field type configured.");
+      return [
+        '#theme' => 'status_messages',
+        '#message_list' => ['warning' => [$empty_entity_field_name]],
+        '#status_headings' => [
+          'warning' => new TranslatableMarkup('Warning message'),
+        ],
+      ];
+    }
+
+    return [
+      '#type' => 'select',
+      '#title' => new TranslatableMarkup('Color field'),
+      '#description' => new TranslatableMarkup('The color field on which we should get the color data from.'),
+      '#options' => $color_field_options,
+      '#default_value' => $metadata['color_field_name'] ?? '',
+      '#required' => TRUE,
+    ];
   }
 
 }

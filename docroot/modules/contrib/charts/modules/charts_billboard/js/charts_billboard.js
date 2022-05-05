@@ -2,17 +2,16 @@
  * @file
  * JavaScript integration between Billboard and Drupal.
  */
-(function ($) {
+(function (Drupal, once) {
+
   'use strict';
 
   Drupal.behaviors.chartsBillboard = {
     attach: function (context, settings) {
-      var contents = new Drupal.Charts.Contents();
-
-      $('.charts-billboard', context).once().each(function () {
-        var id = $(this).attr('id');
-        bb.generate(contents.getData(id));
+      const contents = new Drupal.Charts.Contents();
+      once('charts-billboard', '.charts-billboard', context).forEach(function (element) {
+        bb.generate(contents.getData(element.id));
       });
     }
   };
-}(jQuery));
+}(Drupal, once));

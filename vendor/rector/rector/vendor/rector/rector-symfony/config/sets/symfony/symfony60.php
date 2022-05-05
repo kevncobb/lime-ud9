@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix20220209;
+namespace RectorPrefix20220303;
 
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\MixedType;
@@ -31,6 +31,8 @@ return static function (\Symfony\Component\DependencyInjection\Loader\Configurat
     $services->set(\Rector\Renaming\Rector\MethodCall\RenameMethodRector::class)->configure([
         // @see https://github.com/symfony/symfony/pull/40403
         new \Rector\Renaming\ValueObject\MethodCallRename('Symfony\\Bridge\\Doctrine\\Security\\User\\UserLoaderInterface', 'loadUserByUsername', 'loadUserByIdentifier'),
+        // @see https://github.com/rectorphp/rector-symfony/issues/112
+        new \Rector\Renaming\ValueObject\MethodCallRename('Symfony\\Component\\Security\\Core\\User\\UserInterface', 'getUsername', 'getUserIdentifier'),
     ]);
     $services->set(\Rector\Symfony\Rector\MethodCall\GetHelperControllerToServiceRector::class);
 };

@@ -3,7 +3,6 @@
 namespace Drupal\Tests\feeds\Unit\Feeds\Parser;
 
 use Drupal\Component\Bridge\ZfExtensionManagerSfContainer;
-use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\feeds\Exception\EmptyFeedException;
 use Drupal\feeds\Feeds\Parser\SyndicationParser;
@@ -86,7 +85,7 @@ class SyndicationParserTest extends FeedsUnitTestCase {
 
     $this->feedType = $this->createMock('Drupal\feeds\FeedTypeInterface');
     $configuration = ['feed_type' => $this->feedType];
-    $this->parser = new SyndicationParser($configuration, 'syndication', [], $this->createMock(PluginManagerInterface::class));
+    $this->parser = new SyndicationParser($configuration, 'syndication', []);
     $this->parser->setStringTranslation($this->getStringTranslationStub());
 
     $this->state = new State();

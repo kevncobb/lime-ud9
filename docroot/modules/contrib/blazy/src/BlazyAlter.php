@@ -2,7 +2,6 @@
 
 namespace Drupal\blazy;
 
-use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Field\FormatterInterface;
 use Drupal\editor\Entity\Editor;
@@ -26,10 +25,16 @@ class BlazyAlter {
   /**
    * Implements hook_config_schema_info_alter().
    */
-  public static function configSchemaInfoAlter(array &$definitions, $formatter = 'blazy_base', array $settings = []): void {
+  public static function configSchemaInfoAlter(
+    array &$definitions,
+    $formatter = 'blazy_base',
+    array $settings = []
+  ): void {
     if (isset($definitions[$formatter])) {
       $mappings = &$definitions[$formatter]['mapping'];
       $settings = $settings ?: BlazyDefault::extendedSettings() + BlazyDefault::gridSettings();
+      $settings += BlazyDefault::deprecatedSettings();
+
       foreach ($settings as $key => $value) {
         // Seems double is ignored, and causes a missing schema, unlike float.
         $type = gettype($value);
@@ -62,8 +67,7 @@ class BlazyAlter {
     // and dependency-free and a dependency for many other generic ones.
     // @todo watch out for core @todo to remove drupal namespace for debounce.
     $debounce = 'drupal.debounce';
-    $is_debounce = $extension === 'core' && isset($libraries[$debounce]);
-    if ($is_debounce) {
+    if ($extension === 'core' && isset($libraries[$debounce])) {
       $libraries[$debounce]['js']['misc/debounce.js'] = ['weight' => -16];
     }
 
@@ -82,20 +86,31 @@ class BlazyAlter {
       foreach ($polyfills as $id) {
         // Matches common core polyfills' weight.
         $weight = $id == 'polyfill' ? -21 : -20;
+        $weight = $id == 'webp' ? -5.5 : $weight;
         $common = ['minified' => TRUE, 'weight' => $weight];
         $libraries[$id] = [
           'js' => [
             'js/polyfill/blazy.' . $id . '.min.js' => $common,
           ],
         ];
+
+        if ($id == 'webp') {
+          $libraries[$id]['dependencies'][] = 'blazy/dblazy';
+        }
       }
 
       // Plugins extending dBlazy.
       foreach (BlazyDefault::plugins() as $id) {
-        $base = $id == 'viewport' || $id == 'css';
+        $base = ['eventify', 'viewport', 'dataset', 'css', 'dom'];
+        $base = in_array($id, $base);
         $deps = $base ? ['blazy/dblazy', 'blazy/base'] : ['blazy/xlazy'];
         if ($id == 'xlazy') {
-          $deps = ['blazy/viewport'];
+          $deps = ['blazy/viewport', 'blazy/dataset', 'blazy/dom'];
+        }
+
+        // @todo problematic weight, basically compat must be present.
+        if (in_array($id, ['animate', 'background'])) {
+          $deps[] = 'blazy/compat';
         }
         $weight = $base ? -5.6 : -5.5;
         $common = ['minified' => TRUE, 'weight' => $weight];
@@ -110,21 +125,6 @@ class BlazyAlter {
       static::$libraryInfoBuild = $libraries;
     }
     return static::$libraryInfoBuild;
-  }
-
-  /**
-   * Implements hook_blazy_settings_alter().
-   */
-  public static function blazySettingsAlter(array &$build, $items): void {
-    $settings = &$build['settings'];
-
-    // Sniffs for Views to allow block__no_wrapper, views_no_wrapper, etc.
-    if (function_exists('views_get_current_view') && $view = views_get_current_view()) {
-      $settings['view_name'] = $view->storage->id();
-      $settings['current_view_mode'] = $view->current_display;
-      $plugin_id = is_null($view->style_plugin) ? "" : $view->style_plugin->getPluginId();
-      $settings['view_plugin_id'] = empty($settings['view_plugin_id']) ? $plugin_id : $settings['view_plugin_id'];
-    }
   }
 
   /**
@@ -167,9 +167,9 @@ class BlazyAlter {
    * via Entity/Media Embed which normally means Blazy should be disabled
    * due to CKEditor not supporting JS assets.
    *
-   * @see \Drupal\blazy\BlazyTheme::blazy()
-   * @see \Drupal\blazy\BlazyTheme::field()
-   * @see \Drupal\blazy\BlazyTheme::fileVideo()
+   * @see \Drupal\blazy\Theme\BlazyTheme::blazy()
+   * @see \Drupal\blazy\Theme\BlazyTheme::field()
+   * @see \Drupal\blazy\Theme\BlazyTheme::fileVideo()
    * @see blazy_preprocess_file_video()
    */
   public static function thirdPartyFormatters(): array {
@@ -205,15 +205,40 @@ class BlazyAlter {
   }
 
   /**
-   * Attaches Colorbox if so configured.
+   * Implements hook_blazy_settings_alter().
+   *
+   * @todo remove, likely no-longer relevant since sub-modules re-use the same
+   * Blazy::containerAttributes() without being exclusive to `blazy` namespace
+   * which was at 1.x, but not 2.x. At 2.x `blazy` is merged into the embedding
+   * parent automatically making this irrelevant. Meaning CSS classes are
+   * preserved by Blazy containing Views style since 2.x.
    */
-  public static function attachColorbox(array &$load, $attach = []): void {
-    if (\Drupal::hasService('colorbox.attachment')) {
-      $dummy = [];
-      \Drupal::service('colorbox.attachment')->attach($dummy);
-      $load = isset($dummy['#attached']) ? NestedArray::mergeDeep($load, $dummy['#attached']) : $load;
-      $load['library'][] = 'blazy/colorbox';
-      unset($dummy);
+  public static function blazySettingsAlter(array &$build, $items): void {
+    $settings = &$build['settings'];
+    $blazies = $settings['blazies'];
+
+    // Sniffs for Views to allow block__no_wrapper, views_no_wrapper, etc.
+    $function = 'views_get_current_view';
+    if (is_callable($function) && $view = $function()) {
+
+      $style = $view->style_plugin;
+      $display = is_null($style) ? '' : $style->displayHandler->getPluginId();
+
+      $name = $view->storage->id();
+      $view_mode = $view->current_display;
+      $plugin_id = is_null($style) ? '' : $style->getPluginId();
+
+      $current = [
+        'display'     => $display,
+        'instance_id' => str_replace('_', '-', "{$name}-{$display}-{$view_mode}"),
+        'name'        => $name,
+        'plugin_id'   => $plugin_id,
+        'view_mode'   => $view_mode,
+        'is_view'     => FALSE,
+      ];
+
+      // @todo add `formatter` key if the above is proven right.
+      $blazies->set('view', $current, TRUE);
     }
   }
 

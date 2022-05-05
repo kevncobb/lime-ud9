@@ -29,20 +29,19 @@ class ParagraphCloneForm extends ContentEntityForm {
   /**
    * The entityFieldManager.
    *
-   * @var EntityFieldManagerInterface
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
    */
   protected $entityFieldManager;
 
   /**
    * The entityTypeRepository.
    *
-   * @var EntityTypeRepositoryInterface
+   * @var \Drupal\Core\Entity\EntityTypeRepositoryInterface
    */
   protected $entityTypeRepository;
 
   /**
-   * Constructs a ContentEntityForm object.
-   *
+   * Constructs a ParagraphCloneForm object.
    */
   public function __construct(EntityRepositoryInterface $entity_repository, EntityTypeBundleInfoInterface $entity_type_bundle_info, TimeInterface $time, EntityFieldManagerInterface $entityFieldManager, EntityTypeRepositoryInterface $entityTypeRepository) {
     parent::__construct($entity_repository, $entity_type_bundle_info, $time);
@@ -77,7 +76,7 @@ class ParagraphCloneForm extends ContentEntityForm {
 
     // Create a duplicate.
     $paragraph = $this->entity = $this->entity->createDuplicate();
-    $paragraph->set('created', \Drupal::time()->getRequestTime());
+    $paragraph->set('created', $this->time->getRequestTime());
     $paragraph->setOwnerId($account->id());
     $paragraph->setRevisionAuthorId($account->id());
   }

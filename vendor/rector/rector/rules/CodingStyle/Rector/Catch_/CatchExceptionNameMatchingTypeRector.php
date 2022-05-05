@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\CodingStyle\Rector\Catch_;
 
-use RectorPrefix20220209\Nette\Utils\Strings;
+use RectorPrefix20220303\Nette\Utils\Strings;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Variable;
@@ -78,7 +78,7 @@ CODE_SAMPLE
         }
         $type = $node->types[0];
         $typeShortName = $this->nodeNameResolver->getShortName($type);
-        $newVariableName = \RectorPrefix20220209\Nette\Utils\Strings::replace(\lcfirst($typeShortName), self::STARTS_WITH_ABBREVIATION_REGEX, function (array $matches) : string {
+        $newVariableName = \RectorPrefix20220303\Nette\Utils\Strings::replace(\lcfirst($typeShortName), self::STARTS_WITH_ABBREVIATION_REGEX, function (array $matches) : string {
             $output = '';
             $output .= isset($matches[1]) ? \strtolower($matches[1]) : '';
             $output .= $matches[2] ?? '';
@@ -101,14 +101,15 @@ CODE_SAMPLE
     }
     private function renameVariableInStmts(\PhpParser\Node\Stmt\Catch_ $catch, string $oldVariableName, string $newVariableName) : void
     {
-        $this->traverseNodesWithCallable($catch->stmts, function (\PhpParser\Node $node) use($oldVariableName, $newVariableName) : void {
+        $this->traverseNodesWithCallable($catch->stmts, function (\PhpParser\Node $node) use($oldVariableName, $newVariableName) {
             if (!$node instanceof \PhpParser\Node\Expr\Variable) {
-                return;
+                return null;
             }
             if (!$this->nodeNameResolver->isName($node, $oldVariableName)) {
-                return;
+                return null;
             }
             $node->name = $newVariableName;
+            return null;
         });
         /** @var TryCatch $tryCatch */
         $tryCatch = $catch->getAttribute(\Rector\NodeTypeResolver\Node\AttributeKey::PARENT_NODE);

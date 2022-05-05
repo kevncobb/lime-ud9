@@ -120,7 +120,7 @@ class ChartConfigItemDefaultWidget extends WidgetBase implements ContainerFactor
     // Build default settings.
     $charts_settings = $this->configFactory->get('charts.settings');
     $charts_default_settings = $charts_settings->get('charts_default_settings') ?? [];
-    $value = NestedArray::mergeDeep($charts_default_settings, $value);
+    $value = NestedArray::mergeDeep($charts_default_settings, $value) ?? [];
 
     // Specify the library.
     if (empty($change_default_library) && !empty($charts_default_settings['library'])) {
@@ -136,7 +136,7 @@ class ChartConfigItemDefaultWidget extends WidgetBase implements ContainerFactor
       '#used_in' => 'basic_form',
       '#required' => $element['#required'],
       '#series' => TRUE,
-      '#default_value' => $value ?? [],
+      '#default_value' => $value,
       '#library' => $library,
     ];
 

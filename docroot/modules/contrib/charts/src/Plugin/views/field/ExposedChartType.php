@@ -3,6 +3,7 @@
 namespace Drupal\charts\Plugin\views\field;
 
 use Drupal\charts\Element\BaseSettings;
+use Drupal\charts\Plugin\views\style\ChartsPluginStyleChart;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -33,13 +34,29 @@ class ExposedChartType extends FieldPluginBase {
    * {@inheritdoc}
    */
   public function buildExposedForm(&$form, FormStateInterface $form_state) {
-
     $label = $this->options['label'] ? $this->options['label'] : 'Chart Type';
     $selected_options = $this->options['chart_types'];
-    $all_fields = BaseSettings::getChartTypes();
-    $options = array_filter($all_fields, function ($key) use ($selected_options) {
+    $all_types = BaseSettings::getChartTypes();
+    $options = array_filter($all_types, function ($key) use ($selected_options) {
       return in_array($key, $selected_options, TRUE);
     }, ARRAY_FILTER_USE_KEY);
+
+    $style_plugin = $this->view->style_plugin;
+    $settings = $style_plugin->options['chart_settings'] ?? [];
+    $chart_plugin_selected_type = $settings['type'] ?? '';
+    if ($chart_plugin_selected_type) {
+      // Move the selected.
+      if (isset($options[$chart_plugin_selected_type])) {
+        $options = [
+          $chart_plugin_selected_type => $options[$chart_plugin_selected_type],
+        ] + $options;
+      }
+      else {
+        $options = [
+          $chart_plugin_selected_type => $all_types[$chart_plugin_selected_type],
+        ] + $options;
+      }
+    }
 
     $form['ct'] = [
       '#title' => $this->t('@value', ['@value' => $label]),
@@ -49,18 +66,16 @@ class ExposedChartType extends FieldPluginBase {
     ];
 
     if ($this->options['exposed_select_type'] == 'radios') {
-      $form['ct']['#attributes']['class'] =
-        [
-          'chart-type-radios',
-          'container-inline',
-        ];
+      $form['ct']['#attributes']['class'] = [
+        'chart-type-radios',
+        'container-inline',
+      ];
     }
 
     $form['ect'] = [
       '#type' => 'hidden',
       '#default_value' => 1,
     ];
-
   }
 
   /**
@@ -89,6 +104,15 @@ class ExposedChartType extends FieldPluginBase {
       '#default_value' => $this->options['chart_types'],
     ];
 
+    $style_plugin = $this->view->style_plugin;
+    $settings = $style_plugin->options['chart_settings'] ?? [];
+    if (!empty($settings['type'])) {
+      $form['chart_types'][$settings['type']] = [
+        '#default_value' => $settings['type'],
+        '#disabled' => TRUE,
+      ];
+    }
+
     $form['exposed_select_type'] = [
       '#type' => 'radios',
       '#title' => $this->t('Exposed Selection Type'),
@@ -99,7 +123,18 @@ class ExposedChartType extends FieldPluginBase {
       ],
       '#default_value' => $this->options['exposed_select_type'],
     ];
+  }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function validateOptionsForm(&$form, FormStateInterface $form_state) {
+    parent::validateOptionsForm($form, $form_state);
+
+    $style_plugin = $this->view->style_plugin;
+    if (!($style_plugin instanceof ChartsPluginStyleChart)) {
+      $form_state->setError($form['chart_types'], $this->t('You can only use this field type when the selected views style is chart!'));
+    }
   }
 
   /**
