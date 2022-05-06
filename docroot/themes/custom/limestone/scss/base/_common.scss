@@ -559,7 +559,18 @@ p {
 .spacing-bottom-xl {
   padding-bottom: 10rem;
 }
-
+.spacing-md-scaling {
+  padding-top: 2.4rem;
+  padding-bottom: 2.4rem;
+  @include breakpoint(smedium) {
+    padding-left: 5rem;
+    padding-right: 5rem;
+  }
+  @include breakpoint(large) {
+    padding-left: 8rem;
+    padding-right: 8rem;
+  }
+}
 
 .padding-sides-sm {
   padding-left: 0.5rem;
