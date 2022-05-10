@@ -27,7 +27,7 @@ function charts_post_update_existing_default_colors_to_twenty_five(&$sandbox) {
   $config = \Drupal::service('config.factory')->getEditable('charts.settings');
   $existing_colors = $config->get('charts_default_settings.display.colors');
 
-  if (count($existing_colors) === 10) {
+  if (is_countable($existing_colors) && count($existing_colors) === 10) {
     $path = \Drupal::service('extension.list.module')->getPath('charts');
     $default_install_settings_file = $path . '/config/install/charts.settings.yml';
     if (!file_exists($default_install_settings_file)) {

@@ -492,7 +492,7 @@ class Highcharts extends ChartBase implements ContainerFactoryPluginInterface {
           if ($element[$key][$sub_key]['#type'] === 'chart_data_item') {
             // Make sure defaults are loaded.
             if (empty($element[$key][$sub_key]['#defaults_loaded'])) {
-              $element[$key][$sub_key] += $element_info->getInfo($element[$key][$sub_key]['#type']);
+              $element[$key][$sub_key] += $this->elementInfo->getInfo($element[$key][$sub_key]['#type']);
             }
 
             $data_item = $element[$key][$sub_key];

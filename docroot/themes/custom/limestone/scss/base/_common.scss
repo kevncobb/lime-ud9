@@ -563,12 +563,16 @@ p {
   padding-top: 2.4rem;
   padding-bottom: 2.4rem;
   @include breakpoint(smedium) {
-    padding-left: 5rem;
-    padding-right: 5rem;
+    padding-top: 2.6rem;
+    padding-bottom: 2.6rem;
   }
   @include breakpoint(large) {
-    padding-left: 8rem;
-    padding-right: 8rem;
+    padding-top: 2.9rem;
+    padding-bottom: 2.9rem;
+  }
+  @include breakpoint(xxlarge) {
+    padding-top: 3.4rem;
+    padding-bottom: 3.4rem;
   }
 }
 

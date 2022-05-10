@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Contains dark_mode_switch.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function dark_mode_switch_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the dark_mode_switch module.
+    case 'help.page.dark_mode_switch':
+      $output = '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Create a switch block to turn the site into a darker version.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function dark_mode_switch_theme($existing, $type, $theme, $path): array {
+  return [
+    'dark_mode_switch_block' => [
+      'template' => 'dark-mode-switch--block',
+      'variables' => [],
+    ],
+  ];
+}

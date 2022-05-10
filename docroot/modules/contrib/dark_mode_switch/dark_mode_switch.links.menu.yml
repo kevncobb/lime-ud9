@@ -1,0 +1,5 @@
+dark_mode_switch.form:
+  title: 'Dark Mode Switch settings'
+  description: 'Configure behavior for the Dark Mode Switch'
+  route_name: dark_mode_switch.form
+  parent: 'system.admin_config_ui'

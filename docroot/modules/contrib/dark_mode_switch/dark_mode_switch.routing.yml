@@ -1,0 +1,9 @@
+dark_mode_switch.form:
+  path: '/admin/config/user-interface/dark_mode_switch'
+  defaults:
+    _form: '\Drupal\dark_mode_switch\Form\DarkModeSwitchSettings'
+    _title: 'Dark Mode Switch settings'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE

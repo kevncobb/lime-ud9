@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '9e68eb0cfe281ba06775843a3fdad1f899fa9456',
+        'reference' => '2effa4cdfe2bffd20198648a5b865b5769c4d898',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -609,12 +609,12 @@
             ),
         ),
         'drupal/blazy' => array(
-            'pretty_version' => '2.10.0',
-            'version' => '2.10.0.0',
+            'pretty_version' => '2.11.0',
+            'version' => '2.11.0.0',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/blazy',
             'aliases' => array(),
-            'reference' => '8.x-2.10',
+            'reference' => '8.x-2.11',
             'dev_requirement' => false,
         ),
         'drupal/block' => array(
@@ -723,12 +723,12 @@
             'dev_requirement' => false,
         ),
         'drupal/charts' => array(
-            'pretty_version' => '5.0.0',
-            'version' => '5.0.0.0',
+            'pretty_version' => '5.0.1',
+            'version' => '5.0.1.0',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/charts',
             'aliases' => array(),
-            'reference' => '5.0.0',
+            'reference' => '5.0.1',
             'dev_requirement' => false,
         ),
         'drupal/checklistapi' => array(
@@ -810,12 +810,12 @@
             ),
         ),
         'drupal/coder' => array(
-            'pretty_version' => '8.3.14',
-            'version' => '8.3.14.0',
+            'pretty_version' => '8.3.15',
+            'version' => '8.3.15.0',
             'type' => 'phpcodesniffer-standard',
             'install_path' => __DIR__ . '/../drupal/coder',
             'aliases' => array(),
-            'reference' => 'adb06efa79ba8b91afed2f351014a6b94192622f',
+            'reference' => '0cfad3a21f1168bdc3030ae73351c31f88abba74',
             'dev_requirement' => true,
         ),
         'drupal/coffee' => array(
@@ -1241,6 +1241,15 @@
             'reference' => NULL,
             'dev_requirement' => false,
         ),
+        'drupal/dark_mode_switch' => array(
+            'pretty_version' => '2.0.0',
+            'version' => '2.0.0.0',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/dark_mode_switch',
+            'aliases' => array(),
+            'reference' => '8.x-2.0',
+            'dev_requirement' => false,
+        ),
         'drupal/datetime' => array(
             'dev_requirement' => false,
             'replaced' => array(
@@ -1552,7 +1561,7 @@
             'aliases' => array(
                 0 => '3.x-dev',
             ),
-            'reference' => '8d8ba369a20663a290117163b63396a8973dcf5a',
+            'reference' => 'b879ac140bd0138e2c565fba2c2c6ea8127864f2',
             'dev_requirement' => false,
         ),
         'drupal/feeds_ex' => array(
@@ -1737,12 +1746,12 @@
             ),
         ),
         'drupal/honeypot' => array(
-            'pretty_version' => '2.0.2',
-            'version' => '2.0.2.0',
+            'pretty_version' => '2.1.0',
+            'version' => '2.1.0.0',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/honeypot',
             'aliases' => array(),
-            'reference' => '2.0.2',
+            'reference' => '2.1.0',
             'dev_requirement' => false,
         ),
         'drupal/image' => array(
@@ -3577,6 +3586,15 @@
             'reference' => 'ad87d5a5ca981228e0e205c2bc7dfb8e24559b60',
             'dev_requirement' => false,
         ),
+        'kint-php/kint' => array(
+            'pretty_version' => '4.1.2',
+            'version' => '4.1.2.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../kint-php/kint',
+            'aliases' => array(),
+            'reference' => 'fa53c4333cda79dc9cb002cfa029abe994d0ae00',
+            'dev_requirement' => false,
+        ),
         'laminas/laminas-diactoros' => array(
             'pretty_version' => '2.10.0',
             'version' => '2.10.0.0',
@@ -4052,12 +4070,12 @@
             ),
         ),
         'pantheon-systems/search_api_pantheon' => array(
-            'pretty_version' => '8.0.0-beta9',
-            'version' => '8.0.0.0-beta9',
+            'pretty_version' => '8.0-beta10',
+            'version' => '8.0.0.0-beta10',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/search_api_pantheon',
             'aliases' => array(),
-            'reference' => 'd7df67aff967871783d7947a689842c0401644d4',
+            'reference' => 'b887c5c6f8dc46471447df4c2f6c6acbcbb0c7c9',
             'dev_requirement' => false,
         ),
         'pantheon-systems/terminus-drupal-console-plugin' => array(
@@ -4235,12 +4253,12 @@
             'dev_requirement' => true,
         ),
         'phpstan/phpstan' => array(
-            'pretty_version' => '1.6.7',
-            'version' => '1.6.7.0',
+            'pretty_version' => '1.6.8',
+            'version' => '1.6.8.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../phpstan/phpstan',
             'aliases' => array(),
-            'reference' => 'd41c39cb2e487663bce9bbd97c660e244b73abad',
+            'reference' => 'd76498c5531232cb8386ceb6004f7e013138d3ba',
             'dev_requirement' => false,
         ),
         'phpstan/phpstan-deprecation-rules' => array(
@@ -4654,12 +4672,12 @@
             'dev_requirement' => true,
         ),
         'slevomat/coding-standard' => array(
-            'pretty_version' => '7.1',
-            'version' => '7.1.0.0',
+            'pretty_version' => '7.2.0',
+            'version' => '7.2.0.0',
             'type' => 'phpcodesniffer-standard',
             'install_path' => __DIR__ . '/../slevomat/coding-standard',
             'aliases' => array(),
-            'reference' => 'b521bd358b5f7a7d69e9637fd139e036d8adeb6f',
+            'reference' => 'b4f96a8beea515d2d89141b7b9ad72f526d84071',
             'dev_requirement' => true,
         ),
         'softcreatr/jsonpath' => array(
@@ -5196,7 +5214,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '9e68eb0cfe281ba06775843a3fdad1f899fa9456',
+            'reference' => '2effa4cdfe2bffd20198648a5b865b5769c4d898',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(

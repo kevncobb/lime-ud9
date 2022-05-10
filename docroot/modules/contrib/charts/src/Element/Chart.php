@@ -305,7 +305,7 @@ class Chart extends RenderElement implements ContainerFactoryPluginInterface {
    * @return array
    *   The element.
    */
-  public static function buildElement(array $settings, $chart_id) {
+  public static function buildElement(array $settings, string $chart_id): array {
     $type = $settings['type'];
     $single_axis = in_array($type, ['pie', 'donut']);
     $display_colors = $settings['display']['colors'] ?? [];
@@ -332,96 +332,100 @@ class Chart extends RenderElement implements ContainerFactoryPluginInterface {
       '#height_units' => $settings['display']['dimensions']['height_units'],
     ];
 
-    if (!empty($settings['series'])) {
-      $table = $settings['series'];
-      // Extracting the categories.
-      $categories = ChartDataCollectorTable::getCategoriesFromCollectedTable($table, $type);
-      // Extracting the rest of the data.
-      $series_data = ChartDataCollectorTable::getSeriesFromCollectedTable($table, $type);
+    if (empty($settings['series'])) {
+      return $element;
+    }
 
-      $element['xaxis'] = [
-        '#type' => 'chart_xaxis',
-        '#labels' => $single_axis ? '' : $categories['data'],
-        '#title' => $settings['xaxis']['title'] ?? FALSE,
-        '#labels_rotation' => $settings['xaxis']['labels_rotation'],
+    $table = $settings['series'];
+    // Extracting the categories.
+    $categories = ChartDataCollectorTable::getCategoriesFromCollectedTable($table, $type);
+    // Extracting the rest of the data.
+    $series_data = ChartDataCollectorTable::getSeriesFromCollectedTable($table, $type);
+
+    $element['xaxis'] = [
+      '#type' => 'chart_xaxis',
+      '#labels' => $single_axis ? '' : $categories['data'],
+      '#title' => $settings['xaxis']['title'] ?? FALSE,
+      '#labels_rotation' => $settings['xaxis']['labels_rotation'],
+    ];
+
+    if (empty($series_data)) {
+      return $element;
+    }
+
+    $element['yaxis'] = [
+      '#type' => 'chart_yaxis',
+      '#title' => $settings['yaxis']['title'] ?? '',
+      '#labels_rotation' => $settings['yaxis']['labels_rotation'],
+      '#max' => $settings['yaxis']['max'],
+      '#min' => $settings['yaxis']['min'],
+      '#prefix' => $settings['yaxis']['prefix'],
+      '#suffix' => $settings['yaxis']['suffix'],
+      '#decimal_count' => $settings['yaxis']['decimal_count'],
+    ];
+
+    // Create a secondary axis if needed.
+    $series_count = count($series_data);
+    if (!empty($settings['yaxis']['inherit']) && $series_count === 2) {
+      $element['secondary_yaxis'] = [
+        '#type' => 'chart_yaxis',
+        '#title' => $settings['yaxis']['secondary']['title'] ?? '',
+        '#labels_rotation' => $settings['yaxis']['secondary']['labels_rotation'],
+        '#max' => $settings['yaxis']['secondary']['max'],
+        '#min' => $settings['yaxis']['secondary']['min'],
+        '#prefix' => $settings['yaxis']['secondary']['prefix'],
+        '#suffix' => $settings['yaxis']['secondary']['suffix'],
+        '#decimal_count' => $settings['yaxis']['secondary']['decimal_count'],
+        '#opposite' => TRUE,
       ];
+    }
 
-      if (!empty($series_data)) {
-
-        $element['yaxis'] = [
-          '#type' => 'chart_yaxis',
-          '#title' => $settings['yaxis']['title'] ?? '',
-          '#labels_rotation' => $settings['yaxis']['labels_rotation'],
-          '#max' => $settings['yaxis']['max'],
-          '#min' => $settings['yaxis']['min'],
-          '#prefix' => $settings['yaxis']['prefix'],
-          '#suffix' => $settings['yaxis']['suffix'],
-          '#decimal_count' => $settings['yaxis']['decimal_count'],
+    // Overriding element colors for pie and donut chart types when the
+    // settings display colors is empty.
+    $overrides_element_colors = !$display_colors && ($type === 'pie' || $type === 'donut');
+    $series_key = $chart_id . '__series';
+    if ($single_axis) {
+      $new_series = [];
+      $labels = [];
+      foreach ($series_data as $datum) {
+        $new_series[] = $datum['data'][0][1];
+        $labels[] = $datum['name'];
+        if ($overrides_element_colors) {
+          $element['#colors'][] = $datum['color'];
+        }
+      }
+      $element['xaxis']['#labels'] = $labels;
+      // @todo Address more than one series.
+      $element[$series_key] = [
+        '#type' => 'chart_data',
+        '#data' => $new_series,
+        '#title' => $series_data[0]['title'] ?? '',
+      ];
+    }
+    else {
+      $series_counter = 0;
+      foreach ($series_data as $data_index => $data) {
+        $key = $series_key . '__' . $data_index;
+        $element[$key] = [
+          '#type' => 'chart_data',
+          '#data' => $data['data'],
+          '#title' => $data['name'],
         ];
-
-        // Create a secondary axis if needed.
-        $series_count = count($series_data);
-        if (!empty($settings['yaxis']['inherit']) && $series_count === 2) {
-          $element['secondary_yaxis'] = [
-            '#type' => 'chart_yaxis',
-            '#title' => $settings['yaxis']['secondary']['title'] ?? '',
-            '#labels_rotation' => $settings['yaxis']['secondary']['labels_rotation'],
-            '#max' => $settings['yaxis']['secondary']['max'],
-            '#min' => $settings['yaxis']['secondary']['min'],
-            '#prefix' => $settings['yaxis']['secondary']['prefix'],
-            '#suffix' => $settings['yaxis']['secondary']['suffix'],
-            '#decimal_count' => $settings['yaxis']['secondary']['decimal_count'],
-            '#opposite' => TRUE,
-          ];
+        if (!empty($data['color'])) {
+          $element[$key]['#color'] = $data['color'];
         }
-
-        // Overriding element colors for pie and donut chart types when the
-        // settings display colors is empty.
-        $overrides_element_colors = !$display_colors && ($type === 'pie' || $type === 'donut');
-        if ($single_axis) {
-          $new_series = [];
-          $labels = [];
-          foreach ($series_data as $datum) {
-            $new_series[] = $datum['data'][0][1];
-            $labels[] = $datum['name'];
-            if ($overrides_element_colors) {
-              $element['#colors'][] = $datum['color'];
-            }
-          }
-          $element['xaxis']['#labels'] = $labels;
-          // @todo Address more than one series.
-          $element[$chart_id] = [
-            '#type' => 'chart_data',
-            '#data' => $new_series,
-            '#title' => $series_data[0]['title'] ?? '',
-          ];
+        if (isset($element['yaxis'])) {
+          $element[$key]['#prefix'] = $settings['yaxis']['prefix'];
+          $element[$key]['#suffix'] = $settings['yaxis']['suffix'];
+          $element[$key]['#decimal_count'] = $settings['yaxis']['decimal_count'];
         }
-        else {
-          $series_counter = 0;
-          foreach ($series_data as $data_index => $data) {
-            $key = $chart_id . '_' . $data_index;
-            $element[$key] = [
-              '#type' => 'chart_data',
-              '#data' => $data['data'],
-              '#title' => $data['name'],
-            ];
-            if (!empty($data['color'])) {
-              $element[$key]['#color'] = $data['color'];
-            }
-            if (isset($element['yaxis'])) {
-              $element[$key]['#prefix'] = $settings['yaxis']['prefix'];
-              $element[$key]['#suffix'] = $settings['yaxis']['suffix'];
-              $element[$key]['#decimal_count'] = $settings['yaxis']['decimal_count'];
-            }
-            if (isset($element['secondary_yaxis']) && $series_counter === 1) {
-              $element[$key]['#target_axis'] = 'secondary_yaxis';
-              $element[$key]['#prefix'] = $settings['yaxis']['secondary']['prefix'];
-              $element[$key]['#suffix'] = $settings['yaxis']['secondary']['suffix'];
-              $element[$key]['#decimal_count'] = $settings['yaxis']['secondary']['decimal_count'];
-            }
-            $series_counter++;
-          }
+        if (isset($element['secondary_yaxis']) && $series_counter === 1) {
+          $element[$key]['#target_axis'] = 'secondary_yaxis';
+          $element[$key]['#prefix'] = $settings['yaxis']['secondary']['prefix'];
+          $element[$key]['#suffix'] = $settings['yaxis']['secondary']['suffix'];
+          $element[$key]['#decimal_count'] = $settings['yaxis']['secondary']['decimal_count'];
         }
+        $series_counter++;
       }
     }
 

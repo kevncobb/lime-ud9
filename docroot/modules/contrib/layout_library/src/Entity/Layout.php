@@ -87,12 +87,24 @@ class Layout extends ConfigEntityBase implements SectionListInterface {
   protected $layout = [];
 
   /**
-   * Gets value of targetEntityType.
+   * Alias of getTargetEntityTypeId().
+   *
+   * @todo refactor in favor of getTargetEntityTypeId() to align with core.
    *
    * @return string
    *   Value of targetEntityType
    */
   public function getTargetEntityType() {
+    return $this->targetEntityType;
+  }
+
+  /**
+   * Gets value of targetEntityType.
+   *
+   * @return string
+   *   Value of targetEntityType
+   */
+  public function getTargetEntityTypeId() {
     return $this->targetEntityType;
   }
 

@@ -1,0 +1,27 @@
+{
+    "name": "drupal/dark_mode_switch",
+    "type": "drupal-module",
+    "description": "Create a switch block to turn the site into a darker version.",
+    "keywords": [
+        "Drupal",
+        "Dark Mode",
+        "Dark Mode Switch"
+    ],
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "George Anderson (geoanders)",
+            "homepage": "https://www.drupal.org/u/geoanders",
+            "role": "Maintainer"
+        }
+    ],
+    "homepage": "https://www.drupal.org/project/dark_mode_switch",
+    "minimum-stability": "dev",
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/dark_mode_switch",
+        "source": "https://git.drupalcode.org/project/dark_mode_switch"
+    },
+    "require": {
+        "drupal/core": "^8 || ^9"
+    }
+}

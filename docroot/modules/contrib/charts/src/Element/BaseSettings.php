@@ -1167,21 +1167,23 @@ class BaseSettings extends FormElement {
   private static function processSeriesForm(array $element, array $options, FormStateInterface $form_state) {
     // Chart preview.
     $parents = $element['#parents'];
-    $id_prefix = implode('-', $parents);
+    $css_id_prefix = implode('-', $parents);
+    $id_prefix = str_replace('-', '_', $css_id_prefix);
+    $open_preview_elt_state_key = $id_prefix . '__open_preview';
     $element_state = ChartDataCollectorTable::getElementState($parents, $form_state);
 
     if (!$element_state) {
       $element_state = $options;
       // Closing preview here cause this is probably initial form load.
       $open_preview = FALSE;
-      $element_state[$id_prefix . '__open_preview'] = $open_preview;
+      $element_state[$open_preview_elt_state_key] = $open_preview;
       ChartDataCollectorTable::setElementState($parents, $form_state, $element_state);
     }
     else {
-      $open_preview = $element_state[$id_prefix . '__open_preview'];
+      $open_preview = $element_state[$open_preview_elt_state_key];
     }
 
-    $wrapper_id = $element['#wrapper_id'] . '--preview';
+    $wrapper_id = $css_id_prefix . '--preview--ajax-wrapper';
     $element['preview'] = [
       '#type' => 'details',
       '#title' => new TranslatableMarkup('Preview'),
@@ -1193,9 +1195,9 @@ class BaseSettings extends FormElement {
     $element['preview']['submit'] = [
       '#type' => 'submit',
       '#value' => new TranslatableMarkup('Update Preview'),
-      '#name' => $id_prefix . '--preview-submit',
+      '#name' => $id_prefix . '__preview_submit',
       '#attributes' => [
-        'class' => [Html::cleanCssIdentifier($id_prefix . '--preview-submit')],
+        'class' => [$css_id_prefix . '--preview-submit'],
       ],
       '#submit' => [[get_called_class(), 'chartPreviewSubmit']],
       '#limit_validation_errors' => [$parents],
@@ -1206,22 +1208,22 @@ class BaseSettings extends FormElement {
         'effect' => 'fade',
       ],
       '#operation' => 'preview',
+      '#open_preview_elt_state_key' => $open_preview_elt_state_key,
     ];
 
-    $preview_content = new TranslatableMarkup('<p>Please fill up the required value below then update the preview.</p>');
     if (!empty($element_state['library']) && !empty($element_state['series'])) {
-      /** @var \Drupal\Core\Render\RendererInterface $renderer */
-      $renderer = \Drupal::service('renderer');
-      $chart_build = Chart::buildElement($options, $wrapper_id);
+      $chart_id = $id_prefix . '__preview_chart';
+      $chart_build = Chart::buildElement($options, $chart_id);
+      $chart_build['#id'] = $id_prefix . '--preview-chart';
       // @todo check if this would work with various hooks.
-      $chart_build['#id'] = $wrapper_id;
-      $chart_build['#chart_id'] = $id_prefix;
-
-      $preview_content = $renderer->render($chart_build);
+      $chart_build['#chart_id'] = $chart_id;
+      $element['preview']['content'] = $chart_build;
     }
-    $element['preview']['content'] = [
-      '#markup' => $preview_content,
-    ];
+    else {
+      $element['preview']['content'] = [
+        '#markup' => new TranslatableMarkup('<p>Please fill up the required value below then update the preview.</p>'),
+      ];
+    }
 
     $element['series'] = [
       '#type' => 'chart_data_collector_table',
@@ -1249,11 +1251,10 @@ class BaseSettings extends FormElement {
   public static function chartPreviewSubmit(array $form, FormStateInterface $form_state) {
     $triggering_element = $form_state->getTriggeringElement();
     $element_parents = array_slice($triggering_element['#parents'], 0, -2);
-    $id_prefix = implode('-', $element_parents);
 
     // Getting the current element state.
     $element_state = ChartDataCollectorTable::getElementState($element_parents, $form_state);
-    $element_state[$id_prefix . '__open_preview'] = TRUE;
+    $element_state[$triggering_element['#open_preview_elt_state_key']] = TRUE;
     // Updating form state storage.
     ChartDataCollectorTable::setElementState($element_parents, $form_state, $element_state);
     $form_state->setRebuild();

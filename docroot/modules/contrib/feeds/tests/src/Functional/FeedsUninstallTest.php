@@ -5,6 +5,7 @@ namespace Drupal\Tests\feeds\Functional;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Queue\DatabaseQueue;
 use Drupal\feeds\FeedInterface;
+use Drupal\feeds\FeedTypeInterface;
 
 /**
  * Tests module uninstallation.
@@ -233,6 +234,38 @@ class FeedsUninstallTest extends FeedsBrowserTestBase {
 
     // Assert that there are no more tasks in the Feeds queue.
     $this->assertNoFeedsQueueTasks();
+  }
+
+  /**
+   * Tests uninstalling a third party module.
+   */
+  public function testUninstallModuleWithThirdPartySettings() {
+    // Install Feeds test plugin which provides a config schema for third party
+    // settings.
+    $this->assertTrue($this->container->get('module_installer')->install(['feeds_test_plugin']));
+
+    // Create a feed type and add third party config to it.
+    $feed_type = $this->createFeedType();
+    $feed_type->setThirdPartySetting('feeds_test_plugin', 'status', TRUE);
+    $feed_type->save();
+
+    // Now uninstall the feeds_test_plugin module.
+    $this->container->get('module_installer')->uninstall(['feeds_test_plugin']);
+
+    // Flushing all caches is needed because else the testbot can read reload
+    // the feed type from cache.
+    drupal_flush_all_caches();
+    // The testbot uses or can use the cache backed "ApcuBackend" to cache
+    // config objects. This cache backend is wrapped inside a backend called
+    // "ChainedFastBackend". Based on the docs from that backend, some time
+    // needs to pass in order to read data from the database instead of from the
+    // APCu cache. Since there is very little time between creating the feed
+    // type and uninstalling a module, make sure that the feed type does not
+    // exist on the APCu cache.
+    apcu_clear_cache();
+
+    // Assert that the feed type no longer exist.
+    $this->assertInstanceOf(FeedTypeInterface::class, $this->reloadEntity($feed_type));
   }
 
 }

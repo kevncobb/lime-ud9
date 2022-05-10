@@ -15,7 +15,7 @@ abstract class ChartAxisBase extends RenderElement {
   public function getInfo() {
     return [
       // Options: linear, logarithmic, datetime, labels.
-      '#axis_type' => 'linear',
+      '#axis_type' => '',
       '#title' => '',
       '#title_color' => '#000',
       // Options: normal, bold.
