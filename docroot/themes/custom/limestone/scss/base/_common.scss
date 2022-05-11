@@ -344,6 +344,7 @@ p {
 .bg-l-gray {
   background-color: $light-gray;
   width: 100%;
+  color: black;
   &.bg-faded {
     background-color: rgba($light-gray, 0.4);
   }
@@ -735,7 +736,6 @@ a.to-top {
   position: relative;
   #dark-mode-switch {
     position: absolute;
-    opacity: 0;
     padding: 20px;
     height: 35px;
     width: 35px;
@@ -768,11 +768,34 @@ a.to-top {
   }
 }
 body.dark-mode {
-  background: #121212;
+  $dark-mode-bg-color: #121212;
+  background: $dark-mode-bg-color;
   color: white;
   a {
     color: #0271e3;
   }
+  h1, .h1, h2, .h2, .views-title-center .viewsreference--view-title, h3, .h3, h4, .h4, h5, .h5, h6, .h6,
+  .lc-header, .viewsreference--view-title, .block-title:not([id$="-menu"]), .lc-header-field .field-label, form#views-exposed-form-news-latest-news-block .form-item-search label {
+    color: #0957ee;
+  }
+  p.lc-callout, blockquote.lc-callout {
+    background: none;
+    color: #e3cd57;
+  }
+  .block-limestone-breadcrumbs nav {
+    background-color: $dark-mode-bg-color;
+    ul.breadcrumbs li a, ul.breadcrumbs li span {
+      color: white;
+    }
+  }
+  .splash-header, .paragraph--type--splash-header {
+    opacity: 1;
+    &::before {
+      box-shadow: inset 0px 0px 0px 111.11111rem rgba(0, 0, 0, 0.4);
+      opacity: 1;
+    }
+  }
+  //Dark Mode Switch
   .custom-switch {
     #dark-mode-switch {
       &::after {
