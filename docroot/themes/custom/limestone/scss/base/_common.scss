@@ -734,8 +734,15 @@ a.to-top {
 .custom-switch {
   position: relative;
   #dark-mode-switch {
+    position: absolute;
+    opacity: 0;
+    padding: 20px;
+    height: 35px;
+    width: 35px;
+    margin: 0;
     &::before {
       content: "";
+      position: absolute;
       background-color: black;
       width: 35px;
       height: 35px;
@@ -754,6 +761,8 @@ a.to-top {
       width: auto;
       height: auto;
       font-size: 22px;
+      position: absolute;
+      top: 5px;
       color: white;
     }
   }
@@ -766,12 +775,6 @@ body.dark-mode {
   }
   .custom-switch {
     #dark-mode-switch {
-      position: absolute;
-      opacity: 0;
-      padding: 20px;
-      height: 35px;
-      width: 35px;
-      margin: 0;
       &::after {
         content: "\e962";
         top: 6px;
