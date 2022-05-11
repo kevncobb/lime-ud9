@@ -735,6 +735,12 @@ a.to-top {
   position: relative;
   #dark-mode-switch {
     &::before {
+      content: "";
+      background-color: black;
+      width: 35px;
+      height: 35px;
+    }
+    &::after {
       content: "\e963";
       font-family: 'icomoon' !important;
       speak: none;
@@ -747,8 +753,8 @@ a.to-top {
       -moz-osx-font-smoothing: grayscale;
       width: auto;
       height: auto;
-      top: 6px;
-      left: -4px;
+      font-size: 22px;
+      color: white;
     }
   }
 }
@@ -766,7 +772,7 @@ body.dark-mode {
       height: 35px;
       width: 35px;
       margin: 0;
-      &::before {
+      &::after {
         content: "\e962";
         top: 6px;
         left: -4px;
