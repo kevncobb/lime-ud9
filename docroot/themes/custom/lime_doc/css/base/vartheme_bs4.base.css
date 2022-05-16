@@ -521,6 +521,10 @@ img {
   display: none !important;
 }
 
+.show-for-authenticated {
+  display: none;
+}
+
 body.user-logged-in .visible-admin,
 body.user-logged-in .visible-logged-in,
 body.user-logged-in .hidden-anonymous {
@@ -530,6 +534,10 @@ body.user-logged-in .hidden-anonymous {
 body.user-logged-in .btn .visible-admin,
 body.user-logged-in .btn .visible-logged-in,
 body.user-logged-in .btn .hidden-anonymous {
+  display: inline-block !important;
+}
+
+body.user-logged-in .show-for-authenticated {
   display: inline-block !important;
 }
 
