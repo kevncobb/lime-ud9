@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '2effa4cdfe2bffd20198648a5b865b5769c4d898',
+        'reference' => '800aa6f16c82a54440abc157186d05ee85fa992b',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -670,6 +670,15 @@
             'replaced' => array(
                 0 => '9.3.12',
             ),
+        ),
+        'drupal/book_tree_menu' => array(
+            'pretty_version' => '2.0.1',
+            'version' => '2.0.1.0',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/book_tree_menu',
+            'aliases' => array(),
+            'reference' => '2.0.1',
+            'dev_requirement' => false,
         ),
         'drupal/bootstrap_barrio' => array(
             'pretty_version' => '5.1.6',
@@ -5214,7 +5223,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '2effa4cdfe2bffd20198648a5b865b5769c4d898',
+            'reference' => '800aa6f16c82a54440abc157186d05ee85fa992b',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(
