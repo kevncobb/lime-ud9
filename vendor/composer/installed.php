@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '800aa6f16c82a54440abc157186d05ee85fa992b',
+        'reference' => 'c14e438f3742834b882d8e7d2636628b24375b58',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -2443,6 +2443,17 @@
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/pathologic',
             'aliases' => array(),
             'reference' => '8.x-1.0-alpha3',
+            'dev_requirement' => false,
+        ),
+        'drupal/pdf' => array(
+            'pretty_version' => 'dev-1.x',
+            'version' => 'dev-1.x',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/pdf',
+            'aliases' => array(
+                0 => '1.x-dev',
+            ),
+            'reference' => '1e33fbf7013df3998dd4f1375889a2df93156a0e',
             'dev_requirement' => false,
         ),
         'drupal/persistent_login' => array(
@@ -5223,7 +5234,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '800aa6f16c82a54440abc157186d05ee85fa992b',
+            'reference' => 'c14e438f3742834b882d8e7d2636628b24375b58',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(

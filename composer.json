@@ -75,7 +75,8 @@
     "drupal/imagemagick": "^3.3",
     "drupal/imageapi_optimize_webp": "^2.0@beta",
     "drupal/dark_mode_switch": "^2.0",
-    "drupal/book_tree_menu": "^2.0"
+    "drupal/book_tree_menu": "^2.0",
+    "drupal/pdf": "1.x-dev@dev"
   },
   "require-dev": {
     "drupal/core-dev": "9.3.3",
