@@ -188,8 +188,17 @@
                     {% endif %}
                     <a id="main-content"></a>
                     <section class="grid-container spacing-xs">
+                      <div class="medium-8 cell">
                       <h4 class="text-align-center">Bernie has searched for your page below.</h4>
                         {{ page.content|without('node.field_lp_paragraphs') }}
+                      </div>
+                      <div class="medium-4 cell">
+                        <div class="callout primary">
+                          <p>This search page does <strong>not</strong> include News Articles. To search Limestone News visit:</p>
+
+                          <p><a class="lc-btn" href="/search-news">limestone.edu/search-news</a></p>
+                        </div>
+                      </div>
                     </section>
                     <section>
                         {{ drupal_field('field_lp_paragraphs', 'node') }}
