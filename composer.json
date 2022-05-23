@@ -60,7 +60,7 @@
     "drupal/entity_update": "2.0.x-dev@dev",
     "drupal/feeds_ex": "1.x-dev@dev",
     "drupal/feeds": "3.x-dev@dev",
-    "drupal/search_api_pantheon": "^3.0",
+    "drupal/search_api_pantheon": "^8",
     "pantheon-systems/search_api_pantheon": "^8",
     "drupal/devel_php": "1.x-dev@dev",
     "drupal/search_api_page": "1.x-dev@dev",
