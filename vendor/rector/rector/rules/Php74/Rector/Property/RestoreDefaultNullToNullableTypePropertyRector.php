@@ -4,15 +4,11 @@ declare (strict_types=1);
 namespace Rector\Php74\Rector\Property;
 
 use PhpParser\Node;
-use PhpParser\Node\Expr\Assign;
-use PhpParser\Node\NullableType;
 use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
-use PhpParser\NodeTraverser;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\MethodName;
 use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\TypeDeclaration\AlreadyAssignDetector\ConstructorAssignDetector;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -21,6 +17,15 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class RestoreDefaultNullToNullableTypePropertyRector extends \Rector\Core\Rector\AbstractRector implements \Rector\VersionBonding\Contract\MinPhpVersionInterface
 {
+    /**
+     * @readonly
+     * @var \Rector\TypeDeclaration\AlreadyAssignDetector\ConstructorAssignDetector
+     */
+    private $constructorAssignDetector;
+    public function __construct(\Rector\TypeDeclaration\AlreadyAssignDetector\ConstructorAssignDetector $constructorAssignDetector)
+    {
+        $this->constructorAssignDetector = $constructorAssignDetector;
+    }
     public function getRuleDefinition() : \Symplify\RuleDocGenerator\ValueObject\RuleDefinition
     {
         return new \Symplify\RuleDocGenerator\ValueObject\RuleDefinition('Add null default to properties with PHP 7.4 property nullable type', [new \Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample(<<<'CODE_SAMPLE'
@@ -62,7 +67,7 @@ CODE_SAMPLE
     }
     private function shouldSkip(\PhpParser\Node\Stmt\Property $property) : bool
     {
-        if (!$property->type instanceof \PhpParser\Node\NullableType) {
+        if ($property->type === null) {
             return \true;
         }
         if (\count($property->props) > 1) {
@@ -77,29 +82,15 @@ CODE_SAMPLE
         }
         // is variable assigned in constructor
         $propertyName = $this->getName($property);
-        return $this->isPropertyInitiatedInConstuctor($property, $propertyName);
-    }
-    private function isPropertyInitiatedInConstuctor(\PhpParser\Node\Stmt\Property $property, string $propertyName) : bool
-    {
         $classLike = $this->betterNodeFinder->findParentType($property, \PhpParser\Node\Stmt\Class_::class);
+        // a trait can be used in multiple context, we don't know whether it is assigned in __construct or not
+        // so it needs to has null default
         if (!$classLike instanceof \PhpParser\Node\Stmt\Class_) {
             return \false;
         }
-        $constructClassMethod = $classLike->getMethod(\Rector\Core\ValueObject\MethodName::CONSTRUCT);
-        if (!$constructClassMethod instanceof \PhpParser\Node\Stmt\ClassMethod) {
-            return \false;
+        if (!$this->nodeTypeResolver->isNullableType($property)) {
+            return \true;
         }
-        $isPropertyInitiated = \false;
-        $this->traverseNodesWithCallable((array) $constructClassMethod->stmts, function (\PhpParser\Node $node) use($propertyName, &$isPropertyInitiated) : ?int {
-            if (!$node instanceof \PhpParser\Node\Expr\Assign) {
-                return null;
-            }
-            if (!$this->nodeNameResolver->isLocalPropertyFetchNamed($node->var, $propertyName)) {
-                return null;
-            }
-            $isPropertyInitiated = \true;
-            return \PhpParser\NodeTraverser::STOP_TRAVERSAL;
-        });
-        return $isPropertyInitiated;
+        return $this->constructorAssignDetector->isPropertyAssigned($classLike, $propertyName);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix20220303\Symplify\PackageBuilder\Reflection;
+namespace RectorPrefix20220418\Symplify\PackageBuilder\Reflection;
 
 use ReflectionClass;
 use ReflectionMethod;
@@ -12,8 +12,8 @@ final class PrivatesCaller
 {
     /**
      * @param mixed[] $arguments
-     * @return mixed
      * @param object|string $object
+     * @return mixed
      */
     public function callPrivateMethod($object, string $methodName, array $arguments)
     {
@@ -25,9 +25,9 @@ final class PrivatesCaller
         return $methodReflection->invokeArgs($object, $arguments);
     }
     /**
-     * @return mixed
      * @param object|string $object
      * @param mixed $argument
+     * @return mixed
      */
     public function callPrivateMethodWithReference($object, string $methodName, $argument)
     {
@@ -39,10 +39,7 @@ final class PrivatesCaller
         $methodReflection->invokeArgs($object, [&$argument]);
         return $argument;
     }
-    /**
-     * @param object $object
-     */
-    private function createAccessibleMethodReflection($object, string $methodName) : \ReflectionMethod
+    private function createAccessibleMethodReflection(object $object, string $methodName) : \ReflectionMethod
     {
         $reflectionMethod = new \ReflectionMethod(\get_class($object), $methodName);
         $reflectionMethod->setAccessible(\true);

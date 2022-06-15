@@ -7,10 +7,7 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
-use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
-use PhpParser\Node\Stmt\Function_;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\ParentConnectingVisitor;
 use PhpParser\NodeVisitorAbstract;
@@ -18,9 +15,7 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\ChangesReporting\ValueObject\RectorWithLineChange;
-use Rector\Core\Application\FileSystem\RemovedAndAddedFilesCollector;
 use Rector\Core\Configuration\CurrentNodeProvider;
-use Rector\Core\Contract\Console\OutputStyleInterface;
 use Rector\Core\Contract\Rector\PhpRectorInterface;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Exclusion\ExclusionManager;
@@ -31,7 +26,6 @@ use Rector\Core\PhpParser\Comparing\NodeComparator;
 use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\Core\PhpParser\Node\NodeFactory;
 use Rector\Core\PhpParser\Node\Value\ValueResolver;
-use Rector\Core\PhpParser\Printer\BetterStandardPrinter;
 use Rector\Core\ProcessAnalyzer\RectifiedAnalyzer;
 use Rector\Core\Provider\CurrentFileProvider;
 use Rector\Core\ValueObject\Application\File;
@@ -43,10 +37,9 @@ use Rector\NodeTypeResolver\NodeTypeResolver;
 use Rector\PostRector\Collector\NodesToAddCollector;
 use Rector\PostRector\Collector\NodesToRemoveCollector;
 use Rector\StaticTypeMapper\StaticTypeMapper;
-use RectorPrefix20220303\Symfony\Contracts\Service\Attribute\Required;
-use RectorPrefix20220303\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser;
-use RectorPrefix20220303\Symplify\PackageBuilder\Parameter\ParameterProvider;
-use RectorPrefix20220303\Symplify\Skipper\Skipper\Skipper;
+use RectorPrefix20220418\Symfony\Contracts\Service\Attribute\Required;
+use RectorPrefix20220418\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser;
+use RectorPrefix20220418\Symplify\Skipper\Skipper\Skipper;
 /**
  * @see \Rector\Testing\PHPUnit\AbstractRectorTestCase
  */
@@ -81,18 +74,6 @@ CODE_SAMPLE;
      * @var \Rector\NodeTypeResolver\NodeTypeResolver
      */
     protected $nodeTypeResolver;
-    /**
-     * @var \Rector\Core\PhpParser\Printer\BetterStandardPrinter
-     */
-    protected $betterStandardPrinter;
-    /**
-     * @var \Rector\Core\Application\FileSystem\RemovedAndAddedFilesCollector
-     */
-    protected $removedAndAddedFilesCollector;
-    /**
-     * @var \Symplify\PackageBuilder\Parameter\ParameterProvider
-     */
-    protected $parameterProvider;
     /**
      * @var \Rector\Core\Php\PhpVersionProvider
      */
@@ -142,10 +123,6 @@ CODE_SAMPLE;
      */
     private $simpleCallableNodeTraverser;
     /**
-     * @var \Rector\Core\Contract\Console\OutputStyleInterface
-     */
-    private $rectorOutputStyle;
-    /**
      * @var \Rector\Core\Exclusion\ExclusionManager
      */
     private $exclusionManager;
@@ -161,10 +138,6 @@ CODE_SAMPLE;
      * @var \Symplify\Skipper\Skipper\Skipper
      */
     private $skipper;
-    /**
-     * @var string|null
-     */
-    private $previousAppliedClass = null;
     /**
      * @var \Rector\Core\Provider\CurrentFileProvider
      */
@@ -184,23 +157,19 @@ CODE_SAMPLE;
     /**
      * @required
      */
-    public function autowire(\Rector\PostRector\Collector\NodesToRemoveCollector $nodesToRemoveCollector, \Rector\PostRector\Collector\NodesToAddCollector $nodesToAddCollector, \Rector\NodeRemoval\NodeRemover $nodeRemover, \Rector\Core\Application\FileSystem\RemovedAndAddedFilesCollector $removedAndAddedFilesCollector, \Rector\Core\PhpParser\Printer\BetterStandardPrinter $betterStandardPrinter, \Rector\NodeNameResolver\NodeNameResolver $nodeNameResolver, \Rector\NodeTypeResolver\NodeTypeResolver $nodeTypeResolver, \RectorPrefix20220303\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser $simpleCallableNodeTraverser, \Rector\Core\PhpParser\Node\NodeFactory $nodeFactory, \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory $phpDocInfoFactory, \Rector\Core\Contract\Console\OutputStyleInterface $rectorOutputStyle, \Rector\Core\Php\PhpVersionProvider $phpVersionProvider, \Rector\Core\Exclusion\ExclusionManager $exclusionManager, \Rector\StaticTypeMapper\StaticTypeMapper $staticTypeMapper, \RectorPrefix20220303\Symplify\PackageBuilder\Parameter\ParameterProvider $parameterProvider, \Rector\Core\Logging\CurrentRectorProvider $currentRectorProvider, \Rector\Core\Configuration\CurrentNodeProvider $currentNodeProvider, \RectorPrefix20220303\Symplify\Skipper\Skipper\Skipper $skipper, \Rector\Core\PhpParser\Node\Value\ValueResolver $valueResolver, \Rector\Core\PhpParser\Node\BetterNodeFinder $betterNodeFinder, \Rector\Core\PhpParser\Comparing\NodeComparator $nodeComparator, \Rector\Core\Provider\CurrentFileProvider $currentFileProvider, \Rector\Core\ProcessAnalyzer\RectifiedAnalyzer $rectifiedAnalyzer, \Rector\Core\NodeDecorator\CreatedByRuleDecorator $createdByRuleDecorator) : void
+    public function autowire(\Rector\PostRector\Collector\NodesToRemoveCollector $nodesToRemoveCollector, \Rector\PostRector\Collector\NodesToAddCollector $nodesToAddCollector, \Rector\NodeRemoval\NodeRemover $nodeRemover, \Rector\NodeNameResolver\NodeNameResolver $nodeNameResolver, \Rector\NodeTypeResolver\NodeTypeResolver $nodeTypeResolver, \RectorPrefix20220418\Symplify\Astral\NodeTraverser\SimpleCallableNodeTraverser $simpleCallableNodeTraverser, \Rector\Core\PhpParser\Node\NodeFactory $nodeFactory, \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory $phpDocInfoFactory, \Rector\Core\Php\PhpVersionProvider $phpVersionProvider, \Rector\Core\Exclusion\ExclusionManager $exclusionManager, \Rector\StaticTypeMapper\StaticTypeMapper $staticTypeMapper, \Rector\Core\Logging\CurrentRectorProvider $currentRectorProvider, \Rector\Core\Configuration\CurrentNodeProvider $currentNodeProvider, \RectorPrefix20220418\Symplify\Skipper\Skipper\Skipper $skipper, \Rector\Core\PhpParser\Node\Value\ValueResolver $valueResolver, \Rector\Core\PhpParser\Node\BetterNodeFinder $betterNodeFinder, \Rector\Core\PhpParser\Comparing\NodeComparator $nodeComparator, \Rector\Core\Provider\CurrentFileProvider $currentFileProvider, \Rector\Core\ProcessAnalyzer\RectifiedAnalyzer $rectifiedAnalyzer, \Rector\Core\NodeDecorator\CreatedByRuleDecorator $createdByRuleDecorator) : void
     {
         $this->nodesToRemoveCollector = $nodesToRemoveCollector;
         $this->nodesToAddCollector = $nodesToAddCollector;
         $this->nodeRemover = $nodeRemover;
-        $this->removedAndAddedFilesCollector = $removedAndAddedFilesCollector;
-        $this->betterStandardPrinter = $betterStandardPrinter;
         $this->nodeNameResolver = $nodeNameResolver;
         $this->nodeTypeResolver = $nodeTypeResolver;
         $this->simpleCallableNodeTraverser = $simpleCallableNodeTraverser;
         $this->nodeFactory = $nodeFactory;
         $this->phpDocInfoFactory = $phpDocInfoFactory;
-        $this->rectorOutputStyle = $rectorOutputStyle;
         $this->phpVersionProvider = $phpVersionProvider;
         $this->exclusionManager = $exclusionManager;
         $this->staticTypeMapper = $staticTypeMapper;
-        $this->parameterProvider = $parameterProvider;
         $this->currentRectorProvider = $currentRectorProvider;
         $this->currentNodeProvider = $currentNodeProvider;
         $this->skipper = $skipper;
@@ -216,7 +185,6 @@ CODE_SAMPLE;
      */
     public function beforeTraverse(array $nodes) : ?array
     {
-        $this->previousAppliedClass = null;
         // workaround for file around refactor()
         $file = $this->currentFileProvider->getFile();
         if (!$file instanceof \Rector\Core\ValueObject\Application\File) {
@@ -226,7 +194,7 @@ CODE_SAMPLE;
         return parent::beforeTraverse($nodes);
     }
     /**
-     * @return Node|int|null
+     * @return Node|null
      */
     public final function enterNode(\PhpParser\Node $node)
     {
@@ -246,8 +214,6 @@ CODE_SAMPLE;
         $this->currentRectorProvider->changeCurrentRector($this);
         // for PHP doc info factory and change notifier
         $this->currentNodeProvider->setNode($node);
-        // show current Rector class on --debug
-        $this->printDebugApplying();
         $originalAttributes = $node->getAttributes();
         $node = $this->refactor($node);
         // nothing to change → continue
@@ -332,13 +298,6 @@ CODE_SAMPLE;
     {
         $this->simpleCallableNodeTraverser->traverseNodesWithCallable($nodes, $callable);
     }
-    /**
-     * @param mixed[]|\PhpParser\Node|null $node
-     */
-    protected function print($node) : string
-    {
-        return $this->betterStandardPrinter->print($node);
-    }
     protected function mirrorComments(\PhpParser\Node $newNode, \PhpParser\Node $oldNode) : void
     {
         $newNode->setAttribute(\Rector\NodeTypeResolver\Node\AttributeKey::PHP_DOC_INFO, $oldNode->getAttribute(\Rector\NodeTypeResolver\Node\AttributeKey::PHP_DOC_INFO));
@@ -371,20 +330,6 @@ CODE_SAMPLE;
         $this->nodeRemover->removeNode($node);
     }
     /**
-     * @param \PhpParser\Node\Stmt\Class_|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_ $nodeWithStatements
-     */
-    protected function removeNodeFromStatements($nodeWithStatements, \PhpParser\Node $toBeRemovedNode) : void
-    {
-        $this->nodeRemover->removeNodeFromStatements($nodeWithStatements, $toBeRemovedNode);
-    }
-    /**
-     * @param Node[] $nodes
-     */
-    protected function removeNodes(array $nodes) : void
-    {
-        $this->nodeRemover->removeNodes($nodes);
-    }
-    /**
      * @param class-string<Node> $nodeClass
      */
     private function isMatchingNodeType(string $nodeClass) : bool
@@ -410,19 +355,6 @@ CODE_SAMPLE;
         }
         $rectifiedNode = $this->rectifiedAnalyzer->verify($this, $node, $this->file);
         return $rectifiedNode instanceof \Rector\Core\ValueObject\RectifiedNode;
-    }
-    private function printDebugApplying() : void
-    {
-        if (!$this->rectorOutputStyle->isDebug()) {
-            return;
-        }
-        if ($this->previousAppliedClass === static::class) {
-            return;
-        }
-        // prevent spamming with the same class over and over
-        // indented on purpose to improve log nesting under [refactoring]
-        $this->rectorOutputStyle->writeln('    [applying] ' . static::class);
-        $this->previousAppliedClass = static::class;
     }
     /**
      * @param array<string, mixed> $originalAttributes

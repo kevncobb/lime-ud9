@@ -3,10 +3,10 @@
 declare (strict_types=1);
 namespace Rector\Core\Configuration;
 
-use RectorPrefix20220303\JetBrains\PhpStorm\Immutable;
+use RectorPrefix20220418\JetBrains\PhpStorm\Immutable;
 use Rector\Caching\Contract\ValueObject\Storage\CacheStorageInterface;
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
-use RectorPrefix20220303\Symplify\Skipper\ValueObject\Option as SkipperOption;
+use RectorPrefix20220418\Symplify\Skipper\ValueObject\Option as SkipperOption;
 #[Immutable]
 final class Option
 {
@@ -51,11 +51,6 @@ final class Option
      */
     public const IMPORT_SHORT_CLASSES = 'import_short_classes';
     /**
-     * @deprecated Narrow too complex import settings to more practical use.
-     * @var string
-     */
-    public const IMPORT_DOC_BLOCKS = 'import_doc_blocks';
-    /**
      * @var string
      */
     public const SYMFONY_CONTAINER_XML_PATH_PARAMETER = 'symfony_container_xml_path';
@@ -78,7 +73,7 @@ final class Option
     /**
      * @var string
      */
-    public const SKIP = \RectorPrefix20220303\Symplify\Skipper\ValueObject\Option::SKIP;
+    public const SKIP = \RectorPrefix20220418\Symplify\Skipper\ValueObject\Option::SKIP;
     /**
      * @var string
      */

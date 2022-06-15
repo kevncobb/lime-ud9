@@ -1,19 +1,34 @@
-var assignInWith = require('./assignInWith'),
-    attempt = require('./attempt'),
-    baseValues = require('./_baseValues'),
-    customDefaultsAssignIn = require('./_customDefaultsAssignIn'),
-    escapeStringChar = require('./_escapeStringChar'),
-    isError = require('./isError'),
-    isIterateeCall = require('./_isIterateeCall'),
-    keys = require('./keys'),
-    reInterpolate = require('./_reInterpolate'),
-    templateSettings = require('./templateSettings'),
-    toString = require('./toString');
+import assignInWith from './assignInWith.js';
+import attempt from './attempt.js';
+import baseValues from './_baseValues.js';
+import customDefaultsAssignIn from './_customDefaultsAssignIn.js';
+import escapeStringChar from './_escapeStringChar.js';
+import isError from './isError.js';
+import isIterateeCall from './_isIterateeCall.js';
+import keys from './keys.js';
+import reInterpolate from './_reInterpolate.js';
+import templateSettings from './templateSettings.js';
+import toString from './toString.js';
+
+/** Error message constants. */
+var INVALID_TEMPL_VAR_ERROR_TEXT = 'Invalid `variable` option passed into `_.template`';
 
 /** Used to match empty string literals in compiled template source. */
 var reEmptyStringLeading = /\b__p \+= '';/g,
     reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
     reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
+
+/**
+ * Used to validate the `validate` option in `_.template` variable.
+ *
+ * Forbids characters which could potentially change the meaning of the function argument definition:
+ * - "()," (modification of function parameters)
+ * - "=" (default value)
+ * - "[]{}" (destructuring of function parameters)
+ * - "/" (beginning of a comment)
+ * - whitespace
+ */
+var reForbiddenIdentifierChars = /[()=,{}\[\]\/\s]/;
 
 /**
  * Used to match
@@ -210,6 +225,12 @@ function template(string, options, guard) {
   if (!variable) {
     source = 'with (obj) {\n' + source + '\n}\n';
   }
+  // Throw an error if a forbidden character was found in `variable`, to prevent
+  // potential command injection attacks.
+  else if (reForbiddenIdentifierChars.test(variable)) {
+    throw new Error(INVALID_TEMPL_VAR_ERROR_TEXT);
+  }
+
   // Cleanup code by stripping empty strings.
   source = (isEvaluating ? source.replace(reEmptyStringLeading, '') : source)
     .replace(reEmptyStringMiddle, '$1')
@@ -248,4 +269,4 @@ function template(string, options, guard) {
   return result;
 }
 
-module.exports = template;
+export default template;

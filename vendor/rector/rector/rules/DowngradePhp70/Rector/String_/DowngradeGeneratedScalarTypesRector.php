@@ -3,12 +3,13 @@
 declare (strict_types=1);
 namespace Rector\DowngradePhp70\Rector\String_;
 
-use RectorPrefix20220303\Nette\Utils\Strings;
+use RectorPrefix20220418\Nette\Utils\Strings;
 use PhpParser\Error;
 use PhpParser\Node;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\NodeTraverser;
+use Rector\Core\Contract\PhpParser\NodePrinterInterface;
 use Rector\Core\Contract\Rector\PhpRectorInterface;
 use Rector\Core\PhpParser\Parser\InlineCodeParser;
 use Rector\Core\Rector\AbstractRector;
@@ -43,9 +44,15 @@ final class DowngradeGeneratedScalarTypesRector extends \Rector\Core\Rector\Abst
      * @var \Rector\Core\PhpParser\Parser\InlineCodeParser
      */
     private $inlineCodeParser;
-    public function __construct(\Rector\Core\PhpParser\Parser\InlineCodeParser $inlineCodeParser, \Rector\DowngradePhp70\Rector\FunctionLike\DowngradeScalarTypeDeclarationRector $downgradeScalarTypeDeclarationRector, \Rector\DowngradePhp71\Rector\FunctionLike\DowngradeVoidTypeDeclarationRector $downgradeVoidTypeDeclarationRector)
+    /**
+     * @readonly
+     * @var \Rector\Core\Contract\PhpParser\NodePrinterInterface
+     */
+    private $nodePrinter;
+    public function __construct(\Rector\Core\PhpParser\Parser\InlineCodeParser $inlineCodeParser, \Rector\DowngradePhp70\Rector\FunctionLike\DowngradeScalarTypeDeclarationRector $downgradeScalarTypeDeclarationRector, \Rector\DowngradePhp71\Rector\FunctionLike\DowngradeVoidTypeDeclarationRector $downgradeVoidTypeDeclarationRector, \Rector\Core\Contract\PhpParser\NodePrinterInterface $nodePrinter)
     {
         $this->inlineCodeParser = $inlineCodeParser;
+        $this->nodePrinter = $nodePrinter;
         $this->phpRectors = [$downgradeScalarTypeDeclarationRector, $downgradeVoidTypeDeclarationRector];
     }
     public function getRuleDefinition() : \Symplify\RuleDocGenerator\ValueObject\RuleDefinition
@@ -130,7 +137,7 @@ CODE_SAMPLE
     {
         $refactoredContent = '';
         foreach ($class->stmts as $classStmt) {
-            $refactoredContent .= $this->betterStandardPrinter->prettyPrint([$classStmt]) . \PHP_EOL;
+            $refactoredContent .= $this->nodePrinter->prettyPrint([$classStmt]) . \PHP_EOL;
         }
         return $refactoredContent;
     }

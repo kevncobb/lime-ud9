@@ -14,7 +14,7 @@ class MenuAdminPerMenuNodeFormTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'block',
     'node',
     'menu_admin_per_menu_test',
@@ -104,30 +104,30 @@ class MenuAdminPerMenuNodeFormTest extends BrowserTestBase {
     $this->contentOnlyUser = $this->drupalCreateUser(
       [
         'access content',
-        'administer content types',
+        'bypass node access',
       ]
     );
     $this->contentAndMenuUser = $this->drupalCreateUser(
       [
         'access content',
-        'administer content types',
+        'bypass node access',
         'administer main menu items',
       ]
     );
     $this->menu1User = $this->createUser([
       'access content',
-      'administer content types',
+      'bypass node access',
       'administer menu_1 menu items',
     ], 'Menu 1 user');
     $this->menu2User = $this->createUser([
       'access content',
-      'administer content types',
+      'bypass node access',
       'administer menu_2 menu items',
     ], 'Menu 2 user');
     // Access to menu_3 is added in menu_admin_per_menu_hook_test.
     $this->menu3User = $this->createUser([
       'access content',
-      'administer content types',
+      'bypass node access',
     ], 'Menu 3 user');
   }
 
@@ -142,13 +142,13 @@ class MenuAdminPerMenuNodeFormTest extends BrowserTestBase {
 
     // Save the node with the menu.
     $this->drupalLogin($this->contentAndMenuUser);
-    $edit = [
+    $this->drupalGet('node/add/page');
+    $this->submitForm([
       'title[0][value]' => $this->randomString(),
       'body[0][value]' => $this->randomString(),
       'menu[enabled]' => 1,
       'menu[title]' => $menu_link_title,
-    ];
-    $this->drupalPostForm('node/add/page', $edit, 'Save');
+    ], 'Save');
 
     // Ensure the menu is in place.
     $this->assertSession()->linkExists($menu_link_title);
@@ -158,11 +158,11 @@ class MenuAdminPerMenuNodeFormTest extends BrowserTestBase {
 
     // Save the node again as someone without permission.
     $this->drupalLogin($this->contentOnlyUser);
-    $edit = [
+    $this->drupalGet('node/add/page');
+    $this->submitForm([
       'title[0][value]' => $this->randomString(),
       'body[0][value]' => $this->randomString(),
-    ];
-    $this->drupalPostForm('node/add/page', $edit, 'Save');
+    ], 'Save');
 
     // Ensure the menu is still in place.
     $this->assertSession()->linkExists($menu_link_title);
@@ -221,6 +221,19 @@ class MenuAdminPerMenuNodeFormTest extends BrowserTestBase {
     $assert_session->optionNotExists('menu[menu_parent]', 'menu_2:menu_2.link');
     $assert_session->optionExists('menu[menu_parent]', 'menu_3:');
     $assert_session->optionExists('menu[menu_parent]', 'menu_3:menu_3.link');
+  }
+
+  /**
+   * Test that entity operations are not added to other entities than menus.
+   */
+  public function testEntityOperationsAccess() {
+    $this->drupalLogin($this->rootUser);
+    // Make sure the entity operation is only added to menus.
+    $node = $this->drupalCreateNode(['type' => 'menu_test']);
+    $this->drupalGet('/admin/content');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->linkByHrefNotExists(sprintf('/admin/structure/menu/manage/%s', $node->id()));
+    $this->assertSession()->linkByHrefNotExists(sprintf('/admin/structure/menu/manage/%s/add', $node->id()));
   }
 
 }

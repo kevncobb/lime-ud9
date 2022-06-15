@@ -3,8 +3,8 @@
 declare (strict_types=1);
 namespace Rector\Core\NodeManipulator;
 
-use RectorPrefix20220303\Doctrine\ORM\Mapping\ManyToMany;
-use RectorPrefix20220303\Doctrine\ORM\Mapping\Table;
+use RectorPrefix20220418\Doctrine\ORM\Mapping\ManyToMany;
+use RectorPrefix20220418\Doctrine\ORM\Mapping\Table;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
@@ -18,24 +18,32 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\StaticPropertyFetch;
 use PhpParser\Node\Param;
-use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Property;
+use PhpParser\Node\Stmt\Trait_;
+use PhpParser\Node\Stmt\Unset_;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Type\Type;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer;
+use Rector\Core\PhpParser\AstResolver;
 use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\Core\PhpParser\NodeFinder\PropertyFetchFinder;
 use Rector\Core\Reflection\ReflectionResolver;
 use Rector\Core\ValueObject\MethodName;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\NodeTypeResolver\NodeTypeResolver;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
+use Rector\Php80\NodeAnalyzer\PromotedPropertyResolver;
 use Rector\ReadWrite\Guard\VariableToConstantGuard;
 use Rector\ReadWrite\NodeAnalyzer\ReadWritePropertyAnalyzer;
-use RectorPrefix20220303\Symplify\PackageBuilder\Php\TypeChecker;
+use Rector\TypeDeclaration\AlreadyAssignDetector\ConstructorAssignDetector;
+use RectorPrefix20220418\Symplify\PackageBuilder\Php\TypeChecker;
 /**
  * For inspiration to improve this service,
  * @see examples of variable modifications in https://wiki.php.net/rfc/readonly_properties_v2#proposal
@@ -100,7 +108,32 @@ final class PropertyManipulator
      * @var \Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer
      */
     private $phpAttributeAnalyzer;
-    public function __construct(\Rector\Core\NodeManipulator\AssignManipulator $assignManipulator, \Rector\Core\PhpParser\Node\BetterNodeFinder $betterNodeFinder, \Rector\ReadWrite\Guard\VariableToConstantGuard $variableToConstantGuard, \Rector\ReadWrite\NodeAnalyzer\ReadWritePropertyAnalyzer $readWritePropertyAnalyzer, \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory $phpDocInfoFactory, \RectorPrefix20220303\Symplify\PackageBuilder\Php\TypeChecker $typeChecker, \Rector\Core\PhpParser\NodeFinder\PropertyFetchFinder $propertyFetchFinder, \Rector\Core\Reflection\ReflectionResolver $reflectionResolver, \Rector\NodeNameResolver\NodeNameResolver $nodeNameResolver, \Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer $phpAttributeAnalyzer)
+    /**
+     * @readonly
+     * @var \Rector\NodeTypeResolver\NodeTypeResolver
+     */
+    private $nodeTypeResolver;
+    /**
+     * @readonly
+     * @var \Rector\Php80\NodeAnalyzer\PromotedPropertyResolver
+     */
+    private $promotedPropertyResolver;
+    /**
+     * @readonly
+     * @var \Rector\TypeDeclaration\AlreadyAssignDetector\ConstructorAssignDetector
+     */
+    private $constructorAssignDetector;
+    /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\AstResolver
+     */
+    private $astResolver;
+    /**
+     * @readonly
+     * @var \Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer
+     */
+    private $propertyFetchAnalyzer;
+    public function __construct(\Rector\Core\NodeManipulator\AssignManipulator $assignManipulator, \Rector\Core\PhpParser\Node\BetterNodeFinder $betterNodeFinder, \Rector\ReadWrite\Guard\VariableToConstantGuard $variableToConstantGuard, \Rector\ReadWrite\NodeAnalyzer\ReadWritePropertyAnalyzer $readWritePropertyAnalyzer, \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory $phpDocInfoFactory, \RectorPrefix20220418\Symplify\PackageBuilder\Php\TypeChecker $typeChecker, \Rector\Core\PhpParser\NodeFinder\PropertyFetchFinder $propertyFetchFinder, \Rector\Core\Reflection\ReflectionResolver $reflectionResolver, \Rector\NodeNameResolver\NodeNameResolver $nodeNameResolver, \Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer $phpAttributeAnalyzer, \Rector\NodeTypeResolver\NodeTypeResolver $nodeTypeResolver, \Rector\Php80\NodeAnalyzer\PromotedPropertyResolver $promotedPropertyResolver, \Rector\TypeDeclaration\AlreadyAssignDetector\ConstructorAssignDetector $constructorAssignDetector, \Rector\Core\PhpParser\AstResolver $astResolver, \Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer $propertyFetchAnalyzer)
     {
         $this->assignManipulator = $assignManipulator;
         $this->betterNodeFinder = $betterNodeFinder;
@@ -112,6 +145,11 @@ final class PropertyManipulator
         $this->reflectionResolver = $reflectionResolver;
         $this->nodeNameResolver = $nodeNameResolver;
         $this->phpAttributeAnalyzer = $phpAttributeAnalyzer;
+        $this->nodeTypeResolver = $nodeTypeResolver;
+        $this->promotedPropertyResolver = $promotedPropertyResolver;
+        $this->constructorAssignDetector = $constructorAssignDetector;
+        $this->astResolver = $astResolver;
+        $this->propertyFetchAnalyzer = $propertyFetchAnalyzer;
     }
     /**
      * @param \PhpParser\Node\Param|\PhpParser\Node\Stmt\Property $propertyOrPromotedParam
@@ -180,11 +218,16 @@ final class PropertyManipulator
                 return \true;
             }
             // skip for constructor? it is allowed to set value in constructor method
+            $propertyName = (string) $this->nodeNameResolver->getName($propertyFetch);
             $classMethod = $this->betterNodeFinder->findParentType($propertyFetch, \PhpParser\Node\Stmt\ClassMethod::class);
-            if ($classMethod instanceof \PhpParser\Node\Stmt\ClassMethod && $this->isInlineStmtWithConstructMethod($propertyFetch, $classMethod)) {
+            if ($this->isPropertyAssignedOnlyInConstructor($classLike, $propertyName, $classMethod)) {
                 continue;
             }
             if ($this->assignManipulator->isLeftPartOfAssign($propertyFetch)) {
+                return \true;
+            }
+            $isInUnset = (bool) $this->betterNodeFinder->findParentType($propertyFetch, \PhpParser\Node\Stmt\Unset_::class);
+            if ($isInUnset) {
                 return \true;
             }
         }
@@ -203,20 +246,50 @@ final class PropertyManipulator
         }
         return \false;
     }
-    /**
-     * @param \PhpParser\Node\Expr\PropertyFetch|\PhpParser\Node\Expr\StaticPropertyFetch $propertyFetch
-     */
-    private function isInlineStmtWithConstructMethod($propertyFetch, \PhpParser\Node\Stmt\ClassMethod $classMethod) : bool
+    public function resolveExistingClassPropertyNameByType(\PhpParser\Node\Stmt\Class_ $class, \PHPStan\Type\Type $type) : ?string
     {
+        foreach ($class->getProperties() as $property) {
+            $propertyType = $this->nodeTypeResolver->getType($property);
+            if (!$propertyType->equals($type)) {
+                continue;
+            }
+            return $this->nodeNameResolver->getName($property);
+        }
+        $promotedPropertyParams = $this->promotedPropertyResolver->resolveFromClass($class);
+        foreach ($promotedPropertyParams as $promotedPropertyParam) {
+            $paramType = $this->nodeTypeResolver->getType($promotedPropertyParam);
+            if (!$paramType->equals($type)) {
+                continue;
+            }
+            return $this->nodeNameResolver->getName($promotedPropertyParam);
+        }
+        return null;
+    }
+    public function isUsedByTrait(\PhpParser\Node\Stmt\Class_ $class, string $propertyName) : bool
+    {
+        foreach ($class->getTraitUses() as $traitUse) {
+            foreach ($traitUse->traits as $traitName) {
+                $trait = $this->astResolver->resolveClassFromName($traitName->toString());
+                if (!$trait instanceof \PhpParser\Node\Stmt\Trait_) {
+                    continue;
+                }
+                if ($this->propertyFetchAnalyzer->containsLocalPropertyFetchName($trait, $propertyName)) {
+                    return \true;
+                }
+            }
+        }
+        return \false;
+    }
+    private function isPropertyAssignedOnlyInConstructor(\PhpParser\Node\Stmt\ClassLike $classLike, string $propertyName, ?\PhpParser\Node\Stmt\ClassMethod $classMethod) : bool
+    {
+        if (!$classMethod instanceof \PhpParser\Node\Stmt\ClassMethod) {
+            return \false;
+        }
+        // there is property unset in Test class, so only check on __construct
         if (!$this->nodeNameResolver->isName($classMethod->name, \Rector\Core\ValueObject\MethodName::CONSTRUCT)) {
             return \false;
         }
-        $currentStmt = $propertyFetch->getAttribute(\Rector\NodeTypeResolver\Node\AttributeKey::CURRENT_STATEMENT);
-        if (!$currentStmt instanceof \PhpParser\Node\Stmt) {
-            return \false;
-        }
-        $parent = $currentStmt->getAttribute(\Rector\NodeTypeResolver\Node\AttributeKey::PARENT_NODE);
-        return $parent === $classMethod;
+        return $this->constructorAssignDetector->isPropertyAssigned($classLike, $propertyName);
     }
     /**
      * @param \PhpParser\Node\Expr\PropertyFetch|\PhpParser\Node\Expr\StaticPropertyFetch $propertyFetch

@@ -262,7 +262,9 @@ class FeedsUninstallTest extends FeedsBrowserTestBase {
     // APCu cache. Since there is very little time between creating the feed
     // type and uninstalling a module, make sure that the feed type does not
     // exist on the APCu cache.
-    apcu_clear_cache();
+    if (function_exists('apcu_clear_cache')) {
+      apcu_clear_cache();
+    }
 
     // Assert that the feed type no longer exist.
     $this->assertInstanceOf(FeedTypeInterface::class, $this->reloadEntity($feed_type));

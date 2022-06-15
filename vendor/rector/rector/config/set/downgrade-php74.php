@@ -1,9 +1,9 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix20220303;
+namespace RectorPrefix20220418;
 
-use Rector\Core\Configuration\Option;
+use Rector\Config\RectorConfig;
 use Rector\Core\ValueObject\PhpVersion;
 use Rector\DowngradePhp74\Rector\Array_\DowngradeArraySpreadRector;
 use Rector\DowngradePhp74\Rector\ArrowFunction\ArrowFunctionToAnonymousFunctionRector;
@@ -17,11 +17,9 @@ use Rector\DowngradePhp74\Rector\Interface_\DowngradePreviouslyImplementedInterf
 use Rector\DowngradePhp74\Rector\LNumber\DowngradeNumericLiteralSeparatorRector;
 use Rector\DowngradePhp74\Rector\MethodCall\DowngradeReflectionGetTypeRector;
 use Rector\DowngradePhp74\Rector\Property\DowngradeTypedPropertyRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-return static function (\Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator $containerConfigurator) : void {
-    $parameters = $containerConfigurator->parameters();
-    $parameters->set(\Rector\Core\Configuration\Option::PHP_VERSION_FEATURES, \Rector\Core\ValueObject\PhpVersion::PHP_73);
-    $services = $containerConfigurator->services();
+return static function (\Rector\Config\RectorConfig $rectorConfig) : void {
+    $rectorConfig->phpVersion(\Rector\Core\ValueObject\PhpVersion::PHP_73);
+    $services = $rectorConfig->services();
     $services->set(\Rector\DowngradePhp74\Rector\Property\DowngradeTypedPropertyRector::class);
     $services->set(\Rector\DowngradePhp74\Rector\ArrowFunction\ArrowFunctionToAnonymousFunctionRector::class);
     $services->set(\Rector\DowngradePhp74\Rector\ClassMethod\DowngradeCovariantReturnTypeRector::class);

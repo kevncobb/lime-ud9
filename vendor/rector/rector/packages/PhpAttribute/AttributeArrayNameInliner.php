@@ -8,7 +8,8 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Scalar\String_;
-use RectorPrefix20220303\Webmozart\Assert\Assert;
+use Rector\Core\Exception\NotImplementedYetException;
+use RectorPrefix20220418\Webmozart\Assert\Assert;
 final class AttributeArrayNameInliner
 {
     /**
@@ -47,7 +48,7 @@ final class AttributeArrayNameInliner
      */
     private function inlineArray(array $args) : array
     {
-        \RectorPrefix20220303\Webmozart\Assert\Assert::allIsAOf($args, \PhpParser\Node\Arg::class);
+        \RectorPrefix20220418\Webmozart\Assert\Assert::allIsAOf($args, \PhpParser\Node\Arg::class);
         $newArgs = [];
         foreach ($args as $arg) {
             // matching top root array key
@@ -56,6 +57,11 @@ final class AttributeArrayNameInliner
                 if ($arrayItem->key instanceof \PhpParser\Node\Scalar\String_) {
                     $arrayItemString = $arrayItem->key;
                     $newArgs[] = new \PhpParser\Node\Arg($arrayItem->value, \false, \false, [], new \PhpParser\Node\Identifier($arrayItemString->value));
+                } elseif ($arrayItem->key === null) {
+                    // silent key
+                    $newArgs[] = new \PhpParser\Node\Arg($arrayItem->value);
+                } else {
+                    throw new \Rector\Core\Exception\NotImplementedYetException(\get_debug_type($arrayItem->key));
                 }
             }
         }

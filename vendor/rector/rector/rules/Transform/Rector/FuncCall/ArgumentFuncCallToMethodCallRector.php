@@ -24,7 +24,7 @@ use Rector\Transform\ValueObject\ArgumentFuncCallToMethodCall;
 use Rector\Transform\ValueObject\ArrayFuncCallToMethodCall;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix20220303\Webmozart\Assert\Assert;
+use RectorPrefix20220418\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Transform\Rector\FuncCall\ArgumentFuncCallToMethodCallRector\ArgumentFuncCallToMethodCallRectorTest
  */
@@ -124,7 +124,7 @@ CODE_SAMPLE
      */
     public function configure(array $configuration) : void
     {
-        \RectorPrefix20220303\Webmozart\Assert\Assert::allIsAOf($configuration, \Rector\Transform\Contract\ValueObject\ArgumentFuncCallToMethodCallInterface::class);
+        \RectorPrefix20220418\Webmozart\Assert\Assert::allIsAOf($configuration, \Rector\Transform\Contract\ValueObject\ArgumentFuncCallToMethodCallInterface::class);
         $this->argumentFuncCallToMethodCalls = $configuration;
     }
     private function shouldSkipFuncCall(\PhpParser\Node\Expr\FuncCall $funcCall) : bool
@@ -138,7 +138,7 @@ CODE_SAMPLE
         return $classMethod->isStatic();
     }
     /**
-     * @return PropertyFetch|MethodCall
+     * @return MethodCall|PropertyFetch|null
      */
     private function refactorFuncCallToMethodCall(\Rector\Transform\ValueObject\ArgumentFuncCallToMethodCall $argumentFuncCallToMethodCall, \PhpParser\Node\Stmt\Class_ $class, \PhpParser\Node\Expr\FuncCall $funcCall) : ?\PhpParser\Node
     {

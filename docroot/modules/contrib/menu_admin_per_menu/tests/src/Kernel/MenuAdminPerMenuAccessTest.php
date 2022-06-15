@@ -22,7 +22,7 @@ class MenuAdminPerMenuAccessTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'menu_admin_per_menu',
     'menu_admin_per_menu_test',
     'link',
@@ -149,7 +149,7 @@ class MenuAdminPerMenuAccessTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installEntitySchema('menu');

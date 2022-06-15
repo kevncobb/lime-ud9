@@ -61,8 +61,8 @@ function symfony_mailer_help($route_name, RouteMatchInterface $route_match) {
 
     case 'symfony_mailer.import.status':
       $params = [':mailer_policy' => Url::fromRoute('entity.mailer_policy.collection')->toString()];
-      $output = '<p>' . t('You can import configuration from existing modules to create an equivalent <a href=":mailer_policy">Mailer Policy</a>. It is recommended to run the import at the beginning, before you start editing policy.') . '</p>';
-      $output .= '<p>' . t('<b>Warning</b> importing overwrites existing policy. If you have already created working policy then you should skip the import.', $params);
+      $output = '<p>' . t('You can import configuration from existing modules to create an equivalent <a href=":mailer_policy">Mailer Policy</a>. It is recommended to run the import at the beginning, before you start editing policy.', $params) . '</p>';
+      $output .= '<p>' . t('<b>Warning</b> importing overwrites existing policy. If you have already created working policy then you should skip the import.');
       return $output;
 
     case 'symfony_mailer.test':

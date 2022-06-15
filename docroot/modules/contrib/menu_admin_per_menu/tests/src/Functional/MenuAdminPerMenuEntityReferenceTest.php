@@ -18,7 +18,7 @@ class MenuAdminPerMenuEntityReferenceTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'field',
     'menu_admin_per_menu_test',
@@ -70,7 +70,7 @@ class MenuAdminPerMenuEntityReferenceTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->drupalCreateContentType(
@@ -95,26 +95,26 @@ class MenuAdminPerMenuEntityReferenceTest extends BrowserTestBase {
 
     $this->adminMenuUser = $this->createUser([
       'access content',
-      'administer content types',
+      'bypass node access',
       'edit any page content',
       'administer menu',
     ], 'Admin menu user');
     $this->menu1User = $this->createUser([
       'access content',
-      'administer content types',
+      'bypass node access',
       'edit any page content',
       'administer menu_1 menu items',
     ], 'Menu 1 user');
     $this->menu2User = $this->createUser([
       'access content',
-      'administer content types',
+      'bypass node access',
       'edit any page content',
       'administer menu_2 menu items',
     ], 'Menu 2 user');
     // Access to menu_3 is added in menu_admin_per_menu_hook_test.
     $this->menu3User = $this->createUser([
       'access content',
-      'administer content types',
+      'bypass node access',
       'edit any page content',
     ], 'Menu 3 user');
   }
@@ -169,7 +169,8 @@ class MenuAdminPerMenuEntityReferenceTest extends BrowserTestBase {
     $this->drupalLogin($this->menu1User);
 
     $title = $this->randomString();
-    $this->drupalPostForm('node/add/page', [
+    $this->drupalGet('node/add/page');
+    $this->submitForm([
       'title[0][value]' => $title,
       'field_menu' => 'menu_1',
     ], 'Save');

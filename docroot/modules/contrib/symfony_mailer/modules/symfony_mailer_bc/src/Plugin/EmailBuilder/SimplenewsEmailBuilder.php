@@ -46,7 +46,7 @@ class SimplenewsEmailBuilder extends SimplenewsEmailBuilderBase {
     }
 
     $key = ($message['key'] == 'subscribe_combined') ? 'subscribe' : 'validate';
-    return $factory->newModuleEmail('simplenews', $key, $params['context']['simplenews_subscriber']);
+    return $factory->newModuleEmail('simplenews', $key, $message['params']['context']['simplenews_subscriber']);
   }
 
   /**

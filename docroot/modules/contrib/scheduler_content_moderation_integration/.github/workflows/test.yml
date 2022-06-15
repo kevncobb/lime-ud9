@@ -1,15 +1,17 @@
 name: Run module tests
 
 on:
+  push:
+
   pull_request:
     paths-ignore:
       - '**.md'
 
   schedule:
-    - cron:  '0 4 * * *'
+    - cron:  '15 4 * * *'
 
 env:
-  DRUPAL_TESTING_TEST_CODING_STYLES: false
+  DRUPAL_TESTING_TEST_CODING_STYLES: true
   DRUPAL_TESTING_DATABASE_USER: root
   DRUPAL_TESTING_DATABASE_PASSWORD: root
   DRUPAL_TESTING_DATABASE_ENGINE: mysql
@@ -21,7 +23,8 @@ jobs:
 
     strategy:
       matrix:
-        DRUPAL_TESTING_DRUPAL_VERSION: ['~8.7.0', '~8.8.0', '~8.9.0', '~9.0.0']
+        DRUPAL_TESTING_DRUPAL_VERSION: ['~8.9.0', '~9.3.0', '~9.5.0']
+      fail-fast: false
 
     steps:
       - uses: actions/checkout@v1
@@ -29,7 +32,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           coverage: none
-          php-version: '7.3'
+          php-version: '8.0'
 
       - name: Start MySql service
         run: sudo /etc/init.d/mysql start

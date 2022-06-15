@@ -89,7 +89,7 @@ class Email implements InternalEmailInterface {
    *
    * @var bool
    */
-  protected $replaceSubject;
+  protected $subjectReplace;
 
   /**
    * @var array

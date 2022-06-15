@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\Core\PhpParser\Parser;
 
-use RectorPrefix20220303\Nette\Utils\Strings;
+use RectorPrefix20220418\Nette\Utils\Strings;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\Node\Expr\PropertyFetch;
@@ -13,11 +13,11 @@ use PhpParser\Node\Scalar\Encapsed;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt;
 use PhpParser\Parser;
+use Rector\Core\Contract\PhpParser\NodePrinterInterface;
 use Rector\Core\Exception\ShouldNotHappenException;
-use Rector\Core\PhpParser\Printer\BetterStandardPrinter;
 use Rector\Core\Util\StringUtils;
 use Rector\NodeTypeResolver\NodeScopeAndMetadataDecorator;
-use RectorPrefix20220303\Symplify\SmartFileSystem\SmartFileSystem;
+use RectorPrefix20220418\Symplify\SmartFileSystem\SmartFileSystem;
 final class InlineCodeParser
 {
     /**
@@ -42,9 +42,9 @@ final class InlineCodeParser
     private const ENDING_SEMI_COLON_REGEX = '#;(\\s+)?$#';
     /**
      * @readonly
-     * @var \Rector\Core\PhpParser\Printer\BetterStandardPrinter
+     * @var \Rector\Core\Contract\PhpParser\NodePrinterInterface
      */
-    private $betterStandardPrinter;
+    private $nodePrinter;
     /**
      * @readonly
      * @var \Rector\NodeTypeResolver\NodeScopeAndMetadataDecorator
@@ -60,9 +60,9 @@ final class InlineCodeParser
      * @var \Symplify\SmartFileSystem\SmartFileSystem
      */
     private $smartFileSystem;
-    public function __construct(\Rector\Core\PhpParser\Printer\BetterStandardPrinter $betterStandardPrinter, \Rector\NodeTypeResolver\NodeScopeAndMetadataDecorator $nodeScopeAndMetadataDecorator, \Rector\Core\PhpParser\Parser\SimplePhpParser $simplePhpParser, \RectorPrefix20220303\Symplify\SmartFileSystem\SmartFileSystem $smartFileSystem)
+    public function __construct(\Rector\Core\Contract\PhpParser\NodePrinterInterface $nodePrinter, \Rector\NodeTypeResolver\NodeScopeAndMetadataDecorator $nodeScopeAndMetadataDecorator, \Rector\Core\PhpParser\Parser\SimplePhpParser $simplePhpParser, \RectorPrefix20220418\Symplify\SmartFileSystem\SmartFileSystem $smartFileSystem)
     {
-        $this->betterStandardPrinter = $betterStandardPrinter;
+        $this->nodePrinter = $nodePrinter;
         $this->nodeScopeAndMetadataDecorator = $nodeScopeAndMetadataDecorator;
         $this->simplePhpParser = $simplePhpParser;
         $this->smartFileSystem = $smartFileSystem;
@@ -89,17 +89,17 @@ final class InlineCodeParser
         }
         if ($expr instanceof \PhpParser\Node\Scalar\Encapsed) {
             // remove "
-            $expr = \trim($this->betterStandardPrinter->print($expr), '""');
+            $expr = \trim($this->nodePrinter->print($expr), '""');
             // use \$ → $
-            $expr = \RectorPrefix20220303\Nette\Utils\Strings::replace($expr, self::PRESLASHED_DOLLAR_REGEX, '$');
+            $expr = \RectorPrefix20220418\Nette\Utils\Strings::replace($expr, self::PRESLASHED_DOLLAR_REGEX, '$');
             // use \'{$...}\' → $...
-            return \RectorPrefix20220303\Nette\Utils\Strings::replace($expr, self::CURLY_BRACKET_WRAPPER_REGEX, '$1');
+            return \RectorPrefix20220418\Nette\Utils\Strings::replace($expr, self::CURLY_BRACKET_WRAPPER_REGEX, '$1');
         }
         if ($expr instanceof \PhpParser\Node\Expr\BinaryOp\Concat) {
             return $this->stringify($expr->left) . $this->stringify($expr->right);
         }
         if ($expr instanceof \PhpParser\Node\Expr\Variable || $expr instanceof \PhpParser\Node\Expr\PropertyFetch || $expr instanceof \PhpParser\Node\Expr\StaticPropertyFetch) {
-            return $this->betterStandardPrinter->print($expr);
+            return $this->nodePrinter->print($expr);
         }
         throw new \Rector\Core\Exception\ShouldNotHappenException(\get_class($expr) . ' ' . __METHOD__);
     }

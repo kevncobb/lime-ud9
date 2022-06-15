@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix20220303\Psr\EventDispatcher;
+namespace RectorPrefix20220418\Psr\EventDispatcher;
 
 /**
  * Defines a dispatcher for events.
@@ -17,5 +17,5 @@ interface EventDispatcherInterface
      * @return object
      *   The Event that was passed, now modified by listeners.
      */
-    public function dispatch($event);
+    public function dispatch(object $event);
 }

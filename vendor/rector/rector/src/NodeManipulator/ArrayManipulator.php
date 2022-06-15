@@ -10,7 +10,7 @@ use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Scalar\String_;
 use Rector\ChangesReporting\Collector\RectorChangeCollector;
 use Rector\Core\NodeAnalyzer\ExprAnalyzer;
-use RectorPrefix20220303\Symfony\Contracts\Service\Attribute\Required;
+use RectorPrefix20220418\Symfony\Contracts\Service\Attribute\Required;
 final class ArrayManipulator
 {
     /**
@@ -105,6 +105,6 @@ final class ArrayManipulator
         if ($expr instanceof \PhpParser\Node\Expr\Array_) {
             return !$this->isDynamicArray($expr);
         }
-        return !$this->exprAnalyzer->isDynamicValue($expr);
+        return !$this->exprAnalyzer->isDynamicExpr($expr);
     }
 }

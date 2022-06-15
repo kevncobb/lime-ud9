@@ -86,16 +86,8 @@ function media_library_edit_field_widget_form_alter(&$element, FormStateInterfac
           if ($media->access('update') && $edit_template = $media->getEntityType()->getLinkTemplate('edit-form')) {
             $element['#attributes']['class'][] = 'js-media-library-edit-' . Html::cleanCssIdentifier($context['items']->getFieldDefinition()->getName()) . '-wrapper';
             foreach (Element::children($element['selection']) as $key) {
-              $entity = $context['items']->getEntity();
-              if (!$entity || !$entity->id()) {
-                // Bail out if parent entity is not yet saved.
-                return;
-              }
               $edit_url_query_params = [
                 'media_library_edit' => 'ajax',
-                'media_library_edit_field_name' => $context['items']->getFieldDefinition()->getName(),
-                'media_library_edit_entity_type' => $entity->getEntityTypeId(),
-                'media_library_edit_entity_id' => $entity->id(),
               ];
               $edit_url = Url::fromUserInput(str_replace('{media}', $element['selection'][$key]['target_id']['#value'], $edit_template) . '?' . UrlHelper::buildQuery($edit_url_query_params));
               $dialog_options = MediaLibraryUiBuilder::dialogOptions();

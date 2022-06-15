@@ -1,8 +1,9 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix20220303;
+namespace RectorPrefix20220418;
 
+use Rector\Config\RectorConfig;
 use Rector\Php74\Rector\ArrayDimFetch\CurlyToSquareBracketArrayStringRector;
 use Rector\Php74\Rector\Assign\NullCoalescingOperatorRector;
 use Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector;
@@ -10,7 +11,6 @@ use Rector\Php74\Rector\Double\RealToFloatTypeCastRector;
 use Rector\Php74\Rector\FuncCall\ArrayKeyExistsOnPropertyRector;
 use Rector\Php74\Rector\FuncCall\ArraySpreadInsteadOfArrayMergeRector;
 use Rector\Php74\Rector\FuncCall\FilterVarToAddSlashesRector;
-use Rector\Php74\Rector\FuncCall\GetCalledClassToStaticClassRector;
 use Rector\Php74\Rector\FuncCall\MbStrrposEncodingArgumentPositionRector;
 use Rector\Php74\Rector\Function_\ReservedFnFunctionRector;
 use Rector\Php74\Rector\LNumber\AddLiteralSeparatorToNumberRector;
@@ -19,9 +19,8 @@ use Rector\Php74\Rector\Property\RestoreDefaultNullToNullableTypePropertyRector;
 use Rector\Php74\Rector\Property\TypedPropertyRector;
 use Rector\Php74\Rector\StaticCall\ExportToReflectionFunctionRector;
 use Rector\Renaming\Rector\FuncCall\RenameFunctionRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-return static function (\Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator $containerConfigurator) : void {
-    $services = $containerConfigurator->services();
+return static function (\Rector\Config\RectorConfig $rectorConfig) : void {
+    $services = $rectorConfig->services();
     $services->set(\Rector\Php74\Rector\Property\TypedPropertyRector::class);
     $services->set(\Rector\Renaming\Rector\FuncCall\RenameFunctionRector::class)->configure([
         #the_real_type
@@ -34,7 +33,6 @@ return static function (\Symfony\Component\DependencyInjection\Loader\Configurat
     $services->set(\Rector\Php74\Rector\FuncCall\ArrayKeyExistsOnPropertyRector::class);
     $services->set(\Rector\Php74\Rector\FuncCall\FilterVarToAddSlashesRector::class);
     $services->set(\Rector\Php74\Rector\StaticCall\ExportToReflectionFunctionRector::class);
-    $services->set(\Rector\Php74\Rector\FuncCall\GetCalledClassToStaticClassRector::class);
     $services->set(\Rector\Php74\Rector\FuncCall\MbStrrposEncodingArgumentPositionRector::class);
     $services->set(\Rector\Php74\Rector\Double\RealToFloatTypeCastRector::class);
     $services->set(\Rector\Php74\Rector\Assign\NullCoalescingOperatorRector::class);

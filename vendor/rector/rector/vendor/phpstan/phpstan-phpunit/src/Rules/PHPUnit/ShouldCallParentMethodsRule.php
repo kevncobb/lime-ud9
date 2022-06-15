@@ -6,10 +6,14 @@ namespace PHPStan\Rules\PHPUnit;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\InClassMethodNode;
+use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
-use RectorPrefix20220303\PHPUnit\Framework\TestCase;
+use RectorPrefix20220418\PHPUnit\Framework\TestCase;
+use function in_array;
+use function sprintf;
+use function strtolower;
 /**
- * @implements \PHPStan\Rules\Rule<InClassMethodNode>
+ * @implements Rule<InClassMethodNode>
  */
 class ShouldCallParentMethodsRule implements \PHPStan\Rules\Rule
 {
@@ -26,7 +30,7 @@ class ShouldCallParentMethodsRule implements \PHPStan\Rules\Rule
         if ($scope->getClassReflection() === null) {
             return [];
         }
-        if (!$scope->getClassReflection()->isSubclassOf(\RectorPrefix20220303\PHPUnit\Framework\TestCase::class)) {
+        if (!$scope->getClassReflection()->isSubclassOf(\RectorPrefix20220418\PHPUnit\Framework\TestCase::class)) {
             return [];
         }
         $parentClass = $scope->getClassReflection()->getParentClass();
@@ -37,7 +41,7 @@ class ShouldCallParentMethodsRule implements \PHPStan\Rules\Rule
             return [];
         }
         $parentMethod = $parentClass->getNativeMethod($methodName);
-        if ($parentMethod->getDeclaringClass()->getName() === \RectorPrefix20220303\PHPUnit\Framework\TestCase::class) {
+        if ($parentMethod->getDeclaringClass()->getName() === \RectorPrefix20220418\PHPUnit\Framework\TestCase::class) {
             return [];
         }
         $hasParentCall = $this->hasParentClassCall($node->getOriginalNode()->getStmts(), \strtolower($methodName));
@@ -48,9 +52,7 @@ class ShouldCallParentMethodsRule implements \PHPStan\Rules\Rule
     }
     /**
      * @param Node\Stmt[]|null $stmts
-     * @param string           $methodName
      *
-     * @return bool
      */
     private function hasParentClassCall(?array $stmts, string $methodName) : bool
     {

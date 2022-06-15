@@ -1,12 +1,12 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix20220303\Symplify\PackageBuilder\DependencyInjection\FileLoader;
+namespace RectorPrefix20220418\Symplify\PackageBuilder\DependencyInjection\FileLoader;
 
-use RectorPrefix20220303\Symfony\Component\Config\FileLocatorInterface;
-use RectorPrefix20220303\Symfony\Component\DependencyInjection\ContainerBuilder;
-use RectorPrefix20220303\Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
-use RectorPrefix20220303\Symplify\PackageBuilder\Yaml\ParametersMerger;
+use RectorPrefix20220418\Symfony\Component\Config\FileLocatorInterface;
+use RectorPrefix20220418\Symfony\Component\DependencyInjection\ContainerBuilder;
+use RectorPrefix20220418\Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use RectorPrefix20220418\Symplify\PackageBuilder\Yaml\ParametersMerger;
 /**
  * @api
  *
@@ -16,15 +16,15 @@ use RectorPrefix20220303\Symplify\PackageBuilder\Yaml\ParametersMerger;
  *
  * @property ContainerBuilder $container
  */
-final class ParameterMergingPhpFileLoader extends \RectorPrefix20220303\Symfony\Component\DependencyInjection\Loader\PhpFileLoader
+final class ParameterMergingPhpFileLoader extends \RectorPrefix20220418\Symfony\Component\DependencyInjection\Loader\PhpFileLoader
 {
     /**
      * @var \Symplify\PackageBuilder\Yaml\ParametersMerger
      */
     private $parametersMerger;
-    public function __construct(\RectorPrefix20220303\Symfony\Component\DependencyInjection\ContainerBuilder $containerBuilder, \RectorPrefix20220303\Symfony\Component\Config\FileLocatorInterface $fileLocator)
+    public function __construct(\RectorPrefix20220418\Symfony\Component\DependencyInjection\ContainerBuilder $containerBuilder, \RectorPrefix20220418\Symfony\Component\Config\FileLocatorInterface $fileLocator)
     {
-        $this->parametersMerger = new \RectorPrefix20220303\Symplify\PackageBuilder\Yaml\ParametersMerger();
+        $this->parametersMerger = new \RectorPrefix20220418\Symplify\PackageBuilder\Yaml\ParametersMerger();
         parent::__construct($containerBuilder, $fileLocator);
     }
     /**
@@ -33,9 +33,8 @@ final class ParameterMergingPhpFileLoader extends \RectorPrefix20220303\Symfony\
      * @see https://github.com/symplify/symplify/pull/697
      * @param mixed $resource
      * @return mixed
-     * @param string|null $type
      */
-    public function load($resource, $type = null)
+    public function load($resource, string $type = null)
     {
         // get old parameters
         $parameterBag = $this->container->getParameterBag();

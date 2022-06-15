@@ -1,12 +1,12 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix20220303\Symplify\SmartFileSystem\Finder;
+namespace RectorPrefix20220418\Symplify\SmartFileSystem\Finder;
 
-use RectorPrefix20220303\Nette\Utils\Finder as NetteFinder;
+use RectorPrefix20220418\Nette\Utils\Finder as NetteFinder;
 use SplFileInfo;
-use RectorPrefix20220303\Symfony\Component\Finder\Finder as SymfonyFinder;
-use RectorPrefix20220303\Symfony\Component\Finder\SplFileInfo as SymfonySplFileInfo;
+use RectorPrefix20220418\Symfony\Component\Finder\Finder as SymfonyFinder;
+use RectorPrefix20220418\Symfony\Component\Finder\SplFileInfo as SymfonySplFileInfo;
 use Symplify\SmartFileSystem\SmartFileInfo;
 /**
  * @see \Symplify\SmartFileSystem\Tests\Finder\FinderSanitizer\FinderSanitizerTest
@@ -14,7 +14,7 @@ use Symplify\SmartFileSystem\SmartFileInfo;
 final class FinderSanitizer
 {
     /**
-     * @param NetteFinder|SymfonyFinder|SplFileInfo[]|SymfonySplFileInfo[]|string[] $files
+     * @param mixed[]|NetteFinder|SymfonyFinder $files
      * @return SmartFileInfo[]
      */
     public function sanitize($files) : array

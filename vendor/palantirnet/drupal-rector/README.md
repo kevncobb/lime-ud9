@@ -8,9 +8,13 @@ Automate fixing deprecated Drupal code.
 
 ## Latest release
 
-[Version 0.12.2 for Drupal 8.x and 9.x deprecations](https://github.com/palantirnet/drupal-rector/tree/0.12.2). Note that Drupal 9 deprecation testing recommends PHP 8.
+[Version 0.12.4 for Drupal 8.x and 9.x deprecations](https://github.com/palantirnet/drupal-rector/tree/0.12.4). Note that Drupal 9 deprecation testing recommends PHP 8.
 
-The 0.12.2 release bypasses a known conflict with Rector >0.12.17.
+### Release notes
+
+* The 0.12.4 is a stable release pinned to Rector 0.12.21. Developers should be aware that Rector 0.12.22 introduces breaking changes to how we handle Drupal configuration.
+
+* The 0.12.5 release of drupal-rector will include Rector 0.12.22. The upgrade path should be as simple as re-copying the configuration file. `cp vendor/palantirnet/drupal-rector/rector.php`
 
 *Note that GitHub does not let us have different default homepage and merge branches. If you checked out the project using packagist/composer, read the docs for your version.*
 
@@ -219,6 +223,19 @@ The key is the fully qualified class name of the Rector rule. The key is the yam
 ##### Update the index file
 
 The index file is used in part to provide automated updates to https://dev.acquia.com/drupal9/deprecation_status/errors which is a helpful way to track coverage. The `PHPStan` messages are listed there as well as in the change record comments throughout the Drupal codebase.
+
+## Pinning dev dependencies
+
+If there are conflicts with Rector, the package version can be conflicted with `conflict` on `rector/rector`.
+
+For development, the `require-dev` is on `rector/rector-src` which is `dev-main` and that includes the `dev-main` of all
+its packages.
+
+To properly pin a development release of `rector-src`:
+
+* Set `rector/rector-src` to `dev-main#COMMIT` where `COMMIT` is the tag commit in `rector-src`
+* View the tree for the commit on GitHub and it's `composer/installed.json` file (example https://github.com/rectorphp/rector/blob/0.12.18/vendor/composer/installed.json)
+* Use the references to pin `require-dev` dependencies.
 
 ## Credits
 

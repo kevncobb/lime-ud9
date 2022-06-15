@@ -6,11 +6,13 @@ namespace PHPStan\Rules\PHPUnit;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\ObjectType;
+use function in_array;
+use function strtolower;
 class AssertRuleHelper
 {
     public static function isMethodOrStaticCallOnAssert(\PhpParser\Node $node, \PHPStan\Analyser\Scope $scope) : bool
     {
-        $testCaseType = new \PHPStan\Type\ObjectType('RectorPrefix20220303\\PHPUnit\\Framework\\Assert');
+        $testCaseType = new \PHPStan\Type\ObjectType('RectorPrefix20220418\\PHPUnit\\Framework\\Assert');
         if ($node instanceof \PhpParser\Node\Expr\MethodCall) {
             $calledOnType = $scope->getType($node->var);
         } elseif ($node instanceof \PhpParser\Node\Expr\StaticCall) {

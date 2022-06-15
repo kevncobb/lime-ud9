@@ -56,6 +56,9 @@ trait BaseEmailTrait {
    */
   public function setAddress(string $name, $addresses) {
     assert(isset($this->addresses[$name]));
+    if ($name == 'To') {
+      $this->valid(self::PHASE_BUILD);
+    }
     $this->addresses[$name] = Address::convert($addresses);
     return $this;
   }
@@ -92,7 +95,6 @@ trait BaseEmailTrait {
    * {@inheritdoc}
    */
   public function setTo($addresses) {
-    $this->valid(self::PHASE_BUILD);
     return $this->setAddress('To', $addresses);
   }
 

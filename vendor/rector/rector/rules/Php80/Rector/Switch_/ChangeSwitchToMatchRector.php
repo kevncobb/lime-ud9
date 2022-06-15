@@ -113,7 +113,7 @@ CODE_SAMPLE
         $match = $this->processImplicitReturnAfterSwitch($node, $match, $condAndExprs);
         $match = $this->processImplicitThrowsAfterSwitch($node, $match, $condAndExprs);
         if ($isReturn) {
-            return new \PhpParser\Node\Stmt\Return_($match);
+            return $this->processReturn($match);
         }
         $assignExpr = $this->resolveAssignExpr($condAndExprs);
         if ($assignExpr instanceof \PhpParser\Node\Expr) {
@@ -125,11 +125,18 @@ CODE_SAMPLE
     {
         return \Rector\Core\ValueObject\PhpVersionFeature::MATCH_EXPRESSION;
     }
+    private function processReturn(\PhpParser\Node\Expr\Match_ $match) : ?\PhpParser\Node\Stmt\Return_
+    {
+        if (!$this->matchSwitchAnalyzer->hasDefaultValue($match)) {
+            return null;
+        }
+        return new \PhpParser\Node\Stmt\Return_($match);
+    }
     private function changeToAssign(\PhpParser\Node\Stmt\Switch_ $switch, \PhpParser\Node\Expr\Match_ $match, \PhpParser\Node\Expr $assignExpr) : \PhpParser\Node\Expr\Assign
     {
         $prevInitializedAssign = $this->betterNodeFinder->findFirstPreviousOfNode($switch, function (\PhpParser\Node $node) use($assignExpr) : bool {
             return $node instanceof \PhpParser\Node\Expr\Assign && $this->nodeComparator->areNodesEqual($node->var, $assignExpr);
-        });
+        }, \false);
         $assign = new \PhpParser\Node\Expr\Assign($assignExpr, $match);
         if (!$prevInitializedAssign instanceof \PhpParser\Node\Expr\Assign) {
             return $assign;

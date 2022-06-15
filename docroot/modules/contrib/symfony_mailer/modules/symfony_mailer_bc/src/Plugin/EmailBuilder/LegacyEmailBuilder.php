@@ -5,6 +5,7 @@ namespace Drupal\symfony_mailer_bc\Plugin\EmailBuilder;
 use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\symfony_mailer\EmailFactoryInterface;
+use Drupal\symfony_mailer\EmailInterface;
 use Drupal\symfony_mailer\Exception\SkipMailException;
 use Drupal\symfony_mailer\Processor\EmailBuilderBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -52,6 +53,25 @@ class LegacyEmailBuilder extends EmailBuilderBase implements ContainerFactoryPlu
    * {@inheritdoc}
    */
   public function fromArray(EmailFactoryInterface $factory, array $message) {
+    return $factory->newModuleEmail($message['module'], $message['key'], $message);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createParams(EmailInterface $email, array $legacy_message = NULL) {
+    assert($legacy_message != NULL);
+    $email->setParam('legacy_message', $legacy_message);
+  }
+
+  /**
+   * Reacts to preRender phase.
+   *
+   * @param \Drupal\symfony_mailer\EmailInterface $email
+   *   The email to process.
+   */
+  public function preRender(EmailInterface $email) {
+    $message = $email->getParam('legacy_message');
     $message += [
       'subject' => '',
       'body' => [],
@@ -67,9 +87,7 @@ class LegacyEmailBuilder extends EmailBuilderBase implements ContainerFactoryPlu
       throw new SkipMailException('Send aborted by hook_mail().');
     }
 
-    $email = $factory->newModuleEmail($message['module'], $message['key']);
     $this->mailManager->emailFromArray($email, $message);
-    return $email;
   }
 
 }

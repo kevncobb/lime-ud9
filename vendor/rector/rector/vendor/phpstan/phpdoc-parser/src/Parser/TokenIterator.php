@@ -4,6 +4,11 @@ declare (strict_types=1);
 namespace PHPStan\PhpDocParser\Parser;
 
 use PHPStan\PhpDocParser\Lexer\Lexer;
+use function array_pop;
+use function assert;
+use function count;
+use function in_array;
+use function strlen;
 class TokenIterator
 {
     /** @var mixed[][] */
@@ -50,13 +55,26 @@ class TokenIterator
         return ($this->tokens[$this->index - 1][\PHPStan\PhpDocParser\Lexer\Lexer::TYPE_OFFSET] ?? -1) === \PHPStan\PhpDocParser\Lexer\Lexer::TOKEN_HORIZONTAL_WS;
     }
     /**
-     * @param  int $tokenType
-     * @throws \PHPStan\PhpDocParser\Parser\ParserException
+     * @throws ParserException
      */
     public function consumeTokenType(int $tokenType) : void
     {
         if ($this->tokens[$this->index][\PHPStan\PhpDocParser\Lexer\Lexer::TYPE_OFFSET] !== $tokenType) {
             $this->throwError($tokenType);
+        }
+        $this->index++;
+        if (($this->tokens[$this->index][\PHPStan\PhpDocParser\Lexer\Lexer::TYPE_OFFSET] ?? -1) !== \PHPStan\PhpDocParser\Lexer\Lexer::TOKEN_HORIZONTAL_WS) {
+            return;
+        }
+        $this->index++;
+    }
+    /**
+     * @throws ParserException
+     */
+    public function consumeTokenValue(int $tokenType, string $tokenValue) : void
+    {
+        if ($this->tokens[$this->index][\PHPStan\PhpDocParser\Lexer\Lexer::TYPE_OFFSET] !== $tokenType || $this->tokens[$this->index][\PHPStan\PhpDocParser\Lexer\Lexer::VALUE_OFFSET] !== $tokenValue) {
+            $this->throwError($tokenType, $tokenValue);
         }
         $this->index++;
         if (($this->tokens[$this->index][\PHPStan\PhpDocParser\Lexer\Lexer::TYPE_OFFSET] ?? -1) !== \PHPStan\PhpDocParser\Lexer\Lexer::TOKEN_HORIZONTAL_WS) {
@@ -133,11 +151,10 @@ class TokenIterator
         $this->index = $index;
     }
     /**
-     * @param  int $expectedTokenType
-     * @throws \PHPStan\PhpDocParser\Parser\ParserException
+     * @throws ParserException
      */
-    private function throwError(int $expectedTokenType) : void
+    private function throwError(int $expectedTokenType, ?string $expectedTokenValue = null) : void
     {
-        throw new \PHPStan\PhpDocParser\Parser\ParserException($this->currentTokenValue(), $this->currentTokenType(), $this->currentTokenOffset(), $expectedTokenType);
+        throw new \PHPStan\PhpDocParser\Parser\ParserException($this->currentTokenValue(), $this->currentTokenType(), $this->currentTokenOffset(), $expectedTokenType, $expectedTokenValue);
     }
 }

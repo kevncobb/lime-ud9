@@ -1,21 +1,21 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix20220303\Symplify\Astral\NodeValue\NodeValueResolver;
+namespace RectorPrefix20220418\Symplify\Astral\NodeValue\NodeValueResolver;
 
 use PhpParser\ConstExprEvaluator;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
-use RectorPrefix20220303\Symplify\Astral\Contract\NodeValueResolver\NodeValueResolverInterface;
-use RectorPrefix20220303\Symplify\Astral\Exception\ShouldNotHappenException;
-use RectorPrefix20220303\Symplify\Astral\Naming\SimpleNameResolver;
+use RectorPrefix20220418\Symplify\Astral\Contract\NodeValueResolver\NodeValueResolverInterface;
+use RectorPrefix20220418\Symplify\Astral\Exception\ShouldNotHappenException;
+use RectorPrefix20220418\Symplify\Astral\Naming\SimpleNameResolver;
 /**
  * @see \Symplify\Astral\Tests\NodeValue\NodeValueResolverTest
  *
  * @implements NodeValueResolverInterface<FuncCall>
  */
-final class FuncCallValueResolver implements \RectorPrefix20220303\Symplify\Astral\Contract\NodeValueResolver\NodeValueResolverInterface
+final class FuncCallValueResolver implements \RectorPrefix20220418\Symplify\Astral\Contract\NodeValueResolver\NodeValueResolverInterface
 {
     /**
      * @var string[]
@@ -29,7 +29,7 @@ final class FuncCallValueResolver implements \RectorPrefix20220303\Symplify\Astr
      * @var \PhpParser\ConstExprEvaluator
      */
     private $constExprEvaluator;
-    public function __construct(\RectorPrefix20220303\Symplify\Astral\Naming\SimpleNameResolver $simpleNameResolver, \PhpParser\ConstExprEvaluator $constExprEvaluator)
+    public function __construct(\RectorPrefix20220418\Symplify\Astral\Naming\SimpleNameResolver $simpleNameResolver, \PhpParser\ConstExprEvaluator $constExprEvaluator)
     {
         $this->simpleNameResolver = $simpleNameResolver;
         $this->constExprEvaluator = $constExprEvaluator;
@@ -57,10 +57,10 @@ final class FuncCallValueResolver implements \RectorPrefix20220303\Symplify\Astr
             if (!$this->isAllowedFunctionName($functionName)) {
                 return null;
             }
-            if (\function_exists($functionName) && \is_callable($functionName)) {
-                return \call_user_func_array($functionName, $arguments);
+            if (\function_exists($functionName)) {
+                return $functionName(...$arguments);
             }
-            throw new \RectorPrefix20220303\Symplify\Astral\Exception\ShouldNotHappenException();
+            throw new \RectorPrefix20220418\Symplify\Astral\Exception\ShouldNotHappenException();
         }
         return null;
     }

@@ -3,6 +3,7 @@
 namespace Drupal\Tests\menu_admin_per_menu\Traits;
 
 use Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\Tests\RandomGeneratorTrait;
 
 /**
@@ -21,12 +22,12 @@ trait MenuLinkContentTrait {
    *   An array of settings to change from the defaults.
    *   Example: 'menu_name' => 'foo'.
    *
-   * @return \Drupal\menu_link_content\Entity\MenuLinkContent
+   * @return \Drupal\menu_link_content\MenuLinkContentInterface
    *   The created menu link.
    */
-  protected function createMenuContentLink(array $values = []): MenuLinkContent {
+  protected function createMenuContentLink(array $values = []): MenuLinkContentInterface {
     $menu_link = MenuLinkContent::create($values + [
-      'title' => $this->randomMachineName(8),
+      'title' => $this->randomMachineName(),
       'menu_name' => 'main',
       'link' => ['uri' => 'route:<front>'],
       'provider' => 'menu_link_content',

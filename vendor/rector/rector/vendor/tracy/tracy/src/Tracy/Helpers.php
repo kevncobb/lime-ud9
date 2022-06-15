@@ -5,9 +5,9 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 declare (strict_types=1);
-namespace RectorPrefix20220303\Tracy;
+namespace RectorPrefix20220418\Tracy;
 
-use RectorPrefix20220303\Nette;
+use RectorPrefix20220418\Nette;
 /**
  * Rendering helpers for Debugger.
  */
@@ -18,7 +18,7 @@ class Helpers
      */
     public static function editorLink(string $file, ?int $line = null) : string
     {
-        $file = \strtr($origFile = $file, \RectorPrefix20220303\Tracy\Debugger::$editorMapping);
+        $file = \strtr($origFile = $file, \RectorPrefix20220418\Tracy\Debugger::$editorMapping);
         if ($editor = self::editorUri($origFile, $line)) {
             $parts = \explode('/', \strtr($file, '\\', '/'));
             $file = \array_pop($parts);
@@ -37,12 +37,12 @@ class Helpers
      */
     public static function editorUri(string $file, ?int $line = null, string $action = 'open', string $search = '', string $replace = '') : ?string
     {
-        if (\RectorPrefix20220303\Tracy\Debugger::$editor && $file && ($action === 'create' || \is_file($file))) {
+        if (\RectorPrefix20220418\Tracy\Debugger::$editor && $file && ($action === 'create' || \is_file($file))) {
             $file = \strtr($file, '/', \DIRECTORY_SEPARATOR);
-            $file = \strtr($file, \RectorPrefix20220303\Tracy\Debugger::$editorMapping);
+            $file = \strtr($file, \RectorPrefix20220418\Tracy\Debugger::$editorMapping);
             $search = \str_replace("\n", \PHP_EOL, $search);
             $replace = \str_replace("\n", \PHP_EOL, $replace);
-            return \strtr(\RectorPrefix20220303\Tracy\Debugger::$editor, ['%action' => $action, '%file' => \rawurlencode($file), '%line' => $line ?: 1, '%search' => \rawurlencode($search), '%replace' => \rawurlencode($replace)]);
+            return \strtr(\RectorPrefix20220418\Tracy\Debugger::$editor, ['%action' => $action, '%file' => \rawurlencode($file), '%line' => $line ?: 1, '%search' => \rawurlencode($search), '%replace' => \rawurlencode($replace)]);
         }
         return null;
     }
@@ -115,7 +115,7 @@ class Helpers
     public static function improveException(\Throwable $e) : void
     {
         $message = $e->getMessage();
-        if (!$e instanceof \Error && !$e instanceof \ErrorException || $e instanceof \RectorPrefix20220303\Nette\MemberAccessException || \strpos($e->getMessage(), 'did you mean')) {
+        if (!$e instanceof \Error && !$e instanceof \ErrorException || $e instanceof \RectorPrefix20220418\Nette\MemberAccessException || \strpos($e->getMessage(), 'did you mean')) {
             // do nothing
         } elseif (\preg_match('#^Call to undefined function (\\S+\\\\)?(\\w+)\\(#', $message, $m)) {
             $funcs = \array_merge(\get_defined_functions()['internal'], \get_defined_functions()['user']);
@@ -148,7 +148,7 @@ class Helpers
             $replace = ["::\${$m[2]}", "::\${$hint}"];
         }
         if (isset($hint)) {
-            $loc = \RectorPrefix20220303\Tracy\Debugger::mapSource($e->getFile(), $e->getLine()) ?? ['file' => $e->getFile(), 'line' => $e->getLine()];
+            $loc = \RectorPrefix20220418\Tracy\Debugger::mapSource($e->getFile(), $e->getLine()) ?? ['file' => $e->getFile(), 'line' => $e->getLine()];
             $ref = new \ReflectionProperty($e, 'message');
             $ref->setAccessible(\true);
             $ref->setValue($e, $message);
@@ -391,22 +391,7 @@ XX
     }
     public static function detectColors() : bool
     {
-        $streamIsatty = function ($stream) {
-            if (\function_exists('stream_isatty')) {
-                return \stream_isatty($stream);
-            }
-            if (!\is_resource($stream)) {
-                \trigger_error('stream_isatty() expects parameter 1 to be resource, ' . \gettype($stream) . ' given', \E_USER_WARNING);
-                return \false;
-            }
-            if ('\\' === \DIRECTORY_SEPARATOR) {
-                $stat = @\fstat($stream);
-                // Check if formatted mode is S_IFCHR
-                return $stat ? 020000 === ($stat['mode'] & 0170000) : \false;
-            }
-            return \function_exists('posix_isatty') && @\posix_isatty($stream);
-        };
-        return self::isCli() && \getenv('NO_COLOR') === \false && (\getenv('FORCE_COLOR') || @$streamIsatty(\STDOUT) || (\defined('PHP_WINDOWS_VERSION_BUILD') && (\function_exists('sapi_windows_vt100_support') && \sapi_windows_vt100_support(\STDOUT)) || \getenv('ConEmuANSI') === 'ON' || \getenv('ANSICON') !== \false || \getenv('term') === 'xterm' || \getenv('term') === 'xterm-256color'));
+        return self::isCli() && \getenv('NO_COLOR') === \false && (\getenv('FORCE_COLOR') || @\stream_isatty(\STDOUT) || (\defined('PHP_WINDOWS_VERSION_BUILD') && (\function_exists('sapi_windows_vt100_support') && \sapi_windows_vt100_support(\STDOUT)) || \getenv('ConEmuANSI') === 'ON' || \getenv('ANSICON') !== \false || \getenv('term') === 'xterm' || \getenv('term') === 'xterm-256color'));
     }
     public static function getExceptionChain(\Throwable $ex) : array
     {

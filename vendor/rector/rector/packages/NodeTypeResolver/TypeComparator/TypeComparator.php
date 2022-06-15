@@ -8,6 +8,7 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\ParamTagValueNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BooleanType;
+use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\ConstantScalarType;
 use PHPStan\Type\Generic\GenericClassStringType;
@@ -124,6 +125,27 @@ final class TypeComparator
         }
         return $this->arrayTypeComparator->isSubtype($checkedType, $mainType);
     }
+    public function areTypesPossiblyIncluded(?\PHPStan\Type\Type $assumptionType, ?\PHPStan\Type\Type $exactType) : bool
+    {
+        if (!$assumptionType instanceof \PHPStan\Type\Type) {
+            return \true;
+        }
+        if (!$exactType instanceof \PHPStan\Type\Type) {
+            return \true;
+        }
+        if ($this->areTypesEqual($assumptionType, $exactType)) {
+            return \true;
+        }
+        if (!$assumptionType instanceof \PHPStan\Type\UnionType) {
+            return \true;
+        }
+        if (!$exactType instanceof \PHPStan\Type\UnionType) {
+            return \true;
+        }
+        $assumpionTypeTypes = $assumptionType->getTypes();
+        $exactTypeTypes = $exactType->getTypes();
+        return \count($assumpionTypeTypes) > \count($exactTypeTypes);
+    }
     private function areAliasedObjectMatchingFqnObject(\PHPStan\Type\Type $firstType, \PHPStan\Type\Type $secondType) : bool
     {
         if ($firstType instanceof \Rector\StaticTypeMapper\ValueObject\Type\AliasedObjectType && $secondType instanceof \PHPStan\Type\ObjectType && $firstType->getFullyQualifiedName() === $secondType->getClassName()) {
@@ -190,6 +212,12 @@ final class TypeComparator
             return \false;
         }
         if (!$secondType instanceof \PHPStan\Type\ArrayType) {
+            return \false;
+        }
+        if ($firstType instanceof \PHPStan\Type\Constant\ConstantArrayType) {
+            return \false;
+        }
+        if ($secondType instanceof \PHPStan\Type\Constant\ConstantArrayType) {
             return \false;
         }
         $firstKeyType = $this->normalizeSingleUnionType($firstType->getKeyType());

@@ -86,7 +86,7 @@ class Address implements AddressInterface {
       return new static($address->getAddress(), $address->getName());
     }
     else {
-      throw new LogicException('Cannot convert to address.');
+      throw new \LogicException('Cannot convert to address.');
     }
   }
 
@@ -129,6 +129,8 @@ class Address implements AddressInterface {
    * {@inheritdoc}
    */
   public static function convert($addresses) {
+    $result = [];
+
     if (!is_array($addresses)) {
       $addresses = [$addresses];
     }

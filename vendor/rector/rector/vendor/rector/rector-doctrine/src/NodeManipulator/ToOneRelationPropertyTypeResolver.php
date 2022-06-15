@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\Doctrine\NodeManipulator;
 
-use RectorPrefix20220303\Nette\Utils\Strings;
+use RectorPrefix20220418\Nette\Utils\Strings;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprTrueNode;
@@ -61,9 +61,9 @@ final class ToOneRelationPropertyTypeResolver
     public function resolve(\PhpParser\Node\Stmt\Property $property) : ?\PHPStan\Type\Type
     {
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($property);
-        $toOneRelationTagValueNode = $phpDocInfo->getByAnnotationClasses(self::TO_ONE_ANNOTATION_CLASSES);
-        if ($toOneRelationTagValueNode instanceof \Rector\BetterPhpDocParser\PhpDoc\DoctrineAnnotationTagValueNode) {
-            return $this->resolveFromDocBlock($phpDocInfo, $property, $toOneRelationTagValueNode);
+        $doctrineAnnotationTagValueNode = $phpDocInfo->getByAnnotationClasses(self::TO_ONE_ANNOTATION_CLASSES);
+        if ($doctrineAnnotationTagValueNode instanceof \Rector\BetterPhpDocParser\PhpDoc\DoctrineAnnotationTagValueNode) {
+            return $this->resolveFromDocBlock($phpDocInfo, $property, $doctrineAnnotationTagValueNode);
         }
         $targetEntity = $this->attributeFinder->findAttributeByClassesArgByName($property, self::TO_ONE_ANNOTATION_CLASSES, 'targetEntity');
         if (!$targetEntity instanceof \PhpParser\Node\Expr) {
@@ -84,7 +84,7 @@ final class ToOneRelationPropertyTypeResolver
             return new \PHPStan\Type\MixedType();
         }
         if (\substr_compare($targetEntity, '::class', -\strlen('::class')) === 0) {
-            $targetEntity = \RectorPrefix20220303\Nette\Utils\Strings::before($targetEntity, '::class');
+            $targetEntity = \RectorPrefix20220418\Nette\Utils\Strings::before($targetEntity, '::class');
         }
         // resolve to FQN
         $tagFullyQualifiedName = $this->classAnnotationMatcher->resolveTagFullyQualifiedName($targetEntity, $property);
@@ -97,10 +97,10 @@ final class ToOneRelationPropertyTypeResolver
         $isNullableValue = $doctrineAnnotationTagValueNode->getValue('nullable');
         return $isNullableValue instanceof \PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprTrueNode;
     }
-    private function resolveFromDocBlock(\Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo $phpDocInfo, \PhpParser\Node\Stmt\Property $property, \Rector\BetterPhpDocParser\PhpDoc\DoctrineAnnotationTagValueNode $toOneRelationTagValueNode) : \PHPStan\Type\Type
+    private function resolveFromDocBlock(\Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo $phpDocInfo, \PhpParser\Node\Stmt\Property $property, \Rector\BetterPhpDocParser\PhpDoc\DoctrineAnnotationTagValueNode $doctrineAnnotationTagValueNode) : \PHPStan\Type\Type
     {
         $joinDoctrineAnnotationTagValueNode = $phpDocInfo->findOneByAnnotationClass('Doctrine\\ORM\\Mapping\\JoinColumn');
-        return $this->processToOneRelation($property, $toOneRelationTagValueNode, $joinDoctrineAnnotationTagValueNode);
+        return $this->processToOneRelation($property, $doctrineAnnotationTagValueNode, $joinDoctrineAnnotationTagValueNode);
     }
     private function resolveFromObjectType(\Rector\StaticTypeMapper\ValueObject\Type\FullyQualifiedObjectType $fullyQualifiedObjectType, bool $isNullable) : \PHPStan\Type\Type
     {

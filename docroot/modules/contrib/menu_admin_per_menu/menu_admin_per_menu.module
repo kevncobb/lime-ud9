@@ -8,6 +8,8 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
+use Drupal\system\Entity\Menu;
 
 /**
  * Implements hook_form_ID_alter() for 'menu_link_content_form'.
@@ -58,13 +60,13 @@ function menu_admin_per_menu_form_menu_edit_form_alter(&$form, FormStateInterfac
  */
 function menu_admin_per_menu_form_node_form_alter(&$form, FormStateInterface $form_state) {
   $account = \Drupal::currentUser();
-  if (!$account->hasPermission('administer menu')) {
+  if (isset($form['menu']['link']['menu_parent']) && !$account->hasPermission('administer menu')) {
     /** @var \Drupal\menu_admin_per_menu\MenuAdminPerMenuAccessInterface $allowedMenusService */
     $allowedMenusService = \Drupal::service('menu_admin_per_menu.allowed_menus');
     $allowed_menus = $allowedMenusService->getPerMenuPermissions($account);
 
     $default_value = &$form['menu']['link']['menu_parent']['#default_value'];
-    [$current_menu,] = explode(':', $default_value, 2);
+    list($current_menu) = explode(':', $default_value ?? '', 2);
     // Disallow editing the menu item if there is a pre-existing menu item
     // belonging to a menu the user does not have permission to access.
     if (!empty($current_menu) && !in_array($current_menu, $allowed_menus)) {
@@ -95,7 +97,7 @@ function menu_admin_per_menu_filter_parent_options(AccountInterface $account, ar
   $allowed_menus = $allowedMenusService->getPerMenuPermissions($account);
 
   foreach ($options as $key => $option) {
-    [$menu,] = explode(':', $key, 2);
+    list($menu) = explode(':', $key, 2);
     if (!in_array($menu, $allowed_menus)) {
       unset($options[$key]);
     }
@@ -149,7 +151,45 @@ function menu_admin_per_menu_field_widget_multivalue_form_alter(&$elements, Form
 
   // Hide the entity reference field from the frontend. When #access was used,
   // This also resetted the entity reference field value.
-  if($access === FALSE) {
+  if ($access === FALSE) {
     $elements = [];
+  }
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ *
+ * Re-add the menu entity operations for users that have access to administer
+ * the given menu.
+ */
+function menu_admin_per_menu_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  /** @var \Drupal\menu_admin_per_menu\MenuAdminPerMenuAccessInterface $allowedMenusService */
+  $allowedMenusService = \Drupal::service('menu_admin_per_menu.allowed_menus');
+  $account = \Drupal::currentUser();
+  if (!$entity instanceof Menu || !$allowedMenusService->menuAccess($account, $entity)->isAllowed()) {
+    return;
+  }
+
+  $new_operations = [
+    'list' => [
+      'route' => 'entity.menu.edit_form',
+      'title' => t('List links'),
+      'weight' => 10,
+    ],
+    'add' => [
+      'route' => 'entity.menu.add_link_form',
+      'title' => t('Add link'),
+      'weight' => 20,
+    ],
+  ];
+  foreach ($new_operations as $key => $link) {
+    $url = Url::fromRoute($link['route'], ['menu' => $entity->id()]);
+    if ($url->access()) {
+      $operations[$key] = [
+        'title' => $link['title'],
+        'url' => $url,
+        'weight' => $link['weight'],
+      ];
+    }
   }
 }

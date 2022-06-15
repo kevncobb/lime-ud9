@@ -1,4 +1,4 @@
-# 55 Rules Overview
+# 60 Rules Overview
 
 ## ActionSuffixRemoverRector
 
@@ -12,25 +12,6 @@ Removes Action suffixes from methods in Symfony Controllers
 -    public function indexAction()
 +    public function index()
      {
-     }
- }
-```
-
-<br>
-
-## AddFlashRector
-
-Turns long flash adding to short helper method in Controller in Symfony
-
-- class: [`Rector\Symfony\Rector\MethodCall\AddFlashRector`](../src/Rector/MethodCall/AddFlashRector.php)
-
-```diff
- class SomeController extends Controller
- {
-     public function some(Request $request)
-     {
--        $request->getSession()->getFlashBag()->add("success", "something");
-+        $this->addFlash("success", "something");
      }
  }
 ```
@@ -57,6 +38,20 @@ Add response content to response code assert, so it is easier to debug
 +            $response->getContent()
          );
      }
+ }
+```
+
+<br>
+
+## AuthorizationCheckerIsGrantedExtractorRector
+
+Extract `$this->authorizationChecker->isGranted([$a,` $b]) to `$this->authorizationChecker->isGranted($a)` || `$this->authorizationChecker->isGranted($b)`
+
+- class: [`Rector\Symfony\Rector\MethodCall\AuthorizationCheckerIsGrantedExtractorRector`](../src/Rector/MethodCall/AuthorizationCheckerIsGrantedExtractorRector.php)
+
+```diff
+-if ($this->authorizationChecker->isGranted(['ROLE_USER', 'ROLE_ADMIN'])) {
++if ($this->authorizationChecker->isGranted('ROLE_USER') || $this->authorizationChecker->isGranted('ROLE_USER')) {
  }
 ```
 
@@ -457,12 +452,14 @@ Changes createForm(new FormType), add(new FormType) to ones with "FormType::clas
 - class: [`Rector\Symfony\Rector\MethodCall\FormTypeInstanceToClassConstRector`](../src/Rector/MethodCall/FormTypeInstanceToClassConstRector.php)
 
 ```diff
- class SomeController
+ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
+ final class SomeController extends Controller
  {
      public function action()
      {
--        $form = $this->createForm(new TeamType, $entity);
-+        $form = $this->createForm(TeamType::class, $entity);
+-        $form = $this->createForm(new TeamType);
++        $form = $this->createForm(TeamType::class);
      }
  }
 ```
@@ -572,6 +569,37 @@ Turns fetching of dependencies via `$this->get()` to constructor injection in Co
 
 <br>
 
+## InvokableControllerRector
+
+Change god controller to single-action invokable controllers
+
+- class: [`Rector\Symfony\Rector\Class_\InvokableControllerRector`](../src/Rector/Class_/InvokableControllerRector.php)
+
+```diff
+ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
+-final class SomeController extends Controller
++final class SomeDetailController extends Controller
+ {
+-    public function detailAction()
++    public function __invoke()
+     {
+     }
++}
+
+-    public function listAction()
++use Symfony\Bundle\FrameworkBundle\Controller\Controller;
++
++final class SomeListController extends Controller
++{
++    public function __invoke()
+     {
+     }
+ }
+```
+
+<br>
+
 ## JMSInjectPropertyToConstructorInjectionRector
 
 Turns properties with `@inject` to private properties and constructor injection
@@ -590,6 +618,55 @@ Turns properties with `@inject` to private properties and constructor injection
 +{
 +    $this->someService = $someService;
 +}
+```
+
+<br>
+
+## LiteralGetToRequestClassConstantRector
+
+Replace "GET" string by Symfony Request object class constants
+
+- class: [`Rector\Symfony\Rector\MethodCall\LiteralGetToRequestClassConstantRector`](../src/Rector/MethodCall/LiteralGetToRequestClassConstantRector.php)
+
+```diff
+ use Symfony\Component\Form\FormBuilderInterface;
+
+ final class SomeClass
+ {
+     public function detail(FormBuilderInterface $formBuilder)
+     {
+-        $formBuilder->setMethod('GET');
++        $formBuilder->setMethod(\Symfony\Component\HttpFoundation\Request::GET);
+     }
+ }
+```
+
+<br>
+
+## LoadValidatorMetadataToAnnotationRector
+
+Move metadata from `loadValidatorMetadata()` to property/getter/method annotations
+
+- class: [`Rector\Symfony\Rector\Class_\LoadValidatorMetadataToAnnotationRector`](../src/Rector/Class_/LoadValidatorMetadataToAnnotationRector.php)
+
+```diff
+ use Symfony\Component\Validator\Constraints as Assert;
+ use Symfony\Component\Validator\Mapping\ClassMetadata;
+
+ final class SomeClass
+ {
++    /**
++     * @Assert\NotBlank(message="City can't be blank.")
++     */
+     private $city;
+-
+-    public static function loadValidatorMetadata(ClassMetadata $metadata): void
+-    {
+-        $metadata->addPropertyConstraint('city', new Assert\NotBlank([
+-            'message' => 'City can\'t be blank.',
+-        ]));
+-    }
+ }
 ```
 
 <br>
@@ -761,6 +838,32 @@ Turns old option names to new ones in FormTypes in Form in Symfony
  $builder = new FormBuilder;
 -$builder->add("...", ["precision" => "...", "virtual" => "..."];
 +$builder->add("...", ["scale" => "...", "inherit_data" => "..."];
+```
+
+<br>
+
+## ParamTypeFromRouteRequiredRegexRector
+
+Complete strict param type declaration based on route annotation
+
+- class: [`Rector\Symfony\Rector\ClassMethod\ParamTypeFromRouteRequiredRegexRector`](../src/Rector/ClassMethod/ParamTypeFromRouteRequiredRegexRector.php)
+
+```diff
+ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+ use Symfony\Component\Routing\Annotation\Route;
+
+ final class SomeController extends Controller
+ {
+     /**
+      * @Route(
+      *     requirements={"number"="\d+"},
+      * )
+      */
+-    public function detailAction($number)
++    public function detailAction(int $number)
+     {
+     }
+ }
 ```
 
 <br>
@@ -1026,6 +1129,30 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
 <br>
 
+## ResponseReturnTypeControllerActionRector
+
+Add Response object return type to controller actions
+
+- class: [`Rector\Symfony\Rector\ClassMethod\ResponseReturnTypeControllerActionRector`](../src/Rector/ClassMethod/ResponseReturnTypeControllerActionRector.php)
+
+```diff
+ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
++use Symfony\Component\HttpFoundation\Response;
+ use Symfony\Component\Routing\Annotation\Route;
+
+ final class SomeController extends AbstractController
+ {
+     #[Route]
+-    public function detail()
++    public function detail(): Response
+     {
+         return $this->render('some_template');
+     }
+ }
+```
+
+<br>
+
 ## ResponseStatusCodeRector
 
 Turns status code numbers to constants
@@ -1033,16 +1160,19 @@ Turns status code numbers to constants
 - class: [`Rector\Symfony\Rector\BinaryOp\ResponseStatusCodeRector`](../src/Rector/BinaryOp/ResponseStatusCodeRector.php)
 
 ```diff
+ use Symfony\Component\HttpFoundation\Response;
+
  class SomeController
  {
      public function index()
      {
-         $response = new \Symfony\Component\HttpFoundation\Response();
+         $response = new Response();
 -        $response->setStatusCode(200);
-+        $response->setStatusCode(\Symfony\Component\HttpFoundation\Response::HTTP_OK);
++        $response->setStatusCode(Response::HTTP_OK);
 
--        if ($response->getStatusCode() === 200) {}
-+        if ($response->getStatusCode() === \Symfony\Component\HttpFoundation\Response::HTTP_OK) {}
+-        if ($response->getStatusCode() === 200) {
++        if ($response->getStatusCode() === Response::HTTP_OK) {
+         }
      }
  }
 ```
