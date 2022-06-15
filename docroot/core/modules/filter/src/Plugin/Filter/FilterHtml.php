@@ -119,7 +119,8 @@ class FilterHtml extends FilterBase {
         $tag_attributes = [];
       }
       $allowed_attributes = ['exact' => [], 'prefix' => []];
-      foreach (($global_allowed_attributes + $tag_attributes) as $name => $values) {
+      $attributes = array_merge($global_allowed_attributes, $tag_attributes);;
+      foreach ($attributes as $name => $values) {
         // A trailing * indicates wildcard, but it must have some prefix.
         if (substr($name, -1) === '*' && $name[0] !== '*') {
           $allowed_attributes['prefix'][str_replace('*', '', $name)] = $this->prepareAttributeValues($values);
