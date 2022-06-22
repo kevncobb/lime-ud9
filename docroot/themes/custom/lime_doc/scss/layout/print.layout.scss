@@ -73,10 +73,17 @@
     padding: 7px 15px;
     letter-spacing: 0;
     text-transform: uppercase;
-    color: white;
     background: #435f7b;
-    font-size: 2.4rem;
     font-weight: 300;
+    -webkit-print-color-adjust: exact !important;
+    box-shadow: inset #435f7b 190px 190px 250px !important;
+    color: #efefef !important;
+    font-size: 2.1rem;
+    strong {
+      -webkit-print-color-adjust: exact !important;
+      box-shadow: inset #435f7b 190px 190px 250px !important;
+      color: #efefef !important;
+    }
   }
 
 }
