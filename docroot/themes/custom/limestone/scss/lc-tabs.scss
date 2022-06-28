@@ -1,4 +1,5 @@
 @import 'settings';
+
 .lc-tabs {
   ul.tabs {
     list-style-type: none;
@@ -9,28 +10,13 @@
       cursor: pointer;
       display: block;
       float: left;
-      width: 49%;
-      margin-right: 1%;
       margin-bottom: 0;
-      &:nth-child(even) {
-        margin-right: 0;
-      }
       text-transform: uppercase;
       text-align: center;
-
       font-size: 35px;
       line-height: 30px;
       font-weight: bold;
-      @include breakpoint(smedium) {
-        width: 24%;
-        margin-right: 1.3333%;
-        &:nth-child(even) {
-          margin-right: 1.3333%;
-        }
-        &:last-child {
-          margin-right: 0;
-        }
-      }
+
 
       &:focus, &:hover {
         background: $dark-gray;
@@ -61,5 +47,40 @@
   .tabs-content {
     background-color: #fbfbfb;
     border: 1px solid #f5f5f5;
+  }
+  .two-col-tabs {
+    ul.tabs {
+      li.tabs-title {
+        width: 49%;
+        margin-right: 1%;
+        &:nth-child(even) {
+          margin-right: 0;
+        }
+        @include breakpoint(smedium) {
+          width: 24%;
+          margin-right: 1.3333%;
+          &:nth-child(even) {
+            margin-right: 1.3333%;
+          }
+          &:last-child {
+            margin-right: 0;
+          }
+        }
+      }
+    }
+  }
+  .three-col-tabs {
+    ul.tabs {
+      li.tabs-title {
+        width: 32%;
+        margin-right: 1.3333%;
+        &:nth-child(even) {
+          margin-right: 1.3333%;
+        }
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
   }
 }

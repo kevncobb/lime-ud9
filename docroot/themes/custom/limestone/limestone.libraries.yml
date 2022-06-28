@@ -78,6 +78,11 @@ masonry:
   version: 1.x
   js:
     js/masonry.pkgd.min.js: {}
+lc-tabs:
+  version: 1.x
+  css:
+    base:
+      css/lc-tabs.css: {}
 faqs:
   version: 1.x
   css:
