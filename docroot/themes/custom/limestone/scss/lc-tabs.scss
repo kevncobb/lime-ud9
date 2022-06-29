@@ -81,6 +81,9 @@
           &:last-child {
             border-right: none;
           }
+          &:first-child {
+            border-left: 1px solid #ccc;
+          }
         }
         @include breakpoint(xlarge) {
           font-size: 2rem;
@@ -89,15 +92,13 @@
     }
   }
   &.lc-tabs-fullwidth-bg {
-    ul.tabs {
-      &::before {
-        position: absolute;
-        width: 100%;
-        height: 80px;
-        background-color: #a2a2a2;
-        z-index: -1;
-        left: 0;
-      }
+    ul.tabs::before {
+      position: absolute;
+      width: 100%;
+      height: 80px;
+      background-color: #a2a2a2;
+      z-index: -1;
+      left: 0;
     }
   }
 }
