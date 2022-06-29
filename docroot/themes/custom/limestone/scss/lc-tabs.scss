@@ -6,7 +6,7 @@
     margin-bottom: 0;
     padding: 0;
     border: none;
-    li {
+    li.tabs-title {
       cursor: pointer;
       display: block;
       float: left;
@@ -21,7 +21,7 @@
       &:focus, &:hover {
         background: $dark-gray;
       }
-      a {
+      > a {
         color: #FFF;
         background: #a2a2a2;
         padding: 25px 0px;
@@ -36,11 +36,12 @@
           background: inherit;
         }
       }
-      &.is-active {
-        a { background-color: $limestone-blue; }
-        a:focus, a:hover {
-          background: $limestone-blue;
-        }
+      > a[aria-selected='true'] {
+        background-color: $limestone-blue;
+
+      }
+      > a:focus, a:hover {
+        background: $limestone-blue;
       }
     }
   }
