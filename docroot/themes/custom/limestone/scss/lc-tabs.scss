@@ -74,12 +74,16 @@
       width: 100%;
       li.tabs-title {
         width: 100%;
+        font-size: 1.2rem;
         @include breakpoint(smedium) {
           width: 33.323%;
           border-right: 1px solid #ccc;
           &:last-child {
             border-right: none;
           }
+        }
+        @include breakpoint(xlarge) {
+          font-size: 2rem;
         }
       }
     }
