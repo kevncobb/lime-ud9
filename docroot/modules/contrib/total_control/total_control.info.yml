@@ -2,7 +2,7 @@ name: "Total Control"
 description: "Total Control Administration Dashboard"
 type: module
 package: Administration
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^8 || ^9 || ^10
 dependencies:
   - drupal:block
   - drupal:views
@@ -11,7 +11,7 @@ dependencies:
   - panels:panels
   - page_manager:page_manager
 
-# Information added by Drupal.org packaging script on 2021-10-04
-version: '3.0.2'
+# Information added by Drupal.org packaging script on 2022-08-02
+version: '3.0.3'
 project: 'total_control'
-datestamp: 1633378909
+datestamp: 1659434626

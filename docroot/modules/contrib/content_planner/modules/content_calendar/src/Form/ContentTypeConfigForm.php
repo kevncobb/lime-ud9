@@ -6,7 +6,7 @@ use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class ContentTypeConfigForm.
+ * Implements ContentTypeConfigForm class.
  */
 class ContentTypeConfigForm extends EntityForm {
 
@@ -43,7 +43,6 @@ class ContentTypeConfigForm extends EntityForm {
       '#maxlength' => 20,
       '#default_value' => $config_entity->getColor(),
       '#description' => $this->t("The color value to use for this Content Type inside the Content Calendar. Examples: #ffcc00 or 'red'."),
-      '#required' => TRUE,
     ];
 
     /* You will need additional form elements for your custom properties. */

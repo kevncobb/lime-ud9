@@ -5,9 +5,7 @@ namespace Drupal\content_kanban\Plugin\DashboardBlock;
 use Drupal\content_kanban\Entity\KanbanLog;
 use Drupal\content_planner\DashboardBlockBase;
 use Drupal\content_planner\UserProfileImage;
-use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Datetime\DateFormatterInterface;
-use Drupal\Core\Datetime\Entity\DateFormat;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -82,7 +80,7 @@ class RecentKanbanActivities extends DashboardBlockBase {
     // Limit.
     $form['limit'] = [
       '#type' => 'number',
-      '#title' => t('Quantity'),
+      '#title' => $this->t('Quantity'),
       '#required' => TRUE,
       '#default_value' => $limit_default_value,
     ];
@@ -93,8 +91,8 @@ class RecentKanbanActivities extends DashboardBlockBase {
 
     $form['show_user_thumb'] = [
       '#type' => 'checkbox',
-      '#title' => t('Show thumbnail image of User image'),
-      '#description' => t('This option is only available, if the User account has the "user_picture" field. See Account configuration.'),
+      '#title' => $this->t('Show thumbnail image of User image'),
+      '#description' => $this->t('This option is only available, if the User account has the "user_picture" field. See Account configuration.'),
       '#disabled' => !$user_picture_field_exists,
       '#default_value' => $show_user_thumb_default_value,
     ];
@@ -115,7 +113,7 @@ class RecentKanbanActivities extends DashboardBlockBase {
     // Get limit.
     $limit = $this->getCustomConfigByKey($config, 'limit', $this->defaultLimit);
 
-    /* @var $kanban_log_service \Drupal\content_kanban\KanbanLogService */
+    /** @var \Drupal\content_kanban\KanbanLogService $kanban_log_service */
     $kanban_log_service = \Drupal::service('content_kanban.kanban_log_service');
 
     // Get Logs.
@@ -194,7 +192,7 @@ class RecentKanbanActivities extends DashboardBlockBase {
 
     if ($state_from == $state_to) {
 
-      $message = t(
+      $message = $this->t(
         '@username has updated @entity_type "@entity" @time ago',
         [
           '@username' => $user->getAccountName(),
@@ -207,7 +205,7 @@ class RecentKanbanActivities extends DashboardBlockBase {
     }
     else {
 
-      $message = t(
+      $message = $this->t(
         '@username has changed the state of @entity_type "@entity" from "@state_from" to "@state_to" @time ago',
         [
           '@username' => $user->getAccountName(),

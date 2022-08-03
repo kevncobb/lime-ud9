@@ -6,25 +6,37 @@ use Drupal\content_calendar\ContentTypeConfigService;
 use Drupal\content_calendar\ContentCalendarService;
 use Drupal\content_calendar\DateTimeHelper;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Theme\ThemeManagerInterface;
 
 /**
- *
+ * Implements Calendar class.
  */
 class Calendar {
 
   /**
-   * Drupal\content_calendar\ContentTypeConfigService definition.
+   * The theme manager.
+   *
+   * @var \Drupal\Core\Theme\ThemeManagerInterface
+   */
+  protected $themeManager;
+
+  /**
+   * The content type config service.
    *
    * @var \Drupal\content_calendar\ContentTypeConfigService
    */
   protected $contentTypeConfigService;
 
   /**
+   * The content calendar service.
+   *
    * @var \Drupal\content_calendar\ContentCalendarService
    */
   protected $contentCalendarService;
 
   /**
+   * Defines the Content Type Config entity.
+   *
    * @var \Drupal\content_calendar\Entity\ContentTypeConfig[]
    */
   protected $contentTypeConfigEntities;
@@ -53,6 +65,8 @@ class Calendar {
   /**
    * Calendar constructor.
    *
+   * @param \Drupal\Core\Theme\ThemeManagerInterface $theme_manager
+   *   The theme manager service.
    * @param \Drupal\content_calendar\ContentTypeConfigService $content_type_config_service
    *   The content type config service.
    * @param \Drupal\content_calendar\ContentCalendarService $content_calendar_service
@@ -65,12 +79,14 @@ class Calendar {
    *   The current user.
    */
   public function __construct(
+    ThemeManagerInterface $theme_manager,
     ContentTypeConfigService $content_type_config_service,
     ContentCalendarService $content_calendar_service,
     $month,
     $year,
     AccountProxyInterface $user
   ) {
+    $this->themeManager = $theme_manager;
     $this->contentTypeConfigService = $content_type_config_service;
     $this->contentCalendarService = $content_calendar_service;
     $this->contentTypeConfigEntities = $this->contentTypeConfigService->loadAllEntities();
@@ -115,16 +131,23 @@ class Calendar {
 
     // Place nodes in Calendars.
     $this->placeNodesInCalendars($calendar, $node_basic_data);
+
     // Get the weekdays based on the Drupal first day of week setting.
+    $weekdays = DateTimeHelper::getWeekdays();
 
     $build = [
       '#theme' => 'content_calendar',
       '#calendar' => $calendar,
+      '#weekdays' => $weekdays,
       '#node_type_creation_permissions' => $this->getPermittedNodeTypeCreationActions(),
       '#attached' => [
         'library' => ['content_calendar/calendar'],
       ],
     ];
+
+    if ($this->isGinThemeActive()) {
+      $build['#attached']['library'][] = 'content_calendar/gin';
+    }
 
     return $build;
   }
@@ -133,6 +156,7 @@ class Calendar {
    * Get all permitted Node Type Creation actions.
    *
    * @return array
+   *   Returns an array with permitted node types.
    */
   protected function getPermittedNodeTypeCreationActions() {
 
@@ -172,7 +196,7 @@ class Calendar {
       'month' => $this->month,
       'year' => $this->year,
       'label' => DateTimeHelper::getMonthLabelByNumber($this->month) . ' ' . $this->year,
-      'first_date_weekday' => $datetime->format('N'),
+      'first_date_weekday' => DateTimeHelper::getDayOfWeekByDate($datetime),
       'days' => [],
     ];
 
@@ -186,7 +210,7 @@ class Calendar {
       $scaffold_data['days'][] = [
         'date' => $datetime->format('Y-m-d'),
         'day' => $datetime->format('j'),
-        'weekday' => $datetime->format('N'),
+        'weekday' => DateTimeHelper::getDayOfWeekByDate($datetime),
         'nodes' => [],
         'is_today' => ($today_datetime == $datetime) ? TRUE : FALSE,
       ];
@@ -203,8 +227,9 @@ class Calendar {
    * Place Nodes in Calendar.
    *
    * @param array $calendar
-   *
+   *   Calendar array.
    * @param array $node_basic_data
+   *   Array with node basic data.
    */
   protected function placeNodesInCalendars(array &$calendar, array $node_basic_data) {
 
@@ -222,10 +247,10 @@ class Calendar {
         foreach ($calendar['days'] as &$day) {
 
           // If date of entry is the current date of the calendar day.
-          if ($day['date'] == $calendar_entry->formatSchedulingDateAsMySQLDateOnly()) {
+          if ($day['date'] == $calendar_entry->formatSchedulingDateAsMySqlDateOnly()) {
 
             // Generate a unique key within the day for the entry.
-            $key = $calendar_entry->getRelevantDate() . '_' . $calendar_entry->getNodeID();
+            $key = $calendar_entry->getRelevantDate() . '_' . $calendar_entry->getNodeId();
 
             $day['nodes'][$key] = $calendar_entry->build();
 
@@ -256,6 +281,18 @@ class Calendar {
     }
 
     return FALSE;
+  }
+
+  /**
+   * Determines whether the current theme is Gin or a subtheme of Gin.
+   *
+   * @return bool
+   *   TRUE if the current theme is Gin or a subtheme of Gin
+   */
+  protected function isGinThemeActive() {
+    $theme = $this->themeManager->getActiveTheme();
+
+    return $theme->getName() === 'gin' || isset($theme->getBaseThemeExtensions()['gin']);
   }
 
 }

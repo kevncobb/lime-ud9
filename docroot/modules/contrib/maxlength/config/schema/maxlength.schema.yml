@@ -12,9 +12,3 @@ field.widget.third_party.maxlength:
       type: label
     maxlength_js_enforce:
       type: boolean
-    maxlength_js_truncate_html:
-      type: boolean
-    maxlength_js_enforce_attribute:
-      type: boolean
-    maxlength_js_summary_enforce_attribute:
-      type: boolean

@@ -2,18 +2,20 @@
 
 namespace Drupal\content_kanban\Component;
 
-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\content_kanban\Form\KanbanFilterForm;
 use Drupal\content_kanban\KanbanService;
-use Drupal\Core\Entity\ContentEntityType;
+use Drupal\content_planner\ContentModerationService;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Url;
 use Drupal\workflows\Entity\Workflow;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * The main Kanban class.
  */
 class Kanban {
+
+  use StringTranslationTrait;
 
   /**
    * The request service.
@@ -30,11 +32,25 @@ class Kanban {
   protected $currentUser;
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * The Kanban service.
    *
    * @var \Drupal\content_kanban\KanbanService
    */
   protected $kanbanService;
+
+  /**
+   * The Content Moderation service.
+   *
+   * @var \Drupal\content_planner\ContentModerationService
+   */
+  protected $contentModerationService;
 
   /**
    * The workflow service.
@@ -78,12 +94,14 @@ class Kanban {
    *   The current user service.
    * @param \Drupal\content_kanban\KanbanService $kanban_service
    *   The Kanban service.
+   * @param \Drupal\content_planner\ContentModerationService $content_moderation_service
+   *   The Content Moderation service.
    * @param \Drupal\workflows\Entity\Workflow $workflow
    *   The workflow service.
    *
    * @throws \Exception
    */
-  public function __construct(AccountInterface $current_user, KanbanService $kanban_service, Workflow $workflow) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, AccountInterface $current_user, KanbanService $kanban_service, ContentModerationService $content_moderation_service, Workflow $workflow) {
 
     if (!self::isValidContentModerationWorkflow($workflow)) {
       throw new \Exception('The given workflow is no valid Content Moderation Workflow');
@@ -92,11 +110,16 @@ class Kanban {
     // Store request object.
     $this->request = \Drupal::request();
 
+    $this->entityTypeManager = $entity_type_manager;
+
     // Store current user.
     $this->currentUser = $current_user;
 
     // Store Kanban service.
     $this->kanbanService = $kanban_service;
+
+    // Store Content Moderation service.
+    $this->contentModerationService = $content_moderation_service;
 
     // Store Workflow.
     $this->workflow = $workflow;
@@ -208,7 +231,8 @@ class Kanban {
 
     foreach ($this->states as $state_id => $state) {
 
-      // If the State filter has been set, only get data which set by the filter.
+      // If the State filter has been set, only get data
+      // which set by the filter.
       if ($filter_state && $filter_state != $state_id) {
         // Add empty Kanban column when the column is filtered.
         $emptyColumn = new KanbanColumn(
@@ -242,7 +266,7 @@ class Kanban {
 
       // Get Entity IDs.
       $multipleEntities = [];
-      if ($entityIds = $this->kanbanService->getEntityIdsFromContentModerationEntities($this->workflowID, $filters, $this->entityTypes)) {
+      if ($entityIds = $this->contentModerationService->getEntityIdsFromContentModerationEntities($this->workflowID, $filters, $this->entityTypes)) {
         $multipleEntities = $this->kanbanService->getEntitiesByEntityIds($entityIds, $filters);
       }
       $columnEntities = [];
@@ -313,11 +337,12 @@ class Kanban {
   protected function getCreateEntityPermissions(array $entity_type_configs) {
 
     $permissions = [];
-    foreach ($entity_type_configs as $entity_type_id => $entity_type_config) {
+    foreach ($entity_type_configs as $bundle => $entity_type_config) {
       // Check if the current user has the permisson to create a certain Entity
       // type.
-      if ($this->currentUser->hasPermission("create $entity_type_id content")) {
-        $permissions[$entity_type_id] = t("Add @type", ['@type' => $entity_type_config->getLabel()]);
+
+      if ($this->entityTypeManager->getAccessControlHandler($entity_type_config->getEntityType())->createAccess($bundle)) {
+        $permissions[$bundle] = $this->t("Add @type", ['@type' => $entity_type_config->getLabel()]);
       }
 
     }

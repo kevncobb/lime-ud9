@@ -206,40 +206,25 @@ interface BaseEmailInterface {
    */
   public function getHtmlBody(): ?string;
 
+  /**
+   * Adds an attachment.
+   *
+   * @param string $path
+   *   The path to the file.
+   * @param string|null $name
+   *   (optional) The file name. Defaults to the base name of the path.
+   * @param string|null $mimeType
+   *   (optional) The mime type. If omitted, the type will be guessed.
+   *
+   * @return $this
+   */
+  public function attachFromPath(string $path, ?string $name = NULL, ?string $mimeType = NULL);
+
   // @codingStandardsIgnoreStart
-  /**
-   * @param string $body
-   *
-   * @return $this
-   */
-  // public function attach(string $body, string $name = null, string $contentType = null);
-
-  /**
-   * @return $this
-   */
-  // public function attachFromPath(string $path, string $name = null, string $contentType = null);
-
-  /**
-   * @param string $body
-   *
-   * @return $this
-   */
-  // public function embed(string $body, string $name = null, string $contentType = null);
-
   /**
    * @return $this
    */
   // public function embedFromPath(string $path, string $name = null, string $contentType = null);
-
-  /**
-   * @return $this
-   */
-  // public function attachPart(DataPart $part);
-
-  /**
-   * @return array|DataPart[]
-   */
-  // public function getAttachments(): array;
   // @codingStandardsIgnoreEnd
 
   /**

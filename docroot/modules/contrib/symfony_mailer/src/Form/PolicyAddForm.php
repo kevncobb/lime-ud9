@@ -4,6 +4,8 @@ namespace Drupal\symfony_mailer\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\symfony_mailer\Entity\MailerPolicy;
+use Drupal\Core\Url;
 
 /**
  * Mailer policy add form.
@@ -90,24 +92,33 @@ class PolicyAddForm extends EntityForm {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
-    // @todo Check if the policy already exists (offer a link to it?)
-  }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+    // Build policy id.
     $id_array = [
       $form_state->getValue('type'),
       $form_state->getValue('sub_type'),
       $form_state->getValue('entity_id'),
     ];
     $id = implode('.', array_filter($id_array)) ?: '_';
-    $form_state->setValue('id', $id)
-      ->addCleanValueKey('type')
+    $form_state->setValue('id', $id);
+
+    // If the policy exists, throw an error.
+    if (MailerPolicy::load($id)) {
+      $url = Url::fromRoute('entity.mailer_policy.edit_form', ['mailer_policy' => $id])->toString();
+      $form_state->setErrorByName('type', $this->t('Policy already exists (<a href=":url">edit</a>)', [':url' => $url]));
+      $form_state->setErrorByName('sub_type');
+      $form_state->setErrorByName('entity_id');
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $form_state->addCleanValueKey('type')
       ->addCleanValueKey('sub_type')
       ->addCleanValueKey('entity_id')
-      ->setRedirect('entity.mailer_policy.edit_form', ['mailer_policy' => $id]);
+      ->setRedirect('entity.mailer_policy.edit_form', ['mailer_policy' => $form_state->getValue('id')]);
     parent::submitForm($form, $form_state);
   }
 

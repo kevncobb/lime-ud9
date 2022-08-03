@@ -2,11 +2,13 @@
 
 namespace Drupal\content_planner\Form;
 
+use Drupal\content_planner\DashboardBlockPluginManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\content_planner\DashboardSettingsService;
 use Drupal\Core\Form\ConfigFormBase;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines a form that configures forms module settings.
@@ -32,14 +34,29 @@ class DashboardBlockConfigForm extends ConfigFormBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory service.
+   * @param \Drupal\content_planner\DashboardSettingsService $dashboard_settings_service
+   *   Implements DashboardSettingsService class.
+   * @param \Drupal\content_planner\DashboardBlockPluginManager $dashboard_settings_block
+   *   Dashboard Block plugin manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory) {
+  public function __construct(ConfigFactoryInterface $config_factory, DashboardSettingsService $dashboard_settings_service, DashboardBlockPluginManager $dashboard_settings_block) {
 
     parent::__construct($config_factory);
 
-    $this->dashboardSettingsService = \Drupal::service('content_planner.dashboard_settings_service');
+    $this->dashboardSettingsService = $dashboard_settings_service;
 
-    $this->dashboardBlockPluginManager = \Drupal::service('content_planner.dashboard_block_plugin_manager');
+    $this->dashboardBlockPluginManager = $dashboard_settings_block;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('content_planner.dashboard_settings_service'),
+      $container->get('content_planner.dashboard_block_plugin_manager')
+    );
   }
 
   /**
@@ -90,7 +107,7 @@ class DashboardBlockConfigForm extends ConfigFormBase {
 
       $form['plugin_specific_config'] = [
         '#type' => 'fieldset',
-        '#title' => t('Extra Settings'),
+        '#title' => $this->t('Extra Settings'),
         '#collapsible' => FALSE,
         '#collapsed' => FALSE,
         '#tree' => TRUE,

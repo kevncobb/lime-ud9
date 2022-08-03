@@ -25,12 +25,13 @@ function content_calendar_theme($existing, $type, $theme, $path) {
       ],
     ],
 
-    'content_calendar' => array(
-      'variables' => array(
-        'calendar' => array(),
-        'node_type_creation_permissions' => array(),
-      ),
-    ),
+    'content_calendar' => [
+      'variables' => [
+        'calendar' => [],
+        'weekdays' => [],
+        'node_type_creation_permissions' => [],
+      ],
+    ],
 
     'content_calendar_entry' => [
       'variables' => [
@@ -81,7 +82,9 @@ function content_calendar_form_node_form_alter(&$form,
     $node_type = \Drupal::routeMatch()->getParameter('node_type');
 
     /**
-     * @var $content_type_config_service \Drupal\content_calendar\ContentTypeConfigService
+     * Drupal\content_calendar\ContentTypeConfigService definition.
+     *
+     * @var \Drupal\content_calendar\ContentTypeConfigService $content_type_config_service
      */
     $content_type_config_service = \Drupal::service('content_calendar.content_type_config_service');
 
@@ -92,26 +95,28 @@ function content_calendar_form_node_form_alter(&$form,
       $date = \Drupal::request()->query->get('publish_on');
 
       // If the date is a valid MySQL Date.
-      if (DateTimeHelper::dateIsMySQLDateOnly($date)) {
+      if (DateTimeHelper::dateIsMySqlDateOnly($date)) {
 
-        // Check scheduler for default time
+        // Check scheduler's configuration
         $scheduler_config = \Drupal::config('scheduler.settings');
-        $default_time = FALSE;
+        $datetime_format = "Y-m-d";
+
         if ($scheduler_config->get('allow_date_only')) {
-          $default_time = $scheduler_config->get('default_time');
+          $date .= ' ' . $scheduler_config->get('default_time');
+          $datetime_format = "Y-m-d H:i:s";
+
+          if ($scheduler_config->get('hide_seconds')) {
+            $datetime_format = "Y-m-d H:i";
+          }
         }
+
         // Create DrupalDateTime object.
-        if ($default_time) {
-          $datetime = DrupalDateTime::createFromFormat('Y-m-d H:i:s', $date . ' ' . $default_time);
-        } else {
-          $datetime = DrupalDateTime::createFromFormat('Y-m-d', $date);
-        }
+        $datetime = DrupalDateTime::createFromFormat($datetime_format, $date);
 
         // Assign date to the created field.
         $form['created']['widget'][0]['value']['#default_value'] = $datetime;
 
         // Assign date to the scheduler date, if it exists.
-
         if (\Drupal::currentUser()->hasPermission('schedule publishing of nodes')) {
           if (array_key_exists('publish_on', $form)) {
             $form['publish_on']['widget'][0]['value']['#default_value'] = $datetime;
@@ -119,9 +124,7 @@ function content_calendar_form_node_form_alter(&$form,
         }
       }
     }
-
   }
-
 }
 
 /**

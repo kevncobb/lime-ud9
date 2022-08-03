@@ -29,5 +29,5 @@ function block_form_alter_test_block_plugin_form_alter(array &$form, FormStateIn
  * Implements hook_theme_registry_alter().
  */
 function block_form_alter_test_theme_registry_alter(&$theme_registry) {
-  $theme_registry['block']['path'] = drupal_get_path('module', 'block_form_alter_test') . '/templates/block';
+  $theme_registry['block']['path'] = \Drupal::service('extension.list.module')->getPath('block_form_alter_test') . '/templates/block';
 }

@@ -2,6 +2,7 @@
 
 namespace Drupal\content_kanban\Controller;
 
+use Drupal\content_planner\ContentModerationService;
 use Drupal\Core\Url;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -11,12 +12,12 @@ use Drupal\content_kanban\KanbanWorkflowService;
 use Drupal\content_kanban\Component\Kanban;
 use Drupal\content_moderation\ModerationInformation;
 use Drupal\content_moderation\StateTransitionValidation;
-use Drupal\workflows\Entity\Workflow;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * Class KanbanController.
+ * Implements KanbanController class.
  */
 class KanbanController extends ControllerBase {
 
@@ -35,6 +36,13 @@ class KanbanController extends ControllerBase {
   protected $kanbanService;
 
   /**
+   * The Content Moderation service.
+   *
+   * @var \Drupal\content_planner\ContentModerationService
+   */
+  protected $contentModerationService;
+
+  /**
    * The Moderation information service.
    *
    * @var \Drupal\content_moderation\ModerationInformation
@@ -49,18 +57,29 @@ class KanbanController extends ControllerBase {
   protected $stateTransitionValidation;
 
   /**
+   * Provides an interface for entity type managers.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * Constructs a new KanbanController object.
    */
   public function __construct(
     AccountInterface $current_user,
     KanbanService $kanban_service,
+    ContentModerationService $content_moderation_service,
     ModerationInformation $moderation_information,
-    StateTransitionValidation $state_transition_validation
+    StateTransitionValidation $state_transition_validation,
+    EntityTypeManagerInterface $entity_type_manager
   ) {
     $this->currentUser = $current_user;
     $this->kanbanService = $kanban_service;
+    $this->contentModerationService = $content_moderation_service;
     $this->moderationInformation = $moderation_information;
     $this->stateTransitionValidation = $state_transition_validation;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -70,8 +89,10 @@ class KanbanController extends ControllerBase {
     return new static(
       $container->get('current_user'),
       $container->get('content_kanban.kanban_service'),
+      $container->get('content_planner.content_moderation_service'),
       $container->get('content_moderation.moderation_information'),
-      $container->get('content_moderation.state_transition_validation')
+      $container->get('content_moderation.state_transition_validation'),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -86,7 +107,7 @@ class KanbanController extends ControllerBase {
   public function showKanbans() {
     $build = [];
 
-    $workflows = Workflow::loadMultiple();
+    $workflows = $this->entityTypeManager->getStorage('workflow')->loadMultiple();
 
     if (!$workflows) {
       $this->messenger()->addMessage($this->t('There are no Workflows configured yet.'), 'error');
@@ -98,8 +119,10 @@ class KanbanController extends ControllerBase {
       if (Kanban::isValidContentModerationWorkflow($workflow)) {
 
         $kanban = new Kanban(
+          $this->entityTypeManager,
           $this->currentUser,
           $this->kanbanService,
+          $this->contentModerationService,
           $workflow
         );
 
@@ -141,7 +164,10 @@ class KanbanController extends ControllerBase {
 
     // Check if entity is moderated.
     if (!$this->moderationInformation->isModeratedEntity($entity)) {
-      $data['message'] = $this->t('Entity @type with ID @id is not a moderated entity.', ['@id' => $entity->id(), '@type' => $entity->getEntityTypeId()]);
+      $data['message'] = $this->t('Entity @type with ID @id is not a moderated entity.', [
+        '@id' => $entity->id(),
+        '@type' => $entity->getEntityTypeId(),
+      ]);
       return new JsonResponse($data);
     }
 
@@ -149,7 +175,10 @@ class KanbanController extends ControllerBase {
     $workflow = $this->moderationInformation->getWorkflowForEntity($entity);
     // If Workflow does not exist.
     if (!$workflow) {
-      $data['message'] = $this->t('Workflow not found for Entity @type with ID @id.', ['@id' => $entity->id(), '@type' => $entity->getEntityTypeId()]);
+      $data['message'] = $this->t('Workflow not found for Entity @type with ID @id.', [
+        '@id' => $entity->id(),
+        '@type' => $entity->getEntityTypeId(),
+      ]);
       return new JsonResponse($data);
     }
 
@@ -171,7 +200,7 @@ class KanbanController extends ControllerBase {
     // Load current workflow state of entity.
     $current_state = $entity->get('moderation_state')->getValue()[0]['value'];
 
-    // Load all valid transitions.a1
+    // Load all valid transitions.a1.
     $allowed_transitions = $this->stateTransitionValidation->getValidTransitions($entity, $this->currentUser);
 
     // Load all available transitions.
@@ -189,7 +218,7 @@ class KanbanController extends ControllerBase {
       return new JsonResponse($data);
     }
 
-    if(!array_key_exists($transition_id, $allowed_transitions)) {
+    if (!array_key_exists($transition_id, $allowed_transitions)) {
       $data['message'] = $this->t(
         'You do not have permissions to perform the action @transition_id for this content. Please contact the site administrator.',
         [

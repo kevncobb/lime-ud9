@@ -180,18 +180,16 @@ trait BaseEmailTrait {
     return $this->inner->getHtmlBody();
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function attachFromPath(string $path, string $name = NULL, string $mimeType = NULL) {
+    $this->inner->attachFromPath($path, $name, $mimeType);
+    return $this;
+  }
+
   // @codingStandardsIgnoreStart
-  // public function attach(string $body, string $name = null, string $contentType = null);
-
-  // public function attachFromPath(string $path, string $name = null, string $contentType = null);
-
-  // public function embed(string $body, string $name = null, string $contentType = null);
-
   // public function embedFromPath(string $path, string $name = null, string $contentType = null);
-
-  // public function attachPart(DataPart $part);
-
-  // public function getAttachments();
   // @codingStandardsIgnoreEnd
 
   /**

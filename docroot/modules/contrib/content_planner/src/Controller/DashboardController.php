@@ -8,17 +8,18 @@ use Drupal\content_planner\DashboardSettingsService;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Database\Driver\mysql\Connection;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Session\AccountProxyInterface;
 
 /**
- * Class DashboardController.
+ * Implements DashboardController class.
  */
 class DashboardController extends ControllerBase {
 
   /**
-   * Drupal\Core\Database\Driver\mysql\Connection definition.
+   * The database connection.
    *
-   * @var \Drupal\Core\Database\Driver\mysql\Connection
+   * @var \Drupal\Core\Database\Connection
    */
   protected $database;
 
@@ -51,6 +52,13 @@ class DashboardController extends ControllerBase {
   protected $dashboardBlockPluginManager;
 
   /**
+   * Defines an interface for a service which has the current account stored.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
    * Constructs a new DashboardController object.
    */
   public function __construct(
@@ -58,13 +66,15 @@ class DashboardController extends ControllerBase {
     ConfigFactoryInterface $config_factory,
     DashboardSettingsService $dashboard_settings_service,
     DashboardService $dashboard_service,
-    DashboardBlockPluginManager $dashboard_block_plugin_manager
+    DashboardBlockPluginManager $dashboard_block_plugin_manager,
+    AccountProxyInterface $current_user
   ) {
     $this->database = $database;
     $this->configFactory = $config_factory;
     $this->dashboardSettingsService = $dashboard_settings_service;
     $this->dashboardService = $dashboard_service;
     $this->dashboardBlockPluginManager = $dashboard_block_plugin_manager;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -76,7 +86,8 @@ class DashboardController extends ControllerBase {
       $container->get('config.factory'),
       $container->get('content_planner.dashboard_settings_service'),
       $container->get('content_planner.dashboard_service'),
-      $container->get('content_planner.dashboard_block_plugin_manager')
+      $container->get('content_planner.dashboard_block_plugin_manager'),
+      $container->get('current_user')
     );
   }
 
@@ -143,10 +154,10 @@ class DashboardController extends ControllerBase {
       // If a Dashboard Block plugin exists.
       if (array_key_exists($block_id, $plugins)) {
 
-        /* @var $instance \Drupal\content_planner\DashboardBlockInterface */
+        /** @var \Drupal\content_planner\DashboardBlockInterface $instance */
         $instance = $this->dashboardBlockPluginManager->createInstance($block_id, $block);
 
-        if (\Drupal::currentUser()->hasPermission('administer content planner dashboard settings')) {
+        if ($this->currentUser->hasPermission('administer content planner dashboard settings')) {
           $has_permission = TRUE;
         }
         else {

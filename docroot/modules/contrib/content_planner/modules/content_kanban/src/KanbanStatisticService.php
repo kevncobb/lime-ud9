@@ -2,11 +2,11 @@
 
 namespace Drupal\content_kanban;
 
-use Drupal\Core\Database\Driver\mysql\Connection;
+use Drupal\Core\Database\Connection;
 use Drupal\workflows\Entity\Workflow;
 
 /**
- * Class KanbanStatisticService.
+ * Implements KanbanStatisticService class.
  */
 class KanbanStatisticService {
 

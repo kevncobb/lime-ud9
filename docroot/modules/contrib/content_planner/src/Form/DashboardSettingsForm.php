@@ -3,6 +3,7 @@
 namespace Drupal\content_planner\Form;
 
 use Drupal\content_planner\DashboardBlockBase;
+use Drupal\content_planner\DashboardBlockPluginManager;
 use Drupal\content_planner\DashboardSettingsService;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
@@ -10,6 +11,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines a form that configures forms module settings.
@@ -35,14 +37,29 @@ class DashboardSettingsForm extends ConfigFormBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\content_planner\DashboardSettingsService $dashboard_settings_service
+   *   Implements DashboardSettingsService class.
+   * @param \Drupal\content_planner\DashboardBlockPluginManager $dashboard_block_manager
+   *   Dashboard Block plugin manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory) {
+  public function __construct(ConfigFactoryInterface $config_factory, DashboardSettingsService $dashboard_settings_service, DashboardBlockPluginManager $dashboard_block_manager) {
 
     parent::__construct($config_factory);
 
     // Get config.
-    $this->dashboardSettingsService = \Drupal::service('content_planner.dashboard_settings_service');
-    $this->dashboardBlockPluginManager = \Drupal::service('content_planner.dashboard_block_plugin_manager');
+    $this->dashboardSettingsService = $dashboard_settings_service;
+    $this->dashboardBlockPluginManager = $dashboard_block_manager;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('content_planner.dashboard_settings_service'),
+      $container->get('content_planner.dashboard_block_plugin_manager')
+    );
   }
 
   /**
@@ -109,15 +126,15 @@ class DashboardSettingsForm extends ConfigFormBase {
 
     $form['available_dashboard_blocks'] = [
       '#type' => 'fieldset',
-      '#title' => t('Dashboard Widgets'),
+      '#title' => $this->t('Dashboard Widgets'),
       '#collapsible' => FALSE,
       '#collapsed' => FALSE,
     ];
 
     $form['available_dashboard_blocks']['enabled_blocks'] = [
       '#type' => 'checkboxes',
-      '#title' => t('Available Dashboard Widgets'),
-      '#description' => t('Select which Widgets should be displayed in the Dashboard.'),
+      '#title' => $this->t('Available Dashboard Widgets'),
+      '#description' => $this->t('Select which Widgets should be displayed in the Dashboard.'),
       // '#required' => TRUE,.
       '#options' => $block_options,
       '#default_value' => $default_value,

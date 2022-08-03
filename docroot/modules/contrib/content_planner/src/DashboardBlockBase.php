@@ -3,7 +3,6 @@
 namespace Drupal\content_planner;
 
 use Drupal\Component\Plugin\PluginBase;
-use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBaseTrait;
 use Drupal\Core\Form\FormStateInterface;
@@ -12,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Implements DashboardBlockBase.
+ * Implements DashboardBlockBase class.
  */
 class DashboardBlockBase extends PluginBase implements DashboardBlockInterface, ContainerFactoryPluginInterface {
 
@@ -21,7 +20,7 @@ class DashboardBlockBase extends PluginBase implements DashboardBlockInterface, 
   /**
    * The route match.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManager
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
@@ -60,9 +59,8 @@ class DashboardBlockBase extends PluginBase implements DashboardBlockInterface, 
   /**
    * Gets the configuration names that will be editable.
    *
-   * @return array
-   *   An array of configuration object names that are editable if called in
-   *   conjunction with the trait's config() method.
+   *  Return an array of configuration object names that are editable if called
+   *  in conjunction with the trait's config() method.
    */
   protected function getEditableConfigNames() {
 

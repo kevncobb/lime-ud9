@@ -27,13 +27,6 @@ class MaxLengthCallbacks implements TrustedCallbackInterface {
    *   The processed render array.
    */
   public static function maxlengthPreRender($element) {
-    if (\Drupal::currentUser()->hasPermission('bypass maxlength')) {
-      if (isset($element['#attributes']['maxlength'])) {
-        $element['#attributes']['maxlength'] = $element['#maxlength'] ?? -1;
-      }
-      return $element;
-    }
-
     if (isset($element['#maxlength_js']) && $element['#maxlength_js'] === TRUE) {
       if (isset($element['#attributes']['data-maxlength']) && $element['#attributes']['data-maxlength'] > 0) {
         $element['#attributes']['class'][] = 'maxlength';
@@ -61,9 +54,6 @@ class MaxLengthCallbacks implements TrustedCallbackInterface {
   public static function processElement($element, FormStateInterface $form_state) {
     if (isset($element['#attributes']['#maxlength_js_enforce']) && $element['#attributes']['#maxlength_js_enforce']) {
       $element['#attributes']['class'][] = 'maxlength_js_enforce';
-    }
-    if (isset($element['#attributes']['#maxlength_js_truncate_html']) && $element['#attributes']['#maxlength_js_truncate_html']) {
-      $element['#attributes']['class'][] = 'maxlength_js_truncate_html';
     }
     return $element;
   }

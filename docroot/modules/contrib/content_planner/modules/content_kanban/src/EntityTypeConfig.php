@@ -3,7 +3,7 @@
 namespace Drupal\content_kanban;
 
 /**
- * Class EntityTypeConfig.
+ * Implements EntityTypeConfig class.
  */
 class EntityTypeConfig {
 

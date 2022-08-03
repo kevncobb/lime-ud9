@@ -31,8 +31,9 @@ class MailerBcConfigOverride implements ConfigFactoryOverrideInterface {
     }
 
     // The notification address is configured using Mailer Policy for
-    // UpdateEmailBuilder. Set a dummy value in update.settings so that the
-    // update module sends an email.
+    // UpdateEmailBuilder. Set a dummy value in update.settings to force the
+    // update module to send an email. NB UpdateEmailBuilder ignores the passed
+    // 'To' address so the dummy value will never be used.
     if (in_array('update.settings', $names)) {
       $overrides['update.settings']['notification']['emails'] = ['dummy'];
     }

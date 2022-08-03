@@ -25,7 +25,7 @@ use Drupal\media_library\MediaLibraryUiBuilder;
  *     '#type' => 'media_library',
  *     '#allowed_bundles' => ['image'],
  *     '#title' => t('Upload your image'),
- *     '#default_value' => NULL|1,
+ *     '#default_value' => NULL|'1'|'2,3,1',
  *     '#description' => t('Upload or select your profile image.'),
  *     '#cardinality' => -1|1,
  *   ];
@@ -49,8 +49,6 @@ class MediaLibrary extends FormElement {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public static function processMediaLibrary(array &$element, FormStateInterface $form_state, array &$complete_form): array {
-    $referenced_entity = NULL;
-    $entity_id = NULL;
     $default_value = NULL;
     $referenced_entities = [];
 
@@ -62,12 +60,17 @@ class MediaLibrary extends FormElement {
       $entity_ids = [$default_value['media_selection_id']];
     }
     else {
-      $entity_ids = array_filter(explode(',', $default_value));
+      $entity_ids = array_filter(explode(',', $default_value ?? ''));
     }
 
     if (!empty($entity_ids)) {
       foreach ($entity_ids as $entity_id) {
-        $referenced_entities[] = \Drupal::entityTypeManager()->getStorage('media')->load($entity_id);
+        $entity = \Drupal::entityTypeManager()->getStorage('media')->load($entity_id);
+        // EntityStorageInterface::load can return null.
+        // @see https://www.drupal.org/project/media_library_form_element/issues/3243411
+        if ($entity instanceof Media) {
+          $referenced_entities[] = $entity ;
+        }
       }
     }
 
@@ -291,7 +294,7 @@ class MediaLibrary extends FormElement {
       '#submit' => [[static::class, 'updateItem']],
       // Prevent errors in other widgets from preventing updates.
       // Exclude other validations in case there is no data yet.
-      '#limit_validation_errors' => !empty($referenced_entity) ? $limit_validation_errors : [],
+      '#limit_validation_errors' => !empty($referenced_entities) ? $limit_validation_errors : [],
     ];
 
     return $element;

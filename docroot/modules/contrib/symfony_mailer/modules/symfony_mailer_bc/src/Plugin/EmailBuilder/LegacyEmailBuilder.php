@@ -2,11 +2,12 @@
 
 namespace Drupal\symfony_mailer_bc\Plugin\EmailBuilder;
 
-use Drupal\Core\Mail\MailManagerInterface;
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\symfony_mailer\EmailFactoryInterface;
 use Drupal\symfony_mailer\EmailInterface;
 use Drupal\symfony_mailer\Exception\SkipMailException;
+use Drupal\symfony_mailer\MailerHelperInterface;
 use Drupal\symfony_mailer\Processor\EmailBuilderBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -16,25 +17,41 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class LegacyEmailBuilder extends EmailBuilderBase implements ContainerFactoryPluginInterface {
 
   /**
-   * Mail manager service.
+   * The mailer helper.
    *
-   * @var \Drupal\Core\Mail\MailManagerInterface
+   * @var \Drupal\symfony_mailer\MailerHelperInterface
    */
-  protected $mailManager;
+  protected $mailerHelper;
 
   /**
+   * List of headers for conversion from array.
+   *
+   * We omitted the To header, since it needs to be set in the build phase.
+   *
+   * @var array
+   */
+  protected const HEADERS = [
+    'From' => 'from',
+    'Reply-To' => 'reply-to',
+    'Cc' => 'cc',
+    'Bcc' => 'bcc',
+  ];
+
+  /**
+   * Constructor.
+   *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
    * @param string $plugin_id
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Mail\MailManagerInterface $mail_manager
-   *   Mail manager service.
+   * @param \Drupal\symfony_mailer\MailerHelperInterface $mailer_helper
+   *   The mailer helper.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, MailManagerInterface $mail_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, MailerHelperInterface $mailer_helper) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->mailManager = $mail_manager;
+    $this->mailerHelper = $mailer_helper;
   }
 
   /**
@@ -45,7 +62,7 @@ class LegacyEmailBuilder extends EmailBuilderBase implements ContainerFactoryPlu
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('plugin.manager.mail')
+      $container->get('symfony_mailer.helper')
     );
   }
 
@@ -65,10 +82,18 @@ class LegacyEmailBuilder extends EmailBuilderBase implements ContainerFactoryPlu
   }
 
   /**
-   * Reacts to preRender phase.
-   *
-   * @param \Drupal\symfony_mailer\EmailInterface $email
-   *   The email to process.
+   * {@inheritdoc}
+   */
+  public function build(EmailInterface $email) {
+    $message = $email->getParam('legacy_message');
+    $recipient = $message['to'] ?? NULL;
+    if (isset($recipient)) {
+      $email->setTo($this->mailerHelper->parseAddress($recipient, $message['langcode']));
+    }
+  }
+
+  /**
+   * {@inheritdoc}
    */
   public function preRender(EmailInterface $email) {
     $message = $email->getParam('legacy_message');
@@ -87,7 +112,48 @@ class LegacyEmailBuilder extends EmailBuilderBase implements ContainerFactoryPlu
       throw new SkipMailException('Send aborted by hook_mail().');
     }
 
-    $this->mailManager->emailFromArray($email, $message);
+    $this->emailFromArray($email, $message);
+  }
+
+  /**
+   * Fills an Email from a message array.
+   *
+   * @param \Drupal\symfony_mailer\EmailInterface $email
+   *   The email to fill.
+   * @param array $message
+   *   The array to fill from.
+   */
+  protected function emailFromArray(EmailInterface $email, array $message) {
+    $email->setSubject($message['subject']);
+
+    // Add attachments.
+    $attachments = $message['params']['attachments'] ?? [];
+    foreach ($attachments as $attachment) {
+      $email->attachFromPath($attachment['filepath'], $attachment['filename'] ?? NULL, $attachment['filemime'] ?? NULL);
+    }
+
+    // Add Address headers from message array to Email object.
+    // The "To" header will be set via build().
+    foreach (self::HEADERS as $name => $key) {
+      $encoded = $message['headers'][$name] ?? $message[$key] ?? NULL;
+      if (isset($encoded)) {
+        $email->setAddress($name, $this->mailerHelper->parseAddress($encoded));
+      }
+    }
+
+    // Add the body to the Email object, as rendered by hook_mail.
+    foreach ($message['body'] as $part) {
+      if ($part instanceof MarkupInterface) {
+        $body[] = ['#markup' => $part];
+      }
+      else {
+        $body[] = [
+          '#type' => 'processed_text',
+          '#text' => $part,
+        ];
+      }
+    }
+    $email->setBody($body ?? []);
   }
 
 }

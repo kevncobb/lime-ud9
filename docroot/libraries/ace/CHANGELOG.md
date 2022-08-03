@@ -2,6 +2,67 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.1](https://github.com/ajaxorg/ace/compare/v1.8.0...v1.8.1) (2022-07-21)
+
+
+### Bug Fixes
+
+* prevent race condition when creating css files in build ([1777bfb](https://github.com/ajaxorg/ace/commit/1777bfb7dca4dcaf575293ac9cacbc284f692351))
+
+## [1.8.0](https://github.com/ajaxorg/ace/compare/v1.7.1...v1.8.0) (2022-07-20)
+
+
+### Features
+
+* Use mini require ([#4845](https://github.com/ajaxorg/ace/issues/4845)) ([b9fabd4](https://github.com/ajaxorg/ace/commit/b9fabd47c0765d40117809cd3978b95d593370fb))
+
+
+### Bug Fixes
+
+* add undocumented Target command ([62e8e9e](https://github.com/ajaxorg/ace/commit/62e8e9e4d3b21552dd83d454b7fd55d4981d096a)), closes [#4839](https://github.com/ajaxorg/ace/issues/4839)
+* added NSIS 3.08 commands ([acad68c](https://github.com/ajaxorg/ace/commit/acad68cf92f5372257b061e300e31f71df9c62e9)), closes [#4838](https://github.com/ajaxorg/ace/issues/4838)
+* **bidihandler:** check for undefined before access length property on `splits` variable ([457b657](https://github.com/ajaxorg/ace/commit/457b65748f331740ded529fd7bbd06b86819fa4e))
+* correct highlight of php heredoc strings with one word on line ([ae4564c](https://github.com/ajaxorg/ace/commit/ae4564c2961b006ca849625a0dee1093061eba5a))
+* Fixed typo in Nord Dark theme. ([#4843](https://github.com/ajaxorg/ace/issues/4843)) ([38bf666](https://github.com/ajaxorg/ace/commit/38bf6663f43be1c45bfba3dc68c4a4820fb2661d))
+* Move session.onChange and placeholder.onChange handlers to be first in the change event handler queue ([bcb51f2](https://github.com/ajaxorg/ace/commit/bcb51f2b2a2ba2e1f30ebf543d97e7450574763f))
+* reuse `getTargetDir` function ([b89c4db](https://github.com/ajaxorg/ace/commit/b89c4db3424687856ff9c9e732435c35438b0cb9))
+* type declarations ([a8830fc](https://github.com/ajaxorg/ace/commit/a8830fc83708a7e51053038f1c6d7fde23e82e9d))
+
+### [1.7.1](https://github.com/ajaxorg/ace/compare/v1.7.0...v1.7.1) (2022-06-29)
+
+
+### Bug Fixes
+
+* Fixed accessing properties when err is null in onerror handler ([3b62a07](https://github.com/ajaxorg/ace/commit/3b62a0713e68fd76bfa9c52fa2112b56888d2349))
+* Uncaught TypeError: Cannot read properties of undefined in worker code ([ce068ac](https://github.com/ajaxorg/ace/commit/ce068ac29f0056f6a10d0fc99181b8ba3e274cfe))
+
+## [1.7.0](https://github.com/ajaxorg/ace/compare/v1.6.1...v1.7.0) (2022-06-28)
+
+
+### Features
+
+* Add Robot Framework syntax highlighting ([773c0c5](https://github.com/ajaxorg/ace/commit/773c0c5d8b87fabb643d8c1e2053f536c53318e8)), closes [#4614](https://github.com/ajaxorg/ace/issues/4614)
+* Added YAML language linter ([451f915](https://github.com/ajaxorg/ace/commit/451f915e645f8a172098316196ae2e029fc26aed)), closes [#3979](https://github.com/ajaxorg/ace/issues/3979)
+
+
+### Bug Fixes
+
+* Added two tmthemes gruvbox dark (hard) and light (hard) ([6b1e67f](https://github.com/ajaxorg/ace/commit/6b1e67f844056fd238a35094e8f4e4b197e0a9a4)), closes [#3673](https://github.com/ajaxorg/ace/issues/3673)
+* adds ignore browserified dir to eslintignore ([56b591b](https://github.com/ajaxorg/ace/commit/56b591b49673fcd062fd53325f74629d4cf45e3f))
+* Allow setAnnotations to use custom className ([f505879](https://github.com/ajaxorg/ace/commit/f505879d0463a8b2781e0e7caaaa857444d51f85)), closes [#4362](https://github.com/ajaxorg/ace/issues/4362)
+* Avoid substitutions when Webpack was introduced ([a540323](https://github.com/ajaxorg/ace/commit/a540323e933c6bad164bdc9f103d8de744ee1546)), closes [#4476](https://github.com/ajaxorg/ace/issues/4476)
+* Highlighting DISTINCT keyword in SQL ([fb3820a](https://github.com/ajaxorg/ace/commit/fb3820a9c1624c49a149d388bf26aa3d504704bb)), closes [#4399](https://github.com/ajaxorg/ace/issues/4399)
+* Make sure completions aren't null or undefined ([a78e127](https://github.com/ajaxorg/ace/commit/a78e127e8fd7d724b96208447caa384783616323)), closes [#4608](https://github.com/ajaxorg/ace/issues/4608)
+
+### [1.6.1](https://github.com/ajaxorg/ace/compare/v1.6.0...v1.6.1) (2022-06-24)
+
+
+### Bug Fixes
+
+* Highlight unicode characters in Python function and class names ([be6f2d1](https://github.com/ajaxorg/ace/commit/be6f2d125a8ffe70ceb336051da6a161ce9cf1bc))
+* Incorrect YAML syntax highlighting for version numbers with multiple periods ([049d761](https://github.com/ajaxorg/ace/commit/049d76131e6122f7397fb30cc341db34baaf2813))
+* Incorrect YAML syntax highlighting for version numbers with multiple periods [#4827](https://github.com/ajaxorg/ace/issues/4827) ([915fcaf](https://github.com/ajaxorg/ace/commit/915fcaf542469a7dc0e3e7235f23a66a3abaadb9))
+
 ## [1.6.0](https://github.com/ajaxorg/ace/compare/v1.5.3...v1.6.0) (2022-06-10)
 
 

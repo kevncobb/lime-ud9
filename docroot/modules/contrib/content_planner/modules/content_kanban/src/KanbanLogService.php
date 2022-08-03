@@ -3,19 +3,19 @@
 namespace Drupal\content_kanban;
 
 use Drupal\content_kanban\Entity\KanbanLog;
-use Drupal\Core\Database\Driver\mysql\Connection;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityStorageException;
-use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
- * Class KanbanLogService.
+ * Implements KanbanLogService class.
  */
 class KanbanLogService {
 
   /**
-   * Drupal\Core\Database\Driver\mysql\Connection definition.
+   * The database connection.
    *
-   * @var \Drupal\Core\Database\Driver\mysql\Connection
+   * @var \Drupal\Core\Database\Connection
    */
   protected $database;
 
@@ -29,7 +29,7 @@ class KanbanLogService {
   /**
    * Constructs a new KanbanLogService object.
    */
-  public function __construct(Connection $database, EntityTypeManager $entityTypeManager) {
+  public function __construct(Connection $database, EntityTypeManagerInterface $entityTypeManager) {
     $this->database = $database;
     $this->entityTypeManager = $entityTypeManager;
   }

@@ -6,7 +6,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- *
+ * Implements CalenderOverviewFilterForm class.
  */
 class CalenderOverviewFilterForm extends FormBase {
 
@@ -34,10 +34,13 @@ class CalenderOverviewFilterForm extends FormBase {
    * Add Calendar select box.
    *
    * @param array $form
+   *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $formState
-   * @param $params
+   *   The current state of the form.
+   * @param array $params
+   *   Array params.
    */
-  protected function addCalendarYearSelectBox(array &$form, FormStateInterface &$formState, $params) {
+  protected function addCalendarYearSelectBox(array &$form, FormStateInterface &$formState, array $params) {
 
     // Date range.
     $year_range = range(($params['current_year'] - 3), ($params['current_year'] + 3));
@@ -54,25 +57,23 @@ class CalenderOverviewFilterForm extends FormBase {
   }
 
   /**
-   *
+   * Add jump links.
    */
   protected function addJumpLinks(array &$form, FormStateInterface &$formState, $params) {
 
-    $jump_liks = [];
-
     $months = [
-      1 => t('Jan'),
-      2 => t('Feb'),
-      3 => t('Mar'),
-      4 => t('Apr'),
-      5 => t('May'),
-      6 => t('Jun'),
-      7 => t('Jul'),
-      8 => t('Aug'),
-      9 => t('Sept'),
-      10 => t('Oct'),
-      11 => t('Nov'),
-      12 => t('Dec'),
+      1 => $this->t('Jan'),
+      2 => $this->t('Feb'),
+      3 => $this->t('Mar'),
+      4 => $this->t('Apr'),
+      5 => $this->t('May'),
+      6 => $this->t('Jun'),
+      7 => $this->t('Jul'),
+      8 => $this->t('Aug'),
+      9 => $this->t('Sept'),
+      10 => $this->t('Oct'),
+      11 => $this->t('Nov'),
+      12 => $this->t('Dec'),
     ];
 
     $form['jump_links'] = [
@@ -84,7 +85,7 @@ class CalenderOverviewFilterForm extends FormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {}
 

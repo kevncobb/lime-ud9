@@ -57,14 +57,14 @@ abstract class AddressAdjusterBase extends EmailAdjusterBase {
     foreach ($addresses as $item) {
       $form_item['value'] = [
         '#type' => 'textfield',
-        '#title' => t('Address'),
+        '#title' => $this->t('Address'),
         '#default_value' => $item['value'] ?? NULL,
         '#description' => $this->t('Enter an email address, a user ID, or %site to use the site email address.', ['%site' => '<site>']),
       ];
 
       $form_item['display'] = [
         '#type' => 'textfield',
-        '#title' => t('Display name'),
+        '#title' => $this->t('Display name'),
         '#default_value' => $item['display'] ?? NULL,
         '#description' => $this->t('Human-readable display name (ignored for user or site address).'),
       ];

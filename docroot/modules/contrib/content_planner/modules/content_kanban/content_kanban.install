@@ -5,7 +5,6 @@
  * Contains install and uninstall functionality of the module.
  */
 
-use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Field\BaseFieldDefinition;
 
 /**
@@ -35,18 +34,19 @@ function content_kanban_update_8002() {
     ->setLabel(t('Entity Type'))
     ->setDescription(t('The type of the entity.'))
     ->setDefaultValue('');
-  
+
   \Drupal::entityDefinitionUpdateManager()
     ->installFieldStorageDefinition('entity_type', 'content_kanban_log', 'content_kanban_log', $field_storage_definition);
 }
 
 /**
- * Flush all entities of kanban log once as content_kanban_log structure has changed
+ * Flush all entities of kanban log once as.
+ *
+ * Content_kanban_log structure has changed.
  */
-function content_kanban_update_8003() { 
-  $database = \Drupal::database();
+function content_kanban_update_8003() {
   $entity_type = 'content_kanban_log';
- 
+
   $query = \Drupal::entityQuery($entity_type);
   $ids = $query->execute();
 

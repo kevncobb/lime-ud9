@@ -37,6 +37,8 @@ class InlineCssEmailAdjuster extends EmailAdjusterBase implements ContainerFacto
   protected $cssInliner;
 
   /**
+   * Constructor.
+   *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
    * @param string $plugin_id

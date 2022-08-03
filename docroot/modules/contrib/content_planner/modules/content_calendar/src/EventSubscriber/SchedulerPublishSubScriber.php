@@ -2,14 +2,32 @@
 
 namespace Drupal\content_calendar\EventSubscriber;
 
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Drupal\scheduler\SchedulerEvent;
 use Drupal\scheduler\SchedulerEvents;
 
 /**
- *
+ * Implements SchedulerPublishSubScriber class.
  */
 class SchedulerPublishSubScriber implements EventSubscriberInterface {
+
+  /**
+   * Interface for classes that manage a set of enabled modules.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * Constructs a SchedulerPublishSubScriber object.
+   *
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   Interface for classes that manage a set of enabled modules.
+   */
+  public function __construct(ModuleHandlerInterface $module_handler) {
+    $this->moduleHandler = $module_handler;
+  }
 
   /**
    * {@inheritdoc}
@@ -24,11 +42,12 @@ class SchedulerPublishSubScriber implements EventSubscriberInterface {
    * Act upon a node publish.
    *
    * @param \Drupal\scheduler\SchedulerEvent $event
+   *   Drupal Schedule Event.
    */
   public function onNodePublish(SchedulerEvent $event) {
 
     // If the Content Kanban module exists.
-    if (\Drupal::moduleHandler()->moduleExists('content_kanban')) {
+    if ($this->moduleHandler->moduleExists('content_kanban')) {
 
       /** @var \Drupal\node\Entity\Node $node */
       $node = $event->getNode();
@@ -39,7 +58,8 @@ class SchedulerPublishSubScriber implements EventSubscriberInterface {
       // Set Moderation state to published.
       $node->moderation_state->value = 'published';
 
-      // Return updated node to event which in turn returns it to the scheduler module.
+      // Return updated node to event
+      // which in turn returns it to the scheduler module.
       $event->setNode($node);
 
     }

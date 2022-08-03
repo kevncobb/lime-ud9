@@ -21,8 +21,28 @@ composer create-project vardot/varbase:9.0.x-dev PROJECT_DIR_NAME --stability de
 cd path to your files of the project/PROJECT_DIR_NAME
 composer require --dev drupal/core-dev:~9.0
 composer require --dev drush/drush:~11.0
-composer require --dev drupal/drupal-extension:~4.0
+composer require --dev drupal/drupal-extension:~4.0 --with-all-dependencies
 composer require --dev emuse/behat-html-formatter:^0.2.0
+
+```
+
+### Add additional testing packages
+```
+cd path to yout files of the project/PROJECT_DIR_NAME
+BEHAT-SCREENSHOT to capture images on demand or when a test fails
+
+composer require --dev drevops/behat-screenshot
+
+Edit the behat.yml file, which is located in:
+`path to your files of the project/PROJECT_DIR_NAME/docroot/profiles/varbase/behat.yml`
+- to have DrevOps\BehatScreenshotExtension\Context\ScreenshotContext under contexts
+- to have DrevOps\BehatScreenshotExtension:
+            dir: '%paths.base%/tests/screenshots'
+            fail: true
+            fail_prefix: 'failed_'
+            purge: false
+  under extensions
+Read more about it here: https://github.com/drevops/behat-screenshot
 
 ```
 
@@ -104,7 +124,7 @@ To delete testing users use
 
 ## 1. Change the base url
 
-Edit the behat.yml file, which located in:
+Edit the behat.yml file, which is located in:
 `path to your files of the project/PROJECT_DIR_NAME/docroot/profiles/varbase/behat.yml`
  to the domain or the local virtual domain.
 ```
@@ -148,12 +168,12 @@ sudo mv -f chromedriver /usr/bin/
 rm chromedriver_linux64.zip
 ```
 
-### Get selenium standalone server.
+### Get Selenium Standalone server.
 ```
-wget http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.1.jar
+wget https://github.com/SeleniumHQ/selenium/releases/download/selenium-3.141.59/selenium-server-standalone-3.141.59.jar
 ```
 
-## Run selenium standalone server.
+## Run Selenium Standalone server.
 
 ```
 $ java -jar selenium-*.jar -port 4445
@@ -180,32 +200,30 @@ To run the automated testing with behat you will need to change the [ wd_host an
           browserName: chrome
           version: "*"
           extra_capabilities:
+            loggingPrefs:
+              performance: ALL
+              browser: ALL
             chromeOptions:
-              args:
-                - "--disable-gpu"
-                - "--window-size=1920,1080"
               w3c: false
-          chrome:
-            switches:
-              - "--headless"
-              - "no-sandbox"
-              - "--no-sandbox"
-              - "--disable-web-security"
-              - "--DNS-prefetch-disable"
-              - "--whitelisted-ips"
-              - "--start-maximized"
-              - "--disable-translate"
-              - "--ignore-certificate-errors"
-              - "--test-type"
-              - "--disable-dev-shm-usage"
-              - "--disable-extensions"
-              - "incognito"
-              - "enable-precise-memory-info"
-              - "ignore-certificate-errors"
-              - "disable-infobars"
-              - "js-flags=--expose-gc"
-              - "--profile-directory=Default"
-              - "--user-data-dir=~/.config/google-chrome"
+              args:
+                - "--headless"
+                - "--start-maximized"
+                - "--disable-gpu"
+                - "--window-size=1600,1200"
+                - "--no-sandbox"
+                - "--disable-dev-shm-usage"
+                - "--disable-setuid-sandbox"
+                - "--disable-web-security"
+                - "--DNS-prefetch-disable"
+                - "--disable-translate"
+                - "--ignore-certificate-errors"
+                - "--test-type"
+                - "--disable-extensions"
+                - "--incognito"
+                - "--disable-infobars"
+                - "--remote-debugging-port=9222"
+                - "--allowed-ips=*"
+                - "--whitelisted-ips=*"
       base_url: 'http://varbase.test'
       # browser_name: 'firefox'
       browser_name: 'chrome'

@@ -6,17 +6,15 @@ use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\content_calendar\ContentTypeConfigService;
 use Drupal\content_kanban\Form\SettingsForm;
-use Drupal\content_moderation\Entity\ContentModerationState;
 use Drupal\content_moderation\ModerationInformationInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Database\Driver\mysql\Connection;
-use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\content_kanban\Form\KanbanFilterForm;
 
 /**
- * Class KanbanService.
+ * Implements KanbanService class.
  */
 class KanbanService {
 
@@ -28,9 +26,9 @@ class KanbanService {
   protected $configFactory;
 
   /**
-   * Drupal\Core\Database\Driver\mysql\Connection definition.
+   * The database connection.
    *
-   * @var \Drupal\Core\Database\Driver\mysql\Connection
+   * @var \Drupal\Core\Database\Connection
    */
   protected $database;
 
@@ -85,7 +83,7 @@ class KanbanService {
     ConfigFactoryInterface $config_factory,
     Connection $database,
     ModerationInformationInterface $moderation_information,
-    EntityTypeManager $entityTypeManager,
+    EntityTypeManagerInterface $entityTypeManager,
     ModuleHandlerInterface $moduleHandler,
     ContentTypeConfigService $contentTypConfigService
   ) {
@@ -196,99 +194,17 @@ class KanbanService {
   }
 
   /**
-   * Gets the Content Moderation Entities.
-   *
-   * @param string $workflow
-   *   The workflow ID.
-   * @param array $filters
-   *   An array with the filters.
-   * @param array $entities
-   *   An array with the entities.
-   *
-   * @return \Drupal\content_moderation\Entity\ContentModerationState[]
-   *   Returns an array with the content moderation states for the given
-   *   workflow.
-   */
-  public function getEntityContentModerationEntities($workflow, array $filters = [], array $entities = []) {
-    $result = [];
-    try {
-      $query = $this->entityTypeManager->getStorage('content_moderation_state')->getQuery();
-      if (!empty(array_keys($entities))) {
-        $query->condition('workflow', $workflow);
-        $query->condition('content_entity_type_id', array_keys($entities), 'in');
-      }
-
-      // Moderation state filter.
-      if (array_key_exists('moderation_state', $filters) && $filters['moderation_state']) {
-        $query->condition('moderation_state', $filters['moderation_state']);
-      }
-
-      // User ID filter.
-      if (array_key_exists('uid', $filters) && $filters['uid']) {
-        $query->condition('uid', $filters['uid']);
-      }
-
-      // User ID filter.
-      $result = $query->execute();
-    }
-    catch (InvalidPluginDefinitionException $e) {
-      watchdog_exception('content_kanban', $e);
-    }
-    catch (PluginNotFoundException $e) {
-      watchdog_exception('content_kanban', $e);
-    }
-    if ($result) {
-      return ContentModerationState::loadMultiple($result);
-    }
-
-    return $result;
-  }
-
-  /**
-   * Gets the entity IDs from Content Moderation entities.
-   *
-   * @param string $workflow
-   *   The workflow id.
-   * @param array $filters
-   *   An array with the filters.
-   * @param array $entities
-   *   An array with the entities.
-   *
-   * @return array
-   *   Returns an array with the entity ids.
-   */
-  public function getEntityIdsFromContentModerationEntities($workflow, array $filters = [], array $entities = []) {
-    $entityIds = [];
-
-    if ($content_moderation_states = $this->getEntityContentModerationEntities($workflow, $filters, $entities)) {
-      foreach ($content_moderation_states as $content_moderation_state) {
-
-        // Get property.
-        $content_entity_id_property = $content_moderation_state->content_entity_id;
-
-        // Get value.
-        $content_entity_id_value = $content_entity_id_property->getValue();
-        $entity_type_id_value = $content_moderation_state->get('content_entity_type_id')->getValue();
-        // Get the entity type id.
-        $entity_type_id = $entity_type_id_value[0]['value'];
-        // Build the ids array with entity type as key.
-        $entityIds[$entity_type_id][] = $content_entity_id_value[0]['value'];
-      }
-
-    }
-    return $entityIds;
-  }
-
-  /**
    * Gets the entities by Type.
    *
    * @param array $entityIds
    *   An array with the entity ids.
+   * @param array $filters
+   *   An array with the filters.
    *
    * @return array
    *   Returns a array with the entities for the given entity ids.
    */
-  public function getEntitiesByEntityIds(array $entityIds = [], $filters = []) {
+  public function getEntitiesByEntityIds(array $entityIds = [], array $filters = []) {
 
     $result = [];
     // Basic table.
@@ -299,32 +215,33 @@ class KanbanService {
         try {
           $entityStorage = $this->entityTypeManager->getStorage($entityTypeName);
           $entityKeys = $entityStorage->getEntityType()->getKeys();
+          $ownerKey = $entityKeys['owner'] ?: $entityKeys['uid'];
+          $bundleKey = $entityKeys['bundle'] ?: $entityKeys['type'];
           $query[$entityTypeName] = $this->database->select($entityTypeName . '_field_data', 'nfd');
           $query[$entityTypeName]->addField('nfd', $entityKeys['id']);
           $query[$entityTypeName]->addField('nfd', $entityKeys['label']);
           $query[$entityTypeName]->addField('nfd', 'created');
           $query[$entityTypeName]->addField('nfd', 'status');
-          $query[$entityTypeName]->addField('nfd', 'type');
+          $query[$entityTypeName]->addField('nfd', $bundleKey);
 
           if ($filters['content_type']) {
-            $query[$entityTypeName]->condition('nfd.type', $filters['content_type']);
+            $query[$entityTypeName]->condition('nfd.' . $bundleKey, $filters['content_type']);
           }
 
           // Join with users table to get the username who added the entity.
           $query[$entityTypeName]->addField('ufd', 'name', 'username');
-          $query[$entityTypeName]->addField('nfd', $entityKeys['uid']);
+          $query[$entityTypeName]->addField('nfd', $ownerKey);
           $query[$entityTypeName]->condition('nfd.' . $entityKeys['id'], $entityIds[$entityTypeName], 'in');
-          $query[$entityTypeName]->innerJoin('users_field_data', 'ufd', 'nfd.' . $entityKeys['uid'] . ' = ufd.uid');
+          $query[$entityTypeName]->innerJoin('users_field_data', 'ufd', 'nfd.' . $ownerKey . ' = ufd.uid');
 
           // Filter by Starting Date.
           if (KanbanFilterForm::getDateRangeFilter()) {
 
             $searchFromTime = time() - (86400 * KanbanFilterForm::getDateRangeFilter());
 
-            //@todo how about non mysql systems?
-            $query[$entityTypeName]->condition('nfd.created',$searchFromTime,'>=');
+            // @todo how about non mysql systems?
+            $query[$entityTypeName]->condition('nfd.created', $searchFromTime, '>=');
           }
-
 
           // Sort.
           if ($this->database->schema()->fieldExists($entityTypeName . '_field_data', 'publish_on') && $this->contentCalendarModuleIsEnabled()) {

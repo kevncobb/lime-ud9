@@ -69,7 +69,8 @@ class ContentTypeConfig extends ConfigEntityBase implements ContentTypeConfigInt
   /**
    * Get the saved color value.
    *
-   * @return string
+   * @return string|null
+   *   The saved color value, or NULL if not configured.
    */
   public function getColor() {
 
@@ -77,7 +78,7 @@ class ContentTypeConfig extends ConfigEntityBase implements ContentTypeConfigInt
       return $this->color;
     }
 
-    return 'farbe eingeben';
+    return NULL;
   }
 
 }

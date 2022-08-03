@@ -5,7 +5,7 @@ namespace Drupal\content_planner;
 use Drupal\Core\Config\ConfigFactoryInterface;
 
 /**
- * Class DashboardSettingsService.
+ * Implements DashboardSettingsService class.
  */
 class DashboardSettingsService {
 

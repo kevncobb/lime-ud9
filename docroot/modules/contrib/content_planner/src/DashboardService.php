@@ -2,8 +2,10 @@
 
 namespace Drupal\content_planner;
 
+use Drupal\Core\Extension\ModuleHandlerInterface;
+
 /**
- * Class DashboardService.
+ * Implements DashboardService class.
  */
 class DashboardService {
 
@@ -15,10 +17,18 @@ class DashboardService {
   protected $dashboardSettingsService;
 
   /**
+   * Interface for classes that manage a set of enabled modules.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * Constructs a new DashboardService object.
    */
-  public function __construct(DashboardSettingsService $dashboard_settings_service) {
+  public function __construct(DashboardSettingsService $dashboard_settings_service, ModuleHandlerInterface $module_handler) {
     $this->dashboardSettingsService = $dashboard_settings_service;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -38,7 +48,7 @@ class DashboardService {
    *   TRUE if the content calendar is enabled.
    */
   public function isContentCalendarEnabled() {
-    return \Drupal::moduleHandler()->moduleExists('content_calendar');
+    return $this->moduleHandler->moduleExists('content_calendar');
   }
 
   /**
@@ -48,7 +58,7 @@ class DashboardService {
    *   TRUE if the kanban calendar is enabled.
    */
   public function isContentKanbanEnabled() {
-    return \Drupal::moduleHandler()->moduleExists('content_kanban');
+    return $this->moduleHandler->moduleExists('content_kanban');
   }
 
 }

@@ -4,26 +4,24 @@ namespace Drupal\content_kanban\Form;
 
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
-use Drupal\content_kanban\KanbanService;
-use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\content_kanban\Form\SettingsForm;
-use Drupal\node\Entity\NodeType;
+use Drupal\content_planner\ContentModerationService;
 
 /**
- * KanbanFilterForm class.
+ * Implements KanbanFilterForm class.
  */
 class KanbanFilterForm extends FormBase {
 
   /**
-   * The Kanban service.
+   * The Content Moderation service.
    *
-   * @var \Drupal\content_kanban\KanbanService
+   * @var \Drupal\content_planner\ContentModerationService
    */
-  protected $kanbanService;
+  protected $contentModerationService;
 
   /**
    * An array with the form params.
@@ -42,8 +40,8 @@ class KanbanFilterForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(KanbanService $kanban_service, EntityTypeManager $entityTypeManager) {
-    $this->kanbanService = $kanban_service;
+  public function __construct(ContentModerationService $content_moderation_service, EntityTypeManagerInterface $entityTypeManager) {
+    $this->contentModerationService = $content_moderation_service;
     $this->entityTypeManager = $entityTypeManager;
   }
 
@@ -52,7 +50,7 @@ class KanbanFilterForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('content_kanban.kanban_service'),
+      $container->get('content_planner.content_moderation_service'),
       $container->get('entity_type.manager')
     );
   }
@@ -117,13 +115,12 @@ class KanbanFilterForm extends FormBase {
 
     $form['filters']['filter_content_type'] = [
       '#type' => 'select',
-      '#title' => $this->t('Content type'),
+      '#title' => $this->t('Entity type'),
       '#options' => self::getContentTypeOptions($params['workflow_id']),
       '#required' => FALSE,
       '#empty_value' => '',
       '#empty_option' => $this->t('All'),
       '#default_value' => self::getContentTypeFilter(),
-      '#required' => FALSE,
     ];
 
     $form['filters']['search'] = [
@@ -165,7 +162,7 @@ class KanbanFilterForm extends FormBase {
     $options = [];
 
     // Load Content Moderation entities.
-    $content_moderation_entities = $this->kanbanService->getEntityContentModerationEntities($this->formParams['workflow_id']);
+    $content_moderation_entities = $this->contentModerationService->getEntityContentModerationEntities($this->formParams['workflow_id']);
     foreach ($content_moderation_entities as $content_moderation_entity) {
       // Get the entity id and entity type id.
       $entityId = $content_moderation_entity->content_entity_id->value;
@@ -173,7 +170,7 @@ class KanbanFilterForm extends FormBase {
       // Get the entity keys and the entity loaded.
       try {
         $entityType = $this->entityTypeManager->getStorage($entityTypeId);
-        $entityKeyUserId = $entityType->getEntityType()->getKey('uid');
+        $entityKeyUserId = $entityType->getEntityType()->hasKey('owner') ? $entityType->getEntityType()->getKey('owner') : $entityType->getEntityType()->getKey('uid');
         if ($entity = $entityType->load($entityId)) {
           $userId = $entity->$entityKeyUserId->getValue();
           if ($user_id = $userId[0]['target_id']) {
@@ -224,10 +221,10 @@ class KanbanFilterForm extends FormBase {
    */
   public static function getDateRangeOptions() {
 
-    //static for now, maybe it needs to be more dynamic later
+    // Static for now, maybe it needs to be more dynamic later.
     $options = [];
-    //@todo t() is bad - how can we get the translation service (without using global context)
-    $options['1']    = t('1 Day');
+    // @todo t() is bad - how can we get the translation service (without using global context)
+    $options['1']   = t('1 Day');
     $options['7']   = t('7 Days');
     $options['30']  = t('30 Days');
     $options['90']  = t('90 Days');
@@ -245,13 +242,18 @@ class KanbanFilterForm extends FormBase {
   public function getContentTypeOptions($workflow_id) {
     $options = [];
     $workflow = $this->entityTypeManager->getStorage('workflow')->load($workflow_id);
-    $types = $workflow->get('type_settings')['entity_types']['node'];
-    $all_content_types = NodeType::loadMultiple();
+    $entityTypes = $workflow->get('type_settings')['entity_types'];
 
-    foreach ($types as $key) {
-      $options[$key] = $all_content_types[$key]->label();
+    foreach ($entityTypes as $entityTypeId => $bundles) {
+      $entityType = $this->entityTypeManager->getDefinition($entityTypeId);
+      $bundleEntities = $this->entityTypeManager
+        ->getStorage($entityType->getBundleEntityType())
+        ->loadMultiple($bundles);
+
+      foreach ($bundleEntities as $bundle => $entity) {
+        $options[(string) $entityType->getLabel()][$bundle] = $entity->label();
+      }
     }
-
 
     return $options;
   }
@@ -296,7 +298,8 @@ class KanbanFilterForm extends FormBase {
 
     if (\Drupal::request()->query->has('filter_date_range')) {
       return \Drupal::request()->query->get('filter_date_range');
-    } else {
+    }
+    else {
       $config = \Drupal::config(SettingsForm::CONFIG_NAME);
 
       $date_range = $config->get('default_filter_date_range');

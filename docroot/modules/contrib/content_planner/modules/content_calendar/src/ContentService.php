@@ -6,10 +6,15 @@ use Drupal\content_calendar\Entity\ContentTypeConfig;
 use Drupal\node\Entity\Node;
 
 /**
- * Class UserProfileImage.
+ * Implements UserProfileImage class.
  */
 class ContentService {
 
+  /**
+   * Type Configuration.
+   *
+   * @var int
+   */
   private $contentTypeConfig;
 
   /**
@@ -20,14 +25,17 @@ class ContentService {
   }
 
   /**
+   * Get Content Configuration Type.
+   *
    * @return \Drupal\Core\Entity\EntityInterface[]|static[]
+   *   Returns an static interface.
    */
   public function getContentTypeConfig() {
     return $this->contentTypeConfig;
   }
 
   /**
-   *
+   * Get the recent content.
    */
   public function getRecentContent($limit) {
     $configs = $this->getContentTypeConfig();
@@ -50,11 +58,11 @@ class ContentService {
       ->range(0, $limit)
       ->execute();
 
-    return $nodes = Node::loadMultiple($ids);
+    return Node::loadMultiple($ids);
   }
 
   /**
-   *
+   * Get the following content.
    */
   public function getFollowingContent($limit) {
     $configs = $this->getContentTypeConfig();
@@ -78,7 +86,7 @@ class ContentService {
       ->range(0, $limit)
       ->execute();
 
-    return $nodes = Node::loadMultiple($ids);
+    return Node::loadMultiple($ids);
   }
 
 }

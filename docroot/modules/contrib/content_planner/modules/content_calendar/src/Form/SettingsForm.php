@@ -2,13 +2,15 @@
 
 namespace Drupal\content_calendar\Form;
 
+use Drupal\content_calendar\ContentTypeConfigService;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
-use Drupal\node\Entity\NodeType;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines a form that configures forms module settings.
@@ -16,14 +18,25 @@ use Drupal\Core\Form\FormStateInterface;
 class SettingsForm extends ConfigFormBase {
 
   /**
+   * Drupal\content_calendar\ContentTypeConfigService definition.
+   *
    * @var \Drupal\content_calendar\ContentTypeConfigService
    */
   protected $contentTypeConfigService;
 
   /**
+   * Module configuration object.
+   *
    * @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig
    */
   protected $config;
+
+  /**
+   * Provides an interface for entity type managers.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
 
   /**
    * Config name.
@@ -31,23 +44,35 @@ class SettingsForm extends ConfigFormBase {
   const CONFIG_NAME = 'content_calendar.settings';
 
   /**
-   * The default background color value for unpublished content.
-   */
-  const DEFAULT_BG_COLOR_UNPUBLISHED_CONTENT = '#fff4f4';
-
-  /**
    * Constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory service.
+   * @param \Drupal\content_calendar\ContentTypeConfigService $content_type_config_service
+   *   Implements ContentTypeConfigService class.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   Provides an interface for entity type managers.
    */
-  public function __construct(ConfigFactoryInterface $config_factory) {
+  public function __construct(ConfigFactoryInterface $config_factory, ContentTypeConfigService $content_type_config_service, EntityTypeManagerInterface $entity_type_manager) {
 
     parent::__construct($config_factory);
 
-    $this->contentTypeConfigService = \Drupal::service('content_calendar.content_type_config_service');
+    $this->contentTypeConfigService = $content_type_config_service;
+    $this->entityTypeManager = $entity_type_manager;
 
     // Get config.
     $this->config = $this->config(self::CONFIG_NAME);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('content_calendar.content_type_config_service'),
+      $container->get('entity_type.manager')
+    );
   }
 
   /**
@@ -96,13 +121,14 @@ class SettingsForm extends ConfigFormBase {
    * Build Content Type select options.
    *
    * @return array
+   *   Returns an array with display options.
    */
   protected function getConfiguredContentTypes() {
 
     $display_options = [];
 
     // Load Node Type configurations.
-    $node_types = NodeType::loadMultiple();
+    $node_types = $this->entityTypeManager->getStorage('node_type')->loadMultiple();
 
     foreach ($node_types as $node_type_key => $node_type) {
 
@@ -122,7 +148,9 @@ class SettingsForm extends ConfigFormBase {
    * Build Content type configuration.
    *
    * @param array $form
+   *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
    */
   protected function buildContentTypeConfiguration(array &$form, FormStateInterface $form_state) {
 
@@ -201,7 +229,9 @@ class SettingsForm extends ConfigFormBase {
    * Build the form elements for the calendar options.
    *
    * @param array $form
+   *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
    */
   protected function buildCalendarOptions(array &$form, FormStateInterface $form_state) {
 
@@ -228,7 +258,6 @@ class SettingsForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => $this->t('Background color for unpublished content'),
       '#description' => $this->t("Define the background color for unpublished content. Use a css color in word format (e.x. red) or a hexadecimal value (e.x. #ffcc00). When empty the default value will be used."),
-      '#maxlength' => 20,
       '#default_value' => $this->config->get('bg_color_unpublished_content'),
     ];
 
@@ -265,8 +294,10 @@ class SettingsForm extends ConfigFormBase {
    * Get selected content types.
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
    *
    * @return array
+   *   Return selected content types.
    */
   protected function getSelectedContentTypes(FormStateInterface &$form_state) {
 
@@ -290,7 +321,9 @@ class SettingsForm extends ConfigFormBase {
    * Check which config entity needs to be deleted.
    *
    * @param array $selected_content_types
+   *   An array with selected content types.
    * @param \Drupal\content_calendar\Entity\ContentTypeConfig[] $config_entities
+   *   An array with config entities.
    */
   protected function addNewConfigEntities(array $selected_content_types, array &$config_entities) {
 
@@ -301,9 +334,9 @@ class SettingsForm extends ConfigFormBase {
 
       if (!in_array($selected_content_type, $entity_keys)) {
 
-        if ($node_type = NodeType::load($selected_content_type)) {
+        if ($node_type = $this->entityTypeManager->getStorage('node_type')->load($selected_content_type)) {
           $this->contentTypeConfigService->createEntity($selected_content_type, $node_type->label());
-          $this->messenger()->addMessage(t('Content Type @name has been added and can be configured below.', ['@name' => $node_type->label()]));
+          $this->messenger()->addMessage($this->t('Content Type @name has been added and can be configured below.', ['@name' => $node_type->label()]));
         }
       }
     }
@@ -313,14 +346,16 @@ class SettingsForm extends ConfigFormBase {
    * Check which config entity needs to be deleted.
    *
    * @param array $selected_content_types
+   *   Array with a selected content types.
    * @param \Drupal\content_calendar\Entity\ContentTypeConfig[] $config_entities
+   *   Array with content calendar.
    */
   protected function deleteObsoleteConfigEntities(array $selected_content_types, array &$config_entities) {
 
     foreach ($config_entities as $config_entity_id => $config_entity) {
 
       if (!in_array($config_entity_id, $selected_content_types)) {
-        $this->messenger()->addMessage(t('Content Type @name has been removed from Content Calendar.', ['@name' => $config_entity->label()]));
+        $this->messenger()->addMessage($this->t('Content Type @name has been removed from Content Calendar.', ['@name' => $config_entity->label()]));
         $config_entity->delete();
       }
     }

@@ -12,6 +12,11 @@ namespace Drupal\content_planner\Plugin\DashboardBlock;
  */
 class View6Block extends ViewBlockBase {
 
+  /**
+   * ID for the block.
+   *
+   * @var string
+   */
   protected $blockID = 'view_6';
 
 }

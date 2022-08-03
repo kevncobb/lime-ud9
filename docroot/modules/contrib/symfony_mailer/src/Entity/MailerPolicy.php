@@ -64,12 +64,53 @@ class MailerPolicy extends ConfigEntityBase implements EntityWithPluginCollectio
    */
   protected $emailAdjusterManager;
 
+  /**
+   * The label for an unknown value.
+   *
+   * @var string
+   */
   protected $labelUnknown;
+
+  /**
+   * The label for all values.
+   *
+   * @var string
+   */
   protected $labelAll;
+
+  /**
+   * The type.
+   *
+   * @var string
+   */
   protected $type;
+
+  /**
+   * The subtype.
+   *
+   * @var string
+   */
   protected $subType;
+
+  /**
+   * The entity id.
+   *
+   * @var string
+   */
   protected $entityId;
+
+  /**
+   * The entity.
+   *
+   * @var \Drupal\Core\Config\Entity\ConfigEntityInterface
+   */
   protected $entity;
+
+  /**
+   * The builder definition.
+   *
+   * @var string[]
+   */
   protected $builderDefinition;
 
   /**

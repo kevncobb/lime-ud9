@@ -2,7 +2,6 @@
 
 namespace Drupal\symfony_mailer_bc;
 
-use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -12,7 +11,6 @@ use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\symfony_mailer\EmailFactoryInterface;
 use Drupal\symfony_mailer\EmailInterface;
-use Drupal\symfony_mailer\MailerHelperInterface;
 use Drupal\symfony_mailer\Processor\EmailBuilderManagerInterface;
 
 /**
@@ -21,7 +19,7 @@ use Drupal\symfony_mailer\Processor\EmailBuilderManagerInterface;
 class MailManagerReplacement extends MailManager {
 
   /**
-   * List of headers for conversion to/from array.
+   * List of headers for conversion to array.
    *
    * @var array
    */
@@ -39,13 +37,6 @@ class MailManagerReplacement extends MailManager {
    * @var \Drupal\symfony_mailer\EmailFactoryInterface
    */
   protected $emailFactory;
-
-  /**
-   * The mailer helper.
-   *
-   * @var \Drupal\symfony_mailer\MailerHelperInterface
-   */
-  protected $mailerHelper;
 
   /**
    * The email builder manager.
@@ -74,15 +65,12 @@ class MailManagerReplacement extends MailManager {
    *   The renderer.
    * @param \Drupal\symfony_mailer\EmailFactoryInterface $email_factory
    *   The email factory.
-   * @param \Drupal\symfony_mailer\MailerHelperInterface $mailer_helper
-   *   The mailer helper.
    * @param \Drupal\symfony_mailer\Processor\EmailBuilderManagerInterface $email_builder_manager
    *   The email builder manager.
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, TranslationInterface $string_translation, RendererInterface $renderer, EmailFactoryInterface $email_factory, MailerHelperInterface $mailer_helper, EmailBuilderManagerInterface $email_builder_manager) {
+  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, TranslationInterface $string_translation, RendererInterface $renderer, EmailFactoryInterface $email_factory, EmailBuilderManagerInterface $email_builder_manager) {
     parent::__construct($namespaces, $cache_backend, $module_handler, $config_factory, $logger_factory, $string_translation, $renderer);
     $this->emailFactory = $email_factory;
-    $this->mailerHelper = $mailer_helper;
     $this->emailBuilderManager = $email_builder_manager;
   }
 
@@ -94,7 +82,7 @@ class MailManagerReplacement extends MailManager {
       'id' => $module . '_' . $key,
       'module' => $module,
       'key' => $key,
-      'to' => $to,
+      'to' => $to ?: NULL,
       'langcode' => $langcode,
       'params' => $params,
       'reply-to' => $reply,
@@ -124,50 +112,6 @@ class MailManagerReplacement extends MailManager {
     }
 
     return $message;
-  }
-
-  /**
-   * Fills an Email from a message array.
-   *
-   * @param \Drupal\symfony_mailer\EmailInterface $email
-   *   The email to fill.
-   * @param array $message
-   *   The array to fill from.
-   */
-  public function emailFromArray(EmailInterface $email, array $message) {
-    $email->setSubject($message['subject']);
-
-    if ($email->getPhase() == EmailInterface::PHASE_INIT) {
-      $email->setParams($message['params']);
-    }
-
-    // Address headers.
-    $headers = $email->getHeaders();
-    foreach (self::HEADERS as $name => $key) {
-      $encoded = $message['headers'][$name] ?? $message[$key] ?? NULL;
-      if (isset($encoded)) {
-        $email->setAddress($name, $this->mailerHelper->parseAddress($encoded, $message['langcode']));
-      }
-    }
-
-    // Body.
-    if (is_array($message['body'])) {
-      foreach ($message['body'] as $part) {
-        if ($part instanceof MarkupInterface) {
-          $body[] = ['#markup' => $part];
-        }
-        else {
-          $body[] = [
-            '#type' => 'processed_text',
-            '#text' => $part,
-          ];
-        }
-      }
-      $email->setBody($body ?? []);
-    }
-    else {
-      $email->setHtmlBody($message['body']);
-    }
   }
 
 }

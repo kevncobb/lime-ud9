@@ -2,17 +2,17 @@
 
 namespace Drupal\content_calendar;
 
-use Drupal\Core\Database\Driver\mysql\Connection;
+use Drupal\Core\Database\Connection;
 
 /**
- * Class ContentCalendarService.
+ * Implements ContentCalendarService class.
  */
 class ContentCalendarService {
 
   /**
-   * Drupal\Core\Database\Driver\mysql\Connection definition.
+   * The database connection.
    *
-   * @var \Drupal\Core\Database\Driver\mysql\Connection
+   * @var \Drupal\Core\Database\Connection
    */
   protected $database;
 
@@ -38,11 +38,14 @@ class ContentCalendarService {
    * Get Nodes by Type.
    *
    * @param int $node_type
+   *   The node type id.
    * @param array $filters
+   *   An array with the filters.
    *
    * @return array
+   *   Return node fields data array.
    */
-  public function getNodesByType($node_type, $filters = []) {
+  public function getNodesByType($node_type, array $filters = []) {
 
     // Basic table.
     $query = $this->database->select('node_field_data', 'nfd');

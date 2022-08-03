@@ -51,16 +51,22 @@ class Email implements InternalEmailInterface {
   protected $themeManager;
 
   /**
+   * The type.
+   *
    * @var string
    */
   protected $type;
 
   /**
+   * The subtype.
+   *
    * @var string
    */
   protected $subType;
 
   /**
+   * The config entity.
+   *
    * @var \Drupal\Core\Config\Entity\ConfigEntityInterface
    */
   protected $entity;
@@ -73,6 +79,8 @@ class Email implements InternalEmailInterface {
   protected $phase = self::PHASE_INIT;
 
   /**
+   * The body array.
+   *
    * @var array
    */
   protected $body = [];
@@ -92,21 +100,29 @@ class Email implements InternalEmailInterface {
   protected $subjectReplace;
 
   /**
+   * The processors.
+   *
    * @var array
    */
   protected $processors = [];
 
   /**
+   * The language code.
+   *
    * @var string
    */
   protected $langcode;
 
   /**
+   * The params.
+   *
    * @var string[]
    */
   protected $params = [];
 
   /**
+   * The variables.
+   *
    * @var string[]
    */
   protected $variables = [];
@@ -119,11 +135,15 @@ class Email implements InternalEmailInterface {
   protected $account;
 
   /**
+   * The theme.
+   *
    * @var string
    */
   protected $theme = '';
 
   /**
+   * The libraries.
+   *
    * @var array
    */
   protected $libraries = [];
@@ -553,14 +573,24 @@ class Email implements InternalEmailInterface {
    */
   public function __serialize() {
     // Exclude $this->params, $this->variables as they may not serialize.
-    return [$this->type, $this->subType, $this->entity ? $this->entity->id() : '', $this->phase, $this->subject, $this->langcode, $this->account ? $this->account->id() : '', $this->theme, $this->libraries, $this->transportDsn, $this->inner, $this->addresses, $this->sender];
+    return [$this->type, $this->subType,
+      $this->entity ? $this->entity->id() : '',
+      $this->phase, $this->subject, $this->langcode,
+      $this->account ? $this->account->id() : '', $this->theme,
+      $this->libraries, $this->transportDsn, $this->inner,
+      $this->addresses, $this->sender,
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
   public function __unserialize(array $data) {
-    [$this->type, $this->subType, $entity_id, $this->phase, $this->subject, $this->langcode, $account_id, $this->theme, $this->libraries, $this->transportDsn, $this->inner, $this->addresses, $this->sender] = $data;
+    [$this->type, $this->subType, $entity_id, $this->phase,
+      $this->subject, $this->langcode, $account_id, $this->theme,
+      $this->libraries, $this->transportDsn, $this->inner,
+      $this->addresses, $this->sender,
+    ] = $data;
 
     if ($entity_id) {
       $this->entity = $this->configFactory->get($entity_id);

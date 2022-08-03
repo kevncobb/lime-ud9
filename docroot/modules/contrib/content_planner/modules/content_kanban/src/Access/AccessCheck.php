@@ -7,7 +7,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
 
 /**
- * Class AccessCheck.
+ * Implements AccessCheck class.
  *
  * @package Drupal\my_module\Access
  */

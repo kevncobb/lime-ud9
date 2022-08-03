@@ -6,7 +6,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class KanbanLogSettingsForm.
+ * Create the Kanban log settings form.
  *
  * @ingroup content_kanban
  */

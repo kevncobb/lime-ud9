@@ -8,7 +8,7 @@ use Drupal\views\Views;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class ViewBlockBase.
+ * Implements ViewBlockBase class.
  *
  * @package Drupal\content_planner\Plugin\DashboardBlock
  */
@@ -21,7 +21,7 @@ abstract class ViewBlockBase extends DashboardBlockBase {
    */
   protected $blockID = 'ID-HERE';
 
-  /*
+  /**
    * Builds the content for the views block.
    *
    * @return array|null
@@ -75,7 +75,7 @@ abstract class ViewBlockBase extends DashboardBlockBase {
 
     $form[$this->blockID] = [
       '#type' => 'select',
-      '#title' => t('View'),
+      '#title' => $this->t('View'),
       '#options' => $view_options,
       '#required' => TRUE,
       '#default_value' => $view_default_value,

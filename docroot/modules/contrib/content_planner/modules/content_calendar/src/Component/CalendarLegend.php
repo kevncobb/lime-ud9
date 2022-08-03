@@ -3,14 +3,12 @@
 namespace Drupal\content_calendar\Component;
 
 /**
- *
+ * Implements CalendarLegend class.
  */
 abstract class CalendarLegend {
 
   /**
-   * @param \Drupal\content_calendar\Entity\ContentTypeConfig[] $content_config_entities
-   *
-   * @return array
+   * {@inheritdoc}
    */
   public static function build(array $content_config_entities) {
 

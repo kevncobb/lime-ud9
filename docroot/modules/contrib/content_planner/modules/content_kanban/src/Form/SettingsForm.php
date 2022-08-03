@@ -20,9 +20,9 @@ class SettingsForm extends ConfigFormBase {
   const CONFIG_NAME = 'content_kanban.settings';
 
   /**
-   *  Default Date Range value.
+   * Default Date Range value.
    */
-  Const DEFAULT_DATE_RANGE_VALUE = 30;
+  const DEFAULT_DATE_RANGE_VALUE = 30;
 
   /**
    * The stored config for the form.
@@ -130,13 +130,13 @@ class SettingsForm extends ConfigFormBase {
     }
 
     $form['options']['default_filter_date_range'] = [
-       '#type' => 'select',
-       '#title' => $this->t('Date range'),
-       '#options' => \Drupal\content_kanban\Form\KanbanFilterForm::getDateRangeOptions(),
-       '#required' => FALSE,
-       '#empty_value' => '',
-       '#empty_option' => $this->t('All'),
-       '#default_value' => $default_date_range_value,
+      '#type' => 'select',
+      '#title' => $this->t('Date range'),
+      '#options' => KanbanFilterForm::getDateRangeOptions(),
+      '#required' => FALSE,
+      '#empty_value' => '',
+      '#empty_option' => $this->t('All'),
+      '#default_value' => $default_date_range_value,
     ];
 
     return parent::buildForm($form, $form_state);

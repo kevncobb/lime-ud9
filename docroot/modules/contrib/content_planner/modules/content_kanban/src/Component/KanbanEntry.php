@@ -8,7 +8,7 @@ use Drupal\content_planner\Component\BaseEntry;
 use Drupal\Core\Entity\EntityStorageInterface;
 
 /**
- * Class KanbanEntry.
+ * Implements KanbanEntry class.
  *
  * @package Drupal\content_kanban\Component
  */
@@ -90,7 +90,7 @@ class KanbanEntry extends BaseEntry {
       $this->entity->entityLoaded = $entityType->load($this->entity->$entityId);
 
       // Get User Picture.
-      $user_picture = $this->getUserPictureUrl($entityKeys['uid']);
+      $user_picture = $this->getUserPictureUrl($entityKeys['owner'] ?: $entityKeys['uid']);
       $build = [
         '#theme' => 'content_kanban_column_entry',
         '#entity' => $this->entity,

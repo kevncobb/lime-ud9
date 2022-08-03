@@ -2,8 +2,6 @@
 
 namespace Drupal\symfony_mailer_test;
 
-use Drupal\symfony_mailer\EmailInterface;
-
 /**
  * Tracks sent emails for testing.
  */

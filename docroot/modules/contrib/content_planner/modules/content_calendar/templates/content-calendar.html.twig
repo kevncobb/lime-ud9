@@ -7,13 +7,9 @@
   <table>
     <thead>
     <tr>
-      <th>{{ "Monday"|t }}</th>
-      <th>{{ "Tuesday"|t }}</th>
-      <th>{{ "Wednesday"|t }}</th>
-      <th>{{ "Thursday"|t }}</th>
-      <th>{{ "Friday"|t }}</th>
-      <th>{{ "Saturday"|t }}</th>
-      <th>{{ "Sunday"|t }}</th>
+      {% for month in weekdays %}
+        <th>{{ month }}</th>
+      {% endfor %}
     </tr>
 
     </thead>

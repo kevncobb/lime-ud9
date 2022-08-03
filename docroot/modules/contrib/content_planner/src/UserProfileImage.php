@@ -7,7 +7,7 @@ use Drupal\image\Entity\ImageStyle;
 use Drupal\user\UserInterface;
 
 /**
- * Class UserProfileImage.
+ * Implements UserProfileImage class.
  */
 class UserProfileImage {
 
@@ -25,6 +25,7 @@ class UserProfileImage {
   public static function generateProfileImageUrl(UserInterface $user, $image_style) {
 
     if (
+      ($user->hasField('user_picture')) &&
       ($user_picture_field = $user->get('user_picture')->getValue()) &&
       // Get file entity id.
       ($image_file_id = $user_picture_field[0]['target_id']) &&

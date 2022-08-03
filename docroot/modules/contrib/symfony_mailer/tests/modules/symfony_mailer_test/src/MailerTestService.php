@@ -19,6 +19,11 @@ class MailerTestService implements MailerTestServiceInterface, EmailProcessorInt
    */
   protected $state;
 
+  /**
+   * The emails that have been sent.
+   *
+   * @var \Drupal\symfony_mailer\EmailInterface[]
+   */
   protected $emails = [];
 
   /**

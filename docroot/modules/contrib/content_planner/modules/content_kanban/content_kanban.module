@@ -75,7 +75,7 @@ function content_kanban_theme($existing, $type, $theme, $path) {
 function content_kanban_entity_presave(EntityInterface $entity) {
   // Check to be content entity.
   if ($entity instanceof ContentEntityInterface) {
-    //@var $moderation_information \Drupal\content_kanban\KanbanWorkflowService 
+    /** @var \Drupal\content_kanban\KanbanWorkflowService $moderation_information */
     $kanban_workflow_service = \Drupal::service('content_kanban.kanban_workflow_service');
     $kanban_workflow_service->onEntityPresave($entity, \Drupal::currentUser());
   }
@@ -86,7 +86,7 @@ function content_kanban_entity_presave(EntityInterface $entity) {
  */
 function content_kanban_preprocess_content_calendar_entry(&$variables) {
 
-  /* @var $kanban_workflow_service \Drupal\content_kanban\KanbanWorkflowService */
+  /** @var \Drupal\content_kanban\KanbanWorkflowService $kanban_workflow_service */
   $kanban_workflow_service = \Drupal::service('content_kanban.kanban_workflow_service');
 
   // Fully load node.
@@ -120,13 +120,9 @@ function content_kanban_toolbar_alter(&$items) {
 
 /**
  * Implements hook_form_form_id_alter().
- *
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- * @param $form_id
  */
-function content_kanban_form_workflow_state_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function content_kanban_form_workflow_state_edit_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   // Enable default revision options to all workflows states to avoid issue:
   // https://www.drupal.org/project/content_planner/issues/3010615
-  $form['type_settings']['default_revision']['#disabled'] = false;
+  $form['type_settings']['default_revision']['#disabled'] = FALSE;
 }

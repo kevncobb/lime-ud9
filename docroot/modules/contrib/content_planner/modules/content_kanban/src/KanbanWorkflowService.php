@@ -2,7 +2,7 @@
 
 namespace Drupal\content_kanban;
 
-use Drupal\Core\Database\Driver\mysql\Connection;
+use Drupal\Core\Database\Connection;
 use Drupal\content_moderation\ModerationInformationInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -10,7 +10,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\workflows\Entity\Workflow;
 
 /**
- * Class KanbanWorkflowService.
+ * Implements KanbanWorkflowService class.
  */
 class KanbanWorkflowService {
 

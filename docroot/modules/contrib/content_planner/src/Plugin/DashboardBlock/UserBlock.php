@@ -8,6 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Provides a user block for Content Planner Dashboard.
@@ -18,6 +19,8 @@ use Symfony\Component\HttpFoundation\Request;
  * )
  */
 class UserBlock extends DashboardBlockBase {
+
+  use StringTranslationTrait;
 
   /**
    * Builds the render array for a dashboard block.
@@ -74,22 +77,27 @@ class UserBlock extends DashboardBlockBase {
    */
   protected function getUsers() {
 
-    if (isset($this->getConfiguration()['plugin_specific_config']['roles'])) {
-      // Get configured roles.
-      $configured_roles = $this->getConfiguration()['plugin_specific_config']['roles'];
-
-      $query = \Drupal::entityQuery('user');
-      $query->condition('roles', array_values($configured_roles), 'in');
-      $query->sort('access', 'desc');
-
-      $result = $query->execute();
-
-      if ($result) {
-        return User::loadMultiple($result);
-      }
+    $config = $this->getConfiguration()['plugin_specific_config'];
+    if (!isset($config['roles'])) {
+      return [];
     }
 
-    return [];
+    $configured_roles = $config['roles'];
+    $display_blocked = $config['blocked'] ?? true;
+
+    $query = \Drupal::entityQuery('user');
+    $query->condition('roles', array_values($configured_roles), 'in');
+    $query->sort('access', 'desc');
+    if (!$display_blocked) {
+      $query->condition('status', 1);
+    }
+
+    $result = $query->execute();
+    if ($result === []) {
+      return [];
+    }
+
+    return User::loadMultiple($result);
   }
 
   /**
@@ -133,13 +141,13 @@ class UserBlock extends DashboardBlockBase {
    *   The content count for the given user and the given moderation state.
    */
   public function getUserContentWorkflowCount($user_id, $moderation_state) {
-    $kanban_service = \Drupal::service('content_kanban.kanban_service');
+    $content_moderation_service = \Drupal::service('content_planner.content_moderation_service');
 
     $filters = [
       'uid' => $user_id,
       'moderation_state' => $moderation_state,
     ];
-    $nids = $kanban_service->getEntityIdsFromContentModerationEntities('netnode', $filters);
+    $nids = $content_moderation_service->getEntityIdsFromContentModerationEntities('netnode', $filters);
 
     return count($nids);
   }
@@ -155,6 +163,12 @@ class UserBlock extends DashboardBlockBase {
 
     // Build Role selection box.
     $form['roles'] = $this->buildRoleSelectBox($form_state, $request, $block_configuration);
+
+    $form['blocked'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Display blocked users'),
+      '#default_value' => $block_configuration['plugin_specific_config']['blocked'] ?? true,
+    ];
 
     return $form;
   }
@@ -194,8 +208,8 @@ class UserBlock extends DashboardBlockBase {
 
     return [
       '#type' => 'checkboxes',
-      '#title' => t('Which Roles to display'),
-      '#description' => t('Select which Roles should be displayed in the block.'),
+      '#title' => $this->t('Which Roles to display'),
+      '#description' => $this->t('Select which Roles should be displayed in the block.'),
       '#required' => TRUE,
       '#options' => $roles_options,
       '#default_value' => $default_value,

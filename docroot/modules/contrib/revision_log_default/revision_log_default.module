@@ -1,7 +1,8 @@
 <?php
 
 /**
- * @file Contains hook implementations for the revision_log_default module.
+ * @file
+ * Contains hook implementations for the revision_log_default module.
  */
 
 use Drupal\Core\Entity\EntityInterface;

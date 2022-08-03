@@ -32,7 +32,7 @@ class BlockFormAlterTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Place certain blocks.
@@ -108,8 +108,8 @@ class BlockFormAlterTest extends BrowserTestBase {
     // Enable layout override of test content type.
     // "Borrowed" from LayoutBuilderTest.php.
     $this->drupalGet('admin/structure/types/manage/bundle_with_section_field/display/default');
-    $this->drupalPostForm(NULL, ['layout[enabled]' => TRUE], 'Save');
-    $this->drupalPostForm(NULL, ['layout[allow_custom]' => TRUE], 'Save');
+    $this->submitForm(['layout[enabled]' => TRUE], 'Save');
+    $this->submitForm(['layout[allow_custom]' => TRUE], 'Save');
     // @todo This should not be necessary.
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
 
@@ -141,7 +141,7 @@ class BlockFormAlterTest extends BrowserTestBase {
     // Verify hook_block_plugin_form_alter() is modifying block edit forms
     // rendered by layout_builder.
     $this->drupalGet('node/1/layout');
-    $element = $page->find('xpath', '//div[contains(@class,"block-system-branding-block")]');
+    $element = $page->find('xpath', '//div[contains(@class,"layout-builder-block") and contains(@class,"block-system-branding-block")]');
     $this->drupalGet('/layout_builder/update/block/overrides/node.1/0/content/' . $element->getAttribute('data-layout-block-uuid'));
     $assert_session->checkboxNotChecked('settings[block_branding][use_site_logo]');
 

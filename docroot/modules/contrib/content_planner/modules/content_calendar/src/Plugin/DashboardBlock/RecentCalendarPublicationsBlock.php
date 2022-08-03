@@ -5,10 +5,13 @@ namespace Drupal\content_calendar\Plugin\DashboardBlock;
 use Drupal\content_calendar\ContentService;
 use Drupal\content_planner\DashboardBlockBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Provides a block with recent calendar publications for Content Planner Dashboard.
+ * Provides a block with recent calendar publications.
+ *
+ * For Content Planner Dashboard.
  *
  * @DashboardBlock(
  *   id = "recent_calendar_content_block",
@@ -17,8 +20,10 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class RecentCalendarPublicationsBlock extends DashboardBlockBase {
 
+  use StringTranslationTrait;
+
   /**
-   *
+   * {@inheritdoc}
    */
   public function build() {
 
@@ -54,7 +59,7 @@ class RecentCalendarPublicationsBlock extends DashboardBlockBase {
 
     $form['last_publications_limit'] = [
       '#type' => 'number',
-      '#title' => t('Limit number of recently published nodes'),
+      '#title' => $this->t('Limit number of recently published nodes'),
       '#required' => FALSE,
       '#default_value' => $last_publications_limit_default_value,
     ];
@@ -64,7 +69,7 @@ class RecentCalendarPublicationsBlock extends DashboardBlockBase {
 
     $form['next_publications_limit'] = [
       '#type' => 'number',
-      '#title' => t('Limit number of nodes to be published'),
+      '#title' => $this->t('Limit number of nodes to be published'),
       '#required' => FALSE,
       '#default_value' => $next_publications_limit_default_value,
     ];

@@ -19,9 +19,6 @@
         if ($this.hasClass('maxlength_js_enforce')) {
           options['enforce'] = true;
         }
-        if ($this.hasClass('maxlength_js_truncate_html')) {
-          options['truncateHtml'] = true;
-        }
         $this.charCount(options);
       });
     },
@@ -55,12 +52,7 @@
     var limit = parseInt(obj.attr('data-maxlength'));
 
     if (count == undefined) {
-      if (options.truncateHtml) {
-        count = ml.strip_tags(obj.val()).length;
-      }
-      else {
-        count = ml.twochar_lineending(obj.val()).length;
-      }
+      count = ml.strip_tags(obj.val()).length;
     }
 
     var available = limit - count;
@@ -78,26 +70,14 @@
       if (options.enforce) {
         if (wysiwyg != undefined) {
           if (typeof ml[getter] == 'function' && typeof ml[setter] == 'function') {
-              if (options.truncateHtml) {
-                var new_html = ml.truncate_html(ml[getter](wysiwyg), limit);
-                ml[setter](wysiwyg, new_html);
-                count = ml.strip_tags(new_html).length;
-              } else {
-                var new_html = ml[getter](wysiwyg).substr(0, limit);
-                ml[setter](wysiwyg, new_html);
-                count = new_html.length;
-              }
+            var new_html = ml.truncate_html(ml[getter](wysiwyg), limit);
+            ml[setter](wysiwyg, new_html);
+            count = ml.strip_tags(new_html).length;
           }
         } else {
-          if (options.truncateHtml) {
-            obj.val(ml.truncate_html(obj.val(), limit));
-            // Re calculate text length
-            count = ml.strip_tags(obj.val()).length;
-          } else {
-            obj.val(obj.val().substr(0, limit));
-            // Re calculate text length
-            count = ml.twochar_lineending(obj.val()).length;
-          }
+          obj.val(ml.truncate_html(obj.val(), limit));
+          // Re calculate text length
+          count = ml.strip_tags(obj.val()).length;
         }
       }
       available = limit - count;
@@ -124,8 +104,6 @@
     input = $.trim(input);
     // making the lineendings with two chars
     input = ml.twochar_lineending(input);
-    // We do want that the space characters to count as 1, not 6...
-    input = input.replace('&nbsp;', ' ');
     //input = input.split(' ').join('');
     // Strips HTML and PHP tags from a string
     allowed = (((allowed || "") + "")
@@ -134,9 +112,12 @@
         .join(''); // making sure the allowed arg is a string containing only tags in lowercase (<a><b><c>)
     var tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi,
         commentsAndPhpTags = /<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi;
-    return input.replace(commentsAndPhpTags, '').replace(tags, function($0, $1){
+    input = input.replace(commentsAndPhpTags, '').replace(tags, function($0, $1){
       return allowed.indexOf('<' + $1.toLowerCase() + '>') > -1 ? $0 : '';
     });
+
+    // Replace all html entities with a single character (#) placeholder.
+    return input.replace(/&([a-z]+);/g, '#');
   };
 
   /**
@@ -151,8 +132,6 @@
     var tags_open = new Array();
     // making the lineendings with two chars
     text = ml.twochar_lineending(text);
-    // We do want that the space characters to count as 1, not 6...
-    text = text.replace('&nbsp;', ' ');
     while (result_text.length < limit && text.length > 0) {
       switch (text.charAt(0)) {
         case '<': {
@@ -219,6 +198,17 @@
           }
           break;
         }
+        case '&': {
+          // Don't truncate in the middle of an html entity count it as 1.
+          entities = text.match(/&([a-z]+);/g);
+          if (entities) {
+            nextEntity = entities[0];
+            result_html += nextEntity;
+            result_text += '#';
+            text = text.slice(nextEntity.length - 1);
+            break;
+          }
+        }
         default: {
           // In this case, we have a character that should also count for the
           // limit, so append it to both, the html and text result.
@@ -251,7 +241,6 @@
       counterText: Drupal.t('Content limited to @limit characters, remaining: <strong>@remaining</strong>'),
       action: 'attach',
       enforce: false,
-      truncateHtml: false
     };
 
     var options = $.extend(defaults, options);
@@ -310,12 +299,6 @@
           } else {
             ml.options[e.editor.element.getId()].enforce = false;
           }
-          // Check if we should strip the tags when counting.
-          if (editor.hasClass('maxlength_js_truncate_html')) {
-            ml.options[e.editor.element.getId()].truncateHtml = true;
-          } else {
-            ml.options[e.editor.element.getId()].truncateHtml = false;
-          }
           // Add the events on the editor.
           e.editor.on('key', function(e) {
             setTimeout(function(){ml.ckeditorChange(e)}, 100);
@@ -334,12 +317,7 @@
   ml.ckeditorChange = function(e) {
     // Clone to avoid changing defaults
     var options = $.extend({}, ml.options[e.editor.element.getId()]);
-    if (options.truncateHtml){
-      ml.calculate($('#' + e.editor.element.getId()), options, ml.strip_tags(ml.ckeditorGetData(e)).length, e, 'ckeditorGetData', 'ckeditorSetData');
-    }
-    else {
-      ml.calculate($('#' + e.editor.element.getId()), options, ml.twochar_lineending(ml.ckeditorGetData(e)).length, e, 'ckeditorGetData', 'ckeditorSetData');
-    }
+    ml.calculate($('#' + e.editor.element.getId()), options, ml.strip_tags(ml.ckeditorGetData(e)).length, e, 'ckeditorGetData', 'ckeditorSetData');
   };
 
   // Gets the data from the ckeditor.

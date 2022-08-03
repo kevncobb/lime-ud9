@@ -1,4 +1,4 @@
-<div class="calendar-entry {% if node.editoptions %}draggable{% endif %}" data-nid="{{ node.nid }}" style="border: 1px solid {{ node_type_config.color }}; color: {{ node_type_config.color }}; {% if not node.status %}background-color: {{ options.bg_color_unpublished_content }};{% endif %}">
+<div class="calendar-entry{% if node.editoptions %} draggable{% endif %}{% if not node.status %} unpublished{% endif %}" data-nid="{{ node.nid }}" style="{% if node_type_config.color %}border: 1px solid {{ node_type_config.color }}; color: {{ node_type_config.color }};{% endif %} {% if not node.status and options.bg_color_unpublished_content %}background-color: {{ options.bg_color_unpublished_content }};{% endif %}">
 
 
   <div class="user-info">
@@ -15,7 +15,6 @@
 
 
     
-    <!--<span class="publish-on">{{ node.publish_on_time }}</span>-->
     <span class="created-on">
       {% if node.scheduled %}
         <img src="/modules/contrib/content_planner/modules/content_calendar/assets/dist/images/scheduled.svg">

@@ -46,14 +46,15 @@ abstract class CustomHTMLBlockBase extends DashboardBlockBase {
 
     if (!empty($block_configuration['plugin_specific_config']['content']['value'])) {
       $default_value = $block_configuration['plugin_specific_config']['content']['value'];
-    } else {
+    }
+    else {
       $default_value = '';
     }
     
 
     $form['content'] = [
       '#type' => 'text_format',
-      '#title' => t('Content'),
+      '#title' => $this->t('Content'),
       '#format' => 'full_html',
       '#default_value' => $default_value,
     ];

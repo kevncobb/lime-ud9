@@ -7,19 +7,30 @@ use Drupal\content_calendar\ContentCalendarService;
 use Drupal\content_calendar\DateTimeHelper;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\content_calendar\ContentTypeConfigService;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Drupal\Core\Routing\RedirectDestinationInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Zend\Diactoros\Response\JsonResponse;
 
 /**
- * Class CalendarController.
+ * Implements CalendarController class.
  */
 class CalendarController extends ControllerBase {
 
   /**
+   * The theme manager.
+   *
+   * @var \Drupal\Core\Theme\ThemeManagerInterface
+   */
+  protected $themeManager;
+
+  /**
+   * The request service.
+   *
    * @var \Symfony\Component\HttpFoundation\Request
    */
   protected $request;
@@ -32,23 +43,36 @@ class CalendarController extends ControllerBase {
   protected $contentTypeConfigService;
 
   /**
+   * Calendar Service.
+   *
    * @var \Drupal\content_calendar\ContentCalendarService
    */
   protected $contentCalendarService;
 
   /**
+   * Provides an interface for redirect destinations.
+   *
+   * @var \Drupal\Core\Routing\RedirectDestinationInterface
+   */
+  protected $redirectDestination;
+
+  /**
    * Constructs a new CalendarController object.
    */
   public function __construct(
+    ThemeManagerInterface $theme_manager,
     RequestStack $request_stack,
     ContentTypeConfigService $content_type_config_service,
     ContentCalendarService $content_calendar_service,
-    AccountProxyInterface $current_user
+    AccountProxyInterface $current_user,
+    RedirectDestinationInterface $redirect_destination
   ) {
+    $this->themeManager = $theme_manager;
     $this->request = $request_stack->getCurrentRequest();
     $this->contentTypeConfigService = $content_type_config_service;
     $this->contentCalendarService = $content_calendar_service;
     $this->currentUser = $current_user;
+    $this->redirectDestination = $redirect_destination;
   }
 
   /**
@@ -56,10 +80,12 @@ class CalendarController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
+      $container->get('theme.manager'),
       $container->get('request_stack'),
       $container->get('content_calendar.content_type_config_service'),
       $container->get('content_calendar.content_calendar_service'),
-      $container->get('current_user')
+      $container->get('current_user'),
+      $container->get('redirect.destination')
     );
   }
 
@@ -94,6 +120,7 @@ class CalendarController extends ControllerBase {
 
       // Create new Calendar.
       $calender = new Calendar(
+        $this->themeManager,
         $this->contentTypeConfigService,
         $this->contentCalendarService,
         $month,
@@ -109,9 +136,9 @@ class CalendarController extends ControllerBase {
       'current_year' => date('Y'),
       'selected_year' => $year,
     ];
-    $filters_form = \Drupal::formBuilder()->getForm('Drupal\content_calendar\Form\CalenderOverviewFilterForm', $form_params);
+    $filters_form = $this->formBuilder()->getForm('Drupal\content_calendar\Form\CalenderOverviewFilterForm', $form_params);
 
-    if (\Drupal::currentUser()->hasPermission('administer content calendar settings')) {
+    if ($this->currentUser->hasPermission('administer content calendar settings')) {
       $has_permission = TRUE;
     }
     else {
@@ -132,9 +159,12 @@ class CalendarController extends ControllerBase {
    * Update creation date of a given Node.
    *
    * @param \Drupal\node\NodeInterface $node
+   *   The node object.
    * @param string $date
+   *   The date timestamp.
    *
-   * @return \Zend\Diactoros\Response\JsonResponse
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   *   Return a Json Response.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
@@ -155,20 +185,11 @@ class CalendarController extends ControllerBase {
       return new JsonResponse($data);
     }
 
-    
-    
-
-
-
-    
-
-
     // First – Update created on date!
-
-    // Get the Node's "created on" date 
+    // Get the Node's "created on" date.
     $created_on_timestamp = $node->get('created')->getValue();
     $created_on_timestamp_value = $created_on_timestamp[0]['value'];
-    // Return a date object
+    // Return a date object.
     $original_created_on_datetime = DateTimeHelper::convertUnixTimestampToDatetime($created_on_timestamp_value);
 
     // Extract hour, minutes and seconds.
@@ -185,15 +206,12 @@ class CalendarController extends ControllerBase {
     // Set created time.
     $node->set('created', $new_created_on_datetime->getTimestamp());
 
-
     // Second - Update publish on date! (only if publish on date is set)
-
     // Get publish on timestamp.
     $publish_on_timestamp = $node->get('publish_on')->getValue();
     $publish_on_timestamp_value = $publish_on_timestamp[0]['value'];
 
-
-    // Only change scheduler publish on timestamp, when "publish on" is set
+    // Only change scheduler publish on timestamp, when "publish on" is set.
     if ($publish_on_timestamp_value) {
 
       // Get the Node's publish ondate and return a datetime object.
@@ -213,10 +231,9 @@ class CalendarController extends ControllerBase {
       // Set publish on datetime.
       $node->set('publish_on', $new_publish_datetime->getTimestamp());
 
-      // Set created on datetime.  
+      // Set created on datetime.
       $node->set('created', $new_publish_datetime->getTimestamp());
     }
-    
 
     // Save.
     if ($node->save() == SAVED_UPDATED) {
@@ -231,6 +248,7 @@ class CalendarController extends ControllerBase {
    * Redirect to current Calendar.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   A redirect response object that may be returned by the controller.
    */
   public function redirectToCurrentCalendar() {
 
@@ -242,9 +260,13 @@ class CalendarController extends ControllerBase {
   /**
    * Redirect and jump to a given Calendar directly.
    *
-   * @param string $calendar_id
+   * @param string $year
+   *   Calendar year.
+   * @param string $month
+   *   Calendar month.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   A redirect response object that may be returned by the controller.
    */
   public function redirectToCalendar($year, $month) {
 
@@ -261,8 +283,10 @@ class CalendarController extends ControllerBase {
    * Duplicate Node.
    *
    * @param \Drupal\node\NodeInterface $node
+   *   The node object.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   A redirect response object that may be returned by the controller.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
@@ -274,7 +298,7 @@ class CalendarController extends ControllerBase {
 
     $duplicate->save();
 
-    $destination = \Drupal::destination()->get();
+    $destination = $this->redirectDestination->get();
 
     return new RedirectResponse($destination);
   }

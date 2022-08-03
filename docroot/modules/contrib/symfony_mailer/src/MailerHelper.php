@@ -102,7 +102,7 @@ class MailerHelper implements MailerHelperInterface {
       if ($value == $site_mail) {
         $value = '<site>';
       }
-      elseif ($user = user_load_by_mail($value)) {
+      elseif ($user = $address->getAccount()) {
         $value = $user->id();
       }
       else {

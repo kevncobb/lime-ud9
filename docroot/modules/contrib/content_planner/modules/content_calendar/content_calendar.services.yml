@@ -9,5 +9,6 @@ services:
 
   content_calendar.scheduler_publish_subscriber:
     class: Drupal\content_calendar\EventSubscriber\SchedulerPublishSubScriber
+    arguments: ['@module_handler']
     tags:
       - { name: event_subscriber }

@@ -6,7 +6,7 @@ use Drupal\content_calendar\Entity\ContentTypeConfig;
 use Drupal\Core\Config\ConfigFactoryInterface;
 
 /**
- * Class ContentTypeConfigService.
+ * Implements ContentTypeConfigService class  .
  */
 class ContentTypeConfigService {
 
@@ -28,6 +28,7 @@ class ContentTypeConfigService {
    * Load all config entities.
    *
    * @return \Drupal\content_calendar\Entity\ContentTypeConfig[]
+   *   Returns Drupal\content_calendar\Entity\ContentTypeConfig array.
    */
   public function loadAllEntities() {
     return ContentTypeConfig::loadMultiple();
@@ -37,8 +38,10 @@ class ContentTypeConfigService {
    * Load config entity by Content Type.
    *
    * @param string $content_type
+   *   Content type name.
    *
    * @return bool|\Drupal\content_calendar\Entity\ContentTypeConfig|null|static
+   *   Returns false or a static content calendar.
    */
   public function loadEntityByContentType($content_type) {
 
@@ -52,11 +55,15 @@ class ContentTypeConfigService {
   /**
    * Create new config entity.
    *
-   * @param string $node_type
+   * @param int $node_type
+   *   The node type id.
    * @param string $label
+   *   The label.
    * @param string $color
+   *   The color.
    *
    * @return int
+   *   Returns the number of the entity and save.
    */
   public function createEntity($node_type, $label, $color = '#0074bd') {
 

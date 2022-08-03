@@ -69,7 +69,7 @@ function maxlength_field_widget_third_party_settings_form(WidgetInterface $plugi
       '#title' => t('Maxlength Settings'),
       '#open' => FALSE,
     ];
-    
+
     if (!empty($allowed_settings['summary_maxlength_setting'])) {
       $element['maxlength_js_summary'] = [
         '#type' => 'number',
@@ -108,12 +108,6 @@ function maxlength_field_widget_third_party_settings_form(WidgetInterface $plugi
           If unchecked, a user sees a negative character count when typing past the limit.'),
         '#default_value' => $plugin->getThirdPartySetting('maxlength', 'maxlength_js_enforce'),
       ];
-      $element['maxlength_js_truncate_html'] = [
-        '#type' => 'checkbox',
-        '#title' => t('Safe truncate html'),
-        '#description' => t('Use this option if the input field may contain html and you want to exclude the html tag characters from the character count. This will also overwrite the maxlength validation from core, so that it will strip the tags before checking the length.'),
-        '#default_value' => $plugin->getThirdPartySetting('maxlength', 'maxlength_js_truncate_html'),
-      ];
     }
     return $element;
   }
@@ -134,10 +128,7 @@ function maxlength_field_widget_settings_summary_alter(&$summary, $context) {
       $summary[] = t('Maximum summary length: @count', ['@count' => $context['widget']->getThirdPartySetting('maxlength', 'maxlength_js_summary')]);
     }
     if (!empty($allowed_settings['truncate_setting'])) {
-      if ($context['widget']->getThirdPartySetting('maxlength', 'maxlength_js_truncate_html')) {
-        $summary[] = t('Maximum length - Safe truncate html');
-      }
-      elseif ($context['widget']->getThirdPartySetting('maxlength', 'maxlength_js_enforce')) {
+      if ($context['widget']->getThirdPartySetting('maxlength', 'maxlength_js_enforce')) {
         $summary[] = t('Maximum length - Force truncate');
       }
     }
@@ -188,10 +179,6 @@ function maxlength_field_widget_form_alter(&$element, FormStateInterface $form_s
     if (isset($thirdPartySettings['maxlength']['maxlength_js_enforce']) && $thirdPartySettings['maxlength']['maxlength_js_enforce']) {
       $element['value']['#attributes']['#maxlength_js_enforce'] = TRUE;
       $element['#attributes']['#maxlength_js_enforce'] = TRUE;
-    }
-    if (isset($thirdPartySettings['maxlength']['maxlength_js_truncate_html']) && $thirdPartySettings['maxlength']['maxlength_js_truncate_html']) {
-      $element['value']['#attributes']['#maxlength_js_truncate_html'] = TRUE;
-      $element['#attributes']['#maxlength_js_truncate_html'] = TRUE;
     }
   }
 }

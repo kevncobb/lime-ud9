@@ -3,7 +3,7 @@
 namespace Drupal\content_kanban\Component;
 
 /**
- * Class KanbanColumn.
+ * Implements KanbanColumn class.
  */
 class KanbanColumn {
 
@@ -85,7 +85,7 @@ class KanbanColumn {
       $kanbanEntry = new KanbanEntry(
         $entity,
         $this->stateID,
-        $this->entityTypeConfigs[$entity->type]
+        $this->entityTypeConfigs[isset($entity->bundle) ? $entity->bundle : $entity->type]
       );
       $entity_builds[] = $kanbanEntry->build();
     }
