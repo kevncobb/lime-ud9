@@ -39,35 +39,34 @@
 {% set field_name_class = field_name|clean_class %}
 {%
   set classes = [
-    'field',
-    'field-' ~ entity_type|clean_class ~ '--' ~ field_name_class,
-    'field-name-' ~ field_name_class,
-    'field-type-' ~ field_type|clean_class,
-    'field-label-' ~ label_display,
-    label_display == 'inline' ? 'clearfix',
-    'id-' ~ label,
-  ]
+  'field',
+  'field-' ~ entity_type|clean_class ~ '--' ~ field_name_class,
+  'field-name-' ~ field_name_class,
+  'field-type-' ~ field_type|clean_class,
+  'field-label-' ~ label_display,
+  label_display == 'inline' ? 'clearfix',
+]
 %}
 {%
   set title_classes = [
-    'field-label',
-    label_display == 'visually_hidden' ? 'visually-hidden',
-  ]
+  'field-label',
+  label_display == 'visually_hidden' ? 'visually-hidden',
+]
 %}
 <div{{ attributes.addClass(classes) }}>
   {% if not label_hidden %}
     <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
   {% endif %}
-  {% for item in items %}
-    <div class="large reveal" id="{{ nodenid }}" tabindex="-1" role="dialog" aria-labelledby="{{ nodenid }}-label" aria-hidden="true" data-reveal>
-      {{ content.field_name|field_value }}
+  <div class="large reveal" id="Modal{{ nodenid }}" tabindex="-1" role="dialog" aria-labelledby="{{ nodenid }}-label" aria-hidden="true" data-reveal>
+    {% for item in items %}
+      {{ item.content }}
+    {% endfor %}
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div><button class="button small secondary" data-open="Modal{{ nodenid }}">Saints Map</button></div>
 
-      <button class="close-button" data-close aria-label="Close modal" type="button">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div><button class="button small secondary" data-open="Modal{{ nodenid }} ">Saints Map</button></div>
-  {% endfor %}
 </div>
 
 
