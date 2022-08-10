@@ -18,6 +18,7 @@ use Drupal\symfony_mailer\Entity\MailerPolicy;
  *     "node" = @Translation("Issue"),
  *   },
  *   has_entity = TRUE,
+ *   proxy = TRUE,
  *   common_adjusters = {"email_subject", "email_from"},
  *   import = @Translation("Simplenews newsletter settings"),
  * )

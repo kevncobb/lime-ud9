@@ -12,6 +12,7 @@ use Drupal\symfony_mailer\EmailInterface;
  *   sub_types = {
  *     "register_confirmation_with_pass" = @Translation("Welcome (no approval required, password is set)"),
  *   },
+ *   proxy = TRUE,
  * )
  */
 class UserRegistrationPasswordEmailBuilder extends UserEmailBuilder {

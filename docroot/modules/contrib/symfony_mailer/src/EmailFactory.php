@@ -52,8 +52,8 @@ class EmailFactory implements EmailFactoryInterface {
   /**
    * {@inheritdoc}
    */
-  public function sendModuleEmail(string $module, string $sub_type, ...$params) {
-    return $this->newModuleEmail($module, $sub_type, ...$params)->send();
+  public function sendTypedEmail(string $module, string $sub_type, ...$params) {
+    return $this->newTypedEmail($module, $sub_type, ...$params)->send();
   }
 
   /**
@@ -66,7 +66,7 @@ class EmailFactory implements EmailFactoryInterface {
   /**
    * {@inheritdoc}
    */
-  public function newModuleEmail(string $module, string $sub_type, ...$params) {
+  public function newTypedEmail(string $module, string $sub_type, ...$params) {
     $email = Email::create(\Drupal::getContainer(), $module, $sub_type);
     return $this->initEmail($email, ...$params);
   }

@@ -70,7 +70,7 @@ class LegacyEmailBuilder extends EmailBuilderBase implements ContainerFactoryPlu
    * {@inheritdoc}
    */
   public function fromArray(EmailFactoryInterface $factory, array $message) {
-    return $factory->newModuleEmail($message['module'], $message['key'], $message);
+    return $factory->newTypedEmail($message['module'], $message['key'], $message);
   }
 
   /**

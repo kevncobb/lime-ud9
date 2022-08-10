@@ -10,7 +10,7 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
 interface EmailFactoryInterface {
 
   /**
-   * Sends an email unrelated to a config entity.
+   * Sends an email of a specific type, unrelated to a config entity.
    *
    * @param string $module
    *   The module name.
@@ -22,10 +22,10 @@ interface EmailFactoryInterface {
    * @return \Drupal\symfony_mailer\EmailInterface
    *   A new email object.
    */
-  public function sendModuleEmail(string $module, string $sub_type, ...$params);
+  public function sendTypedEmail(string $module, string $sub_type, ...$params);
 
   /**
-   * Send an email related to a config entity.
+   * Sends an email related to a config entity.
    *
    * @param \Drupal\Core\Config\Entity\ConfigEntityInterface $entity
    *   Entity. @see \Drupal\symfony_mailer\EmailInterface::getEntity()
@@ -40,7 +40,7 @@ interface EmailFactoryInterface {
   public function sendEntityEmail(ConfigEntityInterface $entity, string $sub_type, ...$params);
 
   /**
-   * Creates an email object unrelated to a config entity.
+   * Creates an email of a specific type, unrelated to a config entity.
    *
    * The email is not sent, allowing the caller to modify it before sending.
    * Normally it is recommended to call ::sendModuleMail() instead, and allow
@@ -56,10 +56,10 @@ interface EmailFactoryInterface {
    * @return \Drupal\symfony_mailer\EmailInterface
    *   A new email object.
    */
-  public function newModuleEmail(string $module, string $sub_type, ...$params);
+  public function newTypedEmail(string $module, string $sub_type, ...$params);
 
   /**
-   * Creates an email object related to a config entity.
+   * Creates an email related to a config entity.
    *
    * The email is not sent, allowing the caller to modify it before sending.
    * Normally it is recommended to call ::sendEntityMail() instead, and allow

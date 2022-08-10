@@ -200,26 +200,29 @@ class Mailer implements MailerInterface {
       $this->changeActiveLanguage($langcode);
     }
 
-    // Process the pre-render phase.
-    $email->process();
+    try {
+      // Process the pre-render phase.
+      $email->process();
 
-    // Render.
-    $email->render();
+      // Render.
+      $email->render();
 
-    // Process the post-render phase.
-    $email->process();
-
-    // Switch back.
-    if ($must_switch_account) {
-      $this->accountSwitcher->switchBack();
+      // Process the post-render phase.
+      $email->process();
     }
+    finally {
+      // Switch back.
+      if ($must_switch_account) {
+        $this->accountSwitcher->switchBack();
+      }
 
-    if ($must_switch_language) {
-      $this->changeActiveLanguage($current_langcode);
-    }
+      if ($must_switch_language) {
+        $this->changeActiveLanguage($current_langcode);
+      }
 
-    if ($must_switch_theme) {
-      $this->changeTheme($active_theme_name);
+      if ($must_switch_theme) {
+        $this->changeTheme($active_theme_name);
+      }
     }
 
     try {

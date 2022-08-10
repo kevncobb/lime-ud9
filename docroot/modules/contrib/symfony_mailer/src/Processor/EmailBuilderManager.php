@@ -76,20 +76,29 @@ class EmailBuilderManager extends DefaultPluginManager implements EmailBuilderMa
       $definition['sub_type'] = array_shift($parts);
     }
 
-    // Set a dummy provider that will cause the definition to be removed.
-    // @see DefaultPluginManager::findDefinitions()
-    $definition['provider'] = '_';
+    // Look up the related entity or module, which can be used to generate the
+    // label and provider.
     if ($definition['has_entity']) {
       if ($entity_type = $this->entityTypeManager->getDefinition($type, FALSE)) {
-        $definition['label'] = $entity_type->getLabel();
-        $definition['provider'] = $entity_type->getProvider();
+        $default_label = $entity_type->getLabel();
+        $proxy_provider = $entity_type->getProvider();
       }
     }
-    else {
-      if ($this->moduleHandler->moduleExists($type)) {
-        $definition['label'] = $this->moduleHandler->getName($type);
-        $definition['provider'] = $type;
-      }
+    elseif ($this->moduleHandler->moduleExists($type)) {
+      $default_label = $this->moduleHandler->getName($type);
+      $proxy_provider = $type;
+    }
+
+    if ($definition['proxy']) {
+      // Default the provider, or fallback to a dummy provider that will cause
+      // the definition to be removed if the related module is not installed.
+      // @see DefaultPluginManager::findDefinitions()
+      $definition['provider'] = $proxy_provider ?? '_';
+    }
+
+    if (isset($default_label) && !$definition['label']) {
+      // Default the label.
+      $definition['label'] = $default_label;
     }
   }
 

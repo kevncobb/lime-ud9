@@ -106,6 +106,9 @@ class ImageStyleDownloadController extends FileDownloadController {
     $target = $request->query->get('file');
     $image_uri = $scheme . '://' . $target;
 
+    $is_uppercase = FALSE;
+    $found_extension = NULL;
+
     if ($webp_wanted = preg_match('/\.webp$/', $image_uri)) {
       $destination = $this->webp->getWebpDestination($image_uri, '@directory@filename');
       $possible_image_uris = [$destination];
@@ -117,14 +120,23 @@ class ImageStyleDownloadController extends FileDownloadController {
         '.png',
       ];
       foreach ($extensions as $extension) {
-        $possible_image_uris[] = str_replace('.webp', mb_strtoupper($extension), $image_uri);
-        $possible_image_uris[] = str_replace('.webp', $extension, $image_uri);
-      }
+        $possible_image_uri = str_replace('.webp', $extension, $image_uri);
 
-      foreach ($possible_image_uris as $possible_image_uri) {
+
+
         if (file_exists($possible_image_uri)) {
           $image_uri = $possible_image_uri;
+          $found_extension = $extension;
           break;
+        }
+        else {
+          $possible_image_uri = str_replace('.webp', mb_strtoupper($extension), $image_uri);
+          if (file_exists($possible_image_uri)) {
+              $image_uri = $possible_image_uri;
+              $is_uppercase = TRUE;
+              $found_extension = $extension;
+              break;
+          }
         }
       }
     }

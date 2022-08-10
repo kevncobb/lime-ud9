@@ -23,7 +23,7 @@ class TestEmailBuilder extends EmailBuilderBase {
    * {@inheritdoc}
    */
   public function fromArray(EmailFactoryInterface $factory, array $message) {
-    return $factory->newModuleEmail($message['module'], $message['key']);
+    return $factory->newTypedEmail($message['module'], $message['key']);
   }
 
 }

@@ -87,7 +87,7 @@ class TestEmailForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $to = $form_state->getValue('recipient') ?: $this->currentUser();
-    $this->emailFactory->newModuleEmail('symfony_mailer', 'test')
+    $this->emailFactory->newTypedEmail('symfony_mailer', 'test')
       ->setTo($to)
       ->send();
     $message = is_object($to) ?

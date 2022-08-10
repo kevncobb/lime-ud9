@@ -16,6 +16,7 @@ use Drupal\symfony_mailer\Entity\MailerPolicy;
  *     "subscribe" = @Translation("Subscription confirmation"),
  *     "validate" = @Translation("Validate"),
  *   },
+ *   proxy = TRUE,
  *   common_adjusters = {"email_subject", "email_body"},
  *   import = @Translation("Simplenews subscriber settings"),
  *   import_warning = @Translation("This overrides the default HTML messages with imported plain text versions."),
@@ -46,7 +47,7 @@ class SimplenewsEmailBuilder extends SimplenewsEmailBuilderBase {
     }
 
     $key = ($message['key'] == 'subscribe_combined') ? 'subscribe' : 'validate';
-    return $factory->newModuleEmail('simplenews', $key, $message['params']['context']['simplenews_subscriber']);
+    return $factory->newTypedEmail('simplenews', $key, $message['params']['context']['simplenews_subscriber']);
   }
 
   /**

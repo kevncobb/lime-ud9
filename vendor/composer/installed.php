@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '920b1fb02f897af9b56e62b717da02b4fc98a4ee',
+        'reference' => '23a505c226ec066c11c082b74ba799d430e1cc78',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -1288,8 +1288,8 @@
             'dev_requirement' => false,
         ),
         'drupal/entity_browser_generic_embed' => array(
-            'pretty_version' => '9.0.12',
-            'version' => '9.0.12.0',
+            'pretty_version' => '9.0.13',
+            'version' => '9.0.13.0',
             'type' => 'metapackage',
             'install_path' => NULL,
             'aliases' => array(),
@@ -1396,7 +1396,7 @@
             'aliases' => array(
                 0 => '3.x-dev',
             ),
-            'reference' => 'c00161229462b2c11de0cc9118e4d1e75c55dc96',
+            'reference' => '01a79a3112ea75cc064b4352b3637afb2745fc69',
             'dev_requirement' => false,
         ),
         'drupal/feeds_ex' => array(
@@ -1611,12 +1611,12 @@
             'dev_requirement' => false,
         ),
         'drupal/jquery_ui_datepicker' => array(
-            'pretty_version' => '1.2.0',
-            'version' => '1.2.0.0',
+            'pretty_version' => '1.3.0',
+            'version' => '1.3.0.0',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/jquery_ui_datepicker',
             'aliases' => array(),
-            'reference' => '8.x-1.2',
+            'reference' => '8.x-1.3',
             'dev_requirement' => false,
         ),
         'drupal/jquery_ui_draggable' => array(
@@ -1710,12 +1710,12 @@
             'dev_requirement' => false,
         ),
         'drupal/layout_builder_restrictions' => array(
-            'pretty_version' => '2.14.0',
-            'version' => '2.14.0.0',
+            'pretty_version' => '2.15.0',
+            'version' => '2.15.0.0',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/layout_builder_restrictions',
             'aliases' => array(),
-            'reference' => '8.x-2.14',
+            'reference' => '8.x-2.15',
             'dev_requirement' => false,
         ),
         'drupal/layout_library' => array(
@@ -2465,7 +2465,7 @@
             'aliases' => array(
                 0 => '1.x-dev',
             ),
-            'reference' => '70676ecff1fa8932652dd42ca51cc64c5d11ca05',
+            'reference' => '9250683d12abf9ddcb4188a659b6651ab9916778',
             'dev_requirement' => false,
         ),
         'drupal/taxonomy_access_fix' => array(
@@ -2748,8 +2748,8 @@
             'dev_requirement' => false,
         ),
         'drupal/vbp_text_and_image' => array(
-            'pretty_version' => '9.0.6',
-            'version' => '9.0.6.0',
+            'pretty_version' => '9.0.7',
+            'version' => '9.0.7.0',
             'type' => 'metapackage',
             'install_path' => NULL,
             'aliases' => array(),
@@ -2804,12 +2804,12 @@
             'dev_requirement' => false,
         ),
         'drupal/vmi' => array(
-            'pretty_version' => '2.10.0',
-            'version' => '2.10.0.0',
+            'pretty_version' => '2.11.0',
+            'version' => '2.11.0.0',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/vmi',
             'aliases' => array(),
-            'reference' => '8.x-2.10',
+            'reference' => '8.x-2.11',
             'dev_requirement' => false,
         ),
         'drupal/webform' => array(
@@ -3095,12 +3095,12 @@
             'dev_requirement' => false,
         ),
         'laminas/laminas-feed' => array(
-            'pretty_version' => '2.18.1',
-            'version' => '2.18.1.0',
+            'pretty_version' => '2.18.2',
+            'version' => '2.18.2.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../laminas/laminas-feed',
             'aliases' => array(),
-            'reference' => 'f2b852e88996fb9ffeaa862398505ce06afdbcc0',
+            'reference' => 'a57fdb9df42950d5b7f052509fbdab0d081c6b6d',
             'dev_requirement' => false,
         ),
         'laminas/laminas-servicemanager' => array(
@@ -3341,12 +3341,12 @@
             'dev_requirement' => true,
         ),
         'myclabs/php-enum' => array(
-            'pretty_version' => '1.8.3',
-            'version' => '1.8.3.0',
+            'pretty_version' => '1.8.4',
+            'version' => '1.8.4.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../myclabs/php-enum',
             'aliases' => array(),
-            'reference' => 'b942d263c641ddb5190929ff840c68f78713e937',
+            'reference' => 'a867478eae49c9f59ece437ae7f9506bfaa27483',
             'dev_requirement' => false,
         ),
         'neilime/php-css-lint' => array(
@@ -3377,8 +3377,8 @@
             'dev_requirement' => false,
         ),
         'npm-asset/ace-builds' => array(
-            'pretty_version' => '1.8.1',
-            'version' => '1.8.1.0',
+            'pretty_version' => '1.9.3',
+            'version' => '1.9.3.0',
             'type' => 'npm-asset',
             'install_path' => __DIR__ . '/../../docroot/libraries/ace',
             'aliases' => array(),
@@ -3725,12 +3725,12 @@
             'dev_requirement' => true,
         ),
         'phpstan/phpdoc-parser' => array(
-            'pretty_version' => '1.6.4',
-            'version' => '1.6.4.0',
+            'pretty_version' => '1.7.0',
+            'version' => '1.7.0.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../phpstan/phpdoc-parser',
             'aliases' => array(),
-            'reference' => '135607f9ccc297d6923d49c2bcf309f509413215',
+            'reference' => '367a8d9d5f7da2a0136422d27ce8840583926955',
             'dev_requirement' => true,
         ),
         'phpstan/phpstan' => array(
@@ -4704,7 +4704,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '920b1fb02f897af9b56e62b717da02b4fc98a4ee',
+            'reference' => '23a505c226ec066c11c082b74ba799d430e1cc78',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(

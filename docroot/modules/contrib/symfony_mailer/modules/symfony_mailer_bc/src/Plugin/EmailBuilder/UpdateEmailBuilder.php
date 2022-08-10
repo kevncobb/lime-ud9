@@ -18,6 +18,7 @@ use Drupal\update\UpdateManagerInterface;
  * @EmailBuilder(
  *   id = "update",
  *   sub_types = { "status_notify" = @Translation("Available updates") },
+ *   proxy = TRUE,
  *   common_adjusters = {"email_subject", "email_body", "email_to"},
  *   import = @Translation("Update notification addresses"),
  * )
@@ -30,7 +31,7 @@ class UpdateEmailBuilder extends EmailBuilderBase {
    * {@inheritdoc}
    */
   public function fromArray(EmailFactoryInterface $factory, array $message) {
-    return $factory->newModuleEmail($message['module'], $message['key']);
+    return $factory->newTypedEmail($message['module'], $message['key']);
   }
 
   /**

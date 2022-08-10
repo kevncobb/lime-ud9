@@ -26,6 +26,7 @@ use Drupal\user\UserInterface;
  *     "status_blocked" = @Translation("Account blocked"),
  *     "status_canceled" = @Translation("Account cancelled"),
  *   },
+ *   proxy = TRUE,
  *   common_adjusters = {"email_subject", "email_body", "email_skip_sending"},
  *   import = @Translation("User email settings"),
  *   import_warning = @Translation("This overrides the default HTML messages with imported plain text versions."),
@@ -56,7 +57,7 @@ class UserEmailBuilder extends EmailBuilderBase {
    * {@inheritdoc}
    */
   public function fromArray(EmailFactoryInterface $factory, array $message) {
-    return $factory->newModuleEmail($message['module'], $message['key'], $message['params']['account']);
+    return $factory->newTypedEmail($message['module'], $message['key'], $message['params']['account']);
   }
 
   /**

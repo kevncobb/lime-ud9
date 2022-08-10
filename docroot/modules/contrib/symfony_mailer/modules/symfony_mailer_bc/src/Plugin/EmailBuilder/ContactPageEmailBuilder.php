@@ -20,6 +20,7 @@ use Drupal\symfony_mailer\Entity\MailerPolicy;
  *     "autoreply" = @Translation("Auto-reply"),
  *   },
  *   has_entity = TRUE,
+ *   proxy = TRUE,
  *   common_adjusters = {"email_subject", "email_body", "email_to"},
  *   import = @Translation("Contact form recipients"),
  * )

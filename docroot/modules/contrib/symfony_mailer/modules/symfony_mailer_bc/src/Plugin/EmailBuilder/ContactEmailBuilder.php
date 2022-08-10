@@ -16,6 +16,7 @@ use Drupal\symfony_mailer\EmailInterface;
  *     "mail" = @Translation("Message"),
  *     "copy" = @Translation("Sender copy"),
  *   },
+ *   proxy = TRUE,
  * )
  *
  * @todo Notes for adopting Symfony Mailer into Drupal core. This builder can
@@ -56,7 +57,7 @@ class ContactEmailBuilder extends ContactEmailBuilderBase {
     if (isset($message['params']['contact_form'])) {
       return $factory->newEntityEmail($message['params']['contact_form'], $key, $contact_message, $sender);
     }
-    return $factory->newModuleEmail('contact', $key, $contact_message, $sender, $message['params']['recipient']);
+    return $factory->newTypedEmail('contact', $key, $contact_message, $sender, $message['params']['recipient']);
   }
 
   /**

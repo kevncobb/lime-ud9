@@ -14,6 +14,7 @@ use Drupal\symfony_mailer\Processor\EmailBuilderBase;
  * @EmailBuilder(
  *   id = "swiftmailer",
  *   import = @Translation("Swiftmailer transport settings"),
+ *   proxy = TRUE,
  * )
  */
 class SwiftmailerEmailBuilder extends EmailBuilderBase {

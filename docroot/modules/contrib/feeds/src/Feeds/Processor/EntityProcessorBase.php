@@ -91,35 +91,35 @@ abstract class EntityProcessorBase extends ProcessorBase implements EntityProces
   /**
    * The datetime interface for getting the system time.
    *
-   * @var Drupal\Component\Datetime\TimeInterface
+   * @var \Drupal\Component\Datetime\TimeInterface
    */
   protected $dateTime;
 
   /**
    * The action plugin manager.
    *
-   * @var Drupal\Component\Plugin\PluginManagerInterface
+   * @var \Drupal\Component\Plugin\PluginManagerInterface
    */
   protected $actionManager;
 
   /**
    * The renderer service.
    *
-   * @var Drupal\Core\Render\RendererInterface
+   * @var \Drupal\Core\Render\RendererInterface
    */
   protected $renderer;
 
   /**
    * The logger for feeds channel.
    *
-   * @var Psr\Log\LoggerInterface
+   * @var \Psr\Log\LoggerInterface
    */
   protected $logger;
 
   /**
    * The database service.
    *
-   * @var Drupal\Core\Database\Connection
+   * @var \Drupal\Core\Database\Connection
    */
   protected $database;
 

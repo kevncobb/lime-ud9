@@ -19,6 +19,15 @@ class EmailBuilder extends Plugin {
   public $id;
 
   /**
+   * The human-readable name of the plugin.
+   *
+   * Leave blank to derive from an entity type or module matching the ID.
+   *
+   * @var \Drupal\Core\Annotation\Translation
+   */
+  public $label = '';
+
+  /**
    * Array of sub-types.
    *
    * The array key is the sub-type value and the value is the human-readable
@@ -34,6 +43,13 @@ class EmailBuilder extends Plugin {
    * @var bool
    */
   public $has_entity = FALSE;
+
+  /**
+   * Whether the plugin is proxied for another module.
+   *
+   * @var bool
+   */
+  public $proxy = FALSE;
 
   /**
    * Array of common adjuster IDs.
