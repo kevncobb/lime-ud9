@@ -21,11 +21,13 @@
 
   }
   &.modal-button {
+    padding-right: 2rem;
+    position: relative;
     &::after {
       content: "\e91d" !important;
-      position: relative;
-      padding-left: 5px;
-      bottom: 0.2rem;
+      position: absolute;
+      right: 1rem;
+      bottom: 1.5rem;
       font-size: 0.7rem;
       line-height: 1rem;
       font-family: "icomoon" !important;
@@ -37,6 +39,13 @@
       line-height: 1;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+    }
+  }
+  &.modal-button.small {
+    padding-right: 1.7rem;
+    &::after {
+      right: 0.8rem;
+      bottom: 1.05rem;
     }
   }
   &.larger [class^="icon-"], &.larger [class*=" icon-"] {
