@@ -116,14 +116,14 @@ function menu_admin_per_menu_menu_link_content_access(EntityInterface $entity, $
 }
 
 /**
- * Implements hook_field_widget_multivalue_form_alter().
+ * Implements hook_field_widget_complete_form_alter().
  *
  * Check for a menu entity reference field. When the default value is a menu
  * the current user doesn't have access to, hide the field.
  *
  * @see \Drupal\menu_admin_per_menu\Plugin\EntityReferenceSelection\MenuSelection
  */
-function menu_admin_per_menu_field_widget_multivalue_form_alter(&$elements, FormStateInterface $form_state, array $context) {
+function menu_admin_per_menu_field_widget_complete_form_alter(&$elements, FormStateInterface $form_state, array $context) {
   $account = \Drupal::currentUser();
   if ($account->hasPermission('administer menu')) {
     return;

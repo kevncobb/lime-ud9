@@ -8,6 +8,7 @@ use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -23,6 +24,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class EntityBlock extends BlockBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * The number of times this block allows rendering the same entity.
+   *
+   * @var int
+   */
+  const RECURSIVE_RENDER_LIMIT = 3;
 
   /**
    * The name of our entity type.
@@ -53,9 +61,30 @@ class EntityBlock extends BlockBase implements ContainerFactoryPluginInterface {
   protected $entityViewBuilder;
 
   /**
+   * An array of view mode labels, keyed by the display mode ID.
+   *
+   * @var array
+   */
+  protected $view_mode_options;
+
+  /**
+   * An array of counters for the recursive rendering protection.
+   *
+   * @var array
+   */
+  protected static $recursiveRenderDepth = [];
+
+  /**
+   * The logger factory.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
+  protected $loggerFactory;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entityTypeManager, EntityDisplayRepositoryInterface $entityDisplayRepository) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entityTypeManager, EntityDisplayRepositoryInterface $entityDisplayRepository, LoggerChannelFactoryInterface $logger_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     // Determine what entity type we are referring to.
@@ -75,6 +104,7 @@ class EntityBlock extends BlockBase implements ContainerFactoryPluginInterface {
     }
 
     $this->view_mode_options = $entityDisplayRepository->getViewModeOptions($this->entityTypeName);
+    $this->loggerFactory = $logger_factory;
   }
 
   /**
@@ -84,7 +114,8 @@ class EntityBlock extends BlockBase implements ContainerFactoryPluginInterface {
     return new static(
       $configuration, $plugin_id, $plugin_definition,
       $container->get('entity_type.manager'),
-      $container->get('entity_display.repository')
+      $container->get('entity_display.repository'),
+      $container->get('logger.factory')
     );
   }
 
@@ -100,6 +131,7 @@ class EntityBlock extends BlockBase implements ContainerFactoryPluginInterface {
       '#title' => $this->t('Entity'),
       '#target_type' => $this->entityTypeName,
       '#required' => TRUE,
+      '#maxlength' => 1024,
     ];
 
     if (isset($config['entity'])) {
@@ -161,6 +193,24 @@ class EntityBlock extends BlockBase implements ContainerFactoryPluginInterface {
    */
   public function build() {
     if ($entity = $this->getEntity()) {
+      $recursive_render_id = $entity->getEntityTypeId() . ':' . $entity->id();
+      if (isset(static::$recursiveRenderDepth[$recursive_render_id])) {
+        static::$recursiveRenderDepth[$recursive_render_id]++;
+      }
+      else {
+        static::$recursiveRenderDepth[$recursive_render_id] = 1;
+      }
+
+      // Protect recursive rendering.
+      if (static::$recursiveRenderDepth[$recursive_render_id] > static::RECURSIVE_RENDER_LIMIT) {
+        $this->loggerFactory->get('entity')->error('Recursive rendering detected when rendering embedded entity %entity_type: %entity_id. Aborting rendering.', [
+          '%entity_type' => $entity->getEntityTypeId(),
+          '%entity_id' => $entity->id(),
+        ]);
+
+//        return [];
+      }
+
       $render_controller = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId());
       $view_mode = $this->configuration['view_mode'] ?? 'default';
 

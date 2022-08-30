@@ -53,7 +53,6 @@ feeds.feed_type.*:
           unique:
             type: ignore
 
-
 action.configuration.feeds_feed_delete_action:
   type: action_configuration_default
   label: 'Delete feeds configuration'
@@ -187,6 +186,8 @@ feeds.processor.entity:
     skip_hash_check:
       type: boolean
     authorize:
+      type: boolean
+    revision:
       type: boolean
     expire:
       type: integer

@@ -95,26 +95,30 @@ class MenuAdminPerMenuEntityReferenceTest extends BrowserTestBase {
 
     $this->adminMenuUser = $this->createUser([
       'access content',
-      'bypass node access',
+      'administer content types',
+      'create page content',
       'edit any page content',
       'administer menu',
     ], 'Admin menu user');
     $this->menu1User = $this->createUser([
       'access content',
-      'bypass node access',
+      'administer content types',
+      'create page content',
       'edit any page content',
       'administer menu_1 menu items',
     ], 'Menu 1 user');
     $this->menu2User = $this->createUser([
       'access content',
-      'bypass node access',
+      'administer content types',
+      'create page content',
       'edit any page content',
       'administer menu_2 menu items',
     ], 'Menu 2 user');
     // Access to menu_3 is added in menu_admin_per_menu_hook_test.
     $this->menu3User = $this->createUser([
       'access content',
-      'bypass node access',
+      'administer content types',
+      'create page content',
       'edit any page content',
     ], 'Menu 3 user');
   }

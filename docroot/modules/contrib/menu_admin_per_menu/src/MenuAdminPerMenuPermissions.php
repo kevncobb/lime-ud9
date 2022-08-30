@@ -2,6 +2,7 @@
 
 namespace Drupal\menu_admin_per_menu;
 
+use Drupal\system\Entity\Menu;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
@@ -23,7 +24,11 @@ class MenuAdminPerMenuPermissions {
    *   Array of existing menus on the site.
    */
   protected function getExistingMenus() {
-    return menu_ui_get_menus();
+    $menu_list = array_map(function ($menu) {
+      return $menu->label();
+    }, Menu::loadMultiple());
+    asort($menu_list);
+    return $menu_list;
   }
 
   /**

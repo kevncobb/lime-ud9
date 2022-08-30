@@ -21,7 +21,10 @@ class MenuAdminPerMenuAccess implements MenuAdminPerMenuAccessInterface {
     $perms_menu = &drupal_static(__FUNCTION__, []);
 
     if (!isset($perms_menu[$account->id()])) {
-      $menus = menu_ui_get_menus();
+      $menus = array_map(function ($menu) {
+        return $menu->label();
+      }, Menu::loadMultiple());
+      asort($menus);
       foreach ($menus as $name => $title) {
         $permission = 'administer ' . $name . ' menu items';
         if ($account->hasPermission($permission)) {

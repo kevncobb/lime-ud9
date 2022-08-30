@@ -307,7 +307,7 @@ class Feed extends ContentEntityBase implements FeedInterface {
    * {@inheritdoc}
    */
   public function dispatchEntityEvent($event, EntityInterface $entity, ItemInterface $item) {
-    return $this->eventDispatcher()->dispatch($event, new EntityEvent($this, $entity, $item));
+    return $this->eventDispatcher()->dispatch(new EntityEvent($this, $entity, $item), $event);
   }
 
   /**
@@ -328,7 +328,7 @@ class Feed extends ContentEntityBase implements FeedInterface {
     }
 
     // Allow other modules to react upon finishing importing.
-    $this->eventDispatcher()->dispatch(FeedsEvents::IMPORT_FINISHED, new ImportFinishedEvent($this));
+    $this->eventDispatcher()->dispatch(new ImportFinishedEvent($this), FeedsEvents::IMPORT_FINISHED);
 
     // Cleanup.
     $this->clearStates();

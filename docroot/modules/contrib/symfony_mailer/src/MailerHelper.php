@@ -130,9 +130,12 @@ class MailerHelper implements MailerHelperInterface {
    */
   public function renderEntityPolicy(ConfigEntityInterface $entity, string $subtype) {
     $type = $entity->getEntityTypeId();
-    $element = $this->renderCommon($type);
     $policy_id = "$type.$subtype";
-    $entities = [$policy_id, $policy_id . '.' . $entity->id()];
+    $entities = [$policy_id];
+    if (!$entity->isNew()) {
+      $entities[] = $policy_id . '.' . $entity->id();
+    }
+    $element = $this->renderCommon($type);
     $element['listing'] = $this->entityTypeManager->getListBuilder('mailer_policy')
       ->overrideEntities($entities)
       ->hideColumns(['type', 'sub_type'])

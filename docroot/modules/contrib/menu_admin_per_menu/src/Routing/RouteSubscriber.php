@@ -49,7 +49,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     // Run after content_translation, which has priority -210.
     $events[RoutingEvents::ALTER] = ['onAlterRoutes', -220];
     return $events;

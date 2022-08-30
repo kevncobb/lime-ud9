@@ -23,7 +23,7 @@ class SocialAuthLinkedInLoginBlockTest extends SocialAuthTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->provider = 'linkedin';
@@ -31,8 +31,6 @@ class SocialAuthLinkedInLoginBlockTest extends SocialAuthTestBase {
 
   /**
    * Test that the path is included in the login block.
-   *
-   * @throws \Behat\Mink\Exception\ResponseTextException
    */
   public function testLinkExistsInBlock() {
     $this->checkLinkToProviderExists();

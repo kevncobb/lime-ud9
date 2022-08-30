@@ -60,7 +60,8 @@ class CronTest extends FeedsBrowserTestBase {
     // Check that items import normally.
     \Drupal::cache('feeds_download')->deleteAll();
     sleep(1);
-    $this->drupalPostForm('feed/' . $feed->id() . '/import', [], t('Import'));
+    $this->drupalGet('feed/' . $feed->id() . '/import');
+    $this->submitForm([], t('Import'));
     $feed = $this->reloadEntity($feed);
 
     $manual_imported_time = $feed->getImportedTime();

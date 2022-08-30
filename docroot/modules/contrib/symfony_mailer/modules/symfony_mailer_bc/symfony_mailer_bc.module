@@ -104,6 +104,10 @@ function symfony_mailer_bc_form_alter(&$form, FormStateInterface $form_state, $f
     ],
   ];
 
+  // Add forms same as edit.
+  $config_all['contact_form_add_form'] = $config_all['contact_form_edit_form'];
+  $config_all['simplenews_newsletter_add_form'] = $config_all['simplenews_newsletter_edit_form'];
+
   if ($config = $config_all[$form_id] ?? NULL) {
     $helper = Drupal::service('symfony_mailer.helper');
 

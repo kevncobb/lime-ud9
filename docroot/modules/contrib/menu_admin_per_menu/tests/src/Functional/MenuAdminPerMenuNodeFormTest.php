@@ -104,7 +104,9 @@ class MenuAdminPerMenuNodeFormTest extends BrowserTestBase {
     $this->contentOnlyUser = $this->drupalCreateUser(
       [
         'access content',
-        'bypass node access',
+        'administer content types',
+        'create menu_test content',
+        'create page content',
       ]
     );
     $this->contentAndMenuUser = $this->drupalCreateUser(
@@ -112,22 +114,30 @@ class MenuAdminPerMenuNodeFormTest extends BrowserTestBase {
         'access content',
         'bypass node access',
         'administer main menu items',
+        'create menu_test content',
+        'create page content',
       ]
     );
     $this->menu1User = $this->createUser([
       'access content',
       'bypass node access',
       'administer menu_1 menu items',
+      'create menu_test content',
+      'create page content',
     ], 'Menu 1 user');
     $this->menu2User = $this->createUser([
       'access content',
       'bypass node access',
       'administer menu_2 menu items',
+      'create menu_test content',
+      'create page content',
     ], 'Menu 2 user');
     // Access to menu_3 is added in menu_admin_per_menu_hook_test.
     $this->menu3User = $this->createUser([
       'access content',
-      'bypass node access',
+      'administer content types',
+      'create menu_test content',
+      'create page content',
     ], 'Menu 3 user');
   }
 

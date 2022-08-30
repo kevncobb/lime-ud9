@@ -730,7 +730,19 @@ form#views-exposed-form-news-latest-news-block .form-item-search label {
     background: $dark-gray;
   }
 }
-
+.bar-header-groupings-taxonomy-term-page > h3 {
+  color: white;
+  background: $limestone-blue;
+  text-transform: uppercase;
+  padding: 15px;
+  font-weight: 100;
+  margin: 3rem 0;
+  clear: both;
+  a {
+    color: white;
+    text-decoration: none;
+  }
+}
 .bar-header-groupings {
   .view-content > div {
     float: left;

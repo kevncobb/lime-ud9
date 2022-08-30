@@ -23,7 +23,7 @@ class SocialAuthLinkedInSettingsFormTest extends SocialAuthTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     $this->module = 'social_auth_linkedin';
     $this->provider = 'linkedin';
     $this->moduleType = 'social-auth';
@@ -42,9 +42,6 @@ class SocialAuthLinkedInSettingsFormTest extends SocialAuthTestBase {
 
   /**
    * Test if permissions are set correctly for settings page.
-   *
-   * @throws \Behat\Mink\Exception\ElementNotFoundException
-   * @throws \Behat\Mink\Exception\ExpectationException
    */
   public function testPermissionForSettingsPage() {
     $this->checkPermissionForSettingsPage();
