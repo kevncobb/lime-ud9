@@ -732,12 +732,13 @@ form#views-exposed-form-news-latest-news-block .form-item-search label {
 }
 .bar-header-groupings-taxonomy-term-page > h3 {
   color: white;
-  background: $limestone-blue;
+  background: #2c3e68;
   text-transform: uppercase;
   padding: 15px;
   font-weight: 100;
   margin: 3rem 0;
   clear: both;
+  width: 100%;
   a {
     color: white;
     text-decoration: none;
