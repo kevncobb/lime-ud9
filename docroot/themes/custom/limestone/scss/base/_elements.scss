@@ -293,6 +293,23 @@ a.pdf {
     }
   }
 }
+
+.file--x-office-document {
+  a {
+    &:before {
+      content: "";
+      background: url(/themes/custom/limestone/images/icons/word-icon.png) no-repeat;
+      background-size: 18px;
+      width: 19px;
+      height: 21px;
+      display: inline-block;
+      position: relative;
+      top: 3px;
+      margin-right: 3px;
+    }
+  }
+}
+
 .pdf-reader-embed object {
   width: 100%;
 }
