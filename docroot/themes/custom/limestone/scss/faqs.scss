@@ -31,15 +31,7 @@
   z-index: 10;
   position: relative;
   background-color: #fff;
-  .quarter-cell article.faq-cell {
-    width: 50% !important;
-    @media screen and (min-width: 1000px) {
-      width: 33.333% !important;
-    }
-    @media screen and (min-width: 1400px) {
-      width: 25% !important;
-    }
-  }
+
 }
 
 .faq-cell {
@@ -422,5 +414,14 @@
         }
       }
     }
+  }
+}
+.quarter-cell article.faq-cell {
+  width: 50% !important;
+  @media screen and (min-width: 1000px) {
+    width: 33.333% !important;
+  }
+  @media screen and (min-width: 1400px) {
+    width: 25% !important;
   }
 }
