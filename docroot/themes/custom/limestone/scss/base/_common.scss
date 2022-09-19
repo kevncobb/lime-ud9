@@ -398,10 +398,14 @@ p {
   &.bg-faded {
     background-color: rgba(white, 0.75);
   }
-
   color: $body-font-color;
   > h1, > h2, > h3, > h4, > h5, > h6 {
     color: $header-color;
+  }
+  .vbp_color_02 {
+    background-color: #2c3e50;
+    color: #ffffff;
+    width: 100%;
   }
 }
 
