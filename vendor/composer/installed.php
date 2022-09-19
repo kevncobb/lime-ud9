@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '959eafe584930468120290bb3d136a91a68f786e',
+        'reference' => '9fee8b2eeccbb517a106d49eff453dbffd8cc4ee',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -510,6 +510,15 @@
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/advanced_text_formatter',
             'aliases' => array(),
             'reference' => '2.1.1',
+            'dev_requirement' => false,
+        ),
+        'drupal/aggregator' => array(
+            'pretty_version' => '1.0.1',
+            'version' => '1.0.1.0',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/aggregator',
+            'aliases' => array(),
+            'reference' => '1.0.1',
             'dev_requirement' => false,
         ),
         'drupal/allowed_formats' => array(
@@ -4713,7 +4722,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '959eafe584930468120290bb3d136a91a68f786e',
+            'reference' => '9fee8b2eeccbb517a106d49eff453dbffd8cc4ee',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(
