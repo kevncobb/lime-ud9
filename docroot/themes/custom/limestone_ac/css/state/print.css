@@ -409,12 +409,19 @@ h1 {
   -webkit-print-color-adjust: exact !important;
   box-shadow: inset #0138a5 190px 190px 250px !important;
   color: #efefef !important;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
 }
 .bar-header strong {
   -webkit-print-color-adjust: exact !important;
   box-shadow: inset #0138a5 190px 190px 250px !important;
   color: #efefef !important;
+}
+.bar-header.no-margin-bottom {
+  margin-bottom: 0;
+}
+.bar-header.gray {
+  background: #8e8e8ec9;
+  font-size: 1.5rem;
 }
 .field--name-field-program-type-term,
 .course-discipline {
