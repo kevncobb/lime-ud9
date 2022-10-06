@@ -420,7 +420,7 @@ h1 {
   margin-bottom: 0;
 }
 .bar-header.gray {
-  background: #8e8e8ec9;
+  box-shadow: inset #6b6868c9 190px 190px 250px !important;
   font-size: 1.5rem;
 }
 .field--name-field-program-type-term,
