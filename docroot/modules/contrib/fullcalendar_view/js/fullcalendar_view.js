@@ -152,6 +152,11 @@
     }
     // Open a new window to show the details of the event.
     if (thisEvent.url) {
+      let eventURL = new URL(thisEvent.url, location.origin);
+      if (eventURL.origin === "null") {
+        // Invalid URL.
+        return false;
+      }
       if (viewSettings.openEntityInNewTab) {
         // Open a new window to show the details of the event.
        window.open(thisEvent.url);
@@ -244,7 +249,14 @@
 
     }
   }
-  
+
+  function datesRender (info) {
+    Drupal.attachBehaviors(info.el);
+  }
+  function datesDestroy (info) {
+    Drupal.detachBehaviors(info.el);
+  }
+
   // Build the calendar objects.
   function buildCalendars() {
     $('.js-drupal-fullcalendar')
@@ -263,6 +275,10 @@
       calendarOptions.eventClick = eventClick;
       // Bind the drop event handler.
       calendarOptions.eventDrop = eventDrop;
+      // Trigger Drupal behaviors when calendar events are updated.
+      calendarOptions.datesRender = datesRender;
+      // Trigger Drupal behaviors when calendar events are destroyed.
+      calendarOptions.datesDestroy = datesDestroy;
       // Language select element.
       var localeSelectorEl = document.getElementById('locale-selector-' + viewIndex);
       // Initial the calendar.

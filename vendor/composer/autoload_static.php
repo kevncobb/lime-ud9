@@ -182,6 +182,7 @@ class ComposerStaticInit394befdd71e4af2912826c89f60dbc05
             'Prophecy\\' => 9,
             'PhpParser\\' => 10,
             'Pantheon\\TerminusDrupalConsole\\' => 31,
+            'PantheonSystems\\CDNBehatHelpers\\' => 32,
             'PHPStan\\PhpDocParser\\' => 21,
             'PHPStan\\' => 8,
         ),
@@ -651,6 +652,10 @@ class ComposerStaticInit394befdd71e4af2912826c89f60dbc05
         array (
             0 => __DIR__ . '/..' . '/pantheon-systems/terminus-drupal-console-plugin/src',
         ),
+        'PantheonSystems\\CDNBehatHelpers\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/docroot/modules/contrib/pantheon_advanced_page_cache/tests/behat/helper_classes',
+        ),
         'PHPStan\\PhpDocParser\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src',
@@ -681,8 +686,8 @@ class ComposerStaticInit394befdd71e4af2912826c89f60dbc05
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri-interfaces/src',
-            1 => __DIR__ . '/..' . '/league/uri/src',
+            0 => __DIR__ . '/..' . '/league/uri/src',
+            1 => __DIR__ . '/..' . '/league/uri-interfaces/src',
         ),
         'League\\OAuth2\\Server\\' => 
         array (
@@ -923,9 +928,9 @@ class ComposerStaticInit394befdd71e4af2912826c89f60dbc05
         'Doctrine\\Common\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common',
-            1 => __DIR__ . '/..' . '/doctrine/persistence/lib/Doctrine/Common',
-            2 => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common',
-            3 => __DIR__ . '/..' . '/doctrine/event-manager/src',
+            1 => __DIR__ . '/..' . '/doctrine/event-manager/src',
+            2 => __DIR__ . '/..' . '/doctrine/persistence/lib/Doctrine/Common',
+            3 => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common',
         ),
         'Defuse\\Crypto\\' => 
         array (
@@ -6586,6 +6591,9 @@ class ComposerStaticInit394befdd71e4af2912826c89f60dbc05
         'PHPUnit\\Util\\Xml\\SuccessfulSchemaDetectionResult' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Xml/SuccessfulSchemaDetectionResult.php',
         'PHPUnit\\Util\\Xml\\ValidationResult' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Xml/ValidationResult.php',
         'PHPUnit\\Util\\Xml\\Validator' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Xml/Validator.php',
+        'PantheonSystems\\CDNBehatHelpers\\AgeTracker' => __DIR__ . '/../..' . '/docroot/modules/contrib/pantheon_advanced_page_cache/tests/behat/helper_classes/AgeTracker.php',
+        'PantheonSystems\\CDNBehatHelpers\\Contexts\\FeatureContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/pantheon_advanced_page_cache/tests/behat/helper_classes/Contexts/FeatureContext.php',
+        'PantheonSystems\\CDNBehatHelpers\\tests\\AgeTrackerTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/pantheon_advanced_page_cache/tests/behat/helper_classes/tests/AgeTrackerTest.php',
         'Pantheon\\TerminusDrupalConsole\\Commands\\DrupalConsoleCommand' => __DIR__ . '/..' . '/pantheon-systems/terminus-drupal-console-plugin/src/Commands/DrupalConsoleCommand.php',
         'PharIo\\Manifest\\Application' => __DIR__ . '/..' . '/phar-io/manifest/src/values/Application.php',
         'PharIo\\Manifest\\ApplicationName' => __DIR__ . '/..' . '/phar-io/manifest/src/values/ApplicationName.php',

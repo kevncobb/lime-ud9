@@ -7,7 +7,7 @@ core_version_requirement: ^8 || ^9
 dependencies:
   - token:token
 
-# Information added by Drupal.org packaging script on 2021-08-17
-version: '2.0.1'
+# Information added by Drupal.org packaging script on 2022-07-03
+version: '2.0.2'
 project: 'field_token_value'
-datestamp: 1629160325
+datestamp: 1656889657
