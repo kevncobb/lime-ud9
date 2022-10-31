@@ -43,7 +43,7 @@ abstract class SymfonyMailerTestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->config('system.site')->set('name', $this->siteName)->save();
     $this->adminUser = $this->drupalCreateUser(['administer mailer']);
@@ -52,7 +52,7 @@ abstract class SymfonyMailerTestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function tearDown() {
+  protected function tearDown(): void {
     parent::tearDown();
     // @todo Test for no mail not working?
     $this->noMail();

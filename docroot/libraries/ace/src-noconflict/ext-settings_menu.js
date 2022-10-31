@@ -105,6 +105,7 @@ var supportedModes = {
     Assembly_x86: ["asm|a"],
     AutoHotKey: ["ahk"],
     BatchFile: ["bat|cmd"],
+    BibTeX: ["bib"],
     C_Cpp: ["cpp|c|cc|cxx|h|hh|hpp|ino"],
     C9Search: ["c9search_results"],
     Cirru: ["cirru|cr"],
@@ -484,6 +485,9 @@ var optionGroups = {
         "Show Indent Guides": {
             path: "displayIndentGuides"
         },
+        "Highlight Indent Guides": {
+            path: "highlightIndentGuides"
+        },
         "Persistent HScrollbar": {
             path: "hScrollBarAlwaysVisible"
         },
@@ -546,6 +550,9 @@ var optionGroups = {
         },
         "Live Autocompletion": {
             path: "enableLiveAutocompletion"
+        },
+        "Custom scrollbar": {
+            path: "customScrollbar"
         }
     }
 };

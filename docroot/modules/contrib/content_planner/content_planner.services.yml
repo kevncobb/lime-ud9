@@ -13,4 +13,8 @@ services:
 
   content_planner.content_moderation_service:
     class: Drupal\content_planner\ContentModerationService
+    arguments: ['@entity_type.manager', '@content_moderation.moderation_information']
+
+  content_planner.user_profile_image:
+    class: Drupal\content_planner\UserProfileImage
     arguments: ['@entity_type.manager']

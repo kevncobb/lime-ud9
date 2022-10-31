@@ -2,17 +2,10 @@
 
 namespace Drupal\content_kanban\Controller;
 
-use Drupal\content_planner\ContentModerationService;
 use Drupal\Core\Url;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\content_kanban\KanbanService;
-use Drupal\content_kanban\KanbanWorkflowService;
 use Drupal\content_kanban\Component\Kanban;
-use Drupal\content_moderation\ModerationInformation;
-use Drupal\content_moderation\StateTransitionValidation;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -29,11 +22,25 @@ class KanbanController extends ControllerBase {
   protected $currentUser;
 
   /**
+   * Provides an interface for entity type managers.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * The Kanban Service.
    *
    * @var \Drupal\content_kanban\KanbanService
    */
   protected $kanbanService;
+
+  /**
+   * The kanban workflow service.
+   *
+   * @var \Drupal\content_kanban\KanbanWorkflowService
+   */
+  protected $kanbanWorkflowService;
 
   /**
    * The Content Moderation service.
@@ -57,43 +64,19 @@ class KanbanController extends ControllerBase {
   protected $stateTransitionValidation;
 
   /**
-   * Provides an interface for entity type managers.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
-   * Constructs a new KanbanController object.
-   */
-  public function __construct(
-    AccountInterface $current_user,
-    KanbanService $kanban_service,
-    ContentModerationService $content_moderation_service,
-    ModerationInformation $moderation_information,
-    StateTransitionValidation $state_transition_validation,
-    EntityTypeManagerInterface $entity_type_manager
-  ) {
-    $this->currentUser = $current_user;
-    $this->kanbanService = $kanban_service;
-    $this->contentModerationService = $content_moderation_service;
-    $this->moderationInformation = $moderation_information;
-    $this->stateTransitionValidation = $state_transition_validation;
-    $this->entityTypeManager = $entity_type_manager;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('current_user'),
-      $container->get('content_kanban.kanban_service'),
-      $container->get('content_planner.content_moderation_service'),
-      $container->get('content_moderation.moderation_information'),
-      $container->get('content_moderation.state_transition_validation'),
-      $container->get('entity_type.manager')
-    );
+    $instance = parent::create($container);
+    $instance->currentUser = $container->get('current_user');
+    $instance->entityTypeManager = $container->get('entity_type.manager');
+    $instance->kanbanService = $container->get('content_kanban.kanban_service');
+    $instance->kanbanWorkflowService = $container->get('content_kanban.kanban_workflow_service');
+    $instance->contentModerationService = $container->get('content_planner.content_moderation_service');
+    $instance->moderationInformation = $container->get('content_moderation.moderation_information');
+    $instance->stateTransitionValidation = $container->get('content_moderation.state_transition_validation');
+
+    return $instance;
   }
 
   /**
@@ -106,7 +89,7 @@ class KanbanController extends ControllerBase {
    */
   public function showKanbans() {
     $build = [];
-
+    /** @var \Drupal\workflows\WorkflowInterface[] $workflows */
     $workflows = $this->entityTypeManager->getStorage('workflow')->loadMultiple();
 
     if (!$workflows) {
@@ -116,7 +99,7 @@ class KanbanController extends ControllerBase {
 
     foreach ($workflows as $workflow) {
 
-      if (Kanban::isValidContentModerationWorkflow($workflow)) {
+      if ($this->contentModerationService->isValidContentModerationWorkflow($workflow)) {
 
         $kanban = new Kanban(
           $this->entityTypeManager,
@@ -183,7 +166,7 @@ class KanbanController extends ControllerBase {
     }
 
     // Get Workflow States.
-    $workflow_states = KanbanWorkflowService::getWorkflowStates($workflow);
+    $workflow_states = $this->contentModerationService->getWorkflowStates($workflow);
     // Check if state given by request matches any of the Workflow's states.
     if (!array_key_exists($state_id, $workflow_states)) {
 

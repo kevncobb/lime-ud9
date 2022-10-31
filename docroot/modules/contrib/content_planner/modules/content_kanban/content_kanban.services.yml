@@ -13,7 +13,7 @@ services:
 
   content_kanban.kanban_statistic_service:
     class: Drupal\content_kanban\KanbanStatisticService
-    arguments: ['@database']
+    arguments: ['@database', '@content_kanban.kanban_workflow_service', '@content_planner.content_moderation_service']
 
   content_kanban.entity_params:
     class: Drupal\content_kanban\ParamConverter\EntityParamConverter

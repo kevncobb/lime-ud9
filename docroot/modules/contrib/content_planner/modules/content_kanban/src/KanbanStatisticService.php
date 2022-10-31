@@ -2,6 +2,7 @@
 
 namespace Drupal\content_kanban;
 
+use Drupal\content_planner\ContentModerationService;
 use Drupal\Core\Database\Connection;
 use Drupal\workflows\Entity\Workflow;
 
@@ -18,10 +19,30 @@ class KanbanStatisticService {
   protected $database;
 
   /**
+   * The kanban workflow service.
+   *
+   * @var \Drupal\content_kanban\KanbanWorkflowService
+   */
+  protected $kanbanWorkflowService;
+
+  /**
+   * The Content Moderation service.
+   *
+   * @var \Drupal\content_planner\ContentModerationService
+   */
+  protected $contentModerationService;
+
+  /**
    * Constructs a new NewsService object.
    */
-  public function __construct(Connection $database) {
+  public function __construct(
+    Connection $database,
+    KanbanWorkflowService $kanban_workflow_service,
+    ContentModerationService $content_moderation_service
+  ) {
     $this->database = $database;
+    $this->kanbanWorkflowService = $kanban_workflow_service;
+    $this->contentModerationService = $content_moderation_service;
   }
 
   /**
@@ -36,7 +57,7 @@ class KanbanStatisticService {
   public function getWorkflowStateContentCounts(Workflow $workflow) {
 
     // Get all workflow states form a given workflow.
-    $workflow_states = KanbanWorkflowService::getWorkflowStates($workflow);
+    $workflow_states = $this->contentModerationService->getWorkflowStates($workflow);
 
     $data = [];
 

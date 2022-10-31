@@ -42,7 +42,7 @@ abstract class ParserTestBase extends UnitTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     $this->feedType = $this->createMock('Drupal\feeds\FeedTypeInterface');

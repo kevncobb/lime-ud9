@@ -20,7 +20,7 @@ class JmesPathLinesParserTest extends JsonPathLinesParserTest {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     $configuration = ['feed_type' => $this->feedType];

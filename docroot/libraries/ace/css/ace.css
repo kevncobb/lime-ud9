@@ -1,3 +1,43 @@
+/*ace_scrollbar.css*/
+.ace_editor>.ace_sb-v div, .ace_editor>.ace_sb-h div{
+position: absolute;
+background: rgba(128, 128, 128, 0.6);
+-moz-box-sizing: border-box;
+box-sizing: border-box;
+border: 1px solid #bbb;
+border-radius: 2px;
+z-index: 8;
+}
+.ace_editor>.ace_sb-v, .ace_editor>.ace_sb-h {
+position: absolute;
+z-index: 6;
+background: none;
+overflow: hidden!important;
+}
+.ace_editor>.ace_sb-v {
+z-index: 6;
+right: 0;
+top: 0;
+width: 12px;
+}
+.ace_editor>.ace_sb-v div {
+z-index: 8;
+right: 0;
+width: 100%;
+}
+.ace_editor>.ace_sb-h {
+bottom: 0;
+left: 0;
+height: 12px;
+}
+.ace_editor>.ace_sb-h div {
+bottom: 0;
+height: 100%;
+}
+.ace_editor>.ace_sb_grabbed {
+z-index: 8;
+background: #000;
+}
 /*ace_editor.css*/
 /*
 styles = []
@@ -622,6 +662,9 @@ border: 1px solid rgb(200, 200, 250);
 .ace-tm .ace_indent-guide {
 background: url("./main-15.png") right repeat-y;
 }
+.ace-tm .ace_indent-guide-active {
+background: url("./main-16.png") right repeat-y;
+}
 /*error_marker.css*/
 .error_widget_wrapper {
 background: inherit;
@@ -900,7 +943,7 @@ transform: rotate(-45deg);
 border-width: 0 2px 2px 0 ;
 }
 .ace_searchbtn_close {
-background: url("./main-16.png") no-repeat 50% 0;
+background: url("./main-17.png") no-repeat 50% 0;
 border-radius: 50%;
 border: 0 none;
 color: #656565;

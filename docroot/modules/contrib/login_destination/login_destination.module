@@ -27,8 +27,8 @@ function login_destination_help($route_name, RouteMatchInterface $route_match) {
       $output .= '<dl>';
       $output .= '<dt>' . t('Creating login destinations') . '</dt>';
       $output .= '<dd>' . t('Users with sufficient permissions can create login destination through the !link. The page listing the login destinations provides an interface to add, edit and delete them', [
-          '!link' => Link::fromTextAndUrl('Login destination page', Url::fromRoute('login_destination.list'))->toString(),
-        ]) . '</dd>';
+        '!link' => Link::fromTextAndUrl('Login destination page', Url::fromRoute('login_destination.list'))->toString(),
+      ]) . '</dd>';
       $output .= '<dt>' . t('Assigning destinations') . '</dt>';
       $output .= '<dd>' . t('You can add login destinations and specify the page where the user will be redirected when it logs in or logs out. You can also configure specific pages where the destination can work or not and select for what user roles the login destination applies') . '</dd>';
       $output .= '</dl>';
@@ -70,7 +70,7 @@ function login_destination_user_logout(AccountInterface $account) {
  * Implements hook_form_FORM_ID_alter() for user_form().
  */
 function login_destination_form_user_form_alter(array &$form, FormStateInterface $form_state) {
-  if (isset($_GET['pass-reset-token'])) {
+  if (\Drupal::request()->query->get('pass-reset-token') !== NULL) {
     // If the query parameter 'pass-reset-token' is set, it is assumed that the
     // user just used a one-time login url.
     // If we add the $form_state['redirect'] here it will be overriden by
@@ -124,19 +124,36 @@ function login_destination_toolbar_alter(&$items) {
 }
 
 /**
+ * Implements hook_menu_links_discovered_alter().
+ */
+function login_destination_menu_links_discovered_alter(&$links) {
+  $moduleHandler = \Drupal::service('module_handler');
+
+  // If Admin Toolbar Tools is enabled, remove its 'Logout' link
+  if ($moduleHandler->moduleExists('admin_toolbar_tools')) {
+    if (isset($links['admin_toolbar_tools.user.logout'])) {
+      unset($links['admin_toolbar_tools.user.logout']);
+    }
+    if (isset($links['admin_toolbar_tools.extra_links:user.logout'])) {
+      unset($links['admin_toolbar_tools.extra_links:user.logout']);
+    }
+  }
+}
+
+/**
  * Implements hook_link_alter().
  */
 function login_destination_link_alter(&$variables) {
   $routes = [
     'user.login',
-    'user.logout'
+    'user.logout',
   ];
-  /* @var Drupal\Core\Url $url */
+  /** @var Drupal\Core\Url $url */
   $url = $variables['url'];
   if ($url->isRouted() && in_array($url->getRouteName(), $routes)) {
     // Get current path.
-    $current = \Drupal::service('path.current')->getPath();
-    $variables['options']['query']['current'] = $current;
+    $current = \Drupal::request()->getpathInfo(); /*with lang prefix*/
+    $variables['options']['query']['destination'] = $current;
   }
 }
 
@@ -169,7 +186,7 @@ function login_destination_entity_presave(EntityInterface $entity) {
  *   User Account.
  */
 function login_destination_perform_redirect($trigger, AccountInterface $account) {
-  /* @var Drupal\login_destination\LoginDestinationManager $service */
+  /** @var Drupal\login_destination\LoginDestinationManager $service */
   $service = \Drupal::service('login_destination.manager');
   $destination = $service->findDestination($trigger, $account);
   if ($destination) {

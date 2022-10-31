@@ -85,7 +85,7 @@ class KanbanColumn {
       $kanbanEntry = new KanbanEntry(
         $entity,
         $this->stateID,
-        $this->entityTypeConfigs[isset($entity->bundle) ? $entity->bundle : $entity->type]
+        $this->entityTypeConfigs[$entity->bundle ?? $entity->type]
       );
       $entity_builds[] = $kanbanEntry->build();
     }

@@ -46,6 +46,17 @@ interface MailerHelperInterface {
   public function policyFromAddresses(array $addresses);
 
   /**
+   * Transforms an HTML string into plain text.
+   *
+   * @param string $html
+   *   The string to be transformed.
+   *
+   * @return string
+   *   The transformed string.
+   */
+  public function htmlToText(string $html);
+
+  /**
    * Returns the configuration factory.
    *
    * @return \Drupal\Core\Config\ConfigFactoryInterface

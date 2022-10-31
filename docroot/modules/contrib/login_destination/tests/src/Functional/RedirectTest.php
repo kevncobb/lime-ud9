@@ -69,7 +69,6 @@ class RedirectTest extends BrowserTestBase {
    */
   protected function drupalLogout() {
     // Make a request to the logout page.
-    $assert_session = $this->assertSession();
     $this->drupalGet('user/logout');
 
     // @see BrowserTestBase::drupalUserIsLoggedIn()

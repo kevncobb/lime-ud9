@@ -94,6 +94,7 @@ class KanbanLogService {
     $query = $this->entityTypeManager->getStorage('content_kanban_log')->getQuery();
     $query->sort('created', 'DESC');
     $query->range(0, $limit);
+    $query->accessCheck();
 
     if (isset($filter['exclude_anonymous_users']) && $filter['exclude_anonymous_users'] == TRUE) {
       $query->condition('user_id', 0, '<>');

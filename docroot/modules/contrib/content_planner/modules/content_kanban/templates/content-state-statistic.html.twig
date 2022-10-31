@@ -21,7 +21,7 @@
   {% set color_index = 1 %}
   {% for state in data %}
 
-    {% set slice_percentage = (state.count / total_count) * 100 %}
+    {% set slice_percentage = total_count > 0 ? (state.count / total_count) * 100 : 0 %}
 
     <div class="content-state-slice" style="background-color: {{ colors[color_index] }}; width: {{ slice_percentage }}%;">&nbsp;</div>
     {% set color_index = color_index + 1 %}

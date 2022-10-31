@@ -2,6 +2,103 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.12.3](https://github.com/ajaxorg/ace/compare/v1.12.2...v1.12.3) (2022-10-18)
+
+
+### Bug Fixes
+
+* Fix syntax error in the custom scroll CSS ([#4968](https://github.com/ajaxorg/ace/issues/4968)) ([f2a424a](https://github.com/ajaxorg/ace/commit/f2a424a649f655b9511b1bb6047097634edb0e3f))
+
+### [1.12.2](https://github.com/ajaxorg/ace/compare/v1.12.1...v1.12.2) (2022-10-18)
+
+
+### Bug Fixes
+
+* custom scrollbar breaks csp mode ([#4967](https://github.com/ajaxorg/ace/issues/4967)) ([be8eb12](https://github.com/ajaxorg/ace/commit/be8eb1236fb7e1d27cedf033d301f094ec6764e5))
+* find all in range bug ([13bd553](https://github.com/ajaxorg/ace/commit/13bd55348dc8de5c547c74ec0e48c52b6db96a26))
+* Namespace-relative names for php ([#4963](https://github.com/ajaxorg/ace/issues/4963)) ([96e4066](https://github.com/ajaxorg/ace/commit/96e4066341fb7b82d02ad8272929711073d3bfc4))
+
+### [1.12.1](https://github.com/ajaxorg/ace/compare/v1.12.0...v1.12.1) (2022-10-17)
+
+
+### Bug Fixes
+
+* php worker rules for T_NAME_FULLY_QUALIFIED ([#4960](https://github.com/ajaxorg/ace/issues/4960)) ([52dbb05](https://github.com/ajaxorg/ace/commit/52dbb0577693e29f124a1f16008b4e11e2ce7c02))
+* recognisition of uppercase hex numbers for stylus mode ([#4962](https://github.com/ajaxorg/ace/issues/4962)) ([87e0dc7](https://github.com/ajaxorg/ace/commit/87e0dc7b868798300e874e39304aeda18d3d1a76))
+
+## [1.12.0](https://github.com/ajaxorg/ace/compare/v1.11.2...v1.12.0) (2022-10-15)
+
+
+### Features
+
+* implement BibTeX mode highlighting ([ab9e191](https://github.com/ajaxorg/ace/commit/ab9e1916cb3363260de58b808bdc21fd6bc01618))
+
+
+### Bug Fixes
+
+* `MockDom's` `ClassList` `toggle` and `contains` methods return `boolean` instead of `void` ([e8c0a1f](https://github.com/ajaxorg/ace/commit/e8c0a1f35d302966626896aaf84b056e76a8e66e))
+* change lua version to 5.3 ([#4954](https://github.com/ajaxorg/ace/issues/4954)) ([fc56af5](https://github.com/ajaxorg/ace/commit/fc56af5936a2ebfdfa0871ca6a68ccf7ecc7dbf0))
+* documentation for TokenIterator methods ([#4955](https://github.com/ajaxorg/ace/issues/4955)) ([6bff7b4](https://github.com/ajaxorg/ace/commit/6bff7b43c7ad34dd5fafc81c5de773e9d709026d))
+* Fixed comment folding bugs for html (xml like languages) ([#4910](https://github.com/ajaxorg/ace/issues/4910)) ([5279a8a](https://github.com/ajaxorg/ace/commit/5279a8a71719bf5c7099db1774a3d9669d9e5694))
+* mode change for vim tests ([236a31e](https://github.com/ajaxorg/ace/commit/236a31e5d69fd4fd874b667b38dd1bf0685f75c5))
+* php worker rules for `T_NAME_FULLY_QUALIFIED`, `T_NAME_QUALIFIED`, `T_NAME_RELATIVE` namespaced names tokens ([#4948](https://github.com/ajaxorg/ace/issues/4948)) ([059ff71](https://github.com/ajaxorg/ace/commit/059ff7186ac95d38fa11821488c847d3786d3486))
+* tools to work with new ace project structure ([7894c4b](https://github.com/ajaxorg/ace/commit/7894c4bbc6da5eb3521efb3b89b1a189202c2497))
+
+### [1.11.2](https://github.com/ajaxorg/ace/compare/v1.11.1...v1.11.2) (2022-09-26)
+
+
+### Bug Fixes
+
+* Fixed handling surrogare characters in insert, replace, delete mode in Vim ([72fd4b7](https://github.com/ajaxorg/ace/commit/72fd4b7b616f070be198dc8fc437d48a74637a53))
+* Fixed handling surrogate characters in insert-after mode in Vim ([38f893a](https://github.com/ajaxorg/ace/commit/38f893a13b1f1dedea4407a8f3ef1d6098873269))
+
+### [1.11.1](https://github.com/ajaxorg/ace/compare/v1.11.0...v1.11.1) (2022-09-23)
+
+
+### Bug Fixes
+
+* Discrepancy between keywords used by mode-aql.js in the current version and the version used by arangodb ([1503dd0](https://github.com/ajaxorg/ace/commit/1503dd06f2d651d16af964978fb8c62e0304b6d6))
+* The editor can be crashed by passing in undefined into the setValue method ([56e6e56](https://github.com/ajaxorg/ace/commit/56e6e56137ea5717009e3687019f64dae7f88da2))
+* Update vim mode ([#4933](https://github.com/ajaxorg/ace/issues/4933)) ([3b89ed0](https://github.com/ajaxorg/ace/commit/3b89ed06069cb45edb59b7442b5cc6c15b33cfa4))
+
+## [1.11.0](https://github.com/ajaxorg/ace/compare/v1.10.1...v1.11.0) (2022-09-20)
+
+
+### Features
+
+* add gutter indicators for annotations; add custom scrollbar to display gutter indicators ([62fb0d8](https://github.com/ajaxorg/ace/commit/62fb0d8fba813241d01356962ed20ac868a29ede))
+
+
+### Bug Fixes
+
+* change scroll behaviour for `onmousedown` to immediate scroll to point ([392b224](https://github.com/ajaxorg/ace/commit/392b224ceb4e82b4d906c36aef2ea4953e3d440e))
+* Do not try apply highlight indent guide if the file is empty ([#4928](https://github.com/ajaxorg/ace/issues/4928)) ([a90ef27](https://github.com/ajaxorg/ace/commit/a90ef275298b524c493076e47aae13036f6e6271))
+* restrict annotation mark max height and optimise marks coords on canvas ([a6e2259](https://github.com/ajaxorg/ace/commit/a6e2259eb0a282c62fd9e6fde31d86b6c14ec06d))
+
+### [1.10.1](https://github.com/ajaxorg/ace/compare/v1.10.0...v1.10.1) (2022-09-06)
+
+
+### Bug Fixes
+
+* prevent javascript snippets file confusing old packagers ([#4917](https://github.com/ajaxorg/ace/issues/4917)) ([5d7b65c](https://github.com/ajaxorg/ace/commit/5d7b65c30aff0106a7001f68ecdf13a23893eaad))
+
+## [1.10.0](https://github.com/ajaxorg/ace/compare/v1.9.6...v1.10.0) (2022-08-31)
+
+
+### Features
+
+* editor option for indent guide highlighting ([f1f6517](https://github.com/ajaxorg/ace/commit/f1f6517a30d6819d1c8ca045744cdeb2925ccf0a))
+
+
+### Bug Fixes
+
+* add mock `getHighlightIndentGuides` and `setHighlightIndentGuides` for old tests to work ([4067512](https://github.com/ajaxorg/ace/commit/4067512a72934b23a0866eca33812425c37a7363))
+* added "flex-start" and "flex-end" ([#4912](https://github.com/ajaxorg/ace/issues/4912)) ([3e14988](https://github.com/ajaxorg/ace/commit/3e14988209354f94483307f168705690e15adaf5))
+* Fix problematic semicolon in CSS media queries ([#4849](https://github.com/ajaxorg/ace/issues/4849)) ([18a459a](https://github.com/ajaxorg/ace/commit/18a459a26430bfa58e0f798c4bacce6a799c77bd))
+* more optimal way to accessing an element's list of classes; mark `highlightIndentGuide` as internal property ([855a874](https://github.com/ajaxorg/ace/commit/855a874ffde4824bb8de6e56cb44fad64d49725b))
+* strictly equal instead of loosely ([d4c1ab8](https://github.com/ajaxorg/ace/commit/d4c1ab8ef6ee608e2570b7ca6d1d941c5a6628a9))
+* Updated Jshint to 2.13.5 ([#4911](https://github.com/ajaxorg/ace/issues/4911)) ([2401fbd](https://github.com/ajaxorg/ace/commit/2401fbd93f0d61cc01150c1071145e974dd6693f))
+
 ### [1.9.6](https://github.com/ajaxorg/ace/compare/v1.9.5...v1.9.6) (2022-08-17)
 
 

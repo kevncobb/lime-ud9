@@ -107,7 +107,7 @@ class PathProcessorSearchApiPage implements InboundPathProcessorInterface, Outbo
       return $path;
     }
 
-    if (strpos($request->get('_route'), 'search_api_page.') !== 0) {
+    if (strpos($request->get('_route', ''), 'search_api_page.') !== 0) {
       return $path;
     }
 
@@ -133,7 +133,7 @@ class PathProcessorSearchApiPage implements InboundPathProcessorInterface, Outbo
       $path .= '/' . $request->get('keys');
     }
 
-    if (strpos($path, '/') !== 0) {
+    if (strpos($path ?? '', '/') !== 0) {
       return '/'.$path;
     }
 

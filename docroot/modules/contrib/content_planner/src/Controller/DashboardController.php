@@ -2,14 +2,8 @@
 
 namespace Drupal\content_planner\Controller;
 
-use Drupal\content_planner\DashboardBlockPluginManager;
-use Drupal\content_planner\DashboardService;
-use Drupal\content_planner\DashboardSettingsService;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Database\Connection;
-use Drupal\Core\Session\AccountProxyInterface;
 
 /**
  * Implements DashboardController class.
@@ -59,36 +53,19 @@ class DashboardController extends ControllerBase {
   protected $currentUser;
 
   /**
-   * Constructs a new DashboardController object.
-   */
-  public function __construct(
-    Connection $database,
-    ConfigFactoryInterface $config_factory,
-    DashboardSettingsService $dashboard_settings_service,
-    DashboardService $dashboard_service,
-    DashboardBlockPluginManager $dashboard_block_plugin_manager,
-    AccountProxyInterface $current_user
-  ) {
-    $this->database = $database;
-    $this->configFactory = $config_factory;
-    $this->dashboardSettingsService = $dashboard_settings_service;
-    $this->dashboardService = $dashboard_service;
-    $this->dashboardBlockPluginManager = $dashboard_block_plugin_manager;
-    $this->currentUser = $current_user;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('database'),
-      $container->get('config.factory'),
-      $container->get('content_planner.dashboard_settings_service'),
-      $container->get('content_planner.dashboard_service'),
-      $container->get('content_planner.dashboard_block_plugin_manager'),
-      $container->get('current_user')
-    );
+
+    $instance = parent::create($container);
+    $instance->database = $container->get('database');
+    $instance->configFactory = $container->get('config.factory');
+    $instance->dashboardSettingsService = $container->get('content_planner.dashboard_settings_service');
+    $instance->dashboardService = $container->get('content_planner.dashboard_service');
+    $instance->dashboardBlockPluginManager = $container->get('content_planner.dashboard_block_plugin_manager');
+    $instance->currentUser = $container->get('current_user');
+
+    return $instance;
   }
 
   /**

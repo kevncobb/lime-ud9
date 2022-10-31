@@ -15,13 +15,14 @@ class LayoutBuilderAtReplicateTest extends LayoutBuilderAtBase {
    * {@inheritdoc}
    */
   public static $modules = [
+    'block',
+    'block_content',
     'content_translation',
     'contextual',
     'entity_test',
+    'field_ui',
     'layout_builder',
     'layout_builder_at',
-    'block',
-    'block_content',
   ];
 
   /**
@@ -34,7 +35,7 @@ class LayoutBuilderAtReplicateTest extends LayoutBuilderAtBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->setUpViewDisplay();
     $this->setUpFormDisplay();
@@ -64,14 +65,14 @@ class LayoutBuilderAtReplicateTest extends LayoutBuilderAtBase {
       'settings[entity_test_mul][entity_test_mul][fields][layout_builder__layout]' => TRUE,
     ];
     $assert_session->pageTextNotContains('Layout Builder does not support translating layouts.');
-    $this->drupalPostForm(NULL, $edit, 'Save configuration');
+    $this->submitForm($edit, 'Save configuration');
 
     // Create default entity.
     $user = $this->loggedInUser;
     $this->drupalLogin($this->fullAdmin);
     $url = Url::fromRoute("entity.$this->entityTypeId.add_form", ['type' => 'entity_test_mul'])->toString();
     $this->drupalGet($url);
-    $this->assertNoText('Copy blocks into translation');
+    $assert_session->pageTextNotContains('Copy blocks into translation');
     $this->drupalLogin($user);
     $this->createDefaultTranslationEntity();
 
@@ -112,7 +113,7 @@ class LayoutBuilderAtReplicateTest extends LayoutBuilderAtBase {
     $this->updateLayoutOverride($translated_entity_url, TRUE);
 
     $total = \Drupal::entityTypeManager()->getStorage('block_content')->loadMultiple();
-    self::assertEqual(count($total), 2);
+    $this->assertEquals(count($total), 2);
 
     // Compare now.
     $this->drupalGet($entity_url);
@@ -162,7 +163,7 @@ class LayoutBuilderAtReplicateTest extends LayoutBuilderAtBase {
     $this->updateLayoutOverride($translated_entity_url, TRUE);
 
     $total = \Drupal::entityTypeManager()->getStorage('block_content')->loadMultiple();
-    self::assertEqual(count($total), 4);
+    $this->assertEquals(count($total), 4);
 
     // Compare now.
     $this->drupalGet($entity_url);

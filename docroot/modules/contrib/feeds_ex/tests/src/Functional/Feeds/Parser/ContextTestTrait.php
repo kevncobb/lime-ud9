@@ -25,7 +25,8 @@ trait ContextTestTrait {
       'context' => $context,
     ];
 
-    $this->drupalPostForm('/admin/structure/feeds/manage/' . $this->feedType->id() . '/mapping', $edit, 'Save');
+    $this->drupalGet('/admin/structure/feeds/manage/' . $this->feedType->id() . '/mapping');
+    $this->submitForm($edit, 'Save');
 
     // Assert that the context was saved for the XML parser.
     $feed_type = $this->reloadEntity($this->feedType);
@@ -51,8 +52,9 @@ trait ContextTestTrait {
       'context' => $context,
     ];
 
-    $this->drupalPostForm('/admin/structure/feeds/manage/' . $this->feedType->id() . '/mapping', $edit, 'Save');
-    $this->assertText($expected_error);
+    $this->drupalGet('/admin/structure/feeds/manage/' . $this->feedType->id() . '/mapping');
+    $this->submitForm($edit, 'Save');
+    $this->assertSession()->pageTextContains($expected_error);
 
     // Assert that the context was *not* saved for the parser.
     $feed_type = $this->reloadEntity($this->feedType);

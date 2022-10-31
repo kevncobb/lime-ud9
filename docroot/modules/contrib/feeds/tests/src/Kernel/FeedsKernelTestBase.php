@@ -36,11 +36,12 @@ abstract class FeedsKernelTestBase extends EntityKernelTestBase {
   protected function setUp(): void {
     parent::setUp();
 
-    // Install database schemes.
+    // Install database schemes and config.
     $this->installEntitySchema('feeds_feed');
     $this->installEntitySchema('feeds_subscription');
     $this->installSchema('feeds', 'feeds_clean_list');
     $this->installSchema('node', 'node_access');
+    $this->installConfig(['feeds']);
 
     // Create a content type.
     $this->setUpNodeType();

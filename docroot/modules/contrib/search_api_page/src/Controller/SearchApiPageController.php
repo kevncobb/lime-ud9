@@ -218,6 +218,9 @@ class SearchApiPageController extends ControllerBase {
       'contexts' => [
         'url',
       ],
+      'tags' => [
+        'search_api_list:' . $searchApiPage->getIndex(),
+      ],
     ];
     return $build;
   }

@@ -1052,7 +1052,7 @@ exports.AppConfig = AppConfig;
 
 });
 
-ace.define("ace/theme/textmate.css",["require","exports","module"], function(require, exports, module){module.exports = ".ace-tm .ace_gutter {\n  background: #f0f0f0;\n  color: #333;\n}\n\n.ace-tm .ace_print-margin {\n  width: 1px;\n  background: #e8e8e8;\n}\n\n.ace-tm .ace_fold {\n    background-color: #6B72E6;\n}\n\n.ace-tm {\n  background-color: #FFFFFF;\n  color: black;\n}\n\n.ace-tm .ace_cursor {\n  color: black;\n}\n        \n.ace-tm .ace_invisible {\n  color: rgb(191, 191, 191);\n}\n\n.ace-tm .ace_storage,\n.ace-tm .ace_keyword {\n  color: blue;\n}\n\n.ace-tm .ace_constant {\n  color: rgb(197, 6, 11);\n}\n\n.ace-tm .ace_constant.ace_buildin {\n  color: rgb(88, 72, 246);\n}\n\n.ace-tm .ace_constant.ace_language {\n  color: rgb(88, 92, 246);\n}\n\n.ace-tm .ace_constant.ace_library {\n  color: rgb(6, 150, 14);\n}\n\n.ace-tm .ace_invalid {\n  background-color: rgba(255, 0, 0, 0.1);\n  color: red;\n}\n\n.ace-tm .ace_support.ace_function {\n  color: rgb(60, 76, 114);\n}\n\n.ace-tm .ace_support.ace_constant {\n  color: rgb(6, 150, 14);\n}\n\n.ace-tm .ace_support.ace_type,\n.ace-tm .ace_support.ace_class {\n  color: rgb(109, 121, 222);\n}\n\n.ace-tm .ace_keyword.ace_operator {\n  color: rgb(104, 118, 135);\n}\n\n.ace-tm .ace_string {\n  color: rgb(3, 106, 7);\n}\n\n.ace-tm .ace_comment {\n  color: rgb(76, 136, 107);\n}\n\n.ace-tm .ace_comment.ace_doc {\n  color: rgb(0, 102, 255);\n}\n\n.ace-tm .ace_comment.ace_doc.ace_tag {\n  color: rgb(128, 159, 191);\n}\n\n.ace-tm .ace_constant.ace_numeric {\n  color: rgb(0, 0, 205);\n}\n\n.ace-tm .ace_variable {\n  color: rgb(49, 132, 149);\n}\n\n.ace-tm .ace_xml-pe {\n  color: rgb(104, 104, 91);\n}\n\n.ace-tm .ace_entity.ace_name.ace_function {\n  color: #0000A2;\n}\n\n\n.ace-tm .ace_heading {\n  color: rgb(12, 7, 255);\n}\n\n.ace-tm .ace_list {\n  color:rgb(185, 6, 144);\n}\n\n.ace-tm .ace_meta.ace_tag {\n  color:rgb(0, 22, 142);\n}\n\n.ace-tm .ace_string.ace_regex {\n  color: rgb(255, 0, 0)\n}\n\n.ace-tm .ace_marker-layer .ace_selection {\n  background: rgb(181, 213, 255);\n}\n.ace-tm.ace_multiselect .ace_selection.ace_start {\n  box-shadow: 0 0 3px 0px white;\n}\n.ace-tm .ace_marker-layer .ace_step {\n  background: rgb(252, 255, 0);\n}\n\n.ace-tm .ace_marker-layer .ace_stack {\n  background: rgb(164, 229, 101);\n}\n\n.ace-tm .ace_marker-layer .ace_bracket {\n  margin: -1px 0 0 -1px;\n  border: 1px solid rgb(192, 192, 192);\n}\n\n.ace-tm .ace_marker-layer .ace_active-line {\n  background: rgba(0, 0, 0, 0.07);\n}\n\n.ace-tm .ace_gutter-active-line {\n    background-color : #dcdcdc;\n}\n\n.ace-tm .ace_marker-layer .ace_selected-word {\n  background: rgb(250, 250, 255);\n  border: 1px solid rgb(200, 200, 250);\n}\n\n.ace-tm .ace_indent-guide {\n  background: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==\") right repeat-y;\n}\n";
+ace.define("ace/theme/textmate.css",["require","exports","module"], function(require, exports, module){module.exports = ".ace-tm .ace_gutter {\n  background: #f0f0f0;\n  color: #333;\n}\n\n.ace-tm .ace_print-margin {\n  width: 1px;\n  background: #e8e8e8;\n}\n\n.ace-tm .ace_fold {\n    background-color: #6B72E6;\n}\n\n.ace-tm {\n  background-color: #FFFFFF;\n  color: black;\n}\n\n.ace-tm .ace_cursor {\n  color: black;\n}\n        \n.ace-tm .ace_invisible {\n  color: rgb(191, 191, 191);\n}\n\n.ace-tm .ace_storage,\n.ace-tm .ace_keyword {\n  color: blue;\n}\n\n.ace-tm .ace_constant {\n  color: rgb(197, 6, 11);\n}\n\n.ace-tm .ace_constant.ace_buildin {\n  color: rgb(88, 72, 246);\n}\n\n.ace-tm .ace_constant.ace_language {\n  color: rgb(88, 92, 246);\n}\n\n.ace-tm .ace_constant.ace_library {\n  color: rgb(6, 150, 14);\n}\n\n.ace-tm .ace_invalid {\n  background-color: rgba(255, 0, 0, 0.1);\n  color: red;\n}\n\n.ace-tm .ace_support.ace_function {\n  color: rgb(60, 76, 114);\n}\n\n.ace-tm .ace_support.ace_constant {\n  color: rgb(6, 150, 14);\n}\n\n.ace-tm .ace_support.ace_type,\n.ace-tm .ace_support.ace_class {\n  color: rgb(109, 121, 222);\n}\n\n.ace-tm .ace_keyword.ace_operator {\n  color: rgb(104, 118, 135);\n}\n\n.ace-tm .ace_string {\n  color: rgb(3, 106, 7);\n}\n\n.ace-tm .ace_comment {\n  color: rgb(76, 136, 107);\n}\n\n.ace-tm .ace_comment.ace_doc {\n  color: rgb(0, 102, 255);\n}\n\n.ace-tm .ace_comment.ace_doc.ace_tag {\n  color: rgb(128, 159, 191);\n}\n\n.ace-tm .ace_constant.ace_numeric {\n  color: rgb(0, 0, 205);\n}\n\n.ace-tm .ace_variable {\n  color: rgb(49, 132, 149);\n}\n\n.ace-tm .ace_xml-pe {\n  color: rgb(104, 104, 91);\n}\n\n.ace-tm .ace_entity.ace_name.ace_function {\n  color: #0000A2;\n}\n\n\n.ace-tm .ace_heading {\n  color: rgb(12, 7, 255);\n}\n\n.ace-tm .ace_list {\n  color:rgb(185, 6, 144);\n}\n\n.ace-tm .ace_meta.ace_tag {\n  color:rgb(0, 22, 142);\n}\n\n.ace-tm .ace_string.ace_regex {\n  color: rgb(255, 0, 0)\n}\n\n.ace-tm .ace_marker-layer .ace_selection {\n  background: rgb(181, 213, 255);\n}\n.ace-tm.ace_multiselect .ace_selection.ace_start {\n  box-shadow: 0 0 3px 0px white;\n}\n.ace-tm .ace_marker-layer .ace_step {\n  background: rgb(252, 255, 0);\n}\n\n.ace-tm .ace_marker-layer .ace_stack {\n  background: rgb(164, 229, 101);\n}\n\n.ace-tm .ace_marker-layer .ace_bracket {\n  margin: -1px 0 0 -1px;\n  border: 1px solid rgb(192, 192, 192);\n}\n\n.ace-tm .ace_marker-layer .ace_active-line {\n  background: rgba(0, 0, 0, 0.07);\n}\n\n.ace-tm .ace_gutter-active-line {\n    background-color : #dcdcdc;\n}\n\n.ace-tm .ace_marker-layer .ace_selected-word {\n  background: rgb(250, 250, 255);\n  border: 1px solid rgb(200, 200, 250);\n}\n\n.ace-tm .ace_indent-guide {\n  background: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==\") right repeat-y;\n}\n\n.ace-tm .ace_indent-guide-active {\n  background: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAAZSURBVHjaYvj///9/hivKyv8BAAAA//8DACLqBhbvk+/eAAAAAElFTkSuQmCC\") right repeat-y;\n}\n";
 
 });
 
@@ -1178,7 +1178,7 @@ var reportErrorIfPathIsNotConfigured = function () {
         reportErrorIfPathIsNotConfigured = function () { };
     }
 };
-exports.version = "1.9.6";
+exports.version = "1.12.3";
 
 });
 
@@ -3432,7 +3432,7 @@ exports.addTouchListeners = function (el, editor) {
                 clipboard && ["span", { class: "ace_mobile-button", action: "paste" }, "Paste"],
                 hasUndo && ["span", { class: "ace_mobile-button", action: "undo" }, "Undo"],
                 ["span", { class: "ace_mobile-button", action: "find" }, "Find"],
-                ["span", { class: "ace_mobile-button", action: "openCommandPallete" }, "Pallete"]
+                ["span", { class: "ace_mobile-button", action: "openCommandPallete" }, "Palette"]
             ] : ["span"]), contextMenu.firstChild);
         };
         var handleClick = function (e) {
@@ -6632,7 +6632,7 @@ var Document = function (textOrLines) {
     this.setValue = function (text) {
         var len = this.getLength() - 1;
         this.remove(new Range(0, 0, len, this.getLine(len).length));
-        this.insert({ row: 0, column: 0 }, text);
+        this.insert({ row: 0, column: 0 }, text || "");
     };
     this.getValue = function () {
         return this.getAllLines().join(this.getNewLineCharacter());
@@ -8121,11 +8121,11 @@ function Folding() {
             if (dir != 1) {
                 do {
                     token = iterator.stepBackward();
-                } while (token && re.test(token.type));
-                iterator.stepForward();
+                } while (token && re.test(token.type) && !/^comment.end/.test(token.type));
+                token = iterator.stepForward();
             }
             range.start.row = iterator.getCurrentTokenRow();
-            range.start.column = iterator.getCurrentTokenColumn() + 2;
+            range.start.column = iterator.getCurrentTokenColumn() + (/^comment.start/.test(token.type) ? token.value.length : 2);
             iterator = new TokenIterator(this, row, column);
             if (dir != -1) {
                 var lastRow = -1;
@@ -8139,13 +8139,16 @@ function Folding() {
                     else if (iterator.$row > lastRow) {
                         break;
                     }
-                } while (token && re.test(token.type));
+                } while (token && re.test(token.type) && !/^comment.start/.test(token.type));
                 token = iterator.stepBackward();
             }
             else
                 token = iterator.getCurrentToken();
             range.end.row = iterator.getCurrentTokenRow();
-            range.end.column = iterator.getCurrentTokenColumn() + token.value.length - 2;
+            range.end.column = iterator.getCurrentTokenColumn();
+            if (!/^comment.end/.test(token.type)) {
+                range.end.column += token.value.length - 2;
+            }
             return range;
         }
     };
@@ -8521,6 +8524,172 @@ function BracketMatch() {
             valueIndex = 0;
         }
         return null;
+    };
+    this.getMatchingTags = function (pos) {
+        var iterator = new TokenIterator(this, pos.row, pos.column);
+        var token = this.$findTagName(iterator);
+        if (!token)
+            return;
+        var prevToken = iterator.stepBackward();
+        if (prevToken.value === '<') {
+            return this.$findClosingTag(iterator, token);
+        }
+        else {
+            return this.$findOpeningTag(iterator, token);
+        }
+    };
+    this.$findTagName = function (iterator) {
+        var token = iterator.getCurrentToken();
+        var found = false;
+        var backward = false;
+        if (token && token.type.indexOf('tag-name') === -1) {
+            do {
+                if (backward)
+                    token = iterator.stepBackward();
+                else
+                    token = iterator.stepForward();
+                if (token) {
+                    if (token.value === "/>") {
+                        backward = true;
+                    }
+                    else if (token.type.indexOf('tag-name') !== -1) {
+                        found = true;
+                    }
+                }
+            } while (token && !found);
+        }
+        return token;
+    };
+    this.$findClosingTag = function (iterator, token) {
+        var prevToken;
+        var currentTag = token.value;
+        var tag = token.value;
+        var depth = 0;
+        var openTagStart = new Range(iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn(), iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn() + 1);
+        token = iterator.stepForward();
+        var openTagName = new Range(iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn(), iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn() + token.value.length);
+        var foundOpenTagEnd = false;
+        do {
+            prevToken = token;
+            token = iterator.stepForward();
+            if (token) {
+                if (token.value === '>' && !foundOpenTagEnd) {
+                    var openTagEnd = new Range(iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn(), iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn() + 1); //Range for `>`
+                    foundOpenTagEnd = true;
+                }
+                if (token.type.indexOf('tag-name') !== -1) {
+                    currentTag = token.value;
+                    if (tag === currentTag) {
+                        if (prevToken.value === '<') {
+                            depth++;
+                        }
+                        else if (prevToken.value === '</') {
+                            depth--;
+                            if (depth < 0) { //found closing tag
+                                iterator.stepBackward();
+                                var closeTagStart = new Range(iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn(), iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn() + 2); //Range for </
+                                token = iterator.stepForward();
+                                var closeTagName = new Range(iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn(), iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn() + token.value.length);
+                                token = iterator.stepForward();
+                                if (token && token.value === '>') {
+                                    var closeTagEnd = new Range(iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn(), iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn() + 1); //Range for >
+                                }
+                                else {
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (tag === currentTag && token.value === '/>') { // self-closing tag
+                    depth--;
+                    if (depth < 0) { //found self-closing tag end
+                        var closeTagStart = new Range(iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn(), iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn() + 2);
+                        var closeTagName = closeTagStart;
+                        var closeTagEnd = closeTagName;
+                        var openTagEnd = new Range(openTagName.end.row, openTagName.end.column, openTagName.end.row, openTagName.end.column + 1);
+                    }
+                }
+            }
+        } while (token && depth >= 0);
+        if (openTagStart && openTagEnd && closeTagStart && closeTagEnd && openTagName && closeTagName) {
+            return {
+                openTag: new Range(openTagStart.start.row, openTagStart.start.column, openTagEnd.end.row, openTagEnd.end.column),
+                closeTag: new Range(closeTagStart.start.row, closeTagStart.start.column, closeTagEnd.end.row, closeTagEnd.end.column),
+                openTagName: openTagName,
+                closeTagName: closeTagName
+            };
+        }
+    };
+    this.$findOpeningTag = function (iterator, token) {
+        var prevToken = iterator.getCurrentToken();
+        var tag = token.value;
+        var depth = 0;
+        var startRow = iterator.getCurrentTokenRow();
+        var startColumn = iterator.getCurrentTokenColumn();
+        var endColumn = startColumn + 2;
+        var closeTagStart = new Range(startRow, startColumn, startRow, endColumn); //Range for </
+        iterator.stepForward();
+        var closeTagName = new Range(iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn(), iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn() + token.value.length);
+        token = iterator.stepForward();
+        if (!token || token.value !== ">")
+            return;
+        var closeTagEnd = new Range(iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn(), iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn() + 1); //Range for >
+        iterator.stepBackward();
+        iterator.stepBackward();
+        do {
+            token = prevToken;
+            startRow = iterator.getCurrentTokenRow();
+            startColumn = iterator.getCurrentTokenColumn();
+            endColumn = startColumn + token.value.length;
+            prevToken = iterator.stepBackward();
+            if (token) {
+                if (token.type.indexOf('tag-name') !== -1) {
+                    if (tag === token.value) {
+                        if (prevToken.value === '<') {
+                            depth++;
+                            if (depth > 0) { //found opening tag
+                                var openTagName = new Range(startRow, startColumn, startRow, endColumn);
+                                var openTagStart = new Range(iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn(), iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn() + 1); //Range for <
+                                do {
+                                    token = iterator.stepForward();
+                                } while (token && token.value !== '>');
+                                var openTagEnd = new Range(iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn(), iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn() + 1); //Range for >
+                            }
+                        }
+                        else if (prevToken.value === '</') {
+                            depth--;
+                        }
+                    }
+                }
+                else if (token.value === '/>') { // self-closing tag
+                    var stepCount = 0;
+                    var tmpToken = prevToken;
+                    while (tmpToken) {
+                        if (tmpToken.type.indexOf('tag-name') !== -1 && tmpToken.value === tag) {
+                            depth--;
+                            break;
+                        }
+                        else if (tmpToken.value === '<') {
+                            break;
+                        }
+                        tmpToken = iterator.stepBackward();
+                        stepCount++;
+                    }
+                    for (var i = 0; i < stepCount; i++) {
+                        iterator.stepForward();
+                    }
+                }
+            }
+        } while (prevToken && depth <= 0);
+        if (openTagStart && openTagEnd && closeTagStart && closeTagEnd && openTagName && closeTagName) {
+            return {
+                openTag: new Range(openTagStart.start.row, openTagStart.start.column, openTagEnd.end.row, openTagEnd.end.column),
+                closeTag: new Range(closeTagStart.start.row, closeTagStart.start.column, closeTagEnd.end.row, closeTagEnd.end.column),
+                openTagName: openTagName,
+                closeTagName: closeTagName
+            };
+        }
     };
 }
 exports.BracketMatch = BracketMatch;
@@ -10201,11 +10370,12 @@ var Search = function () {
         }
         if (range) {
             var startColumn = range.start.column;
-            var endColumn = range.start.column;
+            var endColumn = range.end.column;
             var i = 0, j = ranges.length - 1;
-            while (i < j && ranges[i].start.column < startColumn && ranges[i].start.row == range.start.row)
+            while (i < j && ranges[i].start.column < startColumn && ranges[i].start.row == 0)
                 i++;
-            while (i < j && ranges[j].end.column > endColumn && ranges[j].end.row == range.end.row)
+            var endRow = range.end.row - range.start.row;
+            while (i < j && ranges[j].end.column > endColumn && ranges[j].end.row == endRow)
                 j--;
             ranges = ranges.slice(i, j + 1);
             for (i = 0, j = ranges.length; i < j; i++) {
@@ -11510,7 +11680,7 @@ exports.commands = [{
         scrollIntoView: "cursor"
     }, {
         name: "openCommandPallete",
-        description: "Open command pallete",
+        description: "Open command palette",
         bindKey: bindKey("F1", "F1"),
         exec: function (editor) {
             editor.prompt({ $type: "commands" });
@@ -11868,11 +12038,24 @@ Editor.$uid = 0;
                 });
                 session.$bracketHighlight = null;
             }
-            var ranges = session.getMatchingBracketRanges(self.getCursorPosition());
+            var pos = self.getCursorPosition();
+            var ranges = session.getMatchingBracketRanges(pos);
+            if (!ranges) {
+                var iterator = new TokenIterator(session, pos.row, pos.column);
+                var token = iterator.getCurrentToken();
+                if (token && /\b(?:tag-open|tag-name)/.test(token.type)) {
+                    var tagNamesRanges = session.getMatchingTags(pos);
+                    if (tagNamesRanges)
+                        ranges = [tagNamesRanges.openTagName, tagNamesRanges.closeTagName];
+                }
+            }
             if (!ranges && session.$mode.getMatching)
                 ranges = session.$mode.getMatching(self.session);
-            if (!ranges)
+            if (!ranges) {
+                if (self.getHighlightIndentGuides())
+                    self.renderer.$textLayer.$highlightIndentGuide();
                 return;
+            }
             var markerType = "ace_bracket";
             if (!Array.isArray(ranges)) {
                 ranges = [ranges];
@@ -11892,109 +12075,8 @@ Editor.$uid = 0;
                     return session.addMarker(range, markerType, "text");
                 })
             };
-        }, 50);
-    };
-    this.$highlightTags = function () {
-        if (this.$highlightTagPending)
-            return;
-        var self = this;
-        this.$highlightTagPending = true;
-        setTimeout(function () {
-            self.$highlightTagPending = false;
-            var session = self.session;
-            if (!session || session.destroyed)
-                return;
-            var pos = self.getCursorPosition();
-            var iterator = new TokenIterator(self.session, pos.row, pos.column);
-            var token = iterator.getCurrentToken();
-            if (!token || !/\b(?:tag-open|tag-name)/.test(token.type)) {
-                session.removeMarker(session.$tagHighlight);
-                session.$tagHighlight = null;
-                return;
-            }
-            if (token.type.indexOf("tag-open") !== -1) {
-                token = iterator.stepForward();
-                if (!token)
-                    return;
-            }
-            var tag = token.value;
-            var currentTag = token.value;
-            var depth = 0;
-            var prevToken = iterator.stepBackward();
-            if (prevToken.value === '<') {
-                do {
-                    prevToken = token;
-                    token = iterator.stepForward();
-                    if (token) {
-                        if (token.type.indexOf('tag-name') !== -1) {
-                            currentTag = token.value;
-                            if (tag === currentTag) {
-                                if (prevToken.value === '<') {
-                                    depth++;
-                                }
-                                else if (prevToken.value === '</') {
-                                    depth--;
-                                }
-                            }
-                        }
-                        else if (tag === currentTag && token.value === '/>') { // self closing tag
-                            depth--;
-                        }
-                    }
-                } while (token && depth >= 0);
-            }
-            else {
-                do {
-                    token = prevToken;
-                    prevToken = iterator.stepBackward();
-                    if (token) {
-                        if (token.type.indexOf('tag-name') !== -1) {
-                            if (tag === token.value) {
-                                if (prevToken.value === '<') {
-                                    depth++;
-                                }
-                                else if (prevToken.value === '</') {
-                                    depth--;
-                                }
-                            }
-                        }
-                        else if (token.value === '/>') { // self closing tag
-                            var stepCount = 0;
-                            var tmpToken = prevToken;
-                            while (tmpToken) {
-                                if (tmpToken.type.indexOf('tag-name') !== -1 && tmpToken.value === tag) {
-                                    depth--;
-                                    break;
-                                }
-                                else if (tmpToken.value === '<') {
-                                    break;
-                                }
-                                tmpToken = iterator.stepBackward();
-                                stepCount++;
-                            }
-                            for (var i = 0; i < stepCount; i++) {
-                                iterator.stepForward();
-                            }
-                        }
-                    }
-                } while (prevToken && depth <= 0);
-                iterator.stepForward();
-            }
-            if (!token) {
-                session.removeMarker(session.$tagHighlight);
-                session.$tagHighlight = null;
-                return;
-            }
-            var row = iterator.getCurrentTokenRow();
-            var column = iterator.getCurrentTokenColumn();
-            var range = new Range(row, column, row, column + token.value.length);
-            var sbm = session.$backMarkers[session.$tagHighlight];
-            if (session.$tagHighlight && sbm != undefined && range.compareRange(sbm.range) !== 0) {
-                session.removeMarker(session.$tagHighlight);
-                session.$tagHighlight = null;
-            }
-            if (!session.$tagHighlight)
-                session.$tagHighlight = session.addMarker(range, "ace_bracket", "text");
+            if (self.getHighlightIndentGuides())
+                self.renderer.$textLayer.$highlightIndentGuide();
         }, 50);
     };
     this.focus = function () {
@@ -12025,7 +12107,6 @@ Editor.$uid = 0;
     this.$cursorChange = function () {
         this.renderer.updateCursor();
         this.$highlightBrackets();
-        this.$highlightTags();
         this.$updateHighlightActiveLine();
     };
     this.onDocumentChange = function (delta) {
@@ -12402,6 +12483,12 @@ Editor.$uid = 0;
     };
     this.getDisplayIndentGuides = function () {
         return this.renderer.getDisplayIndentGuides();
+    };
+    this.setHighlightIndentGuides = function (highlight) {
+        this.renderer.setHighlightIndentGuides(highlight);
+    };
+    this.getHighlightIndentGuides = function () {
+        return this.renderer.getHighlightIndentGuides();
     };
     this.setShowPrintMargin = function (showPrintMargin) {
         this.renderer.setShowPrintMargin(showPrintMargin);
@@ -12948,6 +13035,10 @@ Editor.$uid = 0;
         var cursor = this.getCursorPosition();
         var iterator = new TokenIterator(this.session, cursor.row, cursor.column);
         var prevToken = iterator.getCurrentToken();
+        var tokenCount = 0;
+        if (prevToken && prevToken.type.indexOf('tag-name') !== -1) {
+            prevToken = iterator.stepBackward();
+        }
         var token = prevToken || iterator.stepForward();
         if (!token)
             return;
@@ -12996,7 +13087,7 @@ Editor.$uid = 0;
                 if (isNaN(depth[token.value])) {
                     depth[token.value] = 0;
                 }
-                if (prevToken.value === '<') {
+                if (prevToken.value === '<' && tokenCount > 1) {
                     depth[token.value]++;
                 }
                 else if (prevToken.value === '</') {
@@ -13009,6 +13100,7 @@ Editor.$uid = 0;
             }
             if (!found) {
                 prevToken = token;
+                tokenCount++;
                 token = iterator.stepForward();
                 i = 0;
             }
@@ -13021,43 +13113,33 @@ Editor.$uid = 0;
             if (!range) {
                 range = new Range(iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn() + i - 1, iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn() + i - 1);
                 pos = range.start;
-                if (expand || pos.row === cursor.row && Math.abs(pos.column - cursor.column) < 2)
+                if (expand || pos.row === cursor.row && Math.abs(pos.column - cursor.column)
+                    < 2)
                     range = this.session.getBracketRange(pos);
             }
         }
         else if (matchType === 'tag') {
-            if (token && token.type.indexOf('tag-name') !== -1)
-                var tag = token.value;
-            else
+            if (!token || token.type.indexOf('tag-name') === -1)
                 return;
             range = new Range(iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn() - 2, iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn() - 2);
             if (range.compare(cursor.row, cursor.column) === 0) {
-                found = false;
-                do {
-                    token = prevToken;
-                    prevToken = iterator.stepBackward();
-                    if (prevToken) {
-                        if (prevToken.type.indexOf('tag-close') !== -1) {
-                            range.setEnd(iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn() + 1);
-                        }
-                        if (token.value === tag && token.type.indexOf('tag-name') !== -1) {
-                            if (prevToken.value === '<') {
-                                depth[tag]++;
-                            }
-                            else if (prevToken.value === '</') {
-                                depth[tag]--;
-                            }
-                            if (depth[tag] === 0)
-                                found = true;
-                        }
+                var tagsRanges = this.session.getMatchingTags(cursor);
+                if (tagsRanges) {
+                    if (tagsRanges.openTag.contains(cursor.row, cursor.column)) {
+                        range = tagsRanges.closeTag;
+                        pos = range.start;
                     }
-                } while (prevToken && !found);
+                    else {
+                        range = tagsRanges.openTag;
+                        if (tagsRanges.closeTag.start.row === cursor.row && tagsRanges.closeTag.start.column
+                            === cursor.column)
+                            pos = range.end;
+                        else
+                            pos = range.start;
+                    }
+                }
             }
-            if (token && token.type.indexOf('tag-name')) {
-                pos = range.start;
-                if (pos.row == cursor.row && Math.abs(pos.column - cursor.column) < 2)
-                    pos = range.end;
-            }
+            pos = pos || range.start;
         }
         pos = range && range.cursor || pos;
         if (pos) {
@@ -13450,6 +13532,7 @@ config.defineOptions(Editor.prototype, "editor", {
             this.$updatePlaceholder();
         }
     },
+    customScrollbar: "renderer",
     hScrollBarAlwaysVisible: "renderer",
     vScrollBarAlwaysVisible: "renderer",
     highlightGutterLine: "renderer",
@@ -13461,6 +13544,7 @@ config.defineOptions(Editor.prototype, "editor", {
     fadeFoldWidgets: "renderer",
     showFoldWidgets: "renderer",
     displayIndentGuides: "renderer",
+    highlightIndentGuides: "renderer",
     showGutter: "renderer",
     fontSize: "renderer",
     fontFamily: "renderer",
@@ -14704,6 +14788,13 @@ var Text = function (parentEl) {
         this.$computeTabString();
         return true;
     };
+    this.$highlightIndentGuides = true;
+    this.setHighlightIndentGuides = function (highlight) {
+        if (this.$highlightIndentGuides === highlight)
+            return false;
+        this.$highlightIndentGuides = highlight;
+        return highlight;
+    };
     this.$tabStrings = [];
     this.onChangeTabSize =
         this.$computeTabString = function () {
@@ -14826,6 +14917,7 @@ var Text = function (parentEl) {
         if (config.lastRow > oldConfig.lastRow) {
             this.$lines.push(this.$renderLinesFragment(config, oldConfig.lastRow + 1, config.lastRow));
         }
+        this.$highlightIndentGuide();
     };
     this.$renderLinesFragment = function (config, firstRow, lastRow) {
         var fragment = [];
@@ -14955,15 +15047,125 @@ var Text = function (parentEl) {
             for (var i = 0; i < count; i++) {
                 parent.appendChild(this.$tabStrings[" "].cloneNode(true));
             }
+            this.$highlightIndentGuide();
             return value.substr(cols);
         }
         else if (value[0] == "\t") {
             for (var i = 0; i < cols; i++) {
                 parent.appendChild(this.$tabStrings["\t"].cloneNode(true));
             }
+            this.$highlightIndentGuide();
             return value.substr(cols);
         }
+        this.$highlightIndentGuide();
         return value;
+    };
+    this.$highlightIndentGuide = function () {
+        if (!this.$highlightIndentGuides || !this.displayIndentGuides)
+            return;
+        this.$highlightIndentGuideMarker = {
+            indentLevel: undefined,
+            start: undefined,
+            end: undefined,
+            dir: undefined
+        };
+        var lines = this.session.doc.$lines;
+        if (!lines)
+            return;
+        var cursor = this.session.selection.getCursor();
+        var initialIndent = /^\s*/.exec(this.session.doc.getLine(cursor.row))[0].length;
+        var elementIndentLevel = Math.floor(initialIndent / this.tabSize);
+        this.$highlightIndentGuideMarker = {
+            indentLevel: elementIndentLevel,
+            start: cursor.row
+        };
+        var bracketHighlight = this.session.$bracketHighlight;
+        if (bracketHighlight) {
+            var ranges = this.session.$bracketHighlight.ranges;
+            for (var i = 0; i < ranges.length; i++) {
+                if (cursor.row !== ranges[i].start.row) {
+                    this.$highlightIndentGuideMarker.end = ranges[i].start.row;
+                    if (cursor.row > ranges[i].start.row) {
+                        this.$highlightIndentGuideMarker.dir = -1;
+                    }
+                    else {
+                        this.$highlightIndentGuideMarker.dir = 1;
+                    }
+                    break;
+                }
+            }
+        }
+        if (!this.$highlightIndentGuideMarker.end) {
+            if (lines[cursor.row] !== '' && cursor.column === lines[cursor.row].length) {
+                this.$highlightIndentGuideMarker.dir = 1;
+                for (var i = cursor.row + 1; i < lines.length; i++) {
+                    var line = lines[i];
+                    var currentIndent = /^\s*/.exec(line)[0].length;
+                    if (line !== '') {
+                        this.$highlightIndentGuideMarker.end = i;
+                        if (currentIndent <= initialIndent)
+                            break;
+                    }
+                }
+            }
+        }
+        this.$renderHighlightIndentGuide();
+    };
+    this.$clearActiveIndentGuide = function () {
+        var cells = this.$lines.cells;
+        for (var i = 0; i < cells.length; i++) {
+            var cell = cells[i];
+            var childNodes = cell.element.childNodes;
+            if (childNodes.length > 0) {
+                for (var j = 0; j < childNodes.length; j++) {
+                    if (childNodes[j].classList && childNodes[j].classList.contains("ace_indent-guide-active")) {
+                        childNodes[j].classList.remove("ace_indent-guide-active");
+                        break;
+                    }
+                }
+            }
+        }
+    };
+    this.$setIndentGuideActive = function (cell, indentLevel) {
+        var line = this.session.doc.getLine(cell.row);
+        if (line !== "") {
+            var childNodes = cell.element.childNodes;
+            if (childNodes) {
+                var node = childNodes[indentLevel - 1];
+                if (node && node.classList && node.classList.contains("ace_indent-guide"))
+                    node.classList.add("ace_indent-guide-active");
+            }
+        }
+    };
+    this.$renderHighlightIndentGuide = function () {
+        if (!this.$lines)
+            return;
+        var cells = this.$lines.cells;
+        this.$clearActiveIndentGuide();
+        var indentLevel = this.$highlightIndentGuideMarker.indentLevel;
+        if (indentLevel !== 0) {
+            if (this.$highlightIndentGuideMarker.dir === 1) {
+                for (var i = 0; i < cells.length; i++) {
+                    var cell = cells[i];
+                    if (this.$highlightIndentGuideMarker.end && cell.row >= this.$highlightIndentGuideMarker.start
+                        + 1) {
+                        if (cell.row >= this.$highlightIndentGuideMarker.end)
+                            break;
+                        this.$setIndentGuideActive(cell, indentLevel);
+                    }
+                }
+            }
+            else {
+                for (var i = cells.length - 1; i >= 0; i--) {
+                    var cell = cells[i];
+                    if (this.$highlightIndentGuideMarker.end && cell.row < this.$highlightIndentGuideMarker.start) {
+                        if (cell.row <= this.$highlightIndentGuideMarker.end)
+                            break;
+                        this.$setIndentGuideActive(cell, indentLevel);
+                    }
+                }
+            }
+        }
     };
     this.$createLineElement = function (parent) {
         var lineEl = this.dom.createElement("div");
@@ -15451,6 +15653,227 @@ exports.HScrollBar = HScrollBar;
 
 });
 
+ace.define("ace/scrollbar_custom",["require","exports","module","ace/lib/oop","ace/lib/dom","ace/lib/event","ace/lib/event_emitter"], function(require, exports, module){"use strict";
+var oop = require("./lib/oop");
+var dom = require("./lib/dom");
+var event = require("./lib/event");
+var EventEmitter = require("./lib/event_emitter").EventEmitter;
+dom.importCssString(".ace_editor>.ace_sb-v div, .ace_editor>.ace_sb-h div{\n  position: absolute;\n  background: rgba(128, 128, 128, 0.6);\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  border: 1px solid #bbb;\n  border-radius: 2px;\n  z-index: 8;\n}\n.ace_editor>.ace_sb-v, .ace_editor>.ace_sb-h {\n  position: absolute;\n  z-index: 6;\n  background: none;\n  overflow: hidden!important;\n}\n.ace_editor>.ace_sb-v {\n  z-index: 6;\n  right: 0;\n  top: 0;\n  width: 12px;\n}\n.ace_editor>.ace_sb-v div {\n  z-index: 8;\n  right: 0;\n  width: 100%;\n}\n.ace_editor>.ace_sb-h {\n  bottom: 0;\n  left: 0;\n  height: 12px;\n}\n.ace_editor>.ace_sb-h div {\n  bottom: 0;\n  height: 100%;\n}\n.ace_editor>.ace_sb_grabbed {\n  z-index: 8;\n  background: #000;\n}", "ace_scrollbar.css", false);
+var ScrollBar = function (parent) {
+    this.element = dom.createElement("div");
+    this.element.className = "ace_sb" + this.classSuffix;
+    this.inner = dom.createElement("div");
+    this.inner.className = "";
+    this.element.appendChild(this.inner);
+    this.VScrollWidth = 12;
+    this.HScrollHeight = 12;
+    parent.appendChild(this.element);
+    this.setVisible(false);
+    this.skipEvent = false;
+    event.addMultiMouseDownListener(this.element, [500, 300, 300], this, "onMouseDown");
+};
+(function () {
+    oop.implement(this, EventEmitter);
+    this.setVisible = function (isVisible) {
+        this.element.style.display = isVisible ? "" : "none";
+        this.isVisible = isVisible;
+        this.coeff = 1;
+    };
+}).call(ScrollBar.prototype);
+var VScrollBar = function (parent, renderer) {
+    ScrollBar.call(this, parent);
+    this.scrollTop = 0;
+    this.scrollHeight = 0;
+    this.parent = parent;
+    this.width = this.VScrollWidth;
+    this.renderer = renderer;
+    this.inner.style.width = this.element.style.width = (this.width || 15) + "px";
+    this.$minWidth = 0;
+};
+oop.inherits(VScrollBar, ScrollBar);
+(function () {
+    this.classSuffix = '-v';
+    oop.implement(this, EventEmitter);
+    this.onMouseDown = function (eType, e) {
+        if (eType !== "mousedown")
+            return;
+        if (event.getButton(e) !== 0 || e.detail === 2) {
+            return;
+        }
+        if (e.target === this.inner) {
+            var self = this;
+            var mousePageY = e.clientY;
+            var onMouseMove = function (e) {
+                mousePageY = e.clientY;
+            };
+            var onMouseUp = function () {
+                clearInterval(timerId);
+            };
+            var startY = e.clientY;
+            var startTop = this.thumbTop;
+            var onScrollInterval = function () {
+                if (mousePageY === undefined)
+                    return;
+                var scrollTop = self.scrollTopFromThumbTop(startTop + mousePageY - startY);
+                if (scrollTop === self.scrollTop)
+                    return;
+                self._emit("scroll", { data: scrollTop });
+            };
+            event.capture(this.inner, onMouseMove, onMouseUp);
+            var timerId = setInterval(onScrollInterval, 20);
+            return event.preventDefault(e);
+        }
+        var top = e.clientY - this.element.getBoundingClientRect().top - this.thumbHeight / 2;
+        this._emit("scroll", { data: this.scrollTopFromThumbTop(top) });
+        return event.preventDefault(e);
+    };
+    this.getHeight = function () {
+        return this.height;
+    };
+    this.scrollTopFromThumbTop = function (thumbTop) {
+        var scrollTop = thumbTop * (this.pageHeight - this.viewHeight) / (this.slideHeight - this.thumbHeight);
+        scrollTop = scrollTop >> 0;
+        if (scrollTop < 0) {
+            scrollTop = 0;
+        }
+        else if (scrollTop > this.pageHeight - this.viewHeight) {
+            scrollTop = this.pageHeight - this.viewHeight;
+        }
+        return scrollTop;
+    };
+    this.getWidth = function () {
+        return Math.max(this.isVisible ? this.width : 0, this.$minWidth || 0);
+    };
+    this.setHeight = function (height) {
+        this.height = Math.max(0, height);
+        this.slideHeight = this.height;
+        this.viewHeight = this.height;
+        this.setScrollHeight(this.pageHeight, true);
+    };
+    this.setInnerHeight = this.setScrollHeight = function (height, force) {
+        if (this.pageHeight === height && !force)
+            return;
+        this.pageHeight = height;
+        this.thumbHeight = this.slideHeight * this.viewHeight / this.pageHeight;
+        if (this.thumbHeight > this.slideHeight)
+            this.thumbHeight = this.slideHeight;
+        if (this.thumbHeight < 15)
+            this.thumbHeight = 15;
+        this.inner.style.height = this.thumbHeight + "px";
+        if (this.scrollTop > (this.pageHeight - this.viewHeight)) {
+            this.scrollTop = (this.pageHeight - this.viewHeight);
+            if (this.scrollTop < 0)
+                this.scrollTop = 0;
+            this._emit("scroll", { data: this.scrollTop });
+        }
+    };
+    this.setScrollTop = function (scrollTop) {
+        this.scrollTop = scrollTop;
+        if (scrollTop < 0)
+            scrollTop = 0;
+        this.thumbTop = scrollTop * (this.slideHeight - this.thumbHeight) / (this.pageHeight - this.viewHeight);
+        this.inner.style.top = this.thumbTop + "px";
+    };
+}).call(VScrollBar.prototype);
+var HScrollBar = function (parent, renderer) {
+    ScrollBar.call(this, parent);
+    this.scrollLeft = 0;
+    this.scrollWidth = 0;
+    this.height = this.HScrollHeight;
+    this.inner.style.height = this.element.style.height = (this.height || 12) + "px";
+    this.renderer = renderer;
+};
+oop.inherits(HScrollBar, ScrollBar);
+(function () {
+    this.classSuffix = '-h';
+    oop.implement(this, EventEmitter);
+    this.onMouseDown = function (eType, e) {
+        if (eType !== "mousedown")
+            return;
+        if (event.getButton(e) !== 0 || e.detail === 2) {
+            return;
+        }
+        if (e.target === this.inner) {
+            var self = this;
+            var mousePageX = e.clientX;
+            var onMouseMove = function (e) {
+                mousePageX = e.clientX;
+            };
+            var onMouseUp = function () {
+                clearInterval(timerId);
+            };
+            var startX = e.clientX;
+            var startLeft = this.thumbLeft;
+            var onScrollInterval = function () {
+                if (mousePageX === undefined)
+                    return;
+                var scrollLeft = self.scrollLeftFromThumbLeft(startLeft + mousePageX - startX);
+                if (scrollLeft === self.scrollLeft)
+                    return;
+                self._emit("scroll", { data: scrollLeft });
+            };
+            event.capture(this.inner, onMouseMove, onMouseUp);
+            var timerId = setInterval(onScrollInterval, 20);
+            return event.preventDefault(e);
+        }
+        var left = e.clientX - this.element.getBoundingClientRect().left - this.thumbWidth / 2;
+        this._emit("scroll", { data: this.scrollLeftFromThumbLeft(left) });
+        return event.preventDefault(e);
+    };
+    this.getHeight = function () {
+        return this.isVisible ? this.height : 0;
+    };
+    this.scrollLeftFromThumbLeft = function (thumbLeft) {
+        var scrollLeft = thumbLeft * (this.pageWidth - this.viewWidth) / (this.slideWidth - this.thumbWidth);
+        scrollLeft = scrollLeft >> 0;
+        if (scrollLeft < 0) {
+            scrollLeft = 0;
+        }
+        else if (scrollLeft > this.pageWidth - this.viewWidth) {
+            scrollLeft = this.pageWidth - this.viewWidth;
+        }
+        return scrollLeft;
+    };
+    this.setWidth = function (width) {
+        this.width = Math.max(0, width);
+        this.element.style.width = this.width + "px";
+        this.slideWidth = this.width;
+        this.viewWidth = this.width;
+        this.setScrollWidth(this.pageWidth, true);
+    };
+    this.setInnerWidth = this.setScrollWidth = function (width, force) {
+        if (this.pageWidth === width && !force)
+            return;
+        this.pageWidth = width;
+        this.thumbWidth = this.slideWidth * this.viewWidth / this.pageWidth;
+        if (this.thumbWidth > this.slideWidth)
+            this.thumbWidth = this.slideWidth;
+        if (this.thumbWidth < 15)
+            this.thumbWidth = 15;
+        this.inner.style.width = this.thumbWidth + "px";
+        if (this.scrollLeft > (this.pageWidth - this.viewWidth)) {
+            this.scrollLeft = (this.pageWidth - this.viewWidth);
+            if (this.scrollLeft < 0)
+                this.scrollLeft = 0;
+            this._emit("scroll", { data: this.scrollLeft });
+        }
+    };
+    this.setScrollLeft = function (scrollLeft) {
+        this.scrollLeft = scrollLeft;
+        if (scrollLeft < 0)
+            scrollLeft = 0;
+        this.thumbLeft = scrollLeft * (this.slideWidth - this.thumbWidth) / (this.pageWidth - this.viewWidth);
+        this.inner.style.left = (this.thumbLeft) + "px";
+    };
+}).call(HScrollBar.prototype);
+exports.ScrollBar = VScrollBar; // backward compatibility
+exports.ScrollBarV = VScrollBar; // backward compatibility
+exports.ScrollBarH = HScrollBar; // backward compatibility
+exports.VScrollBar = VScrollBar;
+exports.HScrollBar = HScrollBar;
+
+});
+
 ace.define("ace/renderloop",["require","exports","module","ace/lib/event"], function(require, exports, module){"use strict";
 var event = require("./lib/event");
 var RenderLoop = function (onRender, win) {
@@ -15664,7 +16087,127 @@ ace.define("ace/css/editor.css",["require","exports","module"], function(require
 
 });
 
-ace.define("ace/virtual_renderer",["require","exports","module","ace/lib/oop","ace/lib/dom","ace/config","ace/layer/gutter","ace/layer/marker","ace/layer/text","ace/layer/cursor","ace/scrollbar","ace/scrollbar","ace/renderloop","ace/layer/font_metrics","ace/lib/event_emitter","ace/css/editor.css","ace/lib/useragent"], function(require, exports, module){"use strict";
+ace.define("ace/layer/decorators",["require","exports","module","ace/lib/dom","ace/lib/oop","ace/lib/event_emitter"], function(require, exports, module){"use strict";
+var dom = require("../lib/dom");
+var oop = require("../lib/oop");
+var EventEmitter = require("../lib/event_emitter").EventEmitter;
+var Decorator = function (parent, renderer) {
+    this.canvas = dom.createElement("canvas");
+    this.renderer = renderer;
+    this.pixelRatio = 1;
+    this.maxHeight = renderer.layerConfig.maxHeight;
+    this.lineHeight = renderer.layerConfig.lineHeight;
+    this.canvasHeight = parent.parent.scrollHeight;
+    this.heightRatio = this.canvasHeight / this.maxHeight;
+    this.canvasWidth = parent.width;
+    this.minDecorationHeight = (2 * this.pixelRatio) | 0;
+    this.halfMinDecorationHeight = (this.minDecorationHeight / 2) | 0;
+    this.canvas.width = this.canvasWidth;
+    this.canvas.height = this.canvasHeight;
+    this.canvas.style.top = 0 + "px";
+    this.canvas.style.right = 0 + "px";
+    this.canvas.style.zIndex = 7 + "px";
+    this.canvas.style.position = "absolute";
+    this.colors = {};
+    this.colors.dark = {
+        "error": "rgba(255, 18, 18, 1)",
+        "warning": "rgba(18, 136, 18, 1)",
+        "info": "rgba(18, 18, 136, 1)"
+    };
+    this.colors.light = {
+        "error": "rgb(255,51,51)",
+        "warning": "rgb(32,133,72)",
+        "info": "rgb(35,68,138)"
+    };
+    parent.element.appendChild(this.canvas);
+};
+(function () {
+    oop.implement(this, EventEmitter);
+    this.$updateDecorators = function (config) {
+        var colors = (this.renderer.theme.isDark === true) ? this.colors.dark : this.colors.light;
+        if (config) {
+            this.maxHeight = config.maxHeight;
+            this.lineHeight = config.lineHeight;
+            this.canvasHeight = config.height;
+            var allLineHeight = (config.lastRow + 1) * this.lineHeight;
+            if (allLineHeight < this.canvasHeight) {
+                this.heightRatio = 1;
+            }
+            else {
+                this.heightRatio = this.canvasHeight / this.maxHeight;
+            }
+        }
+        var ctx = this.canvas.getContext("2d");
+        function compare(a, b) {
+            if (a.priority < b.priority)
+                return -1;
+            if (a.priority > b.priority)
+                return 1;
+            return 0;
+        }
+        var annotations = this.renderer.session.$annotations;
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        if (annotations) {
+            var priorities = {
+                "info": 1,
+                "warning": 2,
+                "error": 3
+            };
+            annotations.forEach(function (item) {
+                item.priority = priorities[item.type] || null;
+            });
+            annotations = annotations.sort(compare);
+            var foldData = this.renderer.session.$foldData;
+            for (var i = 0; i < annotations.length; i++) {
+                var row = annotations[i].row;
+                var compensateFold = this.compensateFoldRows(row, foldData);
+                var currentY = Math.round((row - compensateFold) * this.lineHeight * this.heightRatio);
+                var y1 = Math.round(((row - compensateFold) * this.lineHeight * this.heightRatio));
+                var y2 = Math.round((((row - compensateFold) * this.lineHeight + this.lineHeight) * this.heightRatio));
+                var height = y2 - y1;
+                if (height < this.minDecorationHeight) {
+                    var yCenter = ((y1 + y2) / 2) | 0;
+                    if (yCenter < this.halfMinDecorationHeight) {
+                        yCenter = this.halfMinDecorationHeight;
+                    }
+                    else if (yCenter + this.halfMinDecorationHeight > this.canvasHeight) {
+                        yCenter = this.canvasHeight - this.halfMinDecorationHeight;
+                    }
+                    y1 = Math.round(yCenter - this.halfMinDecorationHeight);
+                    y2 = Math.round(yCenter + this.halfMinDecorationHeight);
+                }
+                ctx.fillStyle = colors[annotations[i].type] || null;
+                ctx.fillRect(0, currentY, this.canvasWidth, y2 - y1);
+            }
+        }
+        var cursor = this.renderer.session.selection.getCursor();
+        if (cursor) {
+            var compensateFold = this.compensateFoldRows(cursor.row, foldData);
+            var currentY = Math.round((cursor.row - compensateFold) * this.lineHeight * this.heightRatio);
+            ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+            ctx.fillRect(0, currentY, this.canvasWidth, 2);
+        }
+    };
+    this.compensateFoldRows = function (row, foldData) {
+        var compensateFold = 0;
+        if (foldData && foldData.length > 0) {
+            for (var j = 0; j < foldData.length; j++) {
+                if (row > foldData[j].start.row && row < foldData[j].end.row) {
+                    compensateFold += row - foldData[j].start.row;
+                }
+                else if (row >= foldData[j].end.row) {
+                    compensateFold += foldData[j].end.row - foldData[j].start.row;
+                }
+            }
+        }
+        return compensateFold;
+    };
+}.call(Decorator.prototype));
+exports.Decorator = Decorator;
+
+});
+
+ace.define("ace/virtual_renderer",["require","exports","module","ace/lib/oop","ace/lib/dom","ace/config","ace/layer/gutter","ace/layer/marker","ace/layer/text","ace/layer/cursor","ace/scrollbar","ace/scrollbar","ace/scrollbar_custom","ace/scrollbar_custom","ace/renderloop","ace/layer/font_metrics","ace/lib/event_emitter","ace/css/editor.css","ace/layer/decorators","ace/lib/useragent"], function(require, exports, module){"use strict";
 var oop = require("./lib/oop");
 var dom = require("./lib/dom");
 var config = require("./config");
@@ -15674,10 +16217,13 @@ var TextLayer = require("./layer/text").Text;
 var CursorLayer = require("./layer/cursor").Cursor;
 var HScrollBar = require("./scrollbar").HScrollBar;
 var VScrollBar = require("./scrollbar").VScrollBar;
+var HScrollBarCustom = require("./scrollbar_custom").HScrollBar;
+var VScrollBarCustom = require("./scrollbar_custom").VScrollBar;
 var RenderLoop = require("./renderloop").RenderLoop;
 var FontMetrics = require("./layer/font_metrics").FontMetrics;
 var EventEmitter = require("./lib/event_emitter").EventEmitter;
 var editorCss = require("./css/editor.css");
+var Decorator = require("./layer/decorators").Decorator;
 var useragent = require("./lib/useragent");
 var HIDE_TEXTAREA = useragent.isIE;
 dom.importCssString(editorCss, "ace_editor.css", false);
@@ -15900,6 +16446,9 @@ var VirtualRenderer = function (container, theme) {
         if (this.resizing)
             this.resizing = 0;
         this.scrollBarH.scrollLeft = this.scrollBarV.scrollTop = null;
+        if (this.$customScrollbar) {
+            this.$updateCustomScrollbar(true);
+        }
     };
     this.$updateCachedSize = function (force, gutterWidth, width, height) {
         height -= (this.$extraHeight || 0);
@@ -15917,6 +16466,7 @@ var VirtualRenderer = function (container, theme) {
             size.scrollerHeight = size.height;
             if (this.$horizScroll)
                 size.scrollerHeight -= this.scrollBarH.getHeight();
+            this.scrollBarV.setHeight(size.scrollerHeight);
             this.scrollBarV.element.style.bottom = this.scrollBarH.getHeight() + "px";
             changes = changes | this.CHANGE_SCROLL;
         }
@@ -15934,6 +16484,7 @@ var VirtualRenderer = function (container, theme) {
             dom.setStyle(this.scrollBarH.element.style, "right", right);
             dom.setStyle(this.scroller.style, "right", right);
             dom.setStyle(this.scroller.style, "bottom", this.scrollBarH.getHeight());
+            this.scrollBarH.setWidth(size.scrollerWidth);
             if (this.session && this.session.getUseWrapMode() && this.adjustWrapLimit() || force) {
                 changes |= this.CHANGE_FULL;
             }
@@ -15980,6 +16531,12 @@ var VirtualRenderer = function (container, theme) {
     };
     this.setDisplayIndentGuides = function (display) {
         this.setOption("displayIndentGuides", display);
+    };
+    this.getHighlightIndentGuides = function () {
+        return this.getOption("highlightIndentGuides");
+    };
+    this.setHighlightIndentGuides = function (highlight) {
+        this.setOption("highlightIndentGuides", highlight);
     };
     this.setShowPrintMargin = function (showPrintMargin) {
         this.setOption("showPrintMargin", showPrintMargin);
@@ -16222,6 +16779,9 @@ var VirtualRenderer = function (container, theme) {
             this.$textLayer.update(config);
             if (this.$showGutter)
                 this.$gutterLayer.update(config);
+            if (this.$customScrollbar) {
+                this.$scrollDecorator.$updateDecorators(config);
+            }
             this.$markerBack.update(config);
             this.$markerFront.update(config);
             this.$cursorLayer.update(config);
@@ -16241,6 +16801,9 @@ var VirtualRenderer = function (container, theme) {
                 else
                     this.$gutterLayer.scrollLines(config);
             }
+            if (this.$customScrollbar) {
+                this.$scrollDecorator.$updateDecorators(config);
+            }
             this.$markerBack.update(config);
             this.$markerFront.update(config);
             this.$cursorLayer.update(config);
@@ -16253,18 +16816,30 @@ var VirtualRenderer = function (container, theme) {
             this.$textLayer.update(config);
             if (this.$showGutter)
                 this.$gutterLayer.update(config);
+            if (this.$customScrollbar) {
+                this.$scrollDecorator.$updateDecorators(config);
+            }
         }
         else if (changes & this.CHANGE_LINES) {
             if (this.$updateLines() || (changes & this.CHANGE_GUTTER) && this.$showGutter)
                 this.$gutterLayer.update(config);
+            if (this.$customScrollbar) {
+                this.$scrollDecorator.$updateDecorators(config);
+            }
         }
         else if (changes & this.CHANGE_TEXT || changes & this.CHANGE_GUTTER) {
             if (this.$showGutter)
                 this.$gutterLayer.update(config);
+            if (this.$customScrollbar) {
+                this.$scrollDecorator.$updateDecorators(config);
+            }
         }
         else if (changes & this.CHANGE_CURSOR) {
             if (this.$highlightGutterLine)
                 this.$gutterLayer.updateLineHighlight(config);
+            if (this.$customScrollbar) {
+                this.$scrollDecorator.$updateDecorators(config);
+            }
         }
         if (changes & this.CHANGE_CURSOR) {
             this.$cursorLayer.update(config);
@@ -16766,6 +17341,43 @@ var VirtualRenderer = function (container, theme) {
         this.removeAllListeners();
         this.container.textContent = "";
     };
+    this.$updateCustomScrollbar = function (val) {
+        var _self = this;
+        this.$horizScroll = this.$vScroll = null;
+        this.scrollBarV.element.remove();
+        this.scrollBarH.element.remove();
+        if (this.$scrollDecorator) {
+            delete this.$scrollDecorator;
+        }
+        if (val === true) {
+            this.scrollBarV = new VScrollBarCustom(this.container, this);
+            this.scrollBarH = new HScrollBarCustom(this.container, this);
+            this.scrollBarV.setHeight(this.$size.scrollerHeight);
+            this.scrollBarH.setWidth(this.$size.scrollerWidth);
+            this.scrollBarV.addEventListener("scroll", function (e) {
+                if (!_self.$scrollAnimation)
+                    _self.session.setScrollTop(e.data - _self.scrollMargin.top);
+            });
+            this.scrollBarH.addEventListener("scroll", function (e) {
+                if (!_self.$scrollAnimation)
+                    _self.session.setScrollLeft(e.data - _self.scrollMargin.left);
+            });
+            this.$scrollDecorator = new Decorator(this.scrollBarV, this);
+            this.$scrollDecorator.$updateDecorators();
+        }
+        else {
+            this.scrollBarV = new VScrollBar(this.container, this);
+            this.scrollBarH = new HScrollBar(this.container, this);
+            this.scrollBarV.addEventListener("scroll", function (e) {
+                if (!_self.$scrollAnimation)
+                    _self.session.setScrollTop(e.data - _self.scrollMargin.top);
+            });
+            this.scrollBarH.addEventListener("scroll", function (e) {
+                if (!_self.$scrollAnimation)
+                    _self.session.setScrollLeft(e.data - _self.scrollMargin.left);
+            });
+        }
+    };
 }).call(VirtualRenderer.prototype);
 config.defineOptions(VirtualRenderer.prototype, "renderer", {
     animatedScroll: { initialValue: false },
@@ -16820,6 +17432,17 @@ config.defineOptions(VirtualRenderer.prototype, "renderer", {
         set: function (show) {
             if (this.$textLayer.setDisplayIndentGuides(show))
                 this.$loop.schedule(this.CHANGE_TEXT);
+        },
+        initialValue: true
+    },
+    highlightIndentGuides: {
+        set: function (show) {
+            if (this.$textLayer.setHighlightIndentGuides(show) == true) {
+                this.$textLayer.$highlightIndentGuide();
+            }
+            else {
+                this.$textLayer.$clearActiveIndentGuide(this.$textLayer.$lines.cells);
+            }
         },
         initialValue: true
     },
@@ -16893,6 +17516,12 @@ config.defineOptions(VirtualRenderer.prototype, "renderer", {
             this.$gutterLayer.$fixedWidth = !!val;
             this.$loop.schedule(this.CHANGE_GUTTER);
         }
+    },
+    customScrollbar: {
+        set: function (val) {
+            this.$updateCustomScrollbar(val);
+        },
+        initialValue: false
     },
     theme: {
         set: function (val) { this.setTheme(val); },

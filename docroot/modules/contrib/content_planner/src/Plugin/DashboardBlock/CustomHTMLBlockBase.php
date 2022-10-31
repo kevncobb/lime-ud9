@@ -4,6 +4,7 @@ namespace Drupal\content_planner\Plugin\DashboardBlock;
 
 use Drupal\content_planner\DashboardBlockBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -12,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @todo Plugin derivates should be used instead of a class hierarchy here.
  */
 abstract class CustomHTMLBlockBase extends DashboardBlockBase {
+  use StringTranslationTrait;
 
   /**
    * Builds the render array for the block.
@@ -50,7 +52,6 @@ abstract class CustomHTMLBlockBase extends DashboardBlockBase {
     else {
       $default_value = '';
     }
-    
 
     $form['content'] = [
       '#type' => 'text_format',

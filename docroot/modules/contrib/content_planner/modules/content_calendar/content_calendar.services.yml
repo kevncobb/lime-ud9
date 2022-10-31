@@ -1,4 +1,18 @@
 services:
+  content_calendar.calendar:
+    class: Drupal\content_calendar\Component\Calendar
+    shared: false
+    arguments:
+      - '@theme.manager'
+      - '@current_user'
+      - '@content_planner.content_moderation_service'
+      - '@content_calendar.content_type_config_service'
+      - '@content_calendar.content_calendar_service'
+
+  content_calendar.content_service:
+    class: Drupal\content_calendar\ContentService
+    arguments: ['@entity_type.manager']
+
   content_calendar.content_type_config_service:
     class: Drupal\content_calendar\ContentTypeConfigService
     arguments: ['@config.factory']

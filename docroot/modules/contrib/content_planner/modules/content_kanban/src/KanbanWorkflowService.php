@@ -7,7 +7,6 @@ use Drupal\content_moderation\ModerationInformationInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\workflows\Entity\Workflow;
 
 /**
  * Implements KanbanWorkflowService class.
@@ -15,6 +14,7 @@ use Drupal\workflows\Entity\Workflow;
 class KanbanWorkflowService {
 
   use StringTranslationTrait;
+
   /**
    * The database connection service.
    *
@@ -62,17 +62,11 @@ class KanbanWorkflowService {
   public function onEntityPresave(ContentEntityInterface $entity, AccountInterface $user) {
     // If the entity is moderated, meaning it belongs to a certain workflow.
     if ($this->moderationInformation->isModeratedEntity($entity)) {
-
-      $current_state = $this->getCurrentStateId($entity);
-
+      $current_state = $entity->moderation_state->value;
       $prev_state = $this->getPreviousWorkflowStateId($entity);
 
       if ($current_state && $prev_state) {
-
-        // Generate name for entity.
         $name = $this->t('Workflow State change on Entity')->render();
-
-        // Get workflow from moderated entity.
         $workflow = $this->moderationInformation->getWorkflowForEntity($entity);
 
         // Create new log entity.
@@ -85,91 +79,8 @@ class KanbanWorkflowService {
           $prev_state,
           $current_state
         );
-
       }
-
     }
-
-  }
-
-  /**
-   * Gets the current State ID.
-   *
-   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
-   *   The entity to check.
-   *
-   * @return mixed
-   *   Returns the current moderation state id for the given entity.
-   */
-  public function getCurrentStateId(ContentEntityInterface $entity) {
-    return $entity->moderation_state->value;
-  }
-
-  /**
-   * Gets the label of the current state of a given entity.
-   *
-   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
-   *   The entity object.
-   *
-   * @return bool|string
-   *   Returns the current state if any, FALSE otherwise.
-   */
-  public function getCurrentStateLabel(ContentEntityInterface $entity) {
-
-    if ($this->moderationInformation->isModeratedEntity($entity)) {
-
-      if ($workflow = $this->moderationInformation->getWorkflowForEntity($entity)) {
-
-        if ($states = self::getWorkflowStates($workflow)) {
-
-          $entity_workflow_state = $this->getCurrentStateId($entity);
-
-          if (array_key_exists($entity_workflow_state, $states)) {
-            return $states[$entity_workflow_state];
-          }
-        }
-      }
-
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * Get Workflow States.
-   *
-   * @param \Drupal\workflows\Entity\Workflow $workflow
-   *   The workflow object.
-   *
-   * @return array
-   *   Returns an array with the available workflow states.
-   */
-  public static function getWorkflowStates(Workflow $workflow) {
-
-    $states = [];
-
-    $type_settings = $workflow->get('type_settings');
-
-    // Sort by weight.
-    uasort($type_settings['states'], function ($a, $b) {
-
-      if ($a['weight'] == $b['weight']) {
-        return 0;
-      }
-      elseif ($a['weight'] < $b['weight']) {
-        return -1;
-      }
-      else {
-        return 1;
-      }
-
-    });
-
-    foreach ($type_settings['states'] as $state_id => $state) {
-      $states[$state_id] = $state['label'];
-    }
-
-    return $states;
   }
 
   /**

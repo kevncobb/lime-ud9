@@ -15,5 +15,8 @@
     "irc": "irc://irc.freenode.org/drupal-contribute",
     "source": "https://git.drupalcode.org/project/layout_builder_at"
   },
-  "license": "GPL-2.0+"
+  "license": "GPL-2.0+",
+  "require": {
+    "drupal/core": "^9.0|^10.0"
+  }
 }

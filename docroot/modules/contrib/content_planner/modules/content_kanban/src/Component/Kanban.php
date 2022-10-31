@@ -90,6 +90,8 @@ class Kanban {
   /**
    * Constructor for the Kanban class.
    *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user service.
    * @param \Drupal\content_kanban\KanbanService $kanban_service
@@ -103,7 +105,7 @@ class Kanban {
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, AccountInterface $current_user, KanbanService $kanban_service, ContentModerationService $content_moderation_service, Workflow $workflow) {
 
-    if (!self::isValidContentModerationWorkflow($workflow)) {
+    if (!$content_moderation_service->isValidContentModerationWorkflow($workflow)) {
       throw new \Exception('The given workflow is no valid Content Moderation Workflow');
     }
 
@@ -176,32 +178,6 @@ class Kanban {
     }
 
     return $return;
-  }
-
-  /**
-   * Checks if a given workflow is a valid Content Moderation workflow.
-   *
-   * @param \Drupal\workflows\Entity\Workflow $workflow
-   *   The workflow service.
-   *
-   * @return bool
-   *   Returns TRUE if the workflow is valid, FALSE otherwise.
-   */
-  public static function isValidContentModerationWorkflow(Workflow $workflow) {
-
-    if ($workflow->get('type') == 'content_moderation') {
-      $type_settings = $workflow->get('type_settings');
-
-      if (!empty($type_settings['entity_types'])) {
-        if (array_key_exists('states', $type_settings)) {
-          if (!empty($type_settings['states'])) {
-            return TRUE;
-          }
-        }
-      }
-    }
-
-    return FALSE;
   }
 
   /**
@@ -340,7 +316,6 @@ class Kanban {
     foreach ($entity_type_configs as $bundle => $entity_type_config) {
       // Check if the current user has the permisson to create a certain Entity
       // type.
-
       if ($this->entityTypeManager->getAccessControlHandler($entity_type_config->getEntityType())->createAccess($bundle)) {
         $permissions[$bundle] = $this->t("Add @type", ['@type' => $entity_type_config->getLabel()]);
       }

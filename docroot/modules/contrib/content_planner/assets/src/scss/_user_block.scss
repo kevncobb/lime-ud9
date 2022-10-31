@@ -1,7 +1,8 @@
 #dashboard-user-block {
 
   .user {
-    clear: both;
+    display: flex;
+    flex-direction: row;
     margin-bottom: 1em;
 
     .user-image-placeholder {
@@ -18,9 +19,9 @@
     }
 
     .user-image {
-      float: left;
       width: 50px;
-      min-height: 70px;
+      height: 50px;
+      margin-right: 1em;
     }
 
     .user-name {
@@ -28,7 +29,7 @@
     }
 
     .user-infos {
-
+      width: 100%;
     }
   }
 }

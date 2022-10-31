@@ -76,7 +76,7 @@ function admin_audit_trail_insert(array &$log) {
     $log['uid'] = $account->id();
   }
 
-  $ip = Drupal::request()->getClientIp();
+  $ip = \Drupal::request()->getClientIp();
   if (empty($log['ip']) && !empty($ip)) {
     $log['ip'] = $ip;
   }
@@ -89,6 +89,9 @@ function admin_audit_trail_insert(array &$log) {
     $log['ref_numeric'] = NULL;
   }
 
+  // Allow the altering of the log array.
+  \Drupal::service('module_handler')->invokeAll('admin_audit_trail_log_alter', ['log' => &$log]);
+
   \Drupal::database()->merge('admin_audit_trail')
     ->key('lid')
     ->fields([
@@ -97,7 +100,7 @@ function admin_audit_trail_insert(array &$log) {
       'description' => $log['description'],
       'created' => $log['created'],
       'uid' => $log['uid'],
-      'ip' => $log['ip'],
+      'ip' => $log['ip'] ?? '',
       'path' => $log['path'],
       'ref_char' => $log['ref_char'],
       'ref_numeric' => $log['ref_numeric'],
@@ -124,13 +127,14 @@ function admin_audit_trail_get_event_handlers() {
  * Form submission callback.
  */
 function admin_audit_trail_form_submit(&$form, FormStateInterface $form_state) {
-  if (!empty($form_state->__admin_audit_trail_logged)) {
+  if ($form_state->has('admin_audit_trail_logged')
+    && $form_state->get('admin_audit_trail_logged') == TRUE) {
     // Some forms are submitted twice, for instance the node_form.
     // We will only call the submit callback once.
     return;
   }
 
-  $form_state->__admin_audit_trail_logged = TRUE;
+  $form_state->set('admin_audit_trail_logged', TRUE);
 
   // Get form id.
   $form_id = $form['#form_id'];

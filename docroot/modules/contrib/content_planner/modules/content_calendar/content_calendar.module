@@ -97,7 +97,7 @@ function content_calendar_form_node_form_alter(&$form,
       // If the date is a valid MySQL Date.
       if (DateTimeHelper::dateIsMySqlDateOnly($date)) {
 
-        // Check scheduler's configuration
+        // Check scheduler's configuration.
         $scheduler_config = \Drupal::config('scheduler.settings');
         $datetime_format = "Y-m-d";
 

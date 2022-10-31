@@ -2,7 +2,6 @@
 
 namespace Drupal\content_planner\Component;
 
-use Drupal\content_planner\UserProfileImage;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
@@ -32,7 +31,7 @@ class BaseEntry {
       // If a user picture is not in the static cache, then create one.
       $user = User::load($userId);
       if ($user instanceof UserInterface) {
-        $styleUrl = UserProfileImage::generateProfileImageUrl($user, $imageStyle);
+        $styleUrl = \Drupal::service('content_planner.user_profile_image')->generateProfileImageUrl($user, $imageStyle);
       }
       $pictureStyles[$imageStyle][$userId] = $styleUrl;
     }

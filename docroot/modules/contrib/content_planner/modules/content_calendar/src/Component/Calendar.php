@@ -5,6 +5,7 @@ namespace Drupal\content_calendar\Component;
 use Drupal\content_calendar\ContentTypeConfigService;
 use Drupal\content_calendar\ContentCalendarService;
 use Drupal\content_calendar\DateTimeHelper;
+use Drupal\content_planner\ContentModerationService;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Theme\ThemeManagerInterface;
 
@@ -19,6 +20,20 @@ class Calendar {
    * @var \Drupal\Core\Theme\ThemeManagerInterface
    */
   protected $themeManager;
+
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
+   * The content moderatiom service.
+   *
+   * @var \Drupal\content_planner\ContentModerationService
+   */
+  protected $contentModerationService;
 
   /**
    * The content type config service.
@@ -51,48 +66,53 @@ class Calendar {
   /**
    * Desired year to be rendered.
    *
-   * @var intinYYYYFormat
+   * @var int
    */
   protected $year;
 
   /**
-   * The current user.
-   *
-   * @var \Drupal\Core\Session\AccountProxyInterface
-   */
-  protected $user;
-
-  /**
    * Calendar constructor.
    *
-   * @param \Drupal\Core\Theme\ThemeManagerInterface $theme_manager
+   * @param \Drupal\Core\Theme\ThemeManagerInterface $themeManager
    *   The theme manager service.
-   * @param \Drupal\content_calendar\ContentTypeConfigService $content_type_config_service
-   *   The content type config service.
-   * @param \Drupal\content_calendar\ContentCalendarService $content_calendar_service
-   *   The content calendar service.
-   * @param int $month
-   *   The month to display in the calendar.
-   * @param int $year
-   *   The year to display in the calendar.
-   * @param \Drupal\Core\Session\AccountProxyInterface $user
+   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
    *   The current user.
+   * @param \Drupal\content_planner\ContentModerationService $contentModerationService
+   *   The content moderation service.
+   * @param \Drupal\content_calendar\ContentTypeConfigService $contentTypeConfigService
+   *   The content type config service.
+   * @param \Drupal\content_calendar\ContentCalendarService $contentCalendarService
+   *   The content calendar service.
    */
   public function __construct(
-    ThemeManagerInterface $theme_manager,
-    ContentTypeConfigService $content_type_config_service,
-    ContentCalendarService $content_calendar_service,
-    $month,
-    $year,
-    AccountProxyInterface $user
+    ThemeManagerInterface $themeManager,
+    AccountProxyInterface $currentUser,
+    ContentModerationService $contentModerationService,
+    ContentTypeConfigService $contentTypeConfigService,
+    ContentCalendarService $contentCalendarService
   ) {
-    $this->themeManager = $theme_manager;
-    $this->contentTypeConfigService = $content_type_config_service;
-    $this->contentCalendarService = $content_calendar_service;
+    $this->themeManager = $themeManager;
+    $this->currentUser = $currentUser;
+    $this->contentModerationService = $contentModerationService;
+    $this->contentTypeConfigService = $contentTypeConfigService;
+    $this->contentCalendarService = $contentCalendarService;
     $this->contentTypeConfigEntities = $this->contentTypeConfigService->loadAllEntities();
+  }
+
+  /**
+   * @return static
+   */
+  public function setMonth(int $month): self {
     $this->month = $month;
+    return $this;
+  }
+
+  /**
+   * @return static
+   */
+  public function setYear(int $year): self {
     $this->year = $year;
-    $this->user = $user;
+    return $this;
   }
 
   /**
@@ -164,7 +184,7 @@ class Calendar {
 
     foreach ($this->contentTypeConfigEntities as $node_type => $config_entity) {
 
-      if ($this->user->hasPermission("create $node_type content")) {
+      if ($this->currentUser->hasPermission("create $node_type content")) {
         $permitted_node_types[$node_type] = $config_entity;
       }
 
@@ -240,6 +260,7 @@ class Calendar {
         $calendar_entry = new CalendarEntry(
           $this->month,
           $this->year,
+          $this->contentModerationService->getCurrentStateLabel('node', $node_type, $node_row->moderation_state),
           $this->getNodeTypeConfig($node_type),
           $node_row
         );

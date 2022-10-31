@@ -161,6 +161,7 @@ class Mailer implements MailerInterface {
    */
   public function doSend(InternalEmailInterface $email) {
     // Process the build phase.
+    // @see \Drupal\symfony_mailer\EmailInterface::PHASE_BUILD
     $email->process();
 
     // Do switching.
@@ -172,19 +173,35 @@ class Mailer implements MailerInterface {
       $this->changeTheme($theme_name);
     }
 
-    // Determine langcode and account from the to address, if there is
-    // agreement.
-    $langcodes = $accounts = [];
-    foreach ($email->getTo() as $to) {
-      if ($loop_langcode = $to->getLangcode()) {
-        $langcodes[$loop_langcode] = $loop_langcode;
-      }
-      if ($loop_account = $to->getAccount()) {
-        $accounts[$loop_account->id()] = $loop_account;
-      }
+    $current_langcode = $this->languageManager->getCurrentLanguage()->getId();
+    if ($email->getParam('__disable_customize__')) {
+      // Undocumented setting for use from LegacyEmailBuilder only for
+      // back-compatibility. This may change without notice.
+      //
+      // By default, the language code and account are customized based on the
+      // recipient ('To' address). This setting disables customization, and
+      // leaves the language and account unchanged. Normally this is a bad idea
+      // and it can even expose private information from rendering an entity in
+      // the context of a privileged user.
+      $langcode = $current_langcode;
+      $account = $this->account;
     }
-    $langcode = (count($langcodes) == 1) ? reset($langcodes) : $this->languageManager->getDefaultLanguage()->getId();
-    $account = (count($accounts) == 1) ? reset($accounts) : User::getAnonymousUser();
+    else {
+      // Determine langcode and account from the to address, if there is
+      // agreement.
+      $langcodes = $accounts = [];
+      foreach ($email->getTo() as $to) {
+        if ($loop_langcode = $to->getLangcode()) {
+          $langcodes[$loop_langcode] = $loop_langcode;
+        }
+        if ($loop_account = $to->getAccount()) {
+          $accounts[$loop_account->id()] = $loop_account;
+        }
+      }
+      $langcode = (count($langcodes) == 1) ? reset($langcodes) : $this->languageManager->getDefaultLanguage()->getId();
+      $account = (count($accounts) == 1) ? reset($accounts) : User::getAnonymousUser();
+    }
+
     $email->customize($langcode, $account);
 
     $must_switch_account = $account->id() != $this->account->id();
@@ -193,7 +210,6 @@ class Mailer implements MailerInterface {
       $this->accountSwitcher->switchTo($account);
     }
 
-    $current_langcode = $this->languageManager->getCurrentLanguage()->getId();
     $must_switch_language = $langcode !== $current_langcode;
 
     if ($must_switch_language) {
@@ -202,12 +218,14 @@ class Mailer implements MailerInterface {
 
     try {
       // Process the pre-render phase.
+      // @see \Drupal\symfony_mailer\EmailInterface::PHASE_PRE_RENDER
       $email->process();
 
       // Render.
       $email->render();
 
       // Process the post-render phase.
+      // @see \Drupal\symfony_mailer\EmailInterface::PHASE_POST_RENDER
       $email->process();
     }
     finally {
@@ -265,6 +283,7 @@ class Mailer implements MailerInterface {
     }
 
     // Process the post-send phase.
+    // @see \Drupal\symfony_mailer\EmailInterface::PHASE_POST_SEND
     $email->process();
 
     return $result;

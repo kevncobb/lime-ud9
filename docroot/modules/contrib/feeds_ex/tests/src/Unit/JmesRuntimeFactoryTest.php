@@ -21,7 +21,7 @@ class JmesRuntimeFactoryTest extends UnitTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     $this->factory = new JmesRuntimeFactory();
   }
 

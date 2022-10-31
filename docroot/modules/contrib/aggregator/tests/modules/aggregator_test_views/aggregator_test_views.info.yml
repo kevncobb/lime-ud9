@@ -7,7 +7,7 @@ dependencies:
   - drupal:aggregator
   - drupal:views
 
-# Information added by Drupal.org packaging script on 2022-09-09
-version: '1.0.1'
+# Information added by Drupal.org packaging script on 2022-10-22
+version: '1.0.2'
 project: 'aggregator'
-datestamp: 1662760824
+datestamp: 1666403576

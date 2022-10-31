@@ -35,7 +35,7 @@ trait EventDispatcherTrait {
    *   The invoked event.
    */
   protected function dispatchEvent($event_name, Event $event = NULL) {
-    return $this->getEventDispatcher()->dispatch($event_name, $event);
+    return $this->getEventDispatcher()->dispatch($event, $event_name);
   }
 
   /**

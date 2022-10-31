@@ -302,6 +302,7 @@ abstract class EntityProcessorBase extends ProcessorBase implements EntityProces
     $ids = $this->entityTypeManager
       ->getStorage($this->entityType())
       ->getQuery()
+      ->accessCheck(FALSE)
       ->condition('feeds_item.target_id', $feed->id())
       ->condition('feeds_item.hash', $this->getConfiguration('update_non_existent'), '<>')
       ->execute();
@@ -371,6 +372,7 @@ abstract class EntityProcessorBase extends ProcessorBase implements EntityProces
     $query = $this->entityTypeManager
       ->getStorage($this->entityType())
       ->getQuery()
+      ->accessCheck(FALSE)
       ->condition('feeds_item.target_id', $feed->id());
 
     // If there is no total, query it.
@@ -585,6 +587,7 @@ abstract class EntityProcessorBase extends ProcessorBase implements EntityProces
     if ($entity->id()) {
       $result = $this->storageController
         ->getQuery()
+        ->accessCheck(FALSE)
         ->condition($this->entityType->getKey('id'), $entity->id())
         ->execute();
       return !empty($result);
@@ -885,6 +888,7 @@ abstract class EntityProcessorBase extends ProcessorBase implements EntityProces
     return $this->entityTypeManager
       ->getStorage($this->entityType())
       ->getQuery()
+      ->accessCheck(FALSE)
       ->condition('feeds_item.target_id', $feed->id())
       ->condition('feeds_item.imported', $expire_time, '<')
       ->execute();
@@ -905,6 +909,7 @@ abstract class EntityProcessorBase extends ProcessorBase implements EntityProces
     return $this->entityTypeManager
       ->getStorage($this->entityType())
       ->getQuery()
+      ->accessCheck(FALSE)
       ->condition('feeds_item.target_id', $feed->id())
       ->count()
       ->execute();
@@ -917,6 +922,7 @@ abstract class EntityProcessorBase extends ProcessorBase implements EntityProces
     return $this->entityTypeManager
       ->getStorage($this->entityType())
       ->getQuery()
+      ->accessCheck(FALSE)
       ->condition('feeds_item.target_id', $feed->id())
       ->execute();
   }
@@ -1059,6 +1065,7 @@ abstract class EntityProcessorBase extends ProcessorBase implements EntityProces
       $this->isLocked = (bool) $this->entityTypeManager
         ->getStorage('feeds_feed')
         ->getQuery()
+        ->accessCheck(FALSE)
         ->condition('type', $this->feedType->id())
         ->range(0, 1)
         ->execute();

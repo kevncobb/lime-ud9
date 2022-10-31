@@ -15,7 +15,7 @@ abstract class FeedsExBrowserTestBase extends FeedsBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'feeds',
     'feeds_ex',
     'node',

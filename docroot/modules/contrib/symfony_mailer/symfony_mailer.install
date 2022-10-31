@@ -110,3 +110,32 @@ function symfony_mailer_update_10004() {
     MailerTransport::create($values)->save();
   }
 }
+
+/**
+ * Update smtp transports with new query configuration.
+ */
+function symfony_mailer_update_10005() {
+  foreach (MailerTransport::loadMultiple() as $transport) {
+    if ($transport->getPlugin()->getPluginId() === 'smtp') {
+      // Resave smtp transports so they get new default config entries.
+      $transport->save();
+    }
+  }
+}
+
+/**
+ * Add new "Wrap and convert" email policy element.
+ */
+function symfony_mailer_update_10006() {
+  foreach (MailerPolicy::loadMultiple() as $policy) {
+    $config = $policy->getConfiguration();
+    if (isset($config['mailer_html_to_text'])) {
+      $config['mailer_wrap_and_convert'] = [
+        'plain' => FALSE,
+        'swiftmailer' => FALSE,
+      ];
+      unset($config['mailer_html_to_text']);
+      $policy->setConfiguration($config)->save();
+    }
+  }
+}

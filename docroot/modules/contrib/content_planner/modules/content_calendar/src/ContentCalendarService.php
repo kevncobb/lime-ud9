@@ -51,16 +51,28 @@ class ContentCalendarService {
     $query = $this->database->select('node_field_data', 'nfd');
 
     // Joins.
-    $query->innerJoin('users_field_data', 'ufd', 'nfd.uid = ufd.uid');
+    $query->innerJoin(
+      'users_field_data',
+      'ufd',
+      'nfd.uid = ufd.uid'
+    );
+    $query->innerJoin(
+      'content_moderation_state_field_data',
+      'cmfd',
+      'nfd.nid = cmfd.content_entity_id AND cmfd.content_entity_type_id = :entity_type_id',
+      [':entity_type_id' => 'node']
+    );
 
     // Fields.
     $query->addField('nfd', 'nid');
+    $query->addField('nfd', 'type');
     $query->addField('nfd', 'title');
     $query->addField('nfd', 'created');
     $query->addField('nfd', 'status');
     $query->addField('nfd', 'uid');
     $query->addField('ufd', 'name', 'username');
     $query->addField('nfd', 'publish_on');
+    $query->addField('cmfd', 'moderation_state');
 
     // Conditions.
     $query->condition('nfd.type', $node_type);

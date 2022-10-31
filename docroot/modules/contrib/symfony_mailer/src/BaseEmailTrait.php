@@ -56,7 +56,8 @@ trait BaseEmailTrait {
    */
   public function setAddress(string $name, $addresses) {
     assert(isset($this->addresses[$name]));
-    if ($name == 'To') {
+    // See Mailer::doSend() for explanation of __disable_customize__.
+    if (($name == 'To') && !$this->getParam('__disable_customize__')) {
       $this->valid(self::PHASE_BUILD);
     }
     $this->addresses[$name] = Address::convert($addresses);

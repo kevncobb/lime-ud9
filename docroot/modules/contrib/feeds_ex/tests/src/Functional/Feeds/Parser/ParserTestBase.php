@@ -33,7 +33,7 @@ abstract class ParserTestBase extends FeedsExBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     // Create a feed type.

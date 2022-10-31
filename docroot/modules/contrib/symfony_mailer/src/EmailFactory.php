@@ -4,7 +4,7 @@ namespace Drupal\symfony_mailer;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\symfony_mailer\Processor\EmailAdjusterManager;
+use Drupal\symfony_mailer\Processor\EmailAdjusterManagerInterface;
 use Drupal\symfony_mailer\Processor\EmailBuilderManagerInterface;
 
 /**
@@ -22,7 +22,7 @@ class EmailFactory implements EmailFactoryInterface {
   /**
    * The email adjuster manager.
    *
-   * @var \Drupal\symfony_mailer\Processor\EmailAdjusterManager
+   * @var \Drupal\symfony_mailer\Processor\EmailAdjusterManagerInterface
    */
   protected $emailAdjusterManager;
 
@@ -38,12 +38,12 @@ class EmailFactory implements EmailFactoryInterface {
    *
    * @param \Drupal\symfony_mailer\Processor\EmailBuilderManagerInterface $email_builder_manager
    *   The email builder manager.
-   * @param \Drupal\symfony_mailer\Processor\EmailAdjusterManager $email_adjuster_manager
+   * @param \Drupal\symfony_mailer\Processor\EmailAdjusterManagerInterface $email_adjuster_manager
    *   The email adjuster manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler to invoke the alter hook with.
    */
-  public function __construct(EmailBuilderManagerInterface $email_builder_manager, EmailAdjusterManager $email_adjuster_manager, ModuleHandlerInterface $module_handler) {
+  public function __construct(EmailBuilderManagerInterface $email_builder_manager, EmailAdjusterManagerInterface $email_adjuster_manager, ModuleHandlerInterface $module_handler) {
     $this->emailBuilderManager = $email_builder_manager;
     $this->emailAdjusterManager = $email_adjuster_manager;
     $this->moduleHandler = $module_handler;
@@ -94,6 +94,7 @@ class EmailFactory implements EmailFactoryInterface {
     // Load builders with matching ID.
     foreach ($email->getSuggestions('', '.') as $plugin_id) {
       if ($this->emailBuilderManager->hasDefinition($plugin_id)) {
+        /** @var \Drupal\symfony_mailer\Processor\EmailBuilderInterface $builder */
         $builder = $this->emailBuilderManager->createInstance($plugin_id);
         if (empty($created)) {
           $builder->createParams($email, ...$params);
@@ -127,6 +128,10 @@ class EmailFactory implements EmailFactoryInterface {
    *
    * @param \Drupal\symfony_mailer\EmailInterface $email
    *   The email.
+   *
+   * @see hook_mailer_PHASE()
+   * @see hook_mailer_TYPE_PHASE()
+   * @see hook_mailer_TYPE__SUBTYPE_PHASE()
    */
   public function invokeHooks(EmailInterface $email) {
     $name = EmailInterface::PHASE_NAMES[$email->getPhase()];

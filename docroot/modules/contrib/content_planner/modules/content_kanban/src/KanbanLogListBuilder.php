@@ -22,6 +22,7 @@ class KanbanLogListBuilder extends EntityListBuilder {
   public function load() {
 
     $query = \Drupal::entityQuery('content_kanban_log');
+    $query->accessCheck();
     $query->sort('created', 'DESC');
 
     $result = $query->execute();

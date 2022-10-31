@@ -13,16 +13,17 @@ class LayoutBuilderAtInstallTest extends LayoutBuilderAtBase {
    * {@inheritdoc}
    */
   public static $modules = [
+    'block',
     'content_translation',
     'entity_test',
+    'field_ui',
     'layout_builder',
-    'block',
   ];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->setUpViewDisplay();
     $this->setUpEntities();
@@ -51,7 +52,7 @@ class LayoutBuilderAtInstallTest extends LayoutBuilderAtBase {
       'settings[entity_test_mul][entity_test_mul][fields][layout_builder__layout]' => TRUE,
     ];
     $assert_session->pageTextNotContains('Layout Builder does not support translating layouts.');
-    $this->drupalPostForm(NULL, $edit, 'Save configuration');
+    $this->submitForm($edit, 'Save configuration');
   }
 
 }

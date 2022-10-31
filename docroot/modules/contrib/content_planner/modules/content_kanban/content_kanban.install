@@ -48,6 +48,7 @@ function content_kanban_update_8003() {
   $entity_type = 'content_kanban_log';
 
   $query = \Drupal::entityQuery($entity_type);
+  $query->accessCheck(FALSE);
   $ids = $query->execute();
 
   $storage_handler = \Drupal::entityTypeManager()->getStorage($entity_type);

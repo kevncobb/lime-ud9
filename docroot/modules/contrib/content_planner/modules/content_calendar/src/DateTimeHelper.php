@@ -167,7 +167,7 @@ abstract class DateTimeHelper {
   public static function getDayOfWeekByDate(\DateTime $dateTime) {
     $weekdays = self::getWeekdays();
     $dayName = t($dateTime->format('l'));
-    return array_search($dayName, $weekdays, false) + 1;
+    return array_search($dayName, $weekdays, FALSE) + 1;
   }
 
 }

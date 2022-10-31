@@ -2,14 +2,32 @@
 
 namespace Drupal\content_planner;
 
-use Drupal\file\Entity\File;
-use Drupal\image\Entity\ImageStyle;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\user\UserInterface;
 
 /**
  * Implements UserProfileImage class.
  */
 class UserProfileImage {
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * Constructs a new UserProfileImage object.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   */
+  public function __construct(
+    EntityTypeManagerInterface $entity_type_manager
+  ) {
+    $this->entityTypeManager = $entity_type_manager;
+  }
 
   /**
    * Helper method that generate image url of the user.
@@ -22,17 +40,15 @@ class UserProfileImage {
    * @return bool|string
    *   Image url or FALSE on failure.
    */
-  public static function generateProfileImageUrl(UserInterface $user, $image_style) {
+  public function generateProfileImageUrl(UserInterface $user, $image_style) {
+
+    $image_style_storage = $this->entityTypeManager
+      ->getStorage('image_style');
 
     if (
       ($user->hasField('user_picture')) &&
-      ($user_picture_field = $user->get('user_picture')->getValue()) &&
-      // Get file entity id.
-      ($image_file_id = $user_picture_field[0]['target_id']) &&
-      // Load File entity.
-      ($file_entity = File::load($image_file_id)) &&
-      // Load Image Style.
-      ($style = ImageStyle::load($image_style))
+      ($file_entity = $user->get('user_picture')->entity) &&
+      ($style = $image_style_storage->load($image_style))
     ) {
       // Build image style url.
       return $style->buildUrl($file_entity->getFileUri());

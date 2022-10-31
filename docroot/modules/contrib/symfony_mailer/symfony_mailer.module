@@ -6,7 +6,9 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
+use Drupal\symfony_mailer\Annotation\EmailBuilder;
 
 /**
  * Implements hook_theme().
@@ -19,6 +21,13 @@ function symfony_mailer_theme($existing, $type, $theme, $path) {
       ],
       'mail theme' => TRUE,
     ],
+    'email_wrap' => [
+      'variables' => [
+        'email' => NULL,
+        'body' => '',
+        'is_html' => TRUE,
+      ],
+    ],
   ];
 }
 
@@ -30,18 +39,58 @@ function symfony_mailer_theme_suggestions_email(array $variables) {
 }
 
 /**
+ * Implements hook_mailer_builder_info_alter().
+ */
+function symfony_mailer_mailer_builder_info_alter(array &$email_builders) {
+  // Add EmailBuilder definitions for any implementations of hook_mail() that
+  // don't already have one, using LegacyEmailBuilder.
+  $module_handler = \Drupal::moduleHandler();
+  $mail_hooks = $module_handler->getImplementations('mail');
+  $missing = array_diff($mail_hooks, array_keys($email_builders));
+
+  foreach ($missing as $type) {
+    $params = [
+      'id' => $type,
+      'label' => $module_handler->getName($type),
+      'class' => "Drupal\symfony_mailer\Plugin\EmailBuilder\LegacyEmailBuilder",
+      'provider' => $type,
+    ];
+
+    $email_builders[$type] = (new EmailBuilder($params))->get();
+  }
+}
+
+/**
  * Prepares variables for email template.
  *
  * Default template: email.html.twig.
  *
  * @param array $variables
  *   An associative array containing:
- *   - email: An associative array containing the Email object.
+ *   - email: Email object.
  */
 function template_preprocess_email(array &$variables) {
   $email = $variables['email'];
   $variables['body'] = $email->getBody();
   $variables = array_merge($variables, $email->getVariables());
+}
+
+/**
+ * Prepares variables for email wrap template.
+ *
+ * Default template: email-wrap.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - email: Email object.
+ *   - body: Body string.
+ *   - is_html: True if generating HTML output, false for plain text.
+ */
+function template_preprocess_email_wrap(array &$variables) {
+  $email = $variables['email'];
+  $variables['type'] = $email->getType();
+  $variables['sub_type'] = $email->getSubType();
+  $variables['attributes'] = new Attribute();
 }
 
 /**

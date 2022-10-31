@@ -17,6 +17,6 @@ abstract class ParserTestBase extends FeedsParserTestBase {
    *
    * @var array
    */
-  public static $modules = ['feeds_ex'];
+  protected static $modules = ['feeds_ex'];
 
 }

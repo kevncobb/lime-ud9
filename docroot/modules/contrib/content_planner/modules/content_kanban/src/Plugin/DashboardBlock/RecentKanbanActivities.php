@@ -4,15 +4,12 @@ namespace Drupal\content_kanban\Plugin\DashboardBlock;
 
 use Drupal\content_kanban\Entity\KanbanLog;
 use Drupal\content_planner\DashboardBlockBase;
-use Drupal\content_planner\UserProfileImage;
-use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\Entity\User;
-use Drupal\content_kanban\KanbanWorkflowService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Provides a user block for Content Planner Dashboard.
@@ -23,6 +20,8 @@ use Symfony\Component\HttpFoundation\Request;
  * )
  */
 class RecentKanbanActivities extends DashboardBlockBase {
+
+  use StringTranslationTrait;
 
   /**
    * An integer representing the default query limit.
@@ -39,39 +38,59 @@ class RecentKanbanActivities extends DashboardBlockBase {
   protected $dateFormatter;
 
   /**
-   * {@inheritdoc}
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  public function __construct(
-    array $configuration,
-    $plugin_id,
-    $plugin_definition,
-    EntityTypeManagerInterface $entity_type_manager,
-    DateFormatterInterface $date_formatter
-  ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager);
+  protected $configFactory;
 
-    $this->dateFormatter = $date_formatter;
-  }
+  /**
+   * The kanban log service.
+   *
+   * @var \Drupal\content_kanban\KanbanLogService
+   */
+  protected $kanbanLogService;
+
+  /**
+   * The kanban workflow service.
+   *
+   * @var \Drupal\content_kanban\KanbanWorkflowService
+   */
+  protected $kanbanWorkflowService;
+
+  /**
+   * The user profile image service.
+   *
+   * @var \Drupal\content_planner\UserProfileImage
+   */
+  protected $userProfileImage;
+
+  /**
+   * The Content Moderation service.
+   *
+   * @var \Drupal\content_planner\ContentModerationService
+   */
+  protected $contentModerationService;
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('entity_type.manager'),
-      $container->get('date.formatter')
-    );
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->dateFormatter = $container->get('date.formatter');
+    $instance->configFactory = $container->get('config.factory');
+    $instance->kanbanLogService = $container->get('content_kanban.kanban_log_service');
+    $instance->kanbanWorkflowService = $container->get('content_kanban.kanban_workflow_service');
+    $instance->userProfileImage = $container->get('content_planner.user_profile_image');
+    $instance->contentModerationService = $container->get('content_planner.content_moderation_service');
+
+    return $instance;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getConfigSpecificFormFields(FormStateInterface &$form_state,
-                                              Request &$request,
-                                              array $block_configuration) {
+  public function getConfigSpecificFormFields(FormStateInterface &$form_state, Request &$request, array $block_configuration) {
 
     $form = [];
 
@@ -85,9 +104,9 @@ class RecentKanbanActivities extends DashboardBlockBase {
       '#default_value' => $limit_default_value,
     ];
 
-    $user_picture_field_exists = !\Drupal::config('field.field.user.user.user_picture')->isNew();
+    $user_picture_field_exists = !$this->configFactory->get('field.field.user.user.user_picture')->isNew();
 
-    $show_user_thumb_default_value = $limit_default_value = $this->getCustomConfigByKey($block_configuration, 'show_user_thumb', 0);
+    $show_user_thumb_default_value = $this->getCustomConfigByKey($block_configuration, 'show_user_thumb', 0);
 
     $form['show_user_thumb'] = [
       '#type' => 'checkbox',
@@ -113,11 +132,8 @@ class RecentKanbanActivities extends DashboardBlockBase {
     // Get limit.
     $limit = $this->getCustomConfigByKey($config, 'limit', $this->defaultLimit);
 
-    /** @var \Drupal\content_kanban\KanbanLogService $kanban_log_service */
-    $kanban_log_service = \Drupal::service('content_kanban.kanban_log_service');
-
     // Get Logs.
-    if ($logs = $kanban_log_service->getRecentLogs($limit, ['exclude_anonymous_users' => TRUE])) {
+    if ($logs = $this->kanbanLogService->getRecentLogs($limit, ['exclude_anonymous_users' => TRUE])) {
       $entries = $this->buildKanbanLogActivities($logs);
       $build = [
         '#theme' => 'content_kanban_log_recent_activity',
@@ -157,7 +173,7 @@ class RecentKanbanActivities extends DashboardBlockBase {
       if ($message = $this->composeMessage($log, $user, $entity)) {
 
         $entry = [
-          'user_profile_image' => UserProfileImage::generateProfileImageUrl($user, 'content_kanban_user_thumb'),
+          'user_profile_image' => $this->userProfileImage->generateProfileImageUrl($user, 'content_kanban_user_thumb'),
           'username' => $user->getAccountName(),
           'message' => $message,
         ];
@@ -188,7 +204,7 @@ class RecentKanbanActivities extends DashboardBlockBase {
 
     $state_from = $log->getStateFrom();
     $state_to = $log->getStateTo();
-    $workflow_states = KanbanWorkflowService::getWorkflowStates($log->getWorkflow());
+    $workflow_states = $this->contentModerationService->getWorkflowStates($log->getWorkflow());
 
     if ($state_from == $state_to) {
 

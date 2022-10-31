@@ -22,7 +22,7 @@ class PermissionsTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'devel',
     'devel_php',
   ];

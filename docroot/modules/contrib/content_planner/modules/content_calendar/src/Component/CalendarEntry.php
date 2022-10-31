@@ -29,6 +29,13 @@ class CalendarEntry extends BaseEntry {
   protected $year;
 
   /**
+   * The label of the moderation state.
+   *
+   * @var string
+   */
+  protected $stateLabel;
+
+  /**
    * The content type config.
    *
    * @var \Drupal\content_calendar\Entity\ContentTypeConfig
@@ -56,19 +63,23 @@ class CalendarEntry extends BaseEntry {
    *   The month to display in the calendar.
    * @param int $year
    *   The year to display in the calendar.
+   * @param string $stateLabel
+   *   The label of the moderation state.
    * @param \Drupal\content_calendar\Entity\ContentTypeConfig $content_type_config
    *   Content config type.
    * @param object $node
    *   Node Object.
    */
   public function __construct(
-    $month,
-    $year,
+    int $month,
+    int $year,
+    string $stateLabel,
     ContentTypeConfig $content_type_config,
     \stdClass $node
   ) {
     $this->month = $month;
     $this->year = $year;
+    $this->stateLabel = $stateLabel;
     $this->contentTypeConfig = $content_type_config;
     $this->node = $node;
 
@@ -157,6 +168,7 @@ class CalendarEntry extends BaseEntry {
       '#year' => $this->year,
       '#user_picture' => $user_picture,
       '#options' => $options,
+      '#workflow_state' => $this->stateLabel,
     ];
 
     return $build;

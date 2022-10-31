@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\file\Entity\File;
 /**
  * @file
  * Search API pages file.
@@ -118,7 +119,7 @@ function template_preprocess_search_api_page_result(&$variables) {
 
   $variables['snippet'] = ['#markup' => $item->getExcerpt()];
   $variables['title'] = $entity->label();
-  if ($entity instanceof \Drupal\file\Entity\File) {
+  if ($entity instanceof File) {
     $variables['url'] = $entity->createFileUrl();
   }
   else {
@@ -126,7 +127,7 @@ function template_preprocess_search_api_page_result(&$variables) {
   }
 
   $info = [];
-  if ($entity instanceof EntityOwnerInterface) {
+  if ($entity instanceof EntityOwnerInterface && $entity->getOwner()) {
     $info['user'] = $entity->getOwner()->label();
   }
   if (isset($entity->created)) {

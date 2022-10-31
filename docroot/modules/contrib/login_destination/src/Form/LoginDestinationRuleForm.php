@@ -260,9 +260,13 @@ class LoginDestinationRuleForm extends EntityForm {
    *
    * @return string
    *   Returns a $displayable_string for the URI.
+   *
    * @see LinkWidget::getUriAsDisplayableString()
    */
   protected function getUriAsDisplayableString($uri) {
+    if (!$uri) {
+      return '';
+    }
     $scheme = parse_url($uri, PHP_URL_SCHEME);
 
     // By default, the displayable string is the URI.

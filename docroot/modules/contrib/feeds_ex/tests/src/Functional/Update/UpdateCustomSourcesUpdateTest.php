@@ -3,7 +3,7 @@
 namespace Drupal\Tests\feeds_ex\Functional\Update;
 
 use Drupal\feeds\Entity\FeedType;
-use Drupal\FunctionalTests\Update\UpdatePathTestBase;
+use Drupal\Tests\feeds\Functional\Update\UpdatePathTestBase;
 
 /**
  * Provides tests for updating custom sources in feed types.
@@ -29,7 +29,7 @@ class UpdateCustomSourcesUpdateTest extends UpdatePathTestBase {
    */
   protected function setDatabaseDumpFiles() {
     $this->databaseDumpFiles = [
-      DRUPAL_ROOT . '/core/modules/system/tests/fixtures/update/drupal-8.8.0.bare.standard.php.gz',
+      $this->getCoreFixturePath(9),
       __DIR__ . '/../../../fixtures/feeds_ex-8.x-1.0-alpha5-installed.php',
       __DIR__ . '/../../../fixtures/feeds_ex-8.x-1.0-alpha5/feed_type.custom-sources-without-type.php',
     ];

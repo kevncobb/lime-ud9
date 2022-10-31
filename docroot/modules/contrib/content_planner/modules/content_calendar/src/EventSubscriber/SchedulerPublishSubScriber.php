@@ -56,7 +56,9 @@ class SchedulerPublishSubScriber implements EventSubscriberInterface {
       $node->setPublished(TRUE);
 
       // Set Moderation state to published.
-      $node->moderation_state->value = 'published';
+      if ($node->hasField('moderation_state')) {
+        $node->moderation_state->value = 'published';
+      }
 
       // Return updated node to event
       // which in turn returns it to the scheduler module.

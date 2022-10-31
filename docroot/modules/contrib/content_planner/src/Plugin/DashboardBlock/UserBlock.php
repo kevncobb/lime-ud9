@@ -3,10 +3,11 @@
 namespace Drupal\content_planner\Plugin\DashboardBlock;
 
 use Drupal\content_planner\DashboardBlockBase;
-use Drupal\content_planner\UserProfileImage;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\user\Entity\Role;
-use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
+use Drupal\workflows\WorkflowInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\workflows\Entity\Workflow;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
@@ -23,6 +24,31 @@ class UserBlock extends DashboardBlockBase {
   use StringTranslationTrait;
 
   /**
+   * The user profile image service.
+   *
+   * @var \Drupal\content_planner\UserProfileImage
+   */
+  protected $userProfileImage;
+
+  /**
+   * The content moderation service.
+   *
+   * @var \Drupal\content_planner\ContentModerationService
+   */
+  protected $contentModerationService;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->userProfileImage = $container->get('content_planner.user_profile_image');
+    $instance->contentModerationService = $container->get('content_planner.content_moderation_service');
+
+    return $instance;
+  }
+
+  /**
    * Builds the render array for a dashboard block.
    *
    * @return array
@@ -30,189 +56,203 @@ class UserBlock extends DashboardBlockBase {
    */
   public function build() {
     $config = $this->getConfiguration();
-
     $users = $this->getUsers($config);
 
-    if ($users) {
-      $user_data = [];
-
-      foreach ($users as $user) {
-
-        $roles = array_map(
-          function ($role) {
-            if ($role != 'authenticated') {
-              /** @var \Drupal\user\RoleInterface $role_entity */
-              $role_entity = $this->entityTypeManager->getStorage('user_role')->load($role);
-              return $role_entity ? $role_entity->label() : NULL;
-            }
-          },
-          $user->getRoles()
-        );
-
-        $user_data[] = [
-          'name' => $user->label(),
-          'image' => UserProfileImage::generateProfileImageUrl($user, 'content_planner_user_block_profile_image'),
-          'roles' => implode(', ', array_filter($roles)),
-          'content_count' => $this->getUserContentCount($user->id()),
-          'content_kalendertag_count' => $this->getUserContentWorkflowCount($user->id(), 'am_kalendertag_publizieren'),
-          'content_draft_count' => $this->getUserContentWorkflowCount($user->id(), 'draft'),
-        ];
-
-      }
-
-      return [
-        '#theme' => 'content_planner_dashboard_user_block',
-        '#users' => $user_data,
-      ];
-    }
-
-    return [];
-  }
-
-  /**
-   * Loads the users with roles set in config.
-   *
-   * @return \Drupal\user\Entity\User[]
-   *   Array of loaded user entities.
-   */
-  protected function getUsers() {
-
-    $config = $this->getConfiguration()['plugin_specific_config'];
-    if (!isset($config['roles'])) {
+    if (!$users) {
       return [];
     }
 
-    $configured_roles = $config['roles'];
-    $display_blocked = $config['blocked'] ?? true;
+    /** @var \Drupal\workflows\WorkflowInterface[] $workflows */
+    $workflows = array_filter(
+      Workflow::loadMultiple(),
+      function (WorkflowInterface $workflow) {
+        return $this->contentModerationService->isValidContentModerationWorkflow($workflow);
+      }
+    );
 
-    $query = \Drupal::entityQuery('user');
-    $query->condition('roles', array_values($configured_roles), 'in');
+    $userData = [];
+    foreach ($users as $user) {
+      $userWorkflows = array_map(
+        function (WorkflowInterface $workflow) use ($user) {
+          $type = $workflow->getTypePlugin();
+          $count = $this->getUserContentCountByWorkflowAndStates($user->id(), $workflow->id());
+
+          if ($count === 0) {
+            return NULL;
+          }
+
+          return [
+            'label' => $this->formatPlural(
+              $count,
+              '@count contribution for %workflowName',
+              '@count contributions for %workflowName',
+              ['%workflowName' => $workflow->label()],
+              ['context' => 'Content planner user dashboard widget']
+            ),
+            'states' => array_map(
+              function (string $stateId) use ($type, $user, $workflow) {
+                return $this->formatPlural(
+                  $this->getUserContentCountByWorkflowAndStates($user->id(), $workflow->id(), $stateId),
+                  '@count in %stateName',
+                  '@count in %stateName',
+                  ['%stateName' => $type->getState($stateId)->label()],
+                  ['context' => 'Content planner user dashboard widget']
+                );
+              },
+              $type->getRequiredStates()
+            ),
+          ];
+        },
+        $workflows
+      );
+
+      $userData[] = [
+        'name' => $user->label(),
+        'image' => $this->userProfileImage->generateProfileImageUrl($user, 'content_planner_user_block_profile_image'),
+        'roles' => implode(', ', $this->getUserRoles($user)),
+        'workflows' => array_filter($userWorkflows),
+      ];
+    }
+
+    return [
+      '#theme' => 'content_planner_dashboard_user_block',
+      '#users' => $userData,
+    ];
+  }
+
+  /**
+   * Gets the content for a given user by workflow id and state id.
+   *
+   * @param int $userId
+   *   The id of the user.
+   * @param string $workflowId
+   *   The id of the workflow.
+   * @param null|string $stateId
+   *   The state id, by default is optional.
+   *
+   * @return int
+   *   Returns the number of the data in the specific state and workflow.
+   */
+  public function getUserContentCountByWorkflowAndStates($userId, $workflowId, $stateId = NULL) {
+    $query = $this->database->select('content_moderation_state_field_data', 'cm');
+    $query->addField('cm', 'id');
+    $query->condition('cm.uid', $userId);
+    $query->condition('cm.workflow', $workflowId);
+    if (!empty($stateId)) {
+      $query->condition('cm.moderation_state', $stateId);
+    }
+    $count_query = $query->countQuery();
+    $result = $count_query->execute()->fetchObject();
+
+    return !empty($result->expression) ? $result->expression : 0;
+  }
+
+  /**
+   * Gets the users with specific roles.
+   *
+   * @param array $config
+   *   An array containing the config data.
+   *
+   * @return \Drupal\user\UserInterface[]
+   *   Returns the user entity, otherwise an empty array.
+   */
+  protected function getUsers(array $config) {
+    $configuredRoles = array_filter($config['plugin_specific_config']['roles'] ?? []);
+    $displayBlocked = $config['plugin_specific_config']['blocked'] ?? TRUE;
+
+    $storage = $this->entityTypeManager->getStorage('user');
+    $query = $storage->getQuery();
+    if ($configuredRoles !== []) {
+      $query->condition('roles', array_values($configuredRoles), 'IN');
+    }
     $query->sort('access', 'desc');
-    if (!$display_blocked) {
+    if (!$displayBlocked) {
       $query->condition('status', 1);
     }
+    $query->accessCheck();
 
     $result = $query->execute();
     if ($result === []) {
       return [];
     }
 
-    return User::loadMultiple($result);
+    return $storage->loadMultiple($result);
   }
 
   /**
-   * Get content count for a given user.
+   * Get roles for a given user.
    *
-   * @param int $user_id
-   *   The user id to load the content count for.
+   * @param \Drupal\user\UserInterface $user
+   *   The user entity.
    *
-   * @return int
-   *   The content count for the given user id.
+   * @return array
+   *   Returns an array containing the roles for that user.
    */
-  protected function getUserContentCount($user_id) {
+  protected function getUserRoles(UserInterface $user) {
+    $storage = $this->entityTypeManager->getStorage('user_role');
+    $roles = [];
 
-    $query = \Drupal::database()->select('node_field_data', 'nfd');
-    $query->fields('nfd', ['nid']);
-    $query->condition('nfd.uid', $user_id);
-    $query->countQuery();
+    foreach ($user->getRoles(TRUE) as $role_id) {
+      $role = $storage->load($role_id);
+      if ($role === NULL) {
+        continue;
+      }
 
-    $result = $query->execute();
-
-    $result->allowRowCount = TRUE;
-
-    $count = $result->rowCount();
-
-    if ($count) {
-      return $count;
+      $roles[] = $role->label();
     }
 
-    return 0;
-  }
-
-  /**
-   * Get content count for a given user based on workflow status.
-   *
-   * @param int $user_id
-   *   The user id the get the workflow count for.
-   * @param string $moderation_state
-   *   The moderation state the get the count for.
-   *
-   * @return int
-   *   The content count for the given user and the given moderation state.
-   */
-  public function getUserContentWorkflowCount($user_id, $moderation_state) {
-    $content_moderation_service = \Drupal::service('content_planner.content_moderation_service');
-
-    $filters = [
-      'uid' => $user_id,
-      'moderation_state' => $moderation_state,
-    ];
-    $nids = $content_moderation_service->getEntityIdsFromContentModerationEntities('netnode', $filters);
-
-    return count($nids);
+    return $roles;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getConfigSpecificFormFields(FormStateInterface &$form_state,
-                                              Request &$request,
-                                              array $block_configuration) {
-
+  public function getConfigSpecificFormFields(
+    FormStateInterface &$form_state,
+    Request &$request,
+    array $block_configuration
+  ) {
     $form = [];
 
-    // Build Role selection box.
-    $form['roles'] = $this->buildRoleSelectBox($form_state, $request, $block_configuration);
+    $form['roles'] = $this->buildRoleSelectBox($block_configuration);
 
     $form['blocked'] = [
       '#type' => 'checkbox',
-      '#title' => t('Display blocked users'),
-      '#default_value' => $block_configuration['plugin_specific_config']['blocked'] ?? true,
+      '#title' => $this->t('Display blocked users'),
+      '#default_value' => $block_configuration['plugin_specific_config']['blocked'] ?? TRUE,
     ];
 
     return $form;
   }
 
   /**
-   * Build Role select box.
+   * Build role select box.
    *
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The form state.
-   * @param \Symfony\Component\HttpFoundation\Request|null $request
-   *   The current request.
    * @param array $block_configuration
-   *   The block configuration.
+   *   An array containing the user widget configuration.
    *
    * @return array
-   *   The roles checkboxes.
+   *   Returns an array with the form item.
    */
-  protected function buildRoleSelectBox(FormStateInterface &$form_state,
-                                        Request &$request,
-                                        array $block_configuration) {
+  protected function buildRoleSelectBox(array $block_configuration) {
+    /** @var \Drupal\user\RoleInterface[] $roles */
+    $roles = $this->entityTypeManager->getStorage('user_role')->loadMultiple();
 
-    // Get Roles.
-    $roles = Role::loadMultiple();
-
-    $roles_options = [];
-
-    foreach ($roles as $role_id => $role) {
-
-      if (in_array($role_id, ['anonymous'])) {
+    $options = [];
+    foreach ($roles as $id => $role) {
+      if ($id == 'anonymous') {
         continue;
       }
 
-      $roles_options[$role_id] = $role->label();
+      $options[$id] = $role->label();
     }
-
-    $default_value = (isset($block_configuration['plugin_specific_config']['roles'])) ? $block_configuration['plugin_specific_config']['roles'] : [];
 
     return [
       '#type' => 'checkboxes',
-      '#title' => $this->t('Which Roles to display'),
-      '#description' => $this->t('Select which Roles should be displayed in the block.'),
-      '#required' => TRUE,
-      '#options' => $roles_options,
-      '#default_value' => $default_value,
+      '#title' => $this->t('Which roles to display'),
+      '#description' => $this->t('Select which roles should be displayed in the block. If none are selected, all roles will be displayed.'),
+      '#options' => $options,
+      '#default_value' => $block_configuration['plugin_specific_config']['roles'] ?? [],
     ];
   }
 

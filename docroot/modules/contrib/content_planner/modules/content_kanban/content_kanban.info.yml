@@ -9,7 +9,7 @@ dependencies:
   - content_planner:content_planner
 hidden: true
 
-# Information added by Drupal.org packaging script on 2022-06-19
-version: '8.x-1.0-beta17'
+# Information added by Drupal.org packaging script on 2022-10-28
+version: '8.x-1.0-beta19'
 project: 'content_planner'
-datestamp: 1655631647
+datestamp: 1666987350

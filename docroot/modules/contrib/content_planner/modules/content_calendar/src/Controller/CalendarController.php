@@ -2,38 +2,17 @@
 
 namespace Drupal\content_calendar\Controller;
 
-use Drupal\content_calendar\Component\Calendar;
-use Drupal\content_calendar\ContentCalendarService;
 use Drupal\content_calendar\DateTimeHelper;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\content_calendar\ContentTypeConfigService;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Drupal\Core\Routing\RedirectDestinationInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Implements CalendarController class.
  */
 class CalendarController extends ControllerBase {
-
-  /**
-   * The theme manager.
-   *
-   * @var \Drupal\Core\Theme\ThemeManagerInterface
-   */
-  protected $themeManager;
-
-  /**
-   * The request service.
-   *
-   * @var \Symfony\Component\HttpFoundation\Request
-   */
-  protected $request;
 
   /**
    * Drupal\content_calendar\ContentTypeConfigService definition.
@@ -43,13 +22,6 @@ class CalendarController extends ControllerBase {
   protected $contentTypeConfigService;
 
   /**
-   * Calendar Service.
-   *
-   * @var \Drupal\content_calendar\ContentCalendarService
-   */
-  protected $contentCalendarService;
-
-  /**
    * Provides an interface for redirect destinations.
    *
    * @var \Drupal\Core\Routing\RedirectDestinationInterface
@@ -57,36 +29,22 @@ class CalendarController extends ControllerBase {
   protected $redirectDestination;
 
   /**
-   * Constructs a new CalendarController object.
+   * The content calendar for a certain year and month.
+   *
+   * @var \Drupal\content_calendar\Component\Calendar
    */
-  public function __construct(
-    ThemeManagerInterface $theme_manager,
-    RequestStack $request_stack,
-    ContentTypeConfigService $content_type_config_service,
-    ContentCalendarService $content_calendar_service,
-    AccountProxyInterface $current_user,
-    RedirectDestinationInterface $redirect_destination
-  ) {
-    $this->themeManager = $theme_manager;
-    $this->request = $request_stack->getCurrentRequest();
-    $this->contentTypeConfigService = $content_type_config_service;
-    $this->contentCalendarService = $content_calendar_service;
-    $this->currentUser = $current_user;
-    $this->redirectDestination = $redirect_destination;
-  }
+  protected $calendar;
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('theme.manager'),
-      $container->get('request_stack'),
-      $container->get('content_calendar.content_type_config_service'),
-      $container->get('content_calendar.content_calendar_service'),
-      $container->get('current_user'),
-      $container->get('redirect.destination')
-    );
+    $instance = parent::create($container);
+    $instance->contentTypeConfigService = $container->get('content_calendar.content_type_config_service');
+    $instance->redirectDestination = $container->get('redirect.destination');
+    $instance->calendar = $container->get('content_calendar.calendar');
+
+    return $instance;
   }
 
   /**
@@ -102,9 +60,10 @@ class CalendarController extends ControllerBase {
   /**
    * Show Calendar year.
    */
-  public function showCalendarYear($year) {
+  public function showCalendarYear(int $year) {
 
     $calendars = [];
+    $this->calendar->setYear($year);
 
     // Get content type config entities.
     $content_type_config_entities = $this->contentTypeConfigService->loadAllEntities();
@@ -117,18 +76,8 @@ class CalendarController extends ControllerBase {
 
     // Generate calendar structures.
     foreach (range(1, 12) as $month) {
-
-      // Create new Calendar.
-      $calender = new Calendar(
-        $this->themeManager,
-        $this->contentTypeConfigService,
-        $this->contentCalendarService,
-        $month,
-        $year,
-        $this->currentUser
-      );
-
-      $calendars[] = $calender->build();
+      $this->calendar->setMonth($month);
+      $calendars[] = $this->calendar->build();
     }
 
     // Get Filter Form.
@@ -138,7 +87,7 @@ class CalendarController extends ControllerBase {
     ];
     $filters_form = $this->formBuilder()->getForm('Drupal\content_calendar\Form\CalenderOverviewFilterForm', $form_params);
 
-    if ($this->currentUser->hasPermission('administer content calendar settings')) {
+    if ($this->currentUser()->hasPermission('administer content calendar settings')) {
       $has_permission = TRUE;
     }
     else {

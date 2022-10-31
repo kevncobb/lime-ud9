@@ -116,7 +116,13 @@ class LoginDestinationManager implements LoginDestinationManagerInterface {
     uasort($destinations, '\Drupal\login_destination\Entity\LoginDestination::sort');
 
     $path = $this->getCurrentPath();
-    $path_alias = mb_strtolower($this->aliasManager->getAliasByPath($path));
+    try {
+      $path_alias = mb_strtolower($this->aliasManager->getAliasByPath($path));
+    }
+    catch (\InvalidArgumentException $e) {
+      // Cannot match invalid paths.
+      $path_alias = NULL;
+    }
 
     // Get user roles.
     $user_roles = $account->getRoles();
@@ -179,11 +185,7 @@ class LoginDestinationManager implements LoginDestinationManagerInterface {
     if ($config->get('preserve_destination')) {
       // Get current destination value.
       $drupal_destination = $this->requestStack->getCurrentRequest()->query->get('destination');
-      if (UrlHelper::isExternal($drupal_destination)) {
-        $drupal_destination = NULL;
-      }
-      // Determine if a destination exist in the URL.
-      if (!empty($drupal_destination)) {
+      if ($drupal_destination && !UrlHelper::isExternal($drupal_destination)) {
         return;
       }
     }

@@ -27,7 +27,7 @@ abstract class UnitTestBase extends FeedsUnitTestCase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     $this->moduleDir = dirname(dirname(dirname(dirname(__FILE__))));
 
     parent::setUp();

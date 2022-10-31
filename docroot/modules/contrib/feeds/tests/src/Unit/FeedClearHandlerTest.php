@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\feeds\Unit;
 
+use Drupal\Core\Database\Connection;
 use Drupal\feeds\Event\FeedsEvents;
 use Drupal\feeds\FeedClearHandler;
 use Drupal\feeds\State;
@@ -44,7 +45,10 @@ class FeedClearHandlerTest extends FeedsUnitTestCase {
     $this->dispatcher = new EventDispatcher();
     $this->context = [];
     $this->handler = $this->getMockBuilder(FeedClearHandler::class)
-      ->setConstructorArgs([$this->dispatcher])
+      ->setConstructorArgs([
+        $this->dispatcher,
+        $this->createMock(Connection::class),
+      ])
       ->setMethods(['batchSet'])
       ->getMock();
     $this->handler->setStringTranslation($this->getStringTranslationStub());

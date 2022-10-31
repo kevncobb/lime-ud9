@@ -2,91 +2,106 @@
 
 namespace Drupal\content_calendar;
 
-use Drupal\content_calendar\Entity\ContentTypeConfig;
-use Drupal\node\Entity\Node;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
- * Implements UserProfileImage class.
+ * Implements ContentService class.
  */
 class ContentService {
 
   /**
-   * Type Configuration.
+   * The entity type manager.
    *
-   * @var int
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  private $contentTypeConfig;
+  protected $entityTypeManager;
 
   /**
    * ContentService constructor.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct() {
-    $this->contentTypeConfig = ContentTypeConfig::loadMultiple();
+  public function __construct(
+    EntityTypeManagerInterface $entity_type_manager
+  ) {
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
    * Get Content Configuration Type.
    *
-   * @return \Drupal\Core\Entity\EntityInterface[]|static[]
-   *   Returns an static interface.
+   * @return \Drupal\content_calendar\Entity\ContentTypeConfig[]
    */
-  public function getContentTypeConfig() {
-    return $this->contentTypeConfig;
+  public function getContentTypeConfig(): array {
+    return $this->entityTypeManager
+      ->getStorage('content_type_config')
+      ->loadMultiple();
   }
 
   /**
    * Get the recent content.
    */
-  public function getRecentContent($limit) {
+  public function getRecentContent($limit): array {
     $configs = $this->getContentTypeConfig();
     $types = [];
 
-    if (is_array($configs)) {
-      foreach ($configs as $config) {
-        $types[] = $config->getOriginalId();
-      }
+    foreach ($configs as $config) {
+      $types[] = $config->getOriginalId();
     }
 
     if (empty($types)) {
       return [];
     }
 
-    $ids = \Drupal::entityQuery('node')
+    $storage = $this->entityTypeManager
+      ->getStorage('node');
+    $ids = $storage->getQuery()
       ->condition('status', 1)
       ->condition('type', $types, 'IN')
       ->sort('created', 'DESC')
       ->range(0, $limit)
+      ->accessCheck()
       ->execute();
 
-    return Node::loadMultiple($ids);
+    if ($ids === []) {
+      return [];
+    }
+
+    return $storage->loadMultiple($ids);
   }
 
   /**
    * Get the following content.
    */
-  public function getFollowingContent($limit) {
+  public function getFollowingContent($limit): array {
     $configs = $this->getContentTypeConfig();
     $types = [];
 
-    if (is_array($configs)) {
-      foreach ($configs as $config) {
-        $types[] = $config->getOriginalId();
-      }
+    foreach ($configs as $config) {
+      $types[] = $config->getOriginalId();
     }
 
     if (empty($types)) {
       return [];
     }
 
-    $ids = \Drupal::entityQuery('node')
+    $storage = $this->entityTypeManager
+      ->getStorage('node');
+    $ids = $storage->getQuery()
       ->condition('status', 0)
       ->condition('type', $types, 'IN')
       ->condition('publish_on', NULL, 'IS NOT NULL')
       ->sort('publish_on', 'ASC')
       ->range(0, $limit)
+      ->accessCheck()
       ->execute();
 
-    return Node::loadMultiple($ids);
+    if ($ids === []) {
+      return [];
+    }
+
+    return $storage->loadMultiple($ids);
   }
 
 }

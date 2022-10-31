@@ -43,7 +43,7 @@ abstract class LayoutBuilderAtBase extends ContentTranslationTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->fullAdmin = $this->drupalCreateUser([], NULL, TRUE);
   }
@@ -128,8 +128,11 @@ abstract class LayoutBuilderAtBase extends ContentTranslationTestBase {
 
     $field_ui_prefix = 'entity_test_mul/structure/entity_test_mul';
     // Allow overrides for the layout.
-    $this->drupalPostForm("$field_ui_prefix/display/default", ['layout[enabled]' => TRUE], 'Save');
-    $this->drupalPostForm("$field_ui_prefix/display/default", ['layout[allow_custom]' => TRUE], 'Save');
+    $this->drupalGet("$field_ui_prefix/display/default");
+    $this->submitForm(['layout[enabled]' => TRUE], 'Save');
+
+    $this->drupalGet("$field_ui_prefix/display/default");
+    $this->submitForm(['layout[allow_custom]' => TRUE], 'Save');
 
     // @todo The Layout Builder UI relies on local tasks; fix in
     //   https://www.drupal.org/project/drupal/issues/2917777.
@@ -142,6 +145,7 @@ abstract class LayoutBuilderAtBase extends ContentTranslationTestBase {
   protected function createDefaultTranslationEntity() {
     // Create a test entity.
     $id = $this->createEntity([
+      'name' => 'Label',
       $this->fieldName => [['value' => self::defaultTextFieldText]],
     ], $this->langcodes[0]);
     $storage = $this->container->get('entity_type.manager')
@@ -187,7 +191,7 @@ abstract class LayoutBuilderAtBase extends ContentTranslationTestBase {
         'settings[label_display]' => FALSE,
         'settings[block_form][body][0][value]' => $custom_block_content_body
       ];
-      $this->drupalPostForm(NULL, $edit, $button->getValue());
+      $this->submitForm($edit, $button->getValue());
     }
 
     $assert_session->buttonExists('Save layout');
@@ -236,7 +240,7 @@ abstract class LayoutBuilderAtBase extends ContentTranslationTestBase {
       $edit = [
         'settings[block_form][body][0][value]' => $custom_block_content_body
       ];
-      $this->drupalPostForm(NULL, $edit, $button->getValue());
+      $this->submitForm($edit, $button->getValue());
     }
 
     $page->pressButton('Save layout');
@@ -255,6 +259,7 @@ abstract class LayoutBuilderAtBase extends ContentTranslationTestBase {
    *   Which source language to use, if applicable.
    */
   protected function addEntityTranslation($copy = FALSE, $target = 2, $source_language = NULL) {
+    $assert_session = $this->assertSession();
     $user = $this->loggedInUser;
     $this->drupalLogin($this->translator);
     $add_translation_url = Url::fromRoute("entity.$this->entityTypeId.content_translation_add", [
@@ -266,19 +271,19 @@ abstract class LayoutBuilderAtBase extends ContentTranslationTestBase {
     $this->drupalGet($add_translation_url);
 
     if ($source_language) {
-      $this->drupalPostForm(NULL, ['source_langcode[source]' => $source_language], 'Change');
+      $this->submitForm(['source_langcode[source]' => $source_language], 'Change');
     }
 
     $edit = ["{$this->fieldName}[0][value]" => 'The translated field value'];
     if ($copy) {
-      $this->assertText('Copy blocks into translation');
+      $assert_session->pageTextContains('Copy blocks into translation');
       $edit['layout_builder__layout[value]'] = TRUE;
     }
     elseif (isset($copy)) {
-      $this->assertNoText('Copy blocks into translation');
+      $assert_session->pageTextNotContains('Copy blocks into translation');
     }
 
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $this->drupalLogin($user);
   }
 
@@ -295,7 +300,8 @@ abstract class LayoutBuilderAtBase extends ContentTranslationTestBase {
     ], ['language' => \Drupal::languageManager()->getLanguage($langcode)]);
 
     $edit = [];
-    $this->drupalPostForm($update_url, $edit, 'Save');
+    $this->drupalGet($update_url);
+    $this->submitForm($edit, 'Save');
     $this->drupalLogin($user);
   }
 

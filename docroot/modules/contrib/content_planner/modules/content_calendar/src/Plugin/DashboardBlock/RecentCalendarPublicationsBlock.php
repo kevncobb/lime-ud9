@@ -2,10 +2,10 @@
 
 namespace Drupal\content_calendar\Plugin\DashboardBlock;
 
-use Drupal\content_calendar\ContentService;
 use Drupal\content_planner\DashboardBlockBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -23,21 +23,37 @@ class RecentCalendarPublicationsBlock extends DashboardBlockBase {
   use StringTranslationTrait;
 
   /**
+   * The content service.
+   *
+   * @var \Drupal\content_calendar\ContentService
+   */
+  protected $contentService;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->contentService = $container->get('content_calendar.content_service');
+
+    return $instance;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function build() {
 
     $config = $this->getConfiguration();
 
-    $contentService = new ContentService();
-
     // Last publications.
     $last_publications_limit_config = $this->getCustomConfigByKey($config, 'last_publications_limit', 3);
-    $last_nodes = $contentService->getRecentContent($last_publications_limit_config);
+    $last_nodes = $this->contentService->getRecentContent($last_publications_limit_config);
 
     // Next publications.
     $next_publications_limit_config = $this->getCustomConfigByKey($config, 'next_publications_limit', 3);
-    $next_nodes = $contentService->getFollowingContent($next_publications_limit_config);
+    $next_nodes = $this->contentService->getFollowingContent($next_publications_limit_config);
 
     return [
       '#theme' => 'recent_calendar_content',
@@ -49,9 +65,8 @@ class RecentCalendarPublicationsBlock extends DashboardBlockBase {
   /**
    * {@inheritdoc}
    */
-  public function getConfigSpecificFormFields(FormStateInterface &$form_state,
-                                              Request &$request,
-                                              array $block_configuration) {
+  public function getConfigSpecificFormFields(FormStateInterface &$form_state, Request &$request, array $block_configuration) {
+
     $form = [];
 
     // Last publications limit.

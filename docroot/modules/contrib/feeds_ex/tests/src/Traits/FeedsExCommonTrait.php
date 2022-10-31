@@ -26,7 +26,7 @@ trait FeedsExCommonTrait {
    *   The absolute path to the Feeds module.
    */
   protected function absolutePath() {
-    return $this->absolute() . '/' . drupal_get_path('module', 'feeds_ex');
+    return $this->absolute() . '/' . \Drupal::service('extension.list.module')->getPath('feeds_ex');
   }
 
   /**
@@ -36,7 +36,7 @@ trait FeedsExCommonTrait {
    *   The url to the Feeds resources directory.
    */
   protected function resourcesUrl() {
-    return \Drupal::request()->getSchemeAndHttpHost() . '/' . drupal_get_path('module', 'feeds_ex') . '/tests/resources';
+    return \Drupal::request()->getSchemeAndHttpHost() . '/' . \Drupal::service('extension.list.module')->getPath('feeds_ex') . '/tests/resources';
   }
 
   /**

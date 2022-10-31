@@ -6,13 +6,12 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\symfony_mailer\Annotation\EmailBuilder;
 
 /**
  * Implements hook_theme().
  */
 function symfony_mailer_bc_theme($existing, $type, $theme, $path) {
-  $templateDir = drupal_get_path('module', 'symfony_mailer_bc') . '/templates';
+  $templateDir = \Drupal::service('extension.list.module')->getPath('symfony_mailer_bc') . '/templates';
   $hooks = [];
   foreach (glob("$templateDir/email--*") as $template) {
     $theme = strtr(basename($template, '.html.twig'), '-', '_');
@@ -20,28 +19,6 @@ function symfony_mailer_bc_theme($existing, $type, $theme, $path) {
   }
 
   return $hooks;
-}
-
-/**
- * Implements hook_mailer_builder_info_alter().
- */
-function symfony_mailer_bc_mailer_builder_info_alter(array &$email_builders) {
-  // Add EmailBuilder definitions for any implementations of hook_mail() that
-  // don't already have one, using LegacyEmailBuilder.
-  $module_handler = \Drupal::moduleHandler();
-  $mail_hooks = $module_handler->getImplementations('mail');
-  $missing = array_diff($mail_hooks, array_keys($email_builders));
-
-  foreach ($missing as $type) {
-    $params = [
-      'id' => $type,
-      'label' => $module_handler->getName($type),
-      'class' => "Drupal\symfony_mailer_bc\Plugin\EmailBuilder\LegacyEmailBuilder",
-      'provider' => $type,
-    ];
-
-    $email_builders[$type] = (new EmailBuilder($params))->get();
-  }
 }
 
 /**
@@ -125,5 +102,10 @@ function symfony_mailer_bc_form_alter(&$form, FormStateInterface $form_state, $f
     if (!empty($config['type'])) {
       $form['mailer_policy'] = $helper->renderTypePolicy($config['type']);
     }
+  }
+
+  if ($form_id == 'contact_form_add_form') {
+    // Set a default value for the hidden field so the form can verify.
+    $form['recipients']['#default_value'] = \Drupal::config('system.site')->get('mail');
   }
 }

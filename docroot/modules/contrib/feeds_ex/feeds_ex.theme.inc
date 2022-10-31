@@ -50,7 +50,7 @@ function theme_feeds_ex_configuration_table(array $variables) {
     'rows' => $rows,
     'attributes' => ['id' => $element['sources']['#id']],
   ]);
-  $output .= render($element);
+  $output .= \Drupal::service('renderer')->render($element);
 
   return $output;
 }
