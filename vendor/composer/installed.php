@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'e98323fb77d6f65bd5c2c2bd8125cf9f5e63e375',
+        'reference' => '68a9ddacd55af8966821e4388f1fc7901acdca79',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -1245,12 +1245,12 @@
             'dev_requirement' => false,
         ),
         'drupal/editor_advanced_link' => array(
-            'pretty_version' => '2.0.0',
-            'version' => '2.0.0.0',
+            'pretty_version' => '2.1.1',
+            'version' => '2.1.1.0',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/editor_advanced_link',
             'aliases' => array(),
-            'reference' => '2.0.0',
+            'reference' => '2.1.1',
             'dev_requirement' => false,
         ),
         'drupal/email_registration' => array(
@@ -1451,12 +1451,12 @@
             'dev_requirement' => false,
         ),
         'drupal/field_group' => array(
-            'pretty_version' => '3.3.0',
-            'version' => '3.3.0.0',
+            'pretty_version' => '3.4.0',
+            'version' => '3.4.0.0',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/field_group',
             'aliases' => array(),
-            'reference' => '8.x-3.3',
+            'reference' => '8.x-3.4',
             'dev_requirement' => false,
         ),
         'drupal/field_token_value' => array(
@@ -1930,12 +1930,12 @@
             'dev_requirement' => false,
         ),
         'drupal/menu_block' => array(
-            'pretty_version' => '1.8.0',
-            'version' => '1.8.0.0',
+            'pretty_version' => '1.10.0',
+            'version' => '1.10.0.0',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/menu_block',
             'aliases' => array(),
-            'reference' => '8.x-1.8',
+            'reference' => '8.x-1.10',
             'dev_requirement' => false,
         ),
         'drupal/menu_item_extras' => array(
@@ -2420,7 +2420,7 @@
             'aliases' => array(
                 0 => '4.x-dev',
             ),
-            'reference' => '9fc4f70a5a515d0ac9388e0d385ef6ecd3ba8efc',
+            'reference' => '5108f54f64b4f0b3990bf398d39cce8f34465450',
             'dev_requirement' => false,
         ),
         'drupal/slick' => array(
@@ -2831,12 +2831,12 @@
             'dev_requirement' => false,
         ),
         'drupal/vartheme_claro' => array(
-            'pretty_version' => '3.0.8',
-            'version' => '3.0.8.0',
+            'pretty_version' => '3.0.9',
+            'version' => '3.0.9.0',
             'type' => 'drupal-theme',
             'install_path' => __DIR__ . '/../../docroot/themes/contrib/vartheme_claro',
             'aliases' => array(),
-            'reference' => '3.0.8',
+            'reference' => '3.0.9',
             'dev_requirement' => false,
         ),
         'drupal/vbp_text_and_image' => array(
@@ -2956,12 +2956,12 @@
             ),
         ),
         'drush/drush' => array(
-            'pretty_version' => '10.6.1',
-            'version' => '10.6.1.0',
+            'pretty_version' => '10.6.2',
+            'version' => '10.6.2.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../drush/drush',
             'aliases' => array(),
-            'reference' => 'd36bca3322555a6f94edc94439873afcde2bbe90',
+            'reference' => '0a570a16ec63259eb71195aba5feab532318b337',
             'dev_requirement' => true,
         ),
         'e0ipso/shaper' => array(
@@ -3826,12 +3826,12 @@
             'dev_requirement' => true,
         ),
         'phpstan/phpstan' => array(
-            'pretty_version' => '1.8.11',
-            'version' => '1.8.11.0',
+            'pretty_version' => '1.9.0',
+            'version' => '1.9.0.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../phpstan/phpstan',
             'aliases' => array(),
-            'reference' => '46e223dd68a620da18855c23046ddb00940b4014',
+            'reference' => 'e08de53a5eec983de78a787a88e72518cf8fe43a',
             'dev_requirement' => false,
         ),
         'phpstan/phpstan-deprecation-rules' => array(
@@ -4020,12 +4020,12 @@
             ),
         ),
         'psy/psysh' => array(
-            'pretty_version' => 'v0.11.8',
-            'version' => '0.11.8.0',
+            'pretty_version' => 'v0.10.12',
+            'version' => '0.10.12.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../psy/psysh',
             'aliases' => array(),
-            'reference' => 'f455acf3645262ae389b10e9beba0c358aa6994e',
+            'reference' => 'a0d9981aa07ecfcbea28e4bfa868031cca121e7d',
             'dev_requirement' => false,
         ),
         'ralouphie/getallheaders' => array(
@@ -4850,7 +4850,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'e98323fb77d6f65bd5c2c2bd8125cf9f5e63e375',
+            'reference' => '68a9ddacd55af8966821e4388f1fc7901acdca79',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(
