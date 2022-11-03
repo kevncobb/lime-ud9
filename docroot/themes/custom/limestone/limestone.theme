@@ -48,7 +48,7 @@ function limestone_preprocess_node(&$variables) {
  */
 function limestone_preprocess_page(&$variables) {
   $site_name = isset($variables['site_name']) ? $variables['site_name'] : \Drupal::config('system.site')->get('name');
-
+  $variables['entity'] = \Drupal::routeMatch()->getParameter('entity_type');
   $variables['logo_img'] = '';
 
   $logo = theme_get_setting('logo.url');
