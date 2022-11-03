@@ -178,7 +178,7 @@
                         {{ page.content|without('node.field_lp_paragraphs') }}
                     </section>
                     <section>
-                        {{ drupal_field('field_lp_paragraphs', 'node') }}
+                        {{ drupal_field('field_lp_paragraphs', 'node', node.id) }}
                     </section>
                 </main>
             {% endif %}

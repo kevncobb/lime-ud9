@@ -91,7 +91,7 @@
             </div>
             {% if node.title.value %}
                 <div class="sub-page-header" role="heading">
-                    {{ drupal_field('field_header_background_image', 'node') }}
+                    {{ drupal_field('field_header_background_image', 'node', node.id) }}
                     {{ title_prefix }}
                     <h1 class="sub-header-title grid-container">{{ code_name }}</h1>
                     {{ title_suffix }}
@@ -175,7 +175,7 @@
                         {{ page.content|without('node.field_lp_paragraphs') }}
                     </section>
                     <section>
-                        {{ drupal_field('field_lp_paragraphs', 'node') }}
+                        {{ drupal_field('field_lp_paragraphs', 'node', node.id) }}
                     </section>
                 </main>
             {% endif %}
