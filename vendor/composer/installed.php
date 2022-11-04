@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '68a9ddacd55af8966821e4388f1fc7901acdca79',
+        'reference' => '6a20380408095b092e4ef1447f6e6acfb7a639a4',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -4850,7 +4850,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '68a9ddacd55af8966821e4388f1fc7901acdca79',
+            'reference' => '6a20380408095b092e4ef1447f6e6acfb7a639a4',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(

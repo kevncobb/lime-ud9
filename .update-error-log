@@ -1,0 +1,32 @@
+
+[32mPreparing composer.json for Varbase updates...(B[0m
+[32mUpdating Varbase...(B[0m
+Loading composer repositories with package information
+                                                      Updating dependencies
+Nothing to modify in lock file
+Installing dependencies from lock file (including require-dev)
+Nothing to install, update or remove
+Package doctrine/reflection is abandoned, you should avoid using it. Use roave/better-reflection instead.
+Package swiftmailer/swiftmailer is abandoned, you should avoid using it. Use symfony/mailer instead.
+Package symfony/debug is abandoned, you should avoid using it. Use symfony/error-handler instead.
+Package webmozart/path-util is abandoned, you should avoid using it. Use symfony/filesystem instead.
+Generating optimized autoload files
+Class QueryPathTests\XMLishTest located in ./vendor/arthurkushman/query-path/tests/QueryPath/XMLIshTest.php does not comply with psr-4 autoloading standard. Skipping.
+Class QueryPathTests\XMLishMock located in ./vendor/arthurkushman/query-path/tests/QueryPath/XMLIshTest.php does not comply with psr-4 autoloading standard. Skipping.
+Class QueryPathTests\QueryPathExtensionTest located in ./vendor/arthurkushman/query-path/tests/QueryPath/ExtensionTest.php does not comply with psr-4 autoloading standard. Skipping.
+Class QueryPathTests\StubExtensionOne located in ./vendor/arthurkushman/query-path/tests/QueryPath/ExtensionTest.php does not comply with psr-4 autoloading standard. Skipping.
+Class QueryPathTests\StubExtensionTwo located in ./vendor/arthurkushman/query-path/tests/QueryPath/ExtensionTest.php does not comply with psr-4 autoloading standard. Skipping.
+Class QueryPathTests\StubExtensionThree located in ./vendor/arthurkushman/query-path/tests/QueryPath/ExtensionTest.php does not comply with psr-4 autoloading standard. Skipping.
+116 packages you are using are looking for funding.
+Use the `composer fund` command to find out more!
+Scaffolding files for drupal/core:
+  - Copy [web-root]/.htaccess from assets/scaffold/files/htaccess
+  - Copy [web-root]/sites/development.services.yml from assets/scaffold/files/development.services.yml
+> Varbase\composer\ScriptHandler::postDrupalScaffoldProcedure
+> Varbase\composer\ScriptHandler::createRequiredFiles
+> Varbase\composer\ScriptHandler::removeGitDirectories
+/Users/kcobb/Sites/lime-ud9/lime-ud9/vendor/vardot/varbase-updater/scripts/update/varbase-updater.sh: line 282: drush: command not found
+[32mEnabling new required modules for the latest Varbase version...(B[0m
+[32mUpdating the database for latest changes.(B[0m
+/Users/kcobb/Sites/lime-ud9/lime-ud9/vendor/vardot/varbase-updater/scripts/update/varbase-updater.sh: line 295: drush: command not found
+[32mHoya! Updates are now done. We will add a link in the near future for here to link to common issues appearing after updates and how to fix them.(B[0m
