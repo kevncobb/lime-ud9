@@ -179,11 +179,12 @@
           display: block;
         }
       }
-      &.expand-top-level {
-        li.menu-item--expanded.is-accordion-submenu-parent.has-submenu-toggle[tabindex="0"] {
-          ul.is-accordion-submenu {
-            display: block;
-          }
+
+    }
+    &.expand-top-level {
+      li.menu-item--expanded.is-accordion-submenu-parent.has-submenu-toggle[tabindex="0"] {
+        ul.is-accordion-submenu {
+          display: block;
         }
       }
     }
