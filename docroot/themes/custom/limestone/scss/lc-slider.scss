@@ -156,6 +156,22 @@
 
     img {
       opacity: 1;
+      @media screen and (min-width: 440px) {
+        height: auto;
+        margin-left: -13%;
+        margin-top: -13%;
+      }
+      @media screen and (min-width: 500px) {
+        margin-left: -10%;
+        margin-top: -8%;
+      }
+      @media screen and (min-width: 545px) {
+        margin-left: 0;
+        margin-top: -8%;
+      }
+      @media screen and (min-width: 600px) {
+        margin-top: -13%;
+      }
       //height: auto !important;
     }
   }
@@ -316,13 +332,19 @@
         right: 50%;
         position: absolute;
         transform: translateX(38%);
-        @media screen and (min-width: 1200px) {
+        @media screen and (min-width: 1350px) {
           transform: none;
           right: 0;
         }
         @media screen and (min-width: 1900px) {
           height: auto !important;
           width: 100% !important;
+        }
+        @media screen and (min-width: 2000px) {
+          top: -3%;
+        }
+        @media screen and (min-width: 2215px) {
+          top: -6%;
         }
       }
     }
