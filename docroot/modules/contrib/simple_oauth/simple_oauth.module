@@ -11,7 +11,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\consumers\Entity\Consumer;
+use Drupal\consumers\Entity\ConsumerInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\user\RoleInterface;
@@ -45,7 +45,7 @@ function simple_oauth_entity_update(EntityInterface $entity) {
   if ($entity instanceof AccountInterface) {
     $collector->deleteMultipleTokens($collector->collectForAccount($entity));
   }
-  if ($entity instanceof Consumer) {
+  if ($entity instanceof ConsumerInterface) {
     $collector->deleteMultipleTokens($collector->collectForClient($entity));
   }
 }
@@ -160,7 +160,9 @@ function simple_oauth_form_consumer_form_alter(array &$form, FormStateInterface 
   unset($form['roles']['widget']['#options'][RoleInterface::ANONYMOUS_ID]);
   unset($form['roles']['widget']['#options'][RoleInterface::AUTHENTICATED_ID]);
   // Get the admin role.
-  $admin_roles = $entity_type_manager->getStorage('user_role')->getQuery()
+  $admin_roles = $entity_type_manager->getStorage('user_role')
+    ->getQuery()
+    ->accessCheck()
     ->condition('is_admin', TRUE)
     ->execute();
   $default_value = reset($admin_roles);
@@ -198,7 +200,7 @@ function simple_oauth_form_consumer_form_alter(array &$form, FormStateInterface 
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The state.
  */
-function simple_oauth_form_consumer_form_submit($entity_type_id, Consumer $entity, array &$form, FormStateInterface $form_state) {
+function simple_oauth_form_consumer_form_submit($entity_type_id, ConsumerInterface $entity, array &$form, FormStateInterface $form_state) {
   if ($entity_type_id !== 'consumer') {
     return;
   }

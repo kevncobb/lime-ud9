@@ -719,7 +719,7 @@ exports.importCssString = importCssString;
 exports.importCssStylsheet = function (uri, doc) {
     exports.buildDom(["link", { rel: "stylesheet", href: uri }], exports.getDocumentHead(doc));
 };
-exports.scrollbarWidth = function (document) {
+exports.scrollbarWidth = function (doc) {
     var inner = exports.createElement("ace_inner");
     inner.style.width = "100%";
     inner.style.minWidth = "0px";
@@ -735,12 +735,14 @@ exports.scrollbarWidth = function (document) {
     style.height = "150px";
     style.display = "block";
     outer.appendChild(inner);
-    var body = document.documentElement;
+    var body = (doc && doc.documentElement) || (document && document.documentElement);
+    if (!body)
+        return 0;
     body.appendChild(outer);
     var noScrollbar = inner.offsetWidth;
     style.overflow = "scroll";
     var withScrollbar = inner.offsetWidth;
-    if (noScrollbar == withScrollbar) {
+    if (noScrollbar === withScrollbar) {
         withScrollbar = outer.clientWidth;
     }
     body.removeChild(outer);
@@ -1178,7 +1180,7 @@ var reportErrorIfPathIsNotConfigured = function () {
         reportErrorIfPathIsNotConfigured = function () { };
     }
 };
-exports.version = "1.12.3";
+exports.version = "1.13.1";
 
 });
 
@@ -1356,6 +1358,7 @@ var Keys = (function () {
             219: '[', 220: '\\', 221: ']', 222: "'", 111: '/', 106: '*'
         }
     };
+    ret.PRINTABLE_KEYS[173] = '-';
     var name, i;
     for (i in ret.FUNCTION_KEYS) {
         name = ret.FUNCTION_KEYS[i].toLowerCase();
@@ -1371,7 +1374,6 @@ var Keys = (function () {
     ret.enter = ret["return"];
     ret.escape = ret.esc;
     ret.del = ret["delete"];
-    ret[173] = '-';
     (function () {
         var mods = ["cmd", "ctrl", "alt", "shift"];
         for (var i = Math.pow(2, mods.length); i--;) {
@@ -8412,14 +8414,18 @@ function BracketMatch() {
         }
         return range;
     };
-    this.getMatchingBracketRanges = function (pos) {
+    this.getMatchingBracketRanges = function (pos, isBackwards) {
         var line = this.getLine(pos.row);
-        var chr = line.charAt(pos.column - 1);
-        var match = chr && chr.match(/([\(\[\{])|([\)\]\}])/);
+        var bracketsRegExp = /([\(\[\{])|([\)\]\}])/;
+        var chr = !isBackwards && line.charAt(pos.column - 1);
+        var match = chr && chr.match(bracketsRegExp);
         if (!match) {
-            chr = line.charAt(pos.column);
-            pos = { row: pos.row, column: pos.column + 1 };
-            match = chr && chr.match(/([\(\[\{])|([\)\]\}])/);
+            chr = (isBackwards === undefined || isBackwards) && line.charAt(pos.column);
+            pos = {
+                row: pos.row,
+                column: pos.column + 1
+            };
+            match = chr && chr.match(bracketsRegExp);
         }
         if (!match)
             return null;
@@ -11586,6 +11592,10 @@ exports.commands = [{
         scrollIntoView: "cursor",
         readOnly: true
     }, {
+        name: "openlink",
+        bindKey: bindKey("Ctrl+F3", "F3"),
+        exec: function (editor) { editor.openLink(); }
+    }, {
         name: "joinlines",
         description: "Join lines",
         bindKey: bindKey(null, null),
@@ -11709,6 +11719,17 @@ for (var i = 1; i < 9; i++) {
 });
 
 ace.define("ace/editor",["require","exports","module","ace/lib/oop","ace/lib/dom","ace/lib/lang","ace/lib/useragent","ace/keyboard/textinput","ace/mouse/mouse_handler","ace/mouse/fold_handler","ace/keyboard/keybinding","ace/edit_session","ace/search","ace/range","ace/lib/event_emitter","ace/commands/command_manager","ace/commands/default_commands","ace/config","ace/token_iterator","ace/clipboard"], function(require, exports, module){"use strict";
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var oop = require("./lib/oop");
 var dom = require("./lib/dom");
 var lang = require("./lib/lang");
@@ -12039,7 +12060,9 @@ Editor.$uid = 0;
                 session.$bracketHighlight = null;
             }
             var pos = self.getCursorPosition();
-            var ranges = session.getMatchingBracketRanges(pos);
+            var handler = self.getKeyboardHandler();
+            var isBackwards = handler && handler.$getDirectionForHighlight && handler.$getDirectionForHighlight(self);
+            var ranges = session.getMatchingBracketRanges(pos, isBackwards);
             if (!ranges) {
                 var iterator = new TokenIterator(session, pos.row, pos.column);
                 var token = iterator.getCurrentToken();
@@ -12838,6 +12861,43 @@ Editor.$uid = 0;
                 }
             }
         }
+    };
+    this.findLinkAt = function (row, column) {
+        var e_1, _a;
+        var line = this.session.getLine(row);
+        var wordParts = line.split(/((?:https?|ftp):\/\/[\S]+)/);
+        var columnPosition = column;
+        if (columnPosition < 0)
+            columnPosition = 0;
+        var previousPosition = 0, currentPosition = 0, match;
+        try {
+            for (var wordParts_1 = __values(wordParts), wordParts_1_1 = wordParts_1.next(); !wordParts_1_1.done; wordParts_1_1 = wordParts_1.next()) {
+                var item = wordParts_1_1.value;
+                currentPosition = previousPosition + item.length;
+                if (columnPosition >= previousPosition && columnPosition <= currentPosition) {
+                    if (item.match(/((?:https?|ftp):\/\/[\S]+)/)) {
+                        match = item.replace(/[\s:.,'";}\]]+$/, "");
+                        break;
+                    }
+                }
+                previousPosition = currentPosition;
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (wordParts_1_1 && !wordParts_1_1.done && (_a = wordParts_1.return)) _a.call(wordParts_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return match;
+    };
+    this.openLink = function () {
+        var cursor = this.selection.getCursor();
+        var url = this.findLinkAt(cursor.row, cursor.column);
+        if (url)
+            window.open(url, '_blank');
+        return url != null;
     };
     this.removeLines = function () {
         var rows = this.$getSelectedRows();
@@ -14724,6 +14784,7 @@ var Text = function (parentEl) {
     this.SPACE_CHAR = "\xB7";
     this.$padding = 0;
     this.MAX_LINE_LENGTH = 10000;
+    this.MAX_CHUNK_LENGTH = 250;
     this.$updateEolChar = function () {
         var doc = this.session.doc;
         var unixMode = doc.getNewLineCharacter() == "\n" && doc.getNewLineMode() != "windows";
@@ -14964,6 +15025,18 @@ var Text = function (parentEl) {
         "rparen": true,
         "lparen": true
     };
+    this.$renderTokenInChunks = function (parent, screenColumn, token, value) {
+        var newScreenColumn;
+        for (var i = 0; i < value.length; i += this.MAX_CHUNK_LENGTH) {
+            var valueChunk = value.substring(i, i + this.MAX_CHUNK_LENGTH);
+            var tokenChunk = {
+                type: token.type,
+                value: valueChunk
+            };
+            newScreenColumn = this.$renderToken(parent, screenColumn + i, tokenChunk, valueChunk);
+        }
+        return newScreenColumn;
+    };
     this.$renderToken = function (parent, screenColumn, token, value) {
         var self = this;
         var re = /(\t)|( +)|([\x00-\x1f\x80-\xa0\xad\u1680\u180E\u2000-\u200f\u2028\u2029\u202F\u205F\uFEFF\uFFF9-\uFFFC\u2066\u2067\u2068\u202A\u202B\u202D\u202E\u202C\u2069]+)|(\u3000)|([\u1100-\u115F\u11A3-\u11A7\u11FA-\u11FF\u2329-\u232A\u2E80-\u2E99\u2E9B-\u2EF3\u2F00-\u2FD5\u2FF0-\u2FFB\u3001-\u303E\u3041-\u3096\u3099-\u30FF\u3105-\u312D\u3131-\u318E\u3190-\u31BA\u31C0-\u31E3\u31F0-\u321E\u3220-\u3247\u3250-\u32FE\u3300-\u4DBF\u4E00-\uA48C\uA490-\uA4C6\uA960-\uA97C\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFAFF\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE66\uFE68-\uFE6B\uFF01-\uFF60\uFFE0-\uFFE6]|[\uD800-\uDBFF][\uDC00-\uDFFF])/g;
@@ -15023,18 +15096,15 @@ var Text = function (parentEl) {
             }
         }
         valueFragment.appendChild(this.dom.createTextNode(i ? value.slice(i) : value, this.element));
+        var span = this.dom.createElement("span");
         if (!this.$textToken[token.type]) {
             var classes = "ace_" + token.type.replace(/\./g, " ace_");
-            var span = this.dom.createElement("span");
             if (token.type == "fold")
                 span.style.width = (token.value.length * this.config.characterWidth) + "px";
             span.className = classes;
-            span.appendChild(valueFragment);
-            parent.appendChild(span);
         }
-        else {
-            parent.appendChild(valueFragment);
-        }
+        span.appendChild(valueFragment);
+        parent.appendChild(span);
         return screenColumn + value.length;
     };
     this.renderIndentGuide = function (parent, value, max) {
@@ -15191,12 +15261,12 @@ var Text = function (parentEl) {
                 chars -= value.length;
             }
             if (chars + value.length < splitChars) {
-                screenColumn = this.$renderToken(lineEl, screenColumn, token, value);
+                screenColumn = this.$renderTokenInChunks(lineEl, screenColumn, token, value);
                 chars += value.length;
             }
             else {
                 while (chars + value.length >= splitChars) {
-                    screenColumn = this.$renderToken(lineEl, screenColumn, token, value.substring(0, splitChars - chars));
+                    screenColumn = this.$renderTokenInChunks(lineEl, screenColumn, token, value.substring(0, splitChars - chars));
                     value = value.substring(splitChars - chars);
                     chars = splitChars;
                     lineEl = this.$createLineElement();
@@ -15208,7 +15278,7 @@ var Text = function (parentEl) {
                 }
                 if (value.length != 0) {
                     chars += value.length;
-                    screenColumn = this.$renderToken(lineEl, screenColumn, token, value);
+                    screenColumn = this.$renderTokenInChunks(lineEl, screenColumn, token, value);
                 }
             }
         }
@@ -15225,13 +15295,17 @@ var Text = function (parentEl) {
                 if (!value)
                     continue;
             }
-            if (screenColumn + value.length > this.MAX_LINE_LENGTH)
-                return this.$renderOverflowMessage(parent, screenColumn, token, value);
-            screenColumn = this.$renderToken(parent, screenColumn, token, value);
+            if (screenColumn + value.length > this.MAX_LINE_LENGTH) {
+                this.$renderOverflowMessage(parent, screenColumn, token, value);
+                return;
+            }
+            screenColumn = this.$renderTokenInChunks(parent, screenColumn, token, value);
         }
     };
     this.$renderOverflowMessage = function (parent, screenColumn, token, value, hide) {
-        token && this.$renderToken(parent, screenColumn, token, value.slice(0, this.MAX_LINE_LENGTH - screenColumn));
+        if (token) {
+            this.$renderTokenInChunks(parent, screenColumn, token, value.slice(0, this.MAX_LINE_LENGTH - screenColumn));
+        }
         var overflowEl = this.dom.createElement("span");
         overflowEl.className = "ace_inline_button ace_keyword ace_toggle_wrap";
         overflowEl.textContent = hide ? "<hide>" : "<click to see more...>";
@@ -15925,10 +15999,11 @@ var lang = require("../lib/lang");
 var event = require("../lib/event");
 var useragent = require("../lib/useragent");
 var EventEmitter = require("../lib/event_emitter").EventEmitter;
-var CHAR_COUNT = 256;
+var DEFAULT_CHAR_COUNT = 250;
 var USE_OBSERVER = typeof ResizeObserver == "function";
 var L = 200;
-var FontMetrics = exports.FontMetrics = function (parentEl) {
+var FontMetrics = exports.FontMetrics = function (parentEl, charCount) {
+    this.charCount = charCount || DEFAULT_CHAR_COUNT;
     this.el = dom.createElement("div");
     this.$setMeasureNodeStyles(this.el.style, true);
     this.$main = dom.createElement("div");
@@ -15938,7 +16013,7 @@ var FontMetrics = exports.FontMetrics = function (parentEl) {
     this.el.appendChild(this.$main);
     this.el.appendChild(this.$measureNode);
     parentEl.appendChild(this.el);
-    this.$measureNode.textContent = lang.stringRepeat("X", CHAR_COUNT);
+    this.$measureNode.textContent = lang.stringRepeat("X", this.charCount);
     this.$characterSize = { width: 0, height: 0 };
     if (USE_OBSERVER)
         this.$addObserver();
@@ -16001,18 +16076,20 @@ var FontMetrics = exports.FontMetrics = function (parentEl) {
         }
     };
     this.$measureSizes = function (node) {
-        var size = {
-            height: (node || this.$measureNode).clientHeight,
-            width: (node || this.$measureNode).clientWidth / CHAR_COUNT
+        node = node || this.$measureNode;
+        var rect = node.getBoundingClientRect();
+        var charSize = {
+            height: rect.height,
+            width: rect.width / this.charCount
         };
-        if (size.width === 0 || size.height === 0)
+        if (charSize.width === 0 || charSize.height === 0)
             return null;
-        return size;
+        return charSize;
     };
     this.$measureCharWidth = function (ch) {
-        this.$main.textContent = lang.stringRepeat(ch, CHAR_COUNT);
+        this.$main.textContent = lang.stringRepeat(ch, this.charCount);
         var rect = this.$main.getBoundingClientRect();
-        return rect.width / CHAR_COUNT;
+        return rect.width / this.charCount;
     };
     this.getCharacterWidth = function (ch) {
         var w = this.charSizes[ch];
@@ -16272,7 +16349,7 @@ var VirtualRenderer = function (container, theme) {
         row: 0,
         column: 0
     };
-    this.$fontMetrics = new FontMetrics(this.container);
+    this.$fontMetrics = new FontMetrics(this.container, this.$textLayer.MAX_CHUNK_LENGTH);
     this.$textLayer.$setFontMetrics(this.$fontMetrics);
     this.$textLayer.on("changeCharacterSize", function (e) {
         _self.updateCharacterSize();
@@ -17024,6 +17101,9 @@ var VirtualRenderer = function (container, theme) {
         var top = pos.top;
         var topMargin = $viewMargin && $viewMargin.top || 0;
         var bottomMargin = $viewMargin && $viewMargin.bottom || 0;
+        if (this.$scrollAnimation) {
+            this.$stopAnimation = true;
+        }
         var scrollTop = this.$scrollAnimation ? this.session.getScrollTop() : this.scrollTop;
         if (scrollTop + topMargin > top) {
             if (offset && scrollTop + topMargin > top + this.lineHeight)
@@ -17116,7 +17196,17 @@ var VirtualRenderer = function (container, theme) {
         clearInterval(this.$timer);
         _self.session.setScrollTop(steps.shift());
         _self.session.$scrollTop = toValue;
+        function endAnimation() {
+            _self.$timer = clearInterval(_self.$timer);
+            _self.$scrollAnimation = null;
+            _self.$stopAnimation = false;
+            callback && callback();
+        }
         this.$timer = setInterval(function () {
+            if (_self.$stopAnimation) {
+                endAnimation();
+                return;
+            }
             if (!_self.session)
                 return clearInterval(_self.$timer);
             if (steps.length) {
@@ -17129,9 +17219,7 @@ var VirtualRenderer = function (container, theme) {
                 toValue = null;
             }
             else {
-                _self.$timer = clearInterval(_self.$timer);
-                _self.$scrollAnimation = null;
-                callback && callback();
+                endAnimation();
             }
         }, 10);
     };

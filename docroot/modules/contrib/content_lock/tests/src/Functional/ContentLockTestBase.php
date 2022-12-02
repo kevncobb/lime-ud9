@@ -14,7 +14,7 @@ abstract class ContentLockTestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'entity_test',
     'content_lock',
   ];

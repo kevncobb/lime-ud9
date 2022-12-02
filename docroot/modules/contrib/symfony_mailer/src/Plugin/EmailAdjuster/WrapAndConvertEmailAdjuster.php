@@ -2,6 +2,7 @@
 
 namespace Drupal\symfony_mailer\Plugin\EmailAdjuster;
 
+use Drupal\Component\Utility\HTML;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -180,7 +181,7 @@ class WrapAndConvertEmailAdjuster extends EmailAdjusterBase implements Container
       $render = [
         '#theme' => 'email_wrap',
         '#email' => $email,
-        '#body' => ['#markup' => $body],
+        '#body' => Markup::create($body),
         '#is_html' => $is_html,
       ];
     }

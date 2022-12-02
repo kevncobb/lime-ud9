@@ -31,37 +31,30 @@ class ClientRepository implements ClientRepositoryInterface {
    * {@inheritdoc}
    */
   public function getClientEntity($client_identifier) {
-    return new ClientEntity($this->getClientDrupalEntity($client_identifier));
-  }
-
-  /**
-   * Get the client Drupal entity.
-   *
-   * @param string $client_identifier
-   *   Client ID.
-   *
-   * @return \Drupal\consumers\Entity\Consumer
-   *   The loaded drupal consumer (client) entity.
-   */
-  public function getClientDrupalEntity(string $client_identifier) {
     $client_drupal_entities = $this->entityTypeManager
       ->getStorage('consumer')
-      ->loadByProperties(['uuid' => $client_identifier]);
+      ->loadByProperties(['client_id' => $client_identifier]);
 
     // Check if the client is registered.
     if (empty($client_drupal_entities)) {
       return NULL;
     }
-    return reset($client_drupal_entities);
+    /** @var \Drupal\consumers\Entity\ConsumerInterface $client_drupal_entity */
+    $client_drupal_entity = reset($client_drupal_entities);
+
+    return new ClientEntity($client_drupal_entity);
   }
 
   /**
    * @{inheritdoc}
    */
   public function validateClient($client_identifier, $client_secret, $grant_type) {
-    if (!$client_drupal_entity = $this->getClientDrupalEntity($client_identifier)) {
+    if (!$client_entity = $this->getClientEntity($client_identifier)) {
       return FALSE;
     }
+
+    // Get the drupal entity.
+    $client_drupal_entity = $client_entity->getDrupalEntity();
     $secret_field = $client_drupal_entity->get('secret');
 
     // Determine whether the client is public. Note that if a client secret is

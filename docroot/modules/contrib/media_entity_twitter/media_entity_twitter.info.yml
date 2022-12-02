@@ -6,7 +6,7 @@ core_version_requirement: ^9 || ^10
 dependencies:
   - drupal:media
 
-# Information added by Drupal.org packaging script on 2022-09-21
-version: '8.x-2.8'
+# Information added by Drupal.org packaging script on 2022-11-24
+version: '8.x-2.9'
 project: 'media_entity_twitter'
-datestamp: 1663763030
+datestamp: 1669304996

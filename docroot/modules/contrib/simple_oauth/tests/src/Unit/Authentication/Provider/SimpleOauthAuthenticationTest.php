@@ -2,10 +2,12 @@
 
 namespace Drupal\Tests\simple_oauth\Unit\Authentication\Provider;
 
+use Drupal\Core\Authentication\AuthenticationProviderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\PageCache\RequestPolicyInterface;
 use Drupal\simple_oauth\Authentication\Provider\SimpleOauthAuthenticationProvider;
 use Drupal\simple_oauth\PageCache\DisallowSimpleOauthRequests;
+use Drupal\simple_oauth\PageCache\SimpleOauthRequestPolicyInterface;
 use Drupal\simple_oauth\Server\ResourceServerInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,20 +21,21 @@ class SimpleOauthAuthenticationTest extends UnitTestCase {
   /**
    * The authentication provider.
    *
-   * @var \Drupal\simple_oauth\Authentication\Provider\SimpleOauthAuthenticationProvider
+   * @var \Drupal\Core\Authentication\AuthenticationProviderInterface
    */
-  protected $provider;
+  protected AuthenticationProviderInterface $provider;
+
   /**
    * The OAuth page cache request policy.
    *
    * @var \Drupal\simple_oauth\PageCache\SimpleOauthRequestPolicyInterface
    */
-  protected $oauthPageCacheRequestPolicy;
+  protected SimpleOauthRequestPolicyInterface $oauthPageCacheRequestPolicy;
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $resource_server = $this->prophesize(ResourceServerInterface::class);
@@ -50,7 +53,7 @@ class SimpleOauthAuthenticationTest extends UnitTestCase {
    *
    * @dataProvider hasTokenValueProvider
    */
-  public function testHasTokenValue($authorization, $has_token) {
+  public function testHasTokenValue(?string $authorization, bool $has_token): void {
     $request = new Request();
 
     if ($authorization !== NULL) {
@@ -64,7 +67,10 @@ class SimpleOauthAuthenticationTest extends UnitTestCase {
     );
   }
 
-  public function hasTokenValueProvider() {
+  /**
+   * Data provider for ::testHasTokenValue.
+   */
+  public function hasTokenValueProvider(): array {
     $token = $this->getRandomGenerator()->name();
     $data = [];
 

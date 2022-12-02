@@ -8,7 +8,7 @@ use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Logger\LoggerChannelInterface;
+use Psr\Log\LoggerInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\media\MediaInterface;
@@ -113,12 +113,12 @@ class Twitter extends MediaSourceBase implements MediaSourceFieldConstraintsInte
    *   The renderer.
    * @param \Drupal\media_entity_twitter\TweetFetcherInterface $tweet_fetcher
    *   The tweet fetcher.
-   * @param \Drupal\Core\Logger\LoggerChannelInterface $logger
+   * @param \Psr\Log\LoggerInterface $logger
    *   The logger channel.
    * @param \Drupal\Core\File\FileSystemInterface $file_system
    *   The file system.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, FieldTypePluginManagerInterface $field_type_manager, ConfigFactoryInterface $config_factory, RendererInterface $renderer, TweetFetcherInterface $tweet_fetcher, LoggerChannelInterface $logger, FileSystemInterface $file_system) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, FieldTypePluginManagerInterface $field_type_manager, ConfigFactoryInterface $config_factory, RendererInterface $renderer, TweetFetcherInterface $tweet_fetcher, LoggerInterface $logger, FileSystemInterface $file_system) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $field_type_manager, $config_factory);
     $this->renderer = $renderer;
     $this->tweetFetcher = $tweet_fetcher;

@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_oauth\Authentication;
 
+use Drupal\consumers\Entity\ConsumerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -34,7 +35,7 @@ class TokenAuthUser implements TokenAuthUserInterface {
   /**
    * The activated consumer instance.
    *
-   * @var \Drupal\consumers\Entity\Consumer
+   * @var \Drupal\consumers\Entity\ConsumerInterface
    */
   protected $consumer;
 
@@ -71,7 +72,7 @@ class TokenAuthUser implements TokenAuthUserInterface {
   /**
    * {@inheritdoc}
    */
-  public function getConsumer() {
+  public function getConsumer(): ConsumerInterface {
     return $this->consumer;
   }
 

@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides an action deriver that finds content entity types.
  *
- * @TODO: This class should extend EntityActionDeriverBase in D8.5.
+ * @todo This class should extend EntityActionDeriverBase in D8.5.
  */
 class BreakLockDeriver extends DeriverBase implements ContainerDeriverInterface {
 

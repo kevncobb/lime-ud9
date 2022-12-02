@@ -26,11 +26,13 @@ class ParagraphsAsymmetricWidget extends ParagraphsWidget {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
 
     // Remove all translatability clues, it makes no sense when running async.
-    foreach (Element::children($element['subform']) as $field) {
-      if (isset($element['subform'][$field]['widget']['#after_build']) && is_array($element['subform'][$field]['widget']['#after_build'])) {
-        foreach ($element['subform'][$field]['widget']['#after_build'] as $index => $after_build) {
-          if (in_array('addTranslatabilityClue', $after_build, TRUE)) {
-            unset($element['subform'][$field]['widget']['#after_build'][$index]);
+    if ($element['subform']) {
+      foreach (Element::children($element['subform']) as $field) {
+        if (isset($element['subform'][$field]['widget']['#after_build']) && is_array($element['subform'][$field]['widget']['#after_build'])) {
+          foreach ($element['subform'][$field]['widget']['#after_build'] as $index => $after_build) {
+            if (in_array('addTranslatabilityClue', $after_build, TRUE)) {
+              unset($element['subform'][$field]['widget']['#after_build'][$index]);
+            }
           }
         }
       }

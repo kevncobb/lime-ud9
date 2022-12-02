@@ -3,7 +3,7 @@
  * Defines Javascript behaviors for the Content Lock button.
  */
 
-(function ($, Drupal, drupalSettings) {
+(function ($, Drupal, once) {
 
   /**
    * Behaviors for tabs in the node edit form.
@@ -20,11 +20,9 @@
       }
 
       $.each(drupalSettings.content_lock, function (form_id, settings) {
-        $('form.' + form_id, context)
-          .once('content-lock')
-          .each(function () {
-            new Drupal.content_lock(this, settings);
-          })
+        once('content-lock', 'form.' + form_id, context).forEach(function (elem) {
+          new Drupal.content_lock(elem, settings);
+        });
       })
     }
   };
@@ -60,4 +58,4 @@
     };
   };
 
-}(jQuery, Drupal, drupalSettings));
+}(jQuery, Drupal, once));

@@ -15,7 +15,7 @@ abstract class ContentLockJavascriptTestBase extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'entity_test',
     'content_lock',
   ];

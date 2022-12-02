@@ -8,6 +8,7 @@
 use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\simple_oauth\Entity\Oauth2TokenStorageSchema;
 
 /**
  * Define the default batch size.
@@ -115,4 +116,26 @@ function simple_oauth_update_8501(&$sandbox) {
     ->getEditable('simple_oauth.settings');
   $config->set('disable_openid_connect', FALSE);
   $config->save();
+}
+
+/**
+ * Add indexes to oauth2_token value field.
+ */
+function simple_oauth_update_8502() {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $definition_update_manager = \Drupal::entityDefinitionUpdateManager();
+
+  $entity_type = $entity_type_manager->getDefinition('oauth2_token')
+    ->setHandlerClass('storage_schema', Oauth2TokenStorageSchema::class);
+  // Regenerate entity type indexes.
+  $definition_update_manager->updateEntityType($entity_type);
+}
+
+/**
+ * Resolve mismatched field definition for oauth2_token.
+ */
+function simple_oauth_update_8503() {
+  $definition_update_manager = \Drupal::entityDefinitionUpdateManager();
+  $field_storage_definition = $definition_update_manager->getFieldStorageDefinition('value', 'oauth2_token');
+  $definition_update_manager->updateFieldStorageDefinition($field_storage_definition);
 }

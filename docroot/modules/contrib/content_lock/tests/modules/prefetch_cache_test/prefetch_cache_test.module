@@ -1,6 +1,10 @@
 <?php
 
 /**
+ * @file
+ */
+
+/**
  * Implements hook_menu_local_tasks_alter().
  */
 function prefetch_cache_test_menu_local_tasks_alter(&$data, $route_name) {

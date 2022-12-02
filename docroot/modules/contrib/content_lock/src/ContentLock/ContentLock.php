@@ -542,7 +542,7 @@ class ContentLock extends ServiceProviderBase {
    * @return bool
    */
   public function isJsLock($entity_type_id) {
-    return in_array($entity_type_id, $this->config->get("types_js_lock")?: []);
+    return in_array($entity_type_id, $this->config->get("types_js_lock") ?: []);
   }
 
   /**

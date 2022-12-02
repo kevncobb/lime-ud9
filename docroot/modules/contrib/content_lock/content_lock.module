@@ -63,7 +63,7 @@ function content_lock_form_alter(&$form, FormStateInterface $form_state, $form_i
   if (!$form_state->getFormObject() instanceof EntityFormInterface) {
     return;
   }
-  /** @var \Drupal\core\Entity\ContentEntityInterface $entity */
+  /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
   $entity = $form_state->getFormObject()->getEntity();
   $entity_type = $entity->getEntityTypeId();
   $user = Drupal::currentUser();
@@ -149,7 +149,7 @@ function content_lock_form_submit($form, FormStateInterface $form_state) {
 
   /** @var \Drupal\content_lock\ContentLock\ContentLock $lock_service */
   $lock_service = \Drupal::service('content_lock');
-  /** @var \Drupal\core\Entity\ContentEntityInterface $entity */
+  /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
   $entity = $form_state->getFormObject()->getEntity();
 
   // If the user submitting owns the lock, release it.
@@ -393,9 +393,9 @@ function content_lock_entity_operation(EntityInterface $entity) {
  */
 function content_lock_theme() {
   return [
-    'content_lock_settings_entities' => array(
+    'content_lock_settings_entities' => [
       'render element' => 'element',
-    ),
+    ],
   ];
 }
 

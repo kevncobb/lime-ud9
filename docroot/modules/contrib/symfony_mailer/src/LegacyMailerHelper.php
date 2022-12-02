@@ -60,7 +60,7 @@ class LegacyMailerHelper implements LegacyMailerHelperInterface {
   /**
    * {@inheritdoc}
    */
-  public function emailToArray(EmailInterface $email, array $message) {
+  public function emailToArray(EmailInterface $email, array &$message) {
     $message['subject'] = $email->getSubject();
     if ($email->getPhase() >= EmailInterface::PHASE_POST_RENDER) {
       $message['body'] = $email->getHtmlBody();

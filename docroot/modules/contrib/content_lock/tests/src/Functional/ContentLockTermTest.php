@@ -17,7 +17,7 @@ class ContentLockTermTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'taxonomy',
     'content_lock',
   ];
@@ -55,7 +55,8 @@ class ContentLockTermTest extends BrowserTestBase {
     $edit = [
       'taxonomy_term[bundles][' . $term1->bundle() . ']' => 1,
     ];
-    $this->drupalPostForm('admin/config/content/content_lock', $edit, t('Save configuration'));
+    $this->drupalGet('admin/config/content/content_lock');
+    $this->submitForm($edit, t('Save configuration'));
 
     // We lock term1.
     $this->drupalLogin($user1);
@@ -78,7 +79,8 @@ class ContentLockTermTest extends BrowserTestBase {
     $this->drupalLogin($user1);
     $this->drupalGet("taxonomy/term/{$term1->id()}/edit");
     $assert_session->pageTextContains(t('This content is now locked by you against simultaneous editing.'));
-    $this->drupalPostForm('/taxonomy/term/' . $term1->id() . '/edit', [], t('Save'));
+    $this->drupalGet('/taxonomy/term/' . $term1->id() . '/edit');
+    $this->submitForm([], t('Save'));
 
     // We lock term1 with user2.
     $this->drupalLogin($user2);
@@ -101,7 +103,8 @@ class ContentLockTermTest extends BrowserTestBase {
     // Edit a node without saving.
     $this->drupalGet("taxonomy/term/{$term1->id()}/edit");
     $assert_session->pageTextContains(t('This content is now locked by you against simultaneous editing.'));
-    $this->drupalPostForm('/taxonomy/term/' . $term1->id() . '/edit', [], t('Save'));
+    $this->drupalGet('/taxonomy/term/' . $term1->id() . '/edit');
+    $this->submitForm([], t('Save'));
   }
 
 }

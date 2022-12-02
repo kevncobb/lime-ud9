@@ -41,7 +41,7 @@ trait ContentLockTestTrait {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $additional_permissions = [];
@@ -83,7 +83,8 @@ trait ContentLockTestTrait {
         'settings[entity_test_mul_changed][entity_test_mul_changed][fields][user_id]' => 1,
         'settings[entity_test_mul_changed][entity_test_mul_changed][fields][field_test_text]' => 1,
       ];
-      $this->drupalPostForm('admin/config/regional/content-language', $edit, t('Save configuration'));
+      $this->drupalGet('admin/config/regional/content-language');
+      $this->submitForm($edit, t('Save configuration'));
       $this->rebuildContainer();
     }
 

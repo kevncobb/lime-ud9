@@ -6,7 +6,7 @@ use Drupal\Tests\block\Traits\BlockCreationTrait;
 use Drupal\Tests\content_lock\FunctionalJavascript\ContentLockJavascriptTestBase;
 
 /**
- * Class PrefetchCacheTest.
+ * Tests prefetch_cache integration.
  *
  * @group content_lock
  */
@@ -17,7 +17,7 @@ class PrefetchCacheTest extends ContentLockJavascriptTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'block',
     'prefetch_cache_test',
   ];
@@ -30,7 +30,10 @@ class PrefetchCacheTest extends ContentLockJavascriptTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
+    $this->markTestSkipped(
+      'prefetch_catch is not D10 compatible.'
+    );
     parent::setUp();
 
     $this->drupalPlaceBlock('local_tasks_block', ['primary' => TRUE]);

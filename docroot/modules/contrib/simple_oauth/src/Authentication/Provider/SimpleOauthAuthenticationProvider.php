@@ -4,6 +4,7 @@ namespace Drupal\simple_oauth\Authentication\Provider;
 
 use Drupal\Core\Authentication\AuthenticationProviderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\simple_oauth\Authentication\TokenAuthUser;
 use Drupal\simple_oauth\PageCache\SimpleOauthRequestPolicyInterface;
 use Drupal\simple_oauth\Server\ResourceServerInterface;
@@ -15,6 +16,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  * @internal
  */
 class SimpleOauthAuthenticationProvider implements AuthenticationProviderInterface {
+
+  use StringTranslationTrait;
 
   /**
    * @var \Drupal\simple_oauth\Server\ResourceServerInterface
@@ -97,7 +100,7 @@ class SimpleOauthAuthenticationProvider implements AuthenticationProviderInterfa
       $token->revoke();
       $token->save();
       $exception = OAuthServerException::accessDenied(
-        t(
+        $this->t(
           '%name is blocked or has not been activated yet.',
           ['%name' => $account->getAccountName()]
         )
@@ -115,7 +118,7 @@ class SimpleOauthAuthenticationProvider implements AuthenticationProviderInterfa
     $request->files->add($auth_request->files->all());
     // Set consumer ID header on successful authentication, so negotiators
     // will trigger correctly.
-    $request->headers->set('X-Consumer-ID', $account->getConsumer()->uuid());
+    $request->headers->set('X-Consumer-ID', $account->getConsumer()->getClientId());
 
     return $account;
   }

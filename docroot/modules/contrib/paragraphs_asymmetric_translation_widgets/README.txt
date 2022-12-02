@@ -12,7 +12,7 @@ TODO (until then, please check the mother issue)
 
 Configuration:
 
-TODO (until then, please chech the mother issue)
+TODO (until then, please check the mother issue)
 
 Warning:
 

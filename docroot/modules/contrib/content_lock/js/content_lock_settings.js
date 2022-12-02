@@ -3,7 +3,7 @@
  * Defines Javascript behaviors for the content lock module.
  */
 
-(function ($, Drupal, drupalSettings) {
+(function ($, Drupal, once) {
 
   'use strict';
 
@@ -17,16 +17,15 @@
    */
   Drupal.behaviors.contentLockSettings = {
     attach: function (context, settings) {
-      $('.content-lock-entity-settings[value="*"]', context)
-        .once('content-lock-settings')
+      once('content-lock-settings', '.content-lock-entity-settings[value="*"]', context).forEach(function (elem) {
         // Init
-        .each(Drupal.behaviors.contentLockSettings.toggleBundles)
+        Drupal.behaviors.contentLockSettings.toggleBundles
         // Change
-        .change(Drupal.behaviors.contentLockSettings.toggleBundles);
-
-      $('.content-lock-entity-types input', context)
-        .once('content-lock-settings')
-        .change(Drupal.behaviors.contentLockSettings.toggleEntityType);
+        $(elem).change(Drupal.behaviors.contentLockSettings.toggleBundles);
+      });
+      once('content-lock-settings', '.content-lock-entity-types input', context).forEach(function (elem) {
+        $(elem).change(Drupal.behaviors.contentLockSettings.toggleEntityType);
+      });
     },
 
     /**
@@ -71,4 +70,4 @@
     }
   };
 
-})(jQuery, Drupal, drupalSettings);
+})(jQuery, Drupal, once);

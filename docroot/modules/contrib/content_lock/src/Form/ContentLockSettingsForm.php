@@ -167,7 +167,7 @@ class ContentLockSettingsForm extends ConfigFormBase {
         $form['entities'][$definition->id()]['settings']['translation_lock'] = [
           '#type' => 'checkbox',
           '#title' => $this->t('Lock only on entity translation level.'),
-          '#default_value' => in_array($definition->id(), $config->get('types_translation_lock')?: []),
+          '#default_value' => in_array($definition->id(), $config->get('types_translation_lock') ?: []),
           '#description' => $this->t('Activating this options allows users to edit multiple translations concurrently'),
         ];
         if (!$this->moduleHandler->moduleExists('conflict')) {
@@ -185,7 +185,7 @@ class ContentLockSettingsForm extends ConfigFormBase {
         $form['entities'][$definition->id()]['settings']['js_lock'] = [
           '#type' => 'checkbox',
           '#title' => $this->t('Lock form using JS.'),
-          '#default_value' => in_array($definition->id(), $config->get('types_js_lock')?: []),
+          '#default_value' => in_array($definition->id(), $config->get('types_js_lock') ?: []),
           '#description' => $this->t('Activating this options activates the lock when the user is on the form. This helps if modules interacting with form without a user interacting with the form, like the prefetch_cache module.'),
         ];
 
@@ -240,7 +240,7 @@ class ContentLockSettingsForm extends ConfigFormBase {
           $content_lock->set('types.' . $definition->id(), $this->removeEmptyValue($form_state->getValue([$definition->id(), 'bundles'])));
 
           $translation_lock = (bool) $form_state->getValue([$definition->id(), 'settings', 'translation_lock']);
-          $types_translation_lock = $content_lock->get('types_translation_lock')?:[];
+          $types_translation_lock = $content_lock->get('types_translation_lock') ?: [];
           if ($translation_lock && !in_array($definition->id(), $types_translation_lock)) {
             $types_translation_lock[] = $definition->id();
           }
@@ -250,7 +250,7 @@ class ContentLockSettingsForm extends ConfigFormBase {
           $content_lock->set('types_translation_lock', $types_translation_lock);
 
           $js_lock = (bool) $form_state->getValue([$definition->id(), 'settings', 'js_lock']);
-          $types_js_lock = $content_lock->get('types_js_lock')?:[];
+          $types_js_lock = $content_lock->get('types_js_lock') ?: [];
           if ($js_lock && !in_array($definition->id(), $types_js_lock)) {
             $types_js_lock[] = $definition->id();
           }

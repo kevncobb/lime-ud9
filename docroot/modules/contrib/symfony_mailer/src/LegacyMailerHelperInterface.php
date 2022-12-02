@@ -29,7 +29,7 @@ interface LegacyMailerHelperInterface {
    * @param array $message
    *   The array to fill.
    */
-  public function emailToArray(EmailInterface $email, array $message);
+  public function emailToArray(EmailInterface $email, array &$message);
 
   /**
    * Fills an Email from a message array.

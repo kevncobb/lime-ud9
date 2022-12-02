@@ -24,7 +24,8 @@ class ContentLockEntityTest extends ContentLockTestBase {
     $edit = [
       'entity_test_mul_changed[bundles][*]' => 1,
     ];
-    $this->drupalPostForm('admin/config/content/content_lock', $edit, t('Save configuration'));
+    $this->drupalGet('admin/config/content/content_lock');
+    $this->submitForm($edit, t('Save configuration'));
 
     // We lock entity.
     $this->drupalLogin($this->user1);
@@ -49,7 +50,8 @@ class ContentLockEntityTest extends ContentLockTestBase {
     $this->drupalLogin($this->user1);
     $this->drupalGet($this->entity->toUrl('edit-form'));
     $assert_session->pageTextContains(t('This content is now locked by you against simultaneous editing.'));
-    $this->drupalPostForm($this->entity->toUrl('edit-form'), [], t('Save'));
+    $this->drupalGet($this->entity->toUrl('edit-form'));
+    $this->submitForm([], t('Save'));
     $assert_session->pageTextNotContains(t('against simultaneous editing.'));
 
     // We lock entity with user2.
@@ -73,7 +75,8 @@ class ContentLockEntityTest extends ContentLockTestBase {
     // Edit a entity without saving.
     $this->drupalGet($this->entity->toUrl('edit-form'));
     $assert_session->pageTextContains(t('This content is now locked by you against simultaneous editing.'));
-    $this->drupalPostForm($this->entity->toUrl('edit-form'), [], t('Save'));
+    $this->drupalGet($this->entity->toUrl('edit-form'));
+    $this->submitForm([], t('Save'));
     $assert_session->pageTextContains(t('updated.'));
     $assert_session->pageTextNotContains(t('against simultaneous editing.'));
   }

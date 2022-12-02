@@ -175,6 +175,30 @@ class FeedsLockBackendTest extends FeedsKernelTestBase {
   }
 
   /**
+   * Tests releasing a lock when only queue tasks for other feeds exists.
+   *
+   * This should cover the case that hasQueueTasks() doesn't return TRUE if the
+   * feed in question doesn't have a queue task, but other feeds do.
+   */
+  public function testLockReleaseWhenQueueTasksExistForOtherFeeds() {
+    // Create queue tasks for other feeds.
+    for ($i = 2; $i < 100; $i++) {
+      $this->container->get('queue')
+        ->get('feeds_feed_refresh:' . $this->feed->bundle())
+        ->createItem([$i, FeedsExecutableInterface::BEGIN, []]);
+    }
+
+    // Create a lock for the feed, set expire time more than an hour in the
+    // past.
+    $this->lock->acquire($this->lockName, 3600);
+    $this->setExpireTime($this->lockName, $this->getRequestTime() - 3601);
+
+    // Assert that the lock gets released because for the feed in question
+    // no queue task exists.
+    $this->assertTrue($this->lock->lockMayBeAvailable($this->lockName));
+  }
+
+  /**
    * Tests that the lock does not get released when there was recent progress.
    */
   public function testNoLockReleaseWithRecentProgress() {

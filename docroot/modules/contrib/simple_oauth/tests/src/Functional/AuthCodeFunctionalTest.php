@@ -5,6 +5,8 @@ namespace Drupal\Tests\simple_oauth\Functional;
 use Drupal\Core\Url;
 use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
+use GuzzleHttp\Psr7\Query;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * The auth code test.
@@ -14,40 +16,35 @@ use Drupal\user\RoleInterface;
 class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
 
   /**
-   * {@inheritdoc}
-   */
-  protected $defaultTheme = 'stark';
-
-  /**
    * The authorize URL.
    *
    * @var \Drupal\Core\Url
    */
-  protected $authorizeUrl;
+  protected Url $authorizeUrl;
 
   /**
    * The redirect URI.
    *
    * @var string
    */
-  protected $redirectUri;
+  protected string $redirectUri;
 
   /**
    * An extra role for testing.
    *
    * @var \Drupal\user\RoleInterface
    */
-  protected $extraRole;
+  protected RoleInterface $extraRole;
 
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['simple_oauth_test'];
+  protected static $modules = ['simple_oauth_test'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->redirectUri = Url::fromRoute('oauth2_token.test_token', [], [
       'absolute' => TRUE,
@@ -82,11 +79,11 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
   /**
    * Test the valid AuthCode grant with a public client.
    */
-  public function testPublicAuthCodeGrant() {
+  public function testPublicAuthCodeGrant(): void {
     $this->client->set('confidential', FALSE)->save();
     $valid_params = [
       'response_type' => 'code',
-      'client_id' => $this->client->uuid(),
+      'client_id' => $this->client->getClientId(),
       // Not sending a client secret.
       'redirect_uri' => Url::fromRoute('oauth2_token.test_token', [], [
         'absolute' => TRUE,
@@ -107,9 +104,7 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
     $this->assertGrantForm();
 
     // 3. Grant access by submitting the form and get the code back.
-    $this->drupalPostForm($this->authorizeUrl, [], 'Grant', [
-      'query' => $valid_params,
-    ]);
+    $this->submitForm([], 'Grant');
     // Store the code for the second part of the flow.
     $code = $this->getAndValidateCodeFromResponse();
 
@@ -125,13 +120,13 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
   /**
    * Test the valid AuthCode grant if the client is non 3rd party.
    */
-  public function testNon3rdPartyClientAuthCodeGrant() {
+  public function testNon3rdPartyClientAuthCodeGrant(): void {
     $this->client->set('third_party', FALSE);
     $this->client->save();
 
     $valid_params = [
       'response_type' => 'code',
-      'client_id' => $this->client->uuid(),
+      'client_id' => $this->client->getClientId(),
       'redirect_uri' => Url::fromRoute('oauth2_token.test_token', [], [
         'absolute' => TRUE,
       ])->toString(),
@@ -164,10 +159,10 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
   /**
    * Tests the remember client functionality.
    */
-  public function testRememberClient() {
+  public function testRememberClient(): void {
     $valid_params = [
       'response_type' => 'code',
-      'client_id' => $this->client->uuid(),
+      'client_id' => $this->client->getClientId(),
       'redirect_uri' => Url::fromRoute('oauth2_token.test_token', [], [
         'absolute' => TRUE,
       ])->toString(),
@@ -187,12 +182,57 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
     $this->assertGrantForm();
 
     // 3. Grant access by submitting the form and get the token back.
-    $this->drupalPostForm(NULL, [], 'Grant');
+    $this->submitForm([], 'Grant');
 
     // Store the code for the second part of the flow.
     $code = $this->getAndValidateCodeFromResponse();
 
     // 4. Send the code to get the access token.
+    $response = $this->postGrantedCodeWithScopes($code, $this->scope);
+    $this->assertValidTokenResponse($response, TRUE);
+
+    // 5. Ensure codes cannot be re-used.
+    $response = $this->postGrantedCodeWithScopes($code, $this->scope);
+    $this->assertEquals(400, $response->getStatusCode());
+  }
+
+  /**
+   * Test confidential clients enforce a client secret.
+   */
+  public function testConfidentialAuthCodeGrant(): void {
+    $this->client->set('confidential', TRUE)->save();
+    $valid_params = [
+      'response_type' => 'code',
+      'client_id' => $this->client->getClientId(),
+      'client_secret' => $this->clientSecret,
+      'redirect_uri' => Url::fromRoute('oauth2_token.test_token', [], [
+        'absolute' => TRUE,
+      ])->toString(),
+    ];
+    // 1. Anonymous request invites the user to log in.
+    $this->drupalGet($this->authorizeUrl->toString(), [
+      'query' => $valid_params,
+    ]);
+    $assert_session = $this->assertSession();
+    $assert_session->buttonExists('Log in');
+
+    // 2. Log the user in and try again.
+    $this->drupalLogin($this->user);
+    $this->drupalGet($this->authorizeUrl->toString(), [
+      'query' => $valid_params,
+    ]);
+    $this->assertGrantForm();
+
+    // 3. Grant access by submitting the form and get the code back.
+    $this->submitForm([], 'Grant');
+    // Store the code for the second part of the flow.
+    $code = $this->getAndValidateCodeFromResponse();
+
+    // 4. Send a request without a client secret.
+    $response = $this->postGrantedCodeWithScopes($code, $this->scope, FALSE);
+    $this->assertEquals(401, $response->getStatusCode());
+
+    // 5. Confidential clients still work when passing a secret.
     $response = $this->postGrantedCodeWithScopes($code, $this->scope);
     $this->assertValidTokenResponse($response, TRUE);
 
@@ -215,7 +255,7 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
 
     $this->assertGrantForm();
     $this->assertSession()->pageTextContains($this->extraRole->label());
-    $this->drupalPostForm(NULL, [], 'Grant');
+    $this->submitForm([], 'Grant');
 
     $code = $this->getAndValidateCodeFromResponse();
 
@@ -253,7 +293,7 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
   /**
    * Test the AuthCode grant with PKCE.
    */
-  public function testClientAuthCodeGrantWithPkce() {
+  public function testClientAuthCodeGrantWithPkce(): void {
     $this->client->set('pkce', TRUE);
     $this->client->set('confidential', FALSE);
     $this->client->save();
@@ -265,7 +305,7 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
 
     $valid_params = [
       'response_type' => 'code',
-      'client_id' => $this->client->uuid(),
+      'client_id' => $this->client->getClientId(),
       'code_challenge' => $code_challenge,
       'code_challenge_method' => 'S256',
       'redirect_uri' => Url::fromRoute('oauth2_token.test_token', [], [
@@ -288,7 +328,7 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
     $this->assertGrantForm();
 
     // 3. Grant access by submitting the form.
-    $this->drupalPostForm(NULL, [], 'Grant');
+    $this->submitForm([], 'Grant');
 
     // Store the code for the second part of the flow.
     $code = $this->getAndValidateCodeFromResponse();
@@ -296,7 +336,7 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
     // Request the access and refresh token.
     $valid_payload = [
       'grant_type' => 'authorization_code',
-      'client_id' => $this->client->uuid(),
+      'client_id' => $this->client->getClientId(),
       'code_verifier' => $code_verifier,
       'scope' => $this->scope . ' ' . $this->extraRole->id(),
       'code' => $code,
@@ -312,7 +352,7 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
    * @throws \Behat\Mink\Exception\ElementNotFoundException
    * @throws \Behat\Mink\Exception\ExpectationException
    */
-  protected function assertGrantForm() {
+  protected function assertGrantForm(): void {
     $assert_session = $this->assertSession();
     $assert_session->statusCodeEquals(200);
     $assert_session->titleEquals('Grant Access to Client | Drupal');
@@ -323,17 +363,17 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
   /**
    * Get the code in the response after granting access to scopes.
    *
-   * @return mixed
+   * @return string
    *   The code.
    *
    * @throws \Behat\Mink\Exception\ExpectationException
    */
-  protected function getAndValidateCodeFromResponse() {
+  protected function getAndValidateCodeFromResponse(): string {
     $assert_session = $this->assertSession();
     $session = $this->getSession();
     $assert_session->statusCodeEquals(200);
     $parsed_url = parse_url($session->getCurrentUrl());
-    $parsed_query = \GuzzleHttp\Psr7\parse_query($parsed_url['query']);
+    $parsed_query = Query::parse($parsed_url['query']);
     $this->assertArrayHasKey('code', $parsed_query);
     return $parsed_query['code'];
   }
@@ -350,11 +390,13 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   The response.
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
-  protected function postGrantedCodeWithScopes($code, $scopes, $send_secret = TRUE) {
+  protected function postGrantedCodeWithScopes(string $code, string $scopes, bool $send_secret = TRUE): ResponseInterface {
     $valid_payload = [
       'grant_type' => 'authorization_code',
-      'client_id' => $this->client->uuid(),
+      'client_id' => $this->client->getClientId(),
       'code' => $code,
       'scope' => $scopes,
       'redirect_uri' => $this->redirectUri,

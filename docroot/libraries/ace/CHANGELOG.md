@@ -2,6 +2,45 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.13.1](https://github.com/ajaxorg/ace/compare/v1.13.0...v1.13.1) (2022-11-16)
+
+
+### Bug Fixes
+
+* Change curly braces insertion behavior for Markdown to act the same as for other braces ([#4994](https://github.com/ajaxorg/ace/issues/4994)) ([2760234](https://github.com/ajaxorg/ace/commit/2760234d3d8d1acba72a42df7763482655af5ebc))
+* incorrect cursor position for very long lines ([#4996](https://github.com/ajaxorg/ace/issues/4996)) ([e57a9d9](https://github.com/ajaxorg/ace/commit/e57a9d9eef0c056cd38a07c77c460bea39cc9551))
+
+## [1.13.0](https://github.com/ajaxorg/ace/compare/v1.12.5...v1.13.0) (2022-11-11)
+
+
+### Features
+
+* add highlight mode for Apache JEXL ([#4979](https://github.com/ajaxorg/ace/issues/4979)) ([4e8926e](https://github.com/ajaxorg/ace/commit/4e8926ef9f9207e57529e07cdbe2305b09e712e2))
+
+
+### Bug Fixes
+
+* Add missing options to `VirtualRendererOptions` and `EditorOptions` ([#4983](https://github.com/ajaxorg/ace/issues/4983)) ([19dd2ec](https://github.com/ajaxorg/ace/commit/19dd2ecc178bef2fedd6a53900f2db58ea7a3c23))
+* Fix of scroll while interrupting animation ([#4993](https://github.com/ajaxorg/ace/issues/4993)) ([0092f3f](https://github.com/ajaxorg/ace/commit/0092f3f8c1f0d9c8a0b8bebe58cc3517931697b7))
+* rare case when document passed to `dom.scrollbarWidth` doesn't have `documentElement` ([#4981](https://github.com/ajaxorg/ace/issues/4981)) ([df44158](https://github.com/ajaxorg/ace/commit/df441585ef44e17a027141e3ceed648e104e9cf9))
+
+### [1.12.5](https://github.com/ajaxorg/ace/compare/v1.12.4...v1.12.5) (2022-11-01)
+
+
+### Bug Fixes
+
+* enableLiveAutocompletion documentation ([#4976](https://github.com/ajaxorg/ace/issues/4976)) ([987ab76](https://github.com/ajaxorg/ace/commit/987ab7602e06acc9b08c75914f5c1335d5cdc8cc))
+* vim "normal" mode brackets highlighting ([0fbc54c](https://github.com/ajaxorg/ace/commit/0fbc54cc5130b0271928995660413ba0fab678cb))
+
+### [1.12.4](https://github.com/ajaxorg/ace/compare/v1.12.3...v1.12.4) (2022-10-31)
+
+
+### Bug Fixes
+
+* Open valid url under cursor ([#4970](https://github.com/ajaxorg/ace/issues/4970)) ([bf2913a](https://github.com/ajaxorg/ace/commit/bf2913a71624e94d13727115b2aa0ef0c279c89f))
+* Update for Csound 6.18.0 ([#4974](https://github.com/ajaxorg/ace/issues/4974)) ([6886b02](https://github.com/ajaxorg/ace/commit/6886b0233e9e1d8d6cce5d3ade7b27fe4527c940))
+* update/add missing demo samples ([#4975](https://github.com/ajaxorg/ace/issues/4975)) ([2b8236e](https://github.com/ajaxorg/ace/commit/2b8236eaf1df10caa9ff45a06902df14947cd968))
+
 ### [1.12.3](https://github.com/ajaxorg/ace/compare/v1.12.2...v1.12.3) (2022-10-18)
 
 

@@ -19,7 +19,7 @@ class ContentLockNodeTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'content_lock',
   ];
@@ -59,7 +59,8 @@ class ContentLockNodeTest extends BrowserTestBase {
     $edit = [
       'node[bundles][article]' => 1,
     ];
-    $this->drupalPostForm('admin/config/content/content_lock', $edit, t('Save configuration'));
+    $this->drupalGet('admin/config/content/content_lock');
+    $this->submitForm($edit, t('Save configuration'));
 
     // We lock article1.
     $this->drupalLogin($user1);
@@ -84,7 +85,8 @@ class ContentLockNodeTest extends BrowserTestBase {
     $this->drupalLogin($user1);
     $this->drupalGet("node/{$article->id()}/edit");
     $assert_session->pageTextContains(t('This content is now locked by you against simultaneous editing.'));
-    $this->drupalPostForm('/node/' . $article->id() . '/edit', [], t('Save'));
+    $this->drupalGet('/node/' . $article->id() . '/edit');
+    $this->submitForm([], t('Save'));
 
     // We lock article1 with user2.
     $this->drupalLogin($user2);
@@ -107,7 +109,8 @@ class ContentLockNodeTest extends BrowserTestBase {
     // Edit a node without saving.
     $this->drupalGet("node/{$article->id()}/edit");
     $assert_session->pageTextContains(t('This content is now locked by you against simultaneous editing.'));
-    $this->drupalPostForm('/node/' . $article->id() . '/edit', [], t('Save'));
+    $this->drupalGet('/node/' . $article->id() . '/edit');
+    $this->submitForm([], t('Save'));
     $assert_session->pageTextContains(t('updated.'));
 
   }
