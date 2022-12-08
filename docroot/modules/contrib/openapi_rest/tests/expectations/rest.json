@@ -20,7 +20,6 @@
                             "value"
                         ]
                     },
-                    "minItems": 1,
                     "maxItems": 1
                 },
                 "uuid": {
@@ -39,7 +38,6 @@
                             "value"
                         ]
                     },
-                    "minItems": 1,
                     "maxItems": 1
                 },
                 "type": {
@@ -86,8 +84,6 @@
                 }
             },
             "required": [
-                "id",
-                "uuid",
                 "type"
             ],
             "discriminator": "type"
@@ -126,8 +122,6 @@
                         }
                     },
                     "required": [
-                        "id",
-                        "uuid",
                         "type"
                     ]
                 }
@@ -167,8 +161,6 @@
                         }
                     },
                     "required": [
-                        "id",
-                        "uuid",
                         "type"
                     ]
                 }
@@ -200,7 +192,6 @@
                             "value"
                         ]
                     },
-                    "minItems": 1,
                     "maxItems": 1
                 },
                 "uuid": {
@@ -220,7 +211,6 @@
                             "value"
                         ]
                     },
-                    "minItems": 1,
                     "maxItems": 1
                 },
                 "revision_id": {
@@ -238,7 +228,6 @@
                             "value"
                         ]
                     },
-                    "minItems": 1,
                     "maxItems": 1
                 },
                 "langcode": {
@@ -520,17 +509,12 @@
                             "value"
                         ]
                     },
-                    "minItems": 1,
                     "maxItems": 1
                 }
             },
             "required": [
-                "tid",
-                "uuid",
-                "revision_id",
                 "vid",
-                "name",
-                "revision_translation_affected"
+                "name"
             ],
             "discriminator": "vid"
         },
@@ -587,12 +571,8 @@
                         }
                     },
                     "required": [
-                        "tid",
-                        "uuid",
-                        "revision_id",
                         "vid",
-                        "name",
-                        "revision_translation_affected"
+                        "name"
                     ]
                 }
             ]
@@ -650,12 +630,8 @@
                         }
                     },
                     "required": [
-                        "tid",
-                        "uuid",
-                        "revision_id",
                         "vid",
-                        "name",
-                        "revision_translation_affected"
+                        "name"
                     ]
                 }
             ]
@@ -686,7 +662,6 @@
                             "value"
                         ]
                     },
-                    "minItems": 1,
                     "maxItems": 1
                 },
                 "uuid": {
@@ -706,7 +681,6 @@
                             "value"
                         ]
                     },
-                    "minItems": 1,
                     "maxItems": 1
                 },
                 "langcode": {
@@ -1030,8 +1004,6 @@
                 }
             },
             "required": [
-                "uid",
-                "uuid",
                 "name"
             ]
         }

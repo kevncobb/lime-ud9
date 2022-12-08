@@ -21,7 +21,6 @@
                             "value"
                         ]
                     },
-                    "minItems": 1,
                     "maxItems": 1
                 },
                 "uuid": {
@@ -41,7 +40,6 @@
                             "value"
                         ]
                     },
-                    "minItems": 1,
                     "maxItems": 1
                 },
                 "langcode": {
@@ -365,8 +363,6 @@
                 }
             },
             "required": [
-                "uid",
-                "uuid",
                 "name"
             ]
         }

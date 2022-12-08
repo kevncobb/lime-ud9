@@ -20,7 +20,6 @@
                             "value"
                         ]
                     },
-                    "minItems": 1,
                     "maxItems": 1
                 },
                 "uuid": {
@@ -39,7 +38,6 @@
                             "value"
                         ]
                     },
-                    "minItems": 1,
                     "maxItems": 1
                 },
                 "type": {
@@ -86,8 +84,6 @@
                 }
             },
             "required": [
-                "id",
-                "uuid",
                 "type"
             ],
             "discriminator": "type"
@@ -126,8 +122,6 @@
                         }
                     },
                     "required": [
-                        "id",
-                        "uuid",
                         "type"
                     ]
                 }
@@ -167,8 +161,6 @@
                         }
                     },
                     "required": [
-                        "id",
-                        "uuid",
                         "type"
                     ]
                 }

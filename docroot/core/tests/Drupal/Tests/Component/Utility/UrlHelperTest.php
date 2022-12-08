@@ -452,6 +452,8 @@ class UrlHelperTest extends TestCase {
    *   Expected escaped value.
    * @param array $protocols
    *   Protocols to allow.
+   *
+   * @runInSeparateProcess
    */
   public function testFilterBadProtocol($uri, $expected, $protocols) {
     UrlHelper::setAllowedProtocols($protocols);
@@ -529,6 +531,8 @@ class UrlHelperTest extends TestCase {
    *   Expected escaped value.
    * @param array $protocols
    *   Protocols to allow.
+   *
+   * @runInSeparateProcess
    */
   public function testStripDangerousProtocols($uri, $expected, $protocols) {
     UrlHelper::setAllowedProtocols($protocols);

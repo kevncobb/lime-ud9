@@ -10,6 +10,10 @@ use Drupal\Tests\openapi\Functional\RequestTestBase;
  * REST tests for requests on OpenAPI routes.
  *
  * @group openapi_rest
+ *
+ * @requires module hal
+ * @requires module schemata
+ * @requires module schemata_json_schema
  */
 final class RequestTestRest extends RequestTestBase {
 
@@ -33,6 +37,7 @@ final class RequestTestRest extends RequestTestBase {
     'schemata_json_schema',
     'openapi',
     'rest',
+    'openapi_rest',
     'openapi_test',
   ];
 

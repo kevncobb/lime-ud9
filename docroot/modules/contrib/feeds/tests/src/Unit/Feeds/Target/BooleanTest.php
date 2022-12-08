@@ -59,6 +59,14 @@ class BooleanTest extends FieldTargetTestBase {
       ],
       [
         'expected' => TRUE,
+        'value' => ' 1 ',
+      ],
+      [
+        'expected' => FALSE,
+        'value' => ' 0 ',
+      ],
+      [
+        'expected' => TRUE,
         'value' => 1,
       ],
       [
