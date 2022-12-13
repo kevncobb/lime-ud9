@@ -53,6 +53,8 @@
   img {
     position: relative;
     &::after {
+      position: absolute;
+      z-index: 9999999;
       content: "\e908";
       color: #cd201f;
       font-family: 'icomoon' !important;
