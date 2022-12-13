@@ -50,7 +50,7 @@
 }
 
 .show-play-icon-on-images {
-  field-node--field-media > .field-items > .field-item > a {
+  .field-node--field-media > .field-items > .field-item > a {
     position: relative;
     float: left;
     text-decoration: none;
@@ -70,7 +70,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-size: 1.5rem;
-    left: -25%;
+    left: -50%;
     //top: 50%;
   }
 }
