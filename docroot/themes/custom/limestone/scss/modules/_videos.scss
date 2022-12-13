@@ -52,6 +52,8 @@
 .show-play-icon-on-images {
   field-node--field-media > .field-items > .field-item > a {
     position: relative;
+    float: left;
+    text-decoration: none;
   }
   .field-node--field-media > .field-items > .field-item > a::after {
     position: absolute;
@@ -68,7 +70,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-size: 1.5rem;
-    left: 25%;
-    top: 50%;
+    left: -50%;
+    //top: 50%;
   }
 }
