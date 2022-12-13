@@ -48,3 +48,22 @@
     @extend .show-for-sr;
   }
 }
+
+.show-play-icon-on-images {
+  img {
+    position: relative;
+    &::after {
+      font-family: 'icomoon' !important;
+      speak: never;
+      font-style: normal;
+      font-weight: normal;
+      font-variant: normal;
+      text-transform: none;
+      line-height: 1;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      content: "\e908";
+      color: #cd201f;
+    }
+  }
+}
