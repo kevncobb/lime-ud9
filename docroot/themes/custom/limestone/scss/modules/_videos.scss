@@ -50,25 +50,24 @@
 }
 
 .show-play-icon-on-images {
-  img {
+  field-node--field-media a {
     position: relative;
-    &::after {
-      position: absolute;
-      z-index: 9999999;
-      content: "\e908";
-      color: #cd201f;
-      font-family: 'icomoon' !important;
-      speak: never;
-      font-style: normal;
-      font-weight: normal;
-      font-variant: normal;
-      text-transform: none;
-      line-height: 1;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      font-size: 1.5rem;
-      top: 35%;
-      left: 35%;
-    }
+  }
+  .field-node--field-media a::after {
+    position: absolute;
+    z-index: 9999999;
+    content: "\e908";
+    color: #cd201f;
+    font-family: 'icomoon' !important;
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 1.5rem;
+    left: 35%;
   }
 }
