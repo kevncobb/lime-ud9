@@ -53,6 +53,8 @@
   img {
     position: relative;
     &::after {
+      content: "\e908";
+      color: #cd201f;
       font-family: 'icomoon' !important;
       speak: never;
       font-style: normal;
@@ -62,8 +64,9 @@
       line-height: 1;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      content: "\e908";
-      color: #cd201f;
+      font-size: 1.5rem;
+      top: 35%;
+      left: 35%;
     }
   }
 }
