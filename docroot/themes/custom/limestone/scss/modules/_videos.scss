@@ -55,7 +55,7 @@
   }
   .field-node--field-media a::after {
     position: absolute;
-    z-index: 9999999;
+    z-index: 9999;
     content: "\e908";
     color: #cd201f;
     font-family: 'icomoon' !important;
@@ -68,6 +68,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-size: 1.5rem;
-    left: 35%;
+    left: 25%;
+    top: 50%;
   }
 }
