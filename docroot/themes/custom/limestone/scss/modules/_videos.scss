@@ -49,12 +49,13 @@
   }
 }
 
+//only works on a view of videos with field templates disabled
 .show-play-icon-on-images {
-  .field-node--field-media a {
+  a.use-ajax {
     position: relative;
     text-decoration: none;
   }
-  .field-node--field-media a::after {
+  a.use-ajax::after {
     position: absolute;
     z-index: 9999;
     content: "\e908";
