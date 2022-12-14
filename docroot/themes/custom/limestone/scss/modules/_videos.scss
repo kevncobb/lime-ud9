@@ -50,11 +50,11 @@
 }
 
 .show-play-icon-on-images {
-  .field-node--field-media > .field-items > .field-item > a {
+  .field-node--field-media a {
     position: relative;
     text-decoration: none;
   }
-  .field-node--field-media > .field-items > .field-item > a::after {
+  .field-node--field-media a::after {
     position: absolute;
     z-index: 9999;
     content: "\e908";
