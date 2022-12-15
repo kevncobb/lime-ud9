@@ -19,12 +19,26 @@
 }
 
 .circle-image {
+
   img {
     border-radius: 50%;
     height: auto;
     display: block;
     margin: 0 auto 0.5em;
     position: static;
+  }
+  &.smaller-inline-image {
+    a {
+      text-decoration: none;
+    }
+    img {
+      width: 40px;
+      height: auto;
+      position: relative;
+      margin: -10px 5px -10px 0;
+      display: inline;
+      float: none;
+    }
   }
 }
 
