@@ -261,3 +261,23 @@
     }
   }
 }
+
+.menu-horizontal-inline {
+  justify-content: center;
+  margin: 1rem auto;
+  li {
+    border-left: thin solid #ccc;
+    border-top: thin solid #ccc;
+    border-bottom: thin solid #ccc;
+    &:last-child {
+      border-right: thin solid #ccc;
+    }
+    a {
+      font-size: 1rem;
+      background-color: rgba(182, 182, 182, 0.12);
+      &:focus, &:hover {
+        background-color: rgba(84, 84, 84, 0.12);
+      }
+    }
+  }
+}
