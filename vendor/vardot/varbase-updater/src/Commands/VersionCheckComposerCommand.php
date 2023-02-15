@@ -199,7 +199,7 @@ class VersionCheckComposerCommand extends BaseCommand {
     $updateConfig = array_replace_recursive($updateConfig, $extraConfig);
 
     $varbaseMetaData = [];
-    $composerProjectJsonUrl = "https://packagist.org/packages/vardot/varbase.json";
+    $composerProjectJsonUrl = "https://repo.packagist.org/p2/vardot/varbase.json";
     $filename = uniqid(sys_get_temp_dir().'/') . ".json";
     $hostname = parse_url($composerProjectJsonUrl, PHP_URL_HOST);
     $downloader->copy($hostname, $composerProjectJsonUrl, $filename, FALSE);
@@ -228,7 +228,7 @@ class VersionCheckComposerCommand extends BaseCommand {
         print $versionInfo["current"];
       break;
       case "next":
-        if(isset($versionInfo['next'])){
+        if (isset($versionInfo['next'])) {
           print $versionInfo["next"];
         }
       break;

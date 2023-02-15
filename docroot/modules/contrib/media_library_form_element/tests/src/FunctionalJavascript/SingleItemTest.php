@@ -58,12 +58,12 @@ class SingleItemTest extends MediaLibraryTestBase {
    *
    * @var string
    */
-  protected $defaultTheme = 'classy';
+  protected $defaultTheme = 'olivero';
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     // Bypass the need in the test module to define schema.
     $this->strictConfigSchema = NULL;
 
@@ -126,7 +126,7 @@ class SingleItemTest extends MediaLibraryTestBase {
     if (count($allowed_bundles) === 1) {
 
       // If a single bundle is allowed, the menu shouldn't be displayed.
-      $assert->elementNotExists('css', '.media-library-menu');
+      $assert->elementNotExists('css', '.js-media-library-menu');
     }
     else {
 
@@ -138,7 +138,7 @@ class SingleItemTest extends MediaLibraryTestBase {
         if (in_array($bundle, $allowed_bundles, TRUE)) {
 
           // If the bundle is allowed, it should be contained in the menu.
-          $assert->elementTextContains('css', '.media-library-menu', $media_type_label);
+          $assert->elementTextContains('css', '.js-media-library-menu', $media_type_label);
 
           // Switch to the proper bundle.
           $page->clickLink($media_type_label);
@@ -154,7 +154,7 @@ class SingleItemTest extends MediaLibraryTestBase {
         else {
 
           // If the bundle is not allowed, it should not be contained in the menu.
-          $assert->elementNotContains('css', '.media-library-menu', $media_type_label);
+          $assert->elementNotContains('css', '.js-media-library-menu', $media_type_label);
 
           // If the bundle is not allowed, make sure none of the entities appear.
           foreach ($entities as $entity) {
@@ -179,7 +179,7 @@ class SingleItemTest extends MediaLibraryTestBase {
 
     foreach ($items as $index => $item) {
       $nth = $index + 1;
-      $selector = ".media-library-item:nth-of-type($nth) .media-library-item__name";
+      $selector = ".js-media-library-item:nth-of-type($nth) .js-media-library-item-preview";
       $assert->elementContains('css', $selector, $item);
     }
   }
@@ -230,6 +230,7 @@ class SingleItemTest extends MediaLibraryTestBase {
    * Tests the setting form.
    */
   public function testForm() {
+    $this->getSession()->resizeWindow(1200, 5000);
     $assert = $this->assertSession();
     $page = $this->getSession()->getPage();
     $this->drupalGet('media-library-form-element-test-form');
@@ -376,7 +377,7 @@ class SingleItemTest extends MediaLibraryTestBase {
 
       $page->pressButton('Add media');
       $assert->assertWaitOnAjaxRequest();
-      $assert->elementContains('css', '.media-library-menu a', 'Type One');
+      $assert->elementContains('css', '.js-media-library-menu a', 'Type One');
       $assert->pageTextContains('Type Two');
       $assert->pageTextNotContains('Type Three');
 
@@ -390,11 +391,8 @@ class SingleItemTest extends MediaLibraryTestBase {
       $assert->elementExists('css', '.ui-dialog-buttonset')->pressButton('Insert selected');
       $assert->assertWaitOnAjaxRequest();
 
-      $assert->elementContains('css', '.media-library-item__name', 'Dog');
+      $assert->elementContains('css', '.media-library-item', 'Dog');
       $assert->elementContains('css', '#test-media-library-wrapper--description', 'The maximum number of media items have been selected.');
-
-      $assert->pageTextContains('Dog');
-      $assert->elementContains('css', '.media-library-item__name', 'Dog');
 
       $page->pressButton('Remove');
       $this->waitForNoText('Dog');

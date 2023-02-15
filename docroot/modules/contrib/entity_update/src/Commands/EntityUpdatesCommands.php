@@ -7,6 +7,7 @@ use Consolidation\SiteAlias\SiteAliasManagerAwareTrait;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface;
 use Drupal\entity_update\EntityCheck;
+use Drupal\entity_update\EntityUpdate;
 use Drupal\entity_update\EntityUpdatePrint;
 use Drush\Commands\DrushCommands;
 use Drush\Drush;

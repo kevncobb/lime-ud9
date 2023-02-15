@@ -315,7 +315,7 @@ class TokenAuthUser implements TokenAuthUserInterface {
    * {@inheritdoc}
    */
   public function urlInfo($rel = 'canonical', array $options = []) {
-    return $this->subject->urlInfo($rel, $options);
+    return $this->subject->toUrl($rel, $options);
   }
 
   /**
@@ -329,7 +329,7 @@ class TokenAuthUser implements TokenAuthUserInterface {
    * {@inheritdoc}
    */
   public function link($text = NULL, $rel = 'canonical', array $options = []) {
-    return $this->subject->link($text, $rel, $options);
+    return $this->subject->toLink($text, $rel, $options)->toString();
   }
 
   /**

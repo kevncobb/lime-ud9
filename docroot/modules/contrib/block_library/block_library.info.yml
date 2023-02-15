@@ -1,14 +1,13 @@
 name: 'Block Library'
 description: 'Adds additional functionality to the core block library.'
 type: module
-core: 8.x
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^9 || ^10
 package: 'Layout Builder'
 dependencies:
   - drupal:layout_builder
   - layout_builder_restrictions:layout_builder_restrictions
 
-# Information added by Drupal.org packaging script on 2021-10-12
-version: '1.0.0-alpha2'
+# Information added by Drupal.org packaging script on 2023-01-30
+version: '1.0.0'
 project: 'block_library'
-datestamp: 1634070832
+datestamp: 1675098223

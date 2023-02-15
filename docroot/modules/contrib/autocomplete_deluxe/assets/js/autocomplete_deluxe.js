@@ -1,30 +1,36 @@
 /**
  * @file:
- * Converts textfield to a autocomplete deluxe widget.
+ * Converts textfield to an Autocomplete Deluxe widget.
  */
 
-(function($, drupalSettings, Sortable) {
+(($, Drupal, once, drupalSettings, Sortable) => {
   Drupal.autocomplete_deluxe = Drupal.autocomplete_deluxe || {};
 
   Drupal.behaviors.autocomplete_deluxe = {
-    attach: function() {
+    attach(context) {
       const autocompleteSettings = drupalSettings.autocomplete_deluxe;
 
-      $("input.autocomplete-deluxe-form")
-        .once("attachAutocompleteDeluxe")
-        .each(function() {
-          if (autocompleteSettings[$(this).attr("id")].multiple === true) {
-            new Drupal.autocomplete_deluxe.MultipleWidget(
-              this,
-              autocompleteSettings[$(this).attr("id")]
-            );
-          } else {
-            new Drupal.autocomplete_deluxe.SingleWidget(
-              autocompleteSettings[$(this).attr("id")]
-            );
-          }
-        });
-    }
+      const $elements = $(
+        once(
+          "attachAutocompleteDeluxe",
+          "input.autocomplete-deluxe-form",
+          context
+        )
+      );
+
+      $elements.each(function () {
+        if (autocompleteSettings[$(this).attr("id")].multiple === true) {
+          new Drupal.autocomplete_deluxe.MultipleWidget(
+            this,
+            autocompleteSettings[$(this).attr("id")]
+          );
+        } else {
+          new Drupal.autocomplete_deluxe.SingleWidget(
+            autocompleteSettings[$(this).attr("id")]
+          );
+        }
+      });
+    },
   };
 
   /**
@@ -141,7 +147,7 @@
    * @param term
    *   A term that should be accepted or not.
    * @return {Boolean}
-   *   True if the term should be accepted.
+   *   true if the term should be accepted.
    */
   Drupal.autocomplete_deluxe.Widget.prototype.acceptTerm = function(term) {
     return true;
@@ -623,4 +629,4 @@
       }
     });
   };
-})(jQuery, drupalSettings, Sortable);
+})(jQuery, Drupal, once, drupalSettings, Sortable);

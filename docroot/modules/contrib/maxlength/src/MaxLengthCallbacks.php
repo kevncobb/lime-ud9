@@ -32,6 +32,7 @@ class MaxLengthCallbacks implements TrustedCallbackInterface {
         $element['#attributes']['class'][] = 'maxlength';
         $element['#attached']['library'][] = 'maxlength/maxlength';
       }
+
       if (isset($element['summary']['#attributes']['data-maxlength']) && $element['summary']['#attributes']['data-maxlength'] > 0) {
         $element['summary']['#attributes']['class'][] = 'maxlength';
         $element['summary']['#attached']['library'][] = 'maxlength/maxlength';

@@ -91,6 +91,7 @@ class SimpleOauthAuthenticationProvider implements AuthenticationProviderInterfa
     $tokens = $this->entityTypeManager->getStorage('oauth2_token')->loadByProperties([
       'value' => $auth_request->get('oauth_access_token_id'),
     ]);
+    /** @var \Drupal\simple_oauth\Entity\Oauth2Token $token */
     $token = reset($tokens);
 
     $account = new TokenAuthUser($token);

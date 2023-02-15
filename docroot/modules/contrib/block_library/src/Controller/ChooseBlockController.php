@@ -31,13 +31,13 @@ class ChooseBlockController extends ChooseBlockControllerBase {
       // Check if block type has icon.
       if ($block_entity && $block_entity->getThirdPartySetting('block_library', 'icon_path')) {
         $icon_path = $block_entity->getThirdPartySetting('block_library', 'icon_path');
-        $icon_url = file_url_transform_relative(file_create_url($icon_path));
+        $icon_url = \Drupal::service('file_url_generator')->generateString($icon_path);
 
         // Add the image to the link title.
         $build['links']['#links'][$key]['title'] = Markup::create('<img src="' . $icon_url . '" class="bl-block-icon" /> ' . '<span class="bl-block-title">' . $link['title'] . '</span>');
 
         // Needed for inline SVG's "currentColor" attribute.
-        if(mime_content_type($icon_path) === "image/svg") {
+        if (mime_content_type($icon_path) === "image/svg") {
           $svg = file_get_contents(DRUPAL_ROOT . '/' . $icon_url);
           $svg = preg_replace(['/<\?xml.*\?>/i', '/<!DOCTYPE((.|\n|\r)*?)">/i'], '', $svg);
           $icon = trim($svg);
@@ -57,4 +57,5 @@ class ChooseBlockController extends ChooseBlockControllerBase {
     $build['#attached']['library'][] = 'block_library/inline_blocks_style';
     return $build;
   }
+
 }

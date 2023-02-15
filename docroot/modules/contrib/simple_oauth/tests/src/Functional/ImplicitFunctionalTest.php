@@ -83,6 +83,9 @@ class ImplicitFunctionalTest extends TokenBearerFunctionalTestBase {
     $assert_session->titleEquals('Grant Access to Client | Drupal');
     $assert_session->buttonExists('Grant');
     $assert_session->responseContains('Permissions');
+    $this->drupalGet($this->authorizeUrl, [
+      'query' => $valid_params,
+    ]);
 
     // 3. Grant access by submitting the form and get the token back.
     $this->submitForm([], 'Grant');

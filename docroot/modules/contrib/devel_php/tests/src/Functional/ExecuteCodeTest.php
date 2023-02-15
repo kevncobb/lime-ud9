@@ -7,6 +7,7 @@ namespace Drupal\Tests\devel_php\Functional;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\Tests\BrowserTestBase;
+use Drupal\user\UserInterface;
 
 /**
  * Tests execute code.
@@ -30,14 +31,37 @@ class ExecuteCodeTest extends BrowserTestBase {
   ];
 
   /**
+   * The test user.
+   *
+   * @var \Drupal\user\UserInterface
+   */
+  protected UserInterface $user;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+
+    // Ensure dump output is parseable by tests assertion methods.
+    $this->config('devel.settings')
+      ->set('devel_dumper', 'default')
+      ->save(TRUE);
+
+    $this->user = $this->drupalCreateUser([
+      'access devel information',
+      'execute php code',
+    ]);
+  }
+
+  /**
    * Tests handle errors.
    */
   public function testHandleErrors(): void {
     $edit = [];
     $url = Url::fromRoute('devel_php.execute_php');
 
-    $user = $this->drupalCreateUser(['execute php code']);
-    $this->drupalLogin($user);
+    $this->drupalLogin($this->user);
     $this->drupalGet($url);
 
     $edit['code'] = 'devel_help()';
@@ -60,12 +84,9 @@ class ExecuteCodeTest extends BrowserTestBase {
     $edit = [];
     $url = Url::fromRoute('devel_php.execute_php');
 
-    $user = $this->drupalCreateUser([
-      'access devel information',
-      'execute php code',
-    ]);
-    $this->drupalLogin($user);
+    $this->drupalLogin($this->user);
     $this->drupalGet($url);
+    $this->assertSession()->pageTextNotContains(\Drupal::VERSION);
 
     $edit['code'] = 'echo \Drupal::VERSION;';
     $this->submitForm($edit, $this->t('Execute'));

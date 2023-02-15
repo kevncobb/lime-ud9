@@ -2,5 +2,5 @@ name: Image Optimize (or ImageAPI Optimize)
 type: module
 package: Image Optimize
 description: 'Define pipelines for image optimization and provide integration with core image styles.'
-core_version_requirement: ^9
+core_version_requirement: ^9 || ^10
 configure: entity.imageapi_optimize_pipeline.collection

@@ -1,7 +1,6 @@
-name: Symfony Mailer Legacy Email Test
+name: Drupal Symfony Mailer Legacy Email Test
 type: module
-package: Mail
+package: Testing
 hidden: true
-core_version_requirement: ^9.1
 dependencies:
   - symfony_mailer:symfony_mailer

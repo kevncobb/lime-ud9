@@ -9,9 +9,9 @@ assets:
     - core/drupal
     - core/drupalSettings
     - core/jquery
-    - core/jquery.once
-    - core/jquery.ui.autocomplete
-    - core/jquery.ui.button
+    - core/once
+    - core/drupal.autocomplete
+    - core/drupal.dialog
     - core/sortable
 
 assets.seven:
@@ -27,5 +27,13 @@ assets.claro:
   css:
     theme:
       assets/css/autocomplete_deluxe.claro.css: {}
+  dependencies:
+    - autocomplete_deluxe/assets
+
+assets.gin:
+  version: VERSION
+  css:
+    theme:
+      assets/css/autocomplete_deluxe.gin.css: {}
   dependencies:
     - autocomplete_deluxe/assets

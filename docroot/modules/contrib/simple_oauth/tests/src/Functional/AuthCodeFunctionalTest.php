@@ -2,10 +2,10 @@
 
 namespace Drupal\Tests\simple_oauth\Functional;
 
+use GuzzleHttp\Psr7\Query;
 use Drupal\Core\Url;
 use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
-use GuzzleHttp\Psr7\Query;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -59,7 +59,7 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
     ]);
     // Add a scope so we can ensure all tests have at least 2 roles. That way we
     // can test dropping a scope and still have at least one scope.
-    $additional_scope = $this->getRandomGenerator()->name(8, TRUE);
+    $additional_scope = $this->randomMachineName();
     Role::create([
       'id' => $additional_scope,
       'label' => $this->getRandomGenerator()->word(5),
@@ -69,7 +69,7 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
     // Add a random scope that is not in the base scopes list to request so we
     // can make extra checks on it.
     $this->extraRole = Role::create([
-      'id' => $this->getRandomGenerator()->name(8, TRUE),
+      'id' => $this->randomMachineName(),
       'label' => $this->getRandomGenerator()->word(5),
       'is_admin' => FALSE,
     ]);
@@ -102,6 +102,9 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
       'query' => $valid_params,
     ]);
     $this->assertGrantForm();
+    $this->drupalGet($this->authorizeUrl, [
+      'query' => $valid_params,
+    ]);
 
     // 3. Grant access by submitting the form and get the code back.
     $this->submitForm([], 'Grant');

@@ -1,6 +1,7 @@
 # Introduction
 
-Maxlength allows site administrators to set hard or soft character limits on titles, text fields and links.
+Maxlength allows site administrators to set hard or soft character 
+limits on titles, text fields and links.
 
 For a full description of the module visit the [Maxlength Project Page](https://www.drupal.org/project/maxlength)
 
@@ -14,7 +15,9 @@ We design improvements and prioritize issues based on our vision and values.
 
 ## Vision
 
-The Maxlength module helps website authors write concisely to better connect with their audiences and adhere to the character limits defined by the site's design.
+The Maxlength module helps website authors write concisely 
+to better connect with their audiences and adhere 
+to the character limits defined by the site's design.
 
 
 ## Values 
@@ -32,7 +35,8 @@ Visit our [Roadmap](https://www.drupal.org/project/maxlength/issues/3259874) to 
 
 ## Reporting Bugs and Requesting Features
 
-* To submit bug reports and feature suggestions, visit https://www.drupal.org/project/issues/maxlength
+* To submit bug reports and feature suggestions, 
+  visit https://www.drupal.org/project/issues/maxlength
 
 
 # Requirements
@@ -42,15 +46,18 @@ This module requires no modules outside of Drupal core.
 
 # Installation
 
-Install the Maxlength module as you would normally install a contributed Drupal module. 
+Install the Maxlength module as you would normally 
+install a contributed Drupal module. 
 Read the [Installing Modules documentation page](https://www.drupal.org/node/1897420) for more information.
 
 
 # Configuration
 
 1. Navigate to Administration > Extend and enable the module.
-2. Navigate to Administration > Structure > Content types [Content type to edit] > Manage form display.
-3. Select the contextual links icon for the desired field and enter the Maxlength. Update and save.
+2. Navigate to Administration > Structure > Content types [Content type to edit] 
+3. Then Navigate to Content types > Manage form display.
+4. Select the contextual links icon for the desired field and enter Maxlength. 
+5. Update and save.
 
 For more information read the [Maxlength Documentation](https://www.drupal.org/docs/contributed-modules/maxlength). 
 
@@ -67,6 +74,7 @@ Supporting organization:
 
 # Credits
 
-Many people have contributed to Maxlength over years. We are grateful to each of them for the work they've put into it.
+Many people have contributed to Maxlength over years. 
+We are grateful to each of them for the work they've put into it.
 
 Read more about the history of Maxlength at the [Credits documentation page](https://www.drupal.org/docs/contributed-modules/maxlength/credits).

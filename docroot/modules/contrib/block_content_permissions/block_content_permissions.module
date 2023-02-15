@@ -93,7 +93,9 @@ function block_content_permissions_views_query_alter(ViewExecutable $view, Query
     // Check if user cannot view restricted block content.
     if (!$account->hasPermission('view restricted block content')) {
       // Get block content types.
-      $allowedBlockContentTypes = \Drupal::entityQuery('block_content_type')->execute();
+      $allowedBlockContentTypes = \Drupal::entityQuery('block_content_type')
+        ->accessCheck(TRUE)
+        ->execute();
 
       // Remove block content types based on user's permissions.
       foreach ($allowedBlockContentTypes as $type) {

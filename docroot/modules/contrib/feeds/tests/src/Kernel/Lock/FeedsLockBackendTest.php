@@ -172,6 +172,9 @@ class FeedsLockBackendTest extends FeedsKernelTestBase {
 
     // Assert that the lock has been extended.
     $this->assertGreaterThanOrEqual($this->getRequestTime() + static::DEFAULT_LOCK_TIMEOUT, $this->getExpireTime($this->lockName));
+
+    // Clear the logged messages so no failure is reported on tear down.
+    $this->logger->clearMessages();
   }
 
   /**
@@ -216,6 +219,9 @@ class FeedsLockBackendTest extends FeedsKernelTestBase {
 
     // Assert that the lock has been extended.
     $this->assertGreaterThanOrEqual($this->getRequestTime() + static::DEFAULT_LOCK_TIMEOUT, $this->getExpireTime($this->lockName));
+
+    // Clear the logged messages so no failure is reported on tear down.
+    $this->logger->clearMessages();
   }
 
   /**
@@ -249,6 +255,9 @@ class FeedsLockBackendTest extends FeedsKernelTestBase {
 
     // Assert that the lock has been extended.
     $this->assertGreaterThan($this->getRequestTime() + 1800, $this->getExpireTime($this->lockName));
+
+    // Clear the logged messages so no failure is reported on tear down.
+    $this->logger->clearMessages();
   }
 
   /**
@@ -260,6 +269,9 @@ class FeedsLockBackendTest extends FeedsKernelTestBase {
   public function testExtendNonExistingLock() {
     // Try to extend a non-existing lock.
     $this->assertFalse($this->lock->extendLock('feeds_feed:123', 1800));
+
+    // Clear the logged messages so no failure is reported on tear down.
+    $this->logger->clearMessages();
   }
 
 }

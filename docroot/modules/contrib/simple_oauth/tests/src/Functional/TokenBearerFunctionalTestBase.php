@@ -101,7 +101,7 @@ abstract class TokenBearerFunctionalTestBase extends BrowserTestBase {
       ->fromOptions(['base_uri' => $this->baseUrl]);
 
     $client_role = Role::create([
-      'id' => $this->getRandomGenerator()->name(8, TRUE),
+      'id' => $this->randomMachineName(),
       'label' => $this->getRandomGenerator()->word(5),
       'is_admin' => FALSE,
     ]);
@@ -110,7 +110,7 @@ abstract class TokenBearerFunctionalTestBase extends BrowserTestBase {
     $this->additionalRoles = [];
     for ($i = 0; $i < mt_rand(1, 3); $i++) {
       $role = Role::create([
-        'id' => $this->getRandomGenerator()->name(8, TRUE),
+        'id' => $this->randomMachineName(),
         'label' => $this->getRandomGenerator()->word(5),
         'is_admin' => FALSE,
       ]);
@@ -118,12 +118,12 @@ abstract class TokenBearerFunctionalTestBase extends BrowserTestBase {
       $this->additionalRoles[] = $role;
     }
 
-    $this->clientSecret = $this->getRandomGenerator()->string();
+    $this->clientSecret = $this->randomString();
 
     $this->client = Consumer::create([
       'owner_id' => '',
-      'label' => $this->getRandomGenerator()->name(),
-      'client_id' => $this->getRandomGenerator()->string(),
+      'label' => $this->randomMachineName(),
+      'client_id' => $this->randomString(),
       'secret' => $this->clientSecret,
       'confidential' => TRUE,
       'third_party' => TRUE,

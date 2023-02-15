@@ -3,7 +3,7 @@
 namespace Drupal\maxlength;
 
 /**
- * The WidgetManagerInterface interface definition.
+ * The widget settings interface definition.
  */
 interface WidgetSettingsInterface {
 
@@ -20,6 +20,9 @@ interface WidgetSettingsInterface {
 
   /**
    * Returns all the settings which are allowed for all the widgets.
+   *
+   * @return array
+   *   An array with all the settings which are allowed.
    */
   public function getAllowedSettingsForAll();
 

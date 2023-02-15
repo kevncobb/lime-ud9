@@ -92,7 +92,7 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
     // Set up a HTTP client that accepts relative URLs.
     $this->httpClient = $this->container->get('http_client_factory')
       ->fromOptions(['base_uri' => $this->baseUrl]);
-    $this->clientSecret = $this->getRandomGenerator()->string();
+    $this->clientSecret = $this->randomString();
     // Create a role 'foo' and add two permissions to it.
     $role = Role::create([
       'id' => 'foo',
@@ -130,9 +130,9 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
     // Create a Consumer.
     $this->client = Consumer::create([
       'owner_id' => 1,
-      'client_id' => $this->getRandomGenerator()->string(),
+      'client_id' => $this->randomString(),
       'user_id' => $this->user->id(),
-      'label' => $this->getRandomGenerator()->name(),
+      'label' => $this->randomMachineName(),
       'secret' => $this->clientSecret,
       'confidential' => TRUE,
       'roles' => [['target_id' => 'oof']],

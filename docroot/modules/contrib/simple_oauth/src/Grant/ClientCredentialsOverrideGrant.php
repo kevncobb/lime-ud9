@@ -63,6 +63,7 @@ class ClientCredentialsOverrideGrant extends ClientCredentialsGrant {
       ->loadByProperties([
         'client_id' => $client->getIdentifier(),
       ]);
+    /** @var \Drupal\consumers\Entity\Consumer $client_drupal_entity */
     $client_drupal_entity = reset($client_drupal_entities);
 
     return $client_drupal_entity

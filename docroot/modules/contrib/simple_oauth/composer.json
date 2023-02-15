@@ -13,12 +13,6 @@
       "phpspec/prophecy-phpunit": "^2"
     },
     "license": "GPL-2.0-or-later",
-    "authors": [
-        {
-            "name": "Mateu Aguiló Bosch",
-            "email": "mateu.aguilo.bosch@gmail.com"
-        }
-    ],
     "extra": {
         "drush": {
             "services": {

@@ -184,13 +184,10 @@ libraries-extend:
 quickedit_stylesheets:
   - ../../../core/themes/claro/css/components/quickedit.css
 
-ckeditor_stylesheets:
-  - ../../../core/themes/claro/css/base/elements.css
-  - ../../../core/themes/claro/css/base/typography.css
-  - ../../../core/themes/claro/css/theme/ckeditor-frame.css
-  - ../../../core/themes/claro/css/classy/components/media-embed-error.css
+ckeditor_stylesheets: false
+ckeditor5-stylesheets: false
 
-# Information added by Drupal.org packaging script on 2022-11-03
-version: '3.0.9'
+# Information added by Drupal.org packaging script on 2023-01-16
+version: '3.0.10'
 project: 'vartheme_claro'
-datestamp: 1667470754
+datestamp: 1673877934

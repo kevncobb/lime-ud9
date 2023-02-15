@@ -75,7 +75,9 @@ class AccessControlHandler implements ContainerInjectionInterface {
    */
   protected function blockContentTypes() {
     if (!$this->blockContentTypes) {
-      $this->blockContentTypes = \Drupal::entityQuery('block_content_type')->execute();
+      $this->blockContentTypes = \Drupal::entityQuery('block_content_type')
+        ->accessCheck(TRUE)
+        ->execute();
     }
     return $this->blockContentTypes;
   }

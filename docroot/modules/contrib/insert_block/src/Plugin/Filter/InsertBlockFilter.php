@@ -6,11 +6,13 @@ use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\Plugin\FilterBase;
 use Drupal\filter\FilterProcessResult;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class InsertBlockFilter.
  *
- * Inserts blocks into the content.
+ * Insert blocks into the content.
  *
  * @package Drupal\insert_block\Plugin\Filter
  *
@@ -18,13 +20,49 @@ use Drupal\filter\FilterProcessResult;
  *   id = "filter_insert_block",
  *   title = @Translation("Insert blocks"),
  *   description = @Translation("Inserts the contents of a block into a node using [block:block-entity-id] tags."),
- *   type = Drupal\filter\Plugin\FilterInterface::TYPE_MARKUP_LANGUAGE,
+ *   type = Drupal\filter\Plugin\FilterInterface::TYPE_TRANSFORM_IRREVERSIBLE,
  *   settings = {
  *     "check_roles" = TRUE
  *   }
  * )
  */
-class InsertBlockFilter extends FilterBase {
+class InsertBlockFilter extends FilterBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * Renderer instance.
+   *
+   * @var \Drupal\Core\Render\Renderer
+   */
+  protected $renderer;
+
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $pluginId, $pluginDefinition) {
+    $instance = new static(
+      $configuration,
+      $pluginId,
+      $pluginDefinition
+    );
+    $instance->entityTypeManager = $container->get('entity_type.manager');
+    $instance->renderer = $container->get('renderer');
+    $instance->currentUser = $container->get('current_user');
+    return $instance;
+  }
 
   /**
    * {@inheritdoc}
@@ -44,8 +82,9 @@ class InsertBlockFilter extends FilterBase {
    */
   public function process($text, $langcode) {
 
+    $result = new FilterProcessResult($text);
+
     if (preg_match_all("/\[block:([^\]]+)+\]/", $text, $match)) {
-      // @todo implement role restrictions.
       $raw_tags = $repl = [];
       foreach ($match[1] as $key => $value) {
         $raw_tags[] = $match[0][$key];
@@ -57,33 +96,61 @@ class InsertBlockFilter extends FilterBase {
           $block_id = $value;
         }
 
-        $replacement = '';
-        // Render blocks in code.
-        if ($block = \Drupal::service('entity_type.manager')
-          ->getStorage('block')
-          ->load($block_id)) {
-          $block_view = \Drupal::service('entity_type.manager')
-            ->getViewBuilder('block')
-            ->view($block);
-          $replacement = \Drupal::service('renderer')->render($block_view);
+        // Render plugin block.
+        if ($block = $this->entityTypeManager->getStorage('block')->load($block_id)) {
+          $type = 'block';
+          // Check visibility.
+          if (!$this->checkVisibility($block->getVisibility())) {
+            continue;
+          }
         }
-        // Render custom blocks.
-        if ($block = \Drupal::service('entity_type.manager')
-          ->getStorage('block_content')
-          ->load($block_id)) {
-          $block_view = \Drupal::service('entity_type.manager')
-            ->getViewBuilder('block_content')
-            ->view($block);
-          $replacement = \Drupal::service('renderer')->render($block_view);
+        // Render content blocks.
+        elseif ($block = $this->entityTypeManager->getStorage('block_content')->load($block_id)) {
+          $type = 'block_content';
+        }
+        if (!isset($type)) {
+          continue;
         }
 
-        $repl[] = $replacement;
+        $block_view = $this->entityTypeManager->getViewBuilder($type)->view($block);
+
+        if (!empty($block_view)) {
+          $repl[] = $this->renderer->render($block_view);
+          $result->addCacheTags($block_view['#cache']['tags'])->addCacheContexts($block_view['#cache']['contexts']);
+        }
       }
-      $text = str_replace($raw_tags, $repl, $text);
+      if (!empty($repl)) {
+        $text = str_replace($raw_tags, $repl, $text);
+      }
     }
+    $result->setProcessedText($text);
 
-    return new FilterProcessResult($text);
+    return $result;
 
+  }
+
+  /**
+   * Check block visibility by role.
+   *
+   * @param array $visibility_settings
+   *   Visibility settings array.
+   *
+   * @return bool
+   *   TRUE if user is allowed to view the block, FALSE otherwise.
+   */
+  protected function checkVisibility(array $visibility_settings): bool {
+    // Check role restrictions.
+    if ($this->settings['check_roles'] && !empty($visibility_settings['user_role'])) {
+      $block_roles = array_values($visibility_settings['user_role']['roles']);
+      $user_roles = $this->currentUser->getRoles();
+      if (!empty(array_intersect($block_roles, $user_roles))) {
+        return TRUE;
+      }
+      else {
+        return FALSE;
+      }
+    }
+    return TRUE;
   }
 
   /**
@@ -91,7 +158,7 @@ class InsertBlockFilter extends FilterBase {
    */
   public function tips($long = FALSE) {
     if ($long) {
-      return $this->t('<a name="filter-insert_block"></a>You may use [block:<em>block_entity_id</em>] tags to display the contents of block. To discover block entity id, visit admin/structure/block and hover over a block\'s configure link and look in your browser\'s status bar. The last "word" you see is the block ID.');
+      return $this->t('<a id="filter-insert_block"></a>You may use [block:<em>block_entity_id</em>] tags to display the contents of block. To discover block entity id, visit admin/structure/block and hover over a block\'s configure link and look in your browser\'s status bar. The last "word" you see is the block ID.');
     }
     else {
       $tips_url = Url::fromRoute("filter.tips_all", [], ['fragment' => 'filter-insert_block']);

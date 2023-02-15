@@ -203,7 +203,7 @@ class PasswordFunctionalTest extends TokenBearerFunctionalTestBase {
     ];
 
     $invalid_payload = $valid_payload;
-    $invalid_payload[$key] = $this->getRandomGenerator()->string(8, TRUE);
+    $invalid_payload[$key] = $this->randomString();
     $response = $this->post($this->url, $invalid_payload);
     $parsed_response = Json::decode((string) $response->getBody());
     $this->assertSame($error, $parsed_response['error'], sprintf('Correct error code %s', $error));
@@ -217,7 +217,7 @@ class PasswordFunctionalTest extends TokenBearerFunctionalTestBase {
     $invalid_payload = [
       'grant_type' => 'password',
       'client_id' => $this->client->getClientId(),
-      'client_secret' => $this->getRandomGenerator()->string(8, TRUE),
+      'client_secret' => $this->randomString(),
       'username' => $this->user->getAccountName(),
       'password' => $this->user->pass_raw,
       'scope' => $this->scope,

@@ -5,9 +5,9 @@ type: module
 dependencies:
   - drupal:block_content
 core: 8.x
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^8 || ^9 || ^10
 
-# Information added by Drupal.org packaging script on 2020-07-05
-version: '8.x-1.10'
+# Information added by Drupal.org packaging script on 2023-01-20
+version: '8.x-1.11'
 project: 'block_content_permissions'
-datestamp: 1593975005
+datestamp: 1674237117

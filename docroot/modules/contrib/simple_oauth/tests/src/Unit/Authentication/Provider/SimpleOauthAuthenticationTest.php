@@ -3,6 +3,7 @@
 namespace Drupal\Tests\simple_oauth\Unit\Authentication\Provider;
 
 use Drupal\Core\Authentication\AuthenticationProviderInterface;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\PageCache\RequestPolicyInterface;
 use Drupal\simple_oauth\Authentication\Provider\SimpleOauthAuthenticationProvider;
@@ -18,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class SimpleOauthAuthenticationTest extends UnitTestCase {
 
+  use ProphecyTrait;
   /**
    * The authentication provider.
    *
@@ -71,7 +73,7 @@ class SimpleOauthAuthenticationTest extends UnitTestCase {
    * Data provider for ::testHasTokenValue.
    */
   public function hasTokenValueProvider(): array {
-    $token = $this->getRandomGenerator()->name();
+    $token = $this->randomMachineName();
     $data = [];
 
     // 1. Authentication header.

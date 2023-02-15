@@ -141,7 +141,7 @@ class ClientCredentialsFunctionalTest extends TokenBearerFunctionalTestBase {
     ];
 
     $invalid_payload = $valid_payload;
-    $invalid_payload[$key] = $this->getRandomGenerator()->string(8, TRUE);
+    $invalid_payload[$key] = $this->randomString();
     $response = $this->post($this->url, $invalid_payload);
     $parsed_response = Json::decode((string) $response->getBody());
     $this->assertSame($error, $parsed_response['error'], sprintf('Correct error code %s', $error));

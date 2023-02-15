@@ -145,7 +145,7 @@ class Oauth2AuthorizeController extends ControllerBase {
         'query' => ['destination' => $destination->toString()],
       ]);
       // Client ID and secret may be passed as Basic Auth. Copy the headers.
-      return RedirectResponse::create($url->toString(), 302, $request->headers->all());
+      return new RedirectResponse($url->toString(), 302, $request->headers->all());
     }
     elseif (!$is_third_party || $this->isKnownClient($client_id, $scopes)) {
       // Login user may skip the grant step if the client is not third party or
@@ -167,7 +167,7 @@ class Oauth2AuthorizeController extends ControllerBase {
       catch (OAuthServerException $exception) {
         $this->messenger()->addError($this->t('Fatal error. Unable to get the authorization server.'));
         watchdog_exception('simple_oauth', $exception);
-        return RedirectResponse::create(Url::fromRoute('<front>')->toString());
+        return new RedirectResponse(Url::fromRoute('<front>')->toString());
       }
       if ($auth_request) {
         $can_grant_codes = $this->currentUser()
@@ -238,7 +238,7 @@ class Oauth2AuthorizeController extends ControllerBase {
     }
 
     // Get the location and return a secure redirect response.
-    return TrustedRedirectResponse::create(
+    return new TrustedRedirectResponse(
       $response->getHeaderLine('location'),
       $response->getStatusCode(),
       $response->getHeaders()
