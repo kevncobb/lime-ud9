@@ -17,6 +17,7 @@ The value and tokens for the field are set within the instance settings with the
 
 An example of when this module could be useful is if you are wanting to combine the output of multiple fields for use in Views, or providing tokens within an additional string like "This page was last updated [node:changed]". This field is then available within the manage display of the entity bundle.
 
+Note: The input field with the default value in the create/edit form is hidden. You can tell whether it is working, as the field value should display once saved. If it doesn't then it is likely that the token couldn't be replaced which is likely because either the token itself isn't available at the time of saving or the token was not added correctly and can't be found.
 
 REQUIREMENTS
 ------------
@@ -37,10 +38,10 @@ information.
 CONFIGURATION
 -------------
 
-* Add a field type of "Field Token Value" to any bundle. Configuration of the field 
+* Add a field type of "Field Token Value" to any bundle. Configuration of the field
   value can be handled in the field settings. A token browser is available for simpler
-  selection of tokens. No field input is displayed on the edit forms, the value is 
-  automatically processed and saved. Display of the field can be handled via the 
+  selection of tokens. No field input is displayed on the edit forms, the value is
+  automatically processed and saved. Display of the field can be handled via the
   display settings for the bundle.
 
 

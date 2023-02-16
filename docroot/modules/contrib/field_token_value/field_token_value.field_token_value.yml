@@ -74,3 +74,7 @@ sup:
   title: sub — Superscript
   summary: The field output will be wrapped in a sup tag
   tag: sup
+no_tag:
+  title: No tag
+  summary: The field output will be rendered without any wrapper
+  tag: ''

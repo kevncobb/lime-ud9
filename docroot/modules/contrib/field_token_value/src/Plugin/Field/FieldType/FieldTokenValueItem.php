@@ -3,9 +3,9 @@
 namespace Drupal\field_token_value\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldItemBase;
-use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\TypedData\DataDefinition;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 
 /**
  * Provides the Field Token Value field type.
@@ -22,7 +22,7 @@ use Drupal\Core\TypedData\DataDefinition;
 class FieldTokenValueItem extends FieldItemBase {
 
   /**
-   * Service for mapping between entity type IDs and token types.
+   * The token entity mapper service.
    *
    * @var \Drupal\token\TokenEntityMapperInterface
    */
@@ -69,9 +69,7 @@ class FieldTokenValueItem extends FieldItemBase {
    */
   public function fieldSettingsForm(array $form, FormStateInterface $form_state) {
     $element = [];
-
-    $entity = $this->getEntity();
-    $entity_type = $entity->getEntityTypeId();
+    $entity_type = $this->getEntity()->getEntityTypeId();
     $token_type = $this->getTokenEntityMapper()->getTokenTypeForEntityType($entity_type);
 
     $element['field_value'] = [
@@ -80,8 +78,8 @@ class FieldTokenValueItem extends FieldItemBase {
       '#title' => $this->t('Field value'),
       '#description' => $this->t('Enter the value for this field. Tokens are automatically replaced upon saving of the node itself.'),
       '#default_value' => $this->getSetting('field_value'),
-      '#element_validate' => array('token_element_validate'),
-      '#token_types' => array($token_type),
+      '#element_validate' => ['token_element_validate'],
+      '#token_types' => [$token_type],
       '#required' => TRUE,
     ];
 
@@ -101,40 +99,16 @@ class FieldTokenValueItem extends FieldItemBase {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function preSave() {
-    $entity = $this->getEntity();
-    $entity_type = $entity->getEntityTypeId();
-    $token_type = $this->getTokenEntityMapper()->getTokenTypeForEntityType($entity_type);
-
-    // Replace the tokens and save as the field value.
-    $token = \Drupal::token();
-    $this->value = $token->replace($this->value,
-      [$token_type => $entity],
-      ['clear' => $this->getSetting('remove_empty')]
-    );
-  }
-
-  /**
-   * Get service for mapping between entity type IDs and token types.
-   *
-   * @see https://www.drupal.org/project/drupal/issues/2053415
+   * Returns the token entity mapper service.
    *
    * @return \Drupal\token\TokenEntityMapperInterface
+   *   The token entity mapper service.
    */
-  protected function getTokenEntityMapper(): \Drupal\token\TokenEntityMapperInterface {
+  protected function getTokenEntityMapper() {
     if (!$this->tokenEntityMapper) {
       $this->tokenEntityMapper = \Drupal::service('token.entity_mapper');
     }
     return $this->tokenEntityMapper;
-  }
-
-  /**
-   * @param \Drupal\token\TokenEntityMapperInterface $tokenEntityMapper
-   */
-  public function setTokenEntityMapper(\Drupal\token\TokenEntityMapperInterface $tokenEntityMapper) {
-    $this->tokenEntityMapper = $tokenEntityMapper;
   }
 
 }

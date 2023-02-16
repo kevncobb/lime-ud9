@@ -9483,28 +9483,28 @@
         },
         {
             "name": "drupal/field_token_value",
-            "version": "2.0.2",
-            "version_normalized": "2.0.2.0",
+            "version": "3.0.1",
+            "version_normalized": "3.0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/field_token_value.git",
-                "reference": "2.0.2"
+                "reference": "3.0.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/field_token_value-2.0.2.zip",
-                "reference": "2.0.2",
-                "shasum": "d0968b4ae5e1efae1813e4b6b287703e50f1aa2b"
+                "url": "https://ftp.drupal.org/files/projects/field_token_value-3.0.1.zip",
+                "reference": "3.0.1",
+                "shasum": "7e5c07c39e5a6afd0b7949ac2c238180b1145af9"
             },
             "require": {
-                "drupal/core": "^8 || ^9",
+                "drupal/core": "^8 || ^9 || ^10",
                 "drupal/token": "*"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "2.0.2",
-                    "datestamp": "1656889656",
+                    "version": "3.0.1",
+                    "datestamp": "1675564648",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
