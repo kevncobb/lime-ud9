@@ -4,7 +4,7 @@ api_version: 1
 # Serve docroot from nested "web" directory
 web_docroot: true
 enforce_https: transitional
-php_version: 7.4
+php_version: 8.1
 database:
   version: 10.4
 drush_version: 10
