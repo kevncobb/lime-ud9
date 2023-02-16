@@ -2,9 +2,9 @@ name: Pantheon Advanced Page Cache Test
 description: 'Used during automated test of Pantheon Advanced Page Cache'
 package: Testing
 type: module
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^9.4 || ^10
 
-# Information added by Drupal.org packaging script on 2022-07-26
-version: '8.x-1.3'
+# Information added by Drupal.org packaging script on 2022-11-28
+version: '2.1.1'
 project: 'pantheon_advanced_page_cache'
-datestamp: 1658872904
+datestamp: 1669644385

@@ -74,18 +74,8 @@ class PrepareLayout implements EventSubscriberInterface {
         if ($layout instanceof Layout) {
           $sections = $layout->getLayout();
           foreach ($sections as $section) {
-            $current_section_array = $section->toArray();
-
-            // Clone section.
-            $cloned_section = new Section(
-                $section->getLayoutId(),
-                $section->getLayoutSettings(),
-                $section->getComponents(),
-                $current_section_array['third_party_settings']
-            );
-
-            // Replace section components with new instances.
-            $deep_cloned_section = $this->cloneAndReplaceSectionComponents($cloned_section);
+            // Deep clone section.
+            $deep_cloned_section = $this->deepCloneSection($section);
 
             // Create a new section.
             $section_storage->appendSection($deep_cloned_section);

@@ -9,3 +9,8 @@ dependencies:
   - drupal:views
   - drupal:facets
 hidden: true
+
+# Information added by Drupal.org packaging script on 2022-12-19
+version: '4.2.10'
+project: 'search_api_solr'
+datestamp: 1671442330

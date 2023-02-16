@@ -135,40 +135,60 @@ trait SectionCloningTrait {
       $value = $entity_field->getValue();
       // Handle Paragraph as special case as it does not support
       // referencedEntities(), check issue #3089724, also it uses revsion id.
-      $this->cloneReferencedParagraphsEntities($field_key, $entity_field, $entity);
+      /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $field_definitions */
+      $field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions($entity->getEntityTypeId(), $entity->bundle());
+      foreach ($field_definitions as $definition) {
+        switch ($definition->getFieldStorageDefinition()->getType()) {
+          case 'entity_reference_revisions':
+            // Support for Entity reference revisions.
+            $this->cloneEntityReferenceRevisions($field_key, $entity_field, $entity);
+            break;
 
-      // The general rule for any entity.
-      if ($entity_field->getName() != 'type' && isset($value[0]['target_id'])) {
-        $target_entity = $entity_field->getDataDefinition()->getTargetEntityTypeId();
-        $referenced_entities = $entity_field->referencedEntities();
-        // Create a duplicate entity reference and replace
-        // the current target ids with the new entites.
-        $new_referenced_target_ids = [];
-        if (
-          in_array($target_entity, $this->getAllowedTypes())
-          && (!$entity_field->getSetting('target_type')
-          || $entity_field->getSetting('target_type') != 'paragraph')) {
-          foreach ($referenced_entities as $entity_reference) {
-            // Skip any items not included in getAllowedTypes method.
-            // such as User, Media, Taxonomy term, Node...etc.
-            if (!in_array($entity_reference->getEntityTypeId(), $this->getAllowedTypes())) {
-              $new_referenced_target_ids[] = ['target_id' => $entity_reference->id()];
-              continue;
+          case 'entity_reference':
+            // Support for Entity reference fields that target inline blocks.
+            $value = $entity_field->getValue();
+            $lang_code = \Drupal::languageManager()->getCurrentLanguage()->getId();
+            if ($definition->getSetting('target_type') == 'block_content') {
+              $referenced_entities = $entity_field->referencedEntities();
+              // Create a duplicate entity reference and replace
+              // the current target ids with the new entites.
+              $new_referenced_target_ids = [];
+              foreach ($referenced_entities as $entity_reference) {
+                // Skip any items not included in getAllowedTypes method.
+                // such as User, Media, Taxonomy term, Node...etc.
+                if (!in_array($entity_reference->getEntityTypeId(), $this->getAllowedTypes())) {
+                  $new_referenced_target_ids[] = ['target_id' => $entity_reference->id()];
+                  continue;
+                }
+
+                $new_entity_reference = $entity_reference->createDuplicate();
+                $new_entity_reference->set("langcode", $lang_code);
+                $new_entity_reference->save();
+                $new_referenced_target_ids[] = ['target_id' => $new_entity_reference->id()];
+                // Recursive call.
+                $this->cloneReferencedEntities($new_entity_reference);
+              }
+
+              if (!empty($new_referenced_target_ids)) {
+                $entity->set($field_key, $new_referenced_target_ids);
+              }
             }
+            elseif (isset($value[0]['entity'])) {
+              $new_value = [];
+              foreach ($value as $key => $item) {
+                if ($item['entity']) {
+                  $new_paragraph_entity = $item['entity']->createDuplicate();
+                  $new_value[$key]['entity'] = $new_paragraph_entity;
+                }
+              }
 
-            $new_entity_reference = $entity_reference->createDuplicate();
-            $new_entity_reference->save();
-            $new_referenced_target_ids[] = ['target_id' => $new_entity_reference->id()];
-            // Recursive call.
-            $this->cloneReferencedEntities($new_entity_reference);
-          }
-        }
-
-        if (!empty($new_referenced_target_ids)) {
-          $entity->set($field_key, $new_referenced_target_ids);
+              if (!empty($new_value)) {
+                $entity->set($field_key, $new_value);
+              }
+            }
+            break;
         }
       }
-
     }
   }
 
@@ -182,20 +202,12 @@ trait SectionCloningTrait {
    * @param object $entity
    *   The original entity object.
    */
-  protected function cloneReferencedParagraphsEntities($field_key, $entity_field, &$entity) {
+  protected function cloneEntityReferenceRevisions($field_key, $entity_field, &$entity) {
     $value = $entity_field->getValue();
     $new_value = [];
-    // Paragraphs Classic, EXPERIMENTAL and IEF - simple form mode structure.
-    if (isset($value[0]['entity'])) {
-      foreach ($value as $key => $item) {
-        if ($item['entity']) {
-          $new_paragraph_entity = $item['entity']->createDuplicate();
-          $new_value[$key]['entity'] = $new_paragraph_entity;
-        }
-      }
-    }
-    // IEF - complex form mode structure.
-    elseif (
+    $lang_code = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    // IEF - complex form mode structure with Pargraph.
+    if (
       $entity_field->getName() != 'type'
       && isset($value[0]['target_id'])
       && $entity_field->getSetting('target_type') == 'paragraph'
@@ -203,10 +215,27 @@ trait SectionCloningTrait {
       foreach ($value as $key => $item) {
         $paragraph = \Drupal::entityTypeManager()->getStorage('paragraph')->load($value[$key]['target_id']);
         $new_paragraph = $paragraph->createDuplicate();
+        $new_paragraph->set("langcode", $lang_code);
         // It's important to save the entity in the IEF - complex case.
         $new_paragraph->save();
         $new_value[$key]['target_id'] = $new_paragraph->id();
         $new_value[$key]['target_revision_id'] = $new_paragraph->getRevisionId();
+      }
+    }
+    // IEF - complex form mode structure with Block content.
+    elseif (
+      $entity_field->getName() != 'type'
+      && isset($value[0]['target_id'])
+      && $entity_field->getSetting('target_type') == 'block_content'
+    ) {
+      foreach ($value as $key => $item) {
+        $block_content = \Drupal::entityTypeManager()->getStorage('block_content')->load($value[$key]['target_id']);
+        $new_block_content = $block_content->createDuplicate();
+        $new_block_content->set("langcode", $lang_code);
+        // It's important to save the entity in the IEF - complex case.
+        $new_block_content->save();
+        $new_value[$key]['target_id'] = $new_block_content->id();
+        $new_value[$key]['target_revision_id'] = $new_block_content->getRevisionId();
       }
     }
 

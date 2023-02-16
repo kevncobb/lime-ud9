@@ -3,7 +3,7 @@
 namespace Drupal\pantheon_advanced_page_cache_test\EventSubscriber;
 
 use Drupal\Core\Cache\CacheableResponseInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -15,12 +15,19 @@ class CacheableResponseSubscriber implements EventSubscriberInterface {
   /**
    * Adds Surrogate-Key header to cacheable master responses.
    *
-   * @param \Symfony\Component\HttpKernel\Event\FilterResponseEvent $event
+   * @param \Symfony\Component\HttpKernel\Event\ResponseEvent $event
    *   The event to process.
    */
-  public function onRespond(FilterResponseEvent $event) {
-    if (!$event->isMasterRequest()) {
-      return;
+  public function onRespond(ResponseEvent $event) {
+    if (method_exists($event, 'isMainRequest')) {
+      if (!$event->isMainRequest()) {
+        return;
+      }
+    }
+    else {
+      if (!$event->isMasterRequest()) {
+        return;
+      }
     }
 
     $response = $event->getResponse();
