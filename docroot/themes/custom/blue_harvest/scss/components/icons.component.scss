@@ -26,3 +26,12 @@
   width: $font-size-base;
   height: $font-size-base;
 }
+.circle-image {
+  img {
+    border-radius: 50%;
+    height: auto;
+    display: block;
+    margin: 0 auto 0.5em;
+    position: static;
+  }
+}

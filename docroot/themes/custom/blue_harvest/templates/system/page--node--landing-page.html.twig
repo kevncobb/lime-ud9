@@ -132,7 +132,7 @@
 {# Main #}
 {% block main %}
   <div role="main" class="main-container
-    {{ container }} js-quickedit-main-content">
+{{ container }} js-quickedit-main-content">
     <div class="row">
 
       {# Header #}
@@ -210,13 +210,7 @@
     </div>
   </div>
 {% endblock %}
-<div class="lc-footer">
-  <div class="lc-footer-layer" data-speed="-2" id="layer2"></div>
-  <div class="lc-footer-layer" data-speed="10" id="layer3"></div>
-  <div class="lc-footer-layer" data-speed="17" id="layer4"></div>
-  <div class="lc-footer-layer" data-speed="25" id="layer5"></div>
-  <img alt="campus skyline" id="mobileLayer" src="/themes/custom/limestone/images/lc-footer-background.png">
-</div>
+
 {% if page.footer %}
   {% block footer %}
     <div class="footer-wrapper">

@@ -32,6 +32,22 @@ p + div.media.media--type-file {
   margin-top: -1rem;
 }
 
+.mw-200 {
+  max-width: 200px;
+}
+
+.mw-300 {
+  max-width: 300px;
+}
+
+.mw-400 {
+  max-width: 400px;
+}
+
+.mw-500 {
+  max-width: 500px;
+}
+
 .mw-600 {
   max-width: 600px;
 }
@@ -72,6 +88,10 @@ p + div.media.media--type-file {
   max-height: 1000px;
 }
 
+.overflow-hidden {
+  overflow: hidden;
+}
+
 .centered {
   margin-right: auto !important;
   margin-left: auto !important;
@@ -89,6 +109,22 @@ p + div.media.media--type-file {
   text-transform: uppercase;
 }
 
+pre.sms {
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+  word-break: break-word;
+  color: white;
+  background-color: #058bfb;
+  font-size: 0.9rem;
+}
+
+pre.sms a {
+  color: white;
+}
+
 .bg-white {
   background-color: white;
 }
@@ -102,13 +138,65 @@ p + div.media.media--type-file {
   color: white;
 }
 
+.bg-blue a:focus,
+.bg-blue a:hover {
+  text-decoration: underline;
+  color: white;
+}
+
+.bg-blue .typography a {
+  color: #fbea65;
+  border-bottom: thin solid #fbea65;
+}
+
+.bg-blue .typography a:focus,
+.bg-blue .typography a:hover {
+  color: white;
+  border-bottom: thin solid white;
+}
+
 .bg-light {
   background-color: #e4e4e0;
 }
 
-.bg-dark {
+.bg-secondary {
   color: white;
-  background-color: #2c3e50;
+}
+
+.bg-dark {
+  color: white !important;
+  background-color: #343a40;
+}
+
+.bg-dark a {
+  color: #fbea65;
+  border-bottom: 2px solid #fbea65;
+}
+
+.bg-dark a:focus,
+.bg-dark a:hover {
+  text-decoration: none;
+  color: white;
+}
+
+.bg-dark .typography a {
+  color: #fbea65;
+  border-bottom: thin solid #fbea65;
+}
+
+.bg-dark .typography a:focus,
+.bg-dark .typography a:hover {
+  color: white;
+  border-bottom: thin solid white;
+}
+
+.bg-dark .a2a_kit a,
+.bg-dark .field--name-field-blog-categories a {
+  border-bottom: none;
+}
+
+.bg-dark .block-system-breadcrumb-block ol.breadcrumb {
+  background-color: #343a40;
 }
 
 .bg-darken::after {
@@ -145,6 +233,11 @@ p + div.media.media--type-file {
 
 .p-absolute {
   position: absolute;
+}
+
+.navbar-brand {
+  display: block;
+  max-width: 400px;
 }
 
 .navbar-dark .navbar-nav .nav-link {
@@ -387,11 +480,16 @@ button.moderation-sidebar-link[value="Reject Review"] {
 }
 
 .typography a.btn.btn-warning {
-  color: inherit;
+  color: #212529;
 }
 
 .typography p {
   margin: 34px 0;
+}
+
+.typography p + pre {
+  margin-top: -20px;
+  margin-bottom: 0;
 }
 
 .typography h2,
@@ -408,4 +506,60 @@ button.moderation-sidebar-link[value="Reject Review"] {
 .typography h5 + *,
 .typography h6 + * {
   margin-top: 0;
+}
+
+.typography .bg-blue a {
+  color: #fbea65 !important;
+  border-bottom: 2px solid #fbea65 !important;
+}
+
+.wrapper {
+  max-width: 700px;
+  margin: auto;
+  padding: 1.5rem;
+}
+
+@media screen and (min-width: 768px) {
+  .wrapper {
+    padding: 0;
+  }
+}
+
+.wide-wrapper {
+  max-width: 1080px;
+  margin: auto;
+  padding: 1.5rem;
+}
+
+@media screen and (min-width: 768px) {
+  .wide-wrapper {
+    padding: 0;
+  }
+}
+
+.quote {
+  margin-left: 0;
+  padding: 1.5rem 1.5rem 1.5rem 0;
+  color: #0c2f7a;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+@media screen and (min-width: 768px) {
+  .quote {
+    float: right;
+    width: 50%;
+    margin: 0 -3rem 0 0rem !important;
+    padding: 0rem 0rem 3rem 3rem;
+    text-align: right;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .text,
+  .headline {
+    margin-left: 150px;
+  }
 }

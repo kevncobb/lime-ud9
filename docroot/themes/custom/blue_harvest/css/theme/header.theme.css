@@ -7,6 +7,30 @@
 }
 
 /* Insert your blue_harvest header custom SASS styling. */
-header.navbar.bg-blue {
-  background: #0038a5;
+header.navbar {
+  padding: 0 30px !important;
+}
+
+@media screen and (min-width: 768px) {
+  header.navbar {
+    padding: inherit !important;
+  }
+}
+
+.navbar-nav .dropdown-menu .dropdown-item.active > a,
+.navbar-nav .dropdown-menu .dropdown-item:active > a {
+  color: #fff !important;
+}
+
+.navbar-light .navbar-nav ul.dropdown-menu li.active > a.active {
+  color: #fff !important;
+}
+
+header.bg-blue .nav-item > a:hover,
+header.bg-blue .nav-item > a:focus {
+  color: #fbea65;
+}
+
+header.bg-blue .navbar-toggler .navbar-toggler-icon {
+  background-image: url("/themes/custom/blue_harvest/images/icons/menu-toggle-shield.svg");
 }

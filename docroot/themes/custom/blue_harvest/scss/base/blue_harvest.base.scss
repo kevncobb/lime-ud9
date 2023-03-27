@@ -25,6 +25,18 @@ P + div.media.media--type-file {
   margin-top: -1rem;
 }
 
+.mw-200 {
+  max-width: 200px;
+}
+.mw-300 {
+   max-width: 300px;
+ }
+.mw-400 {
+    max-width: 400px;
+  }
+.mw-500 {
+  max-width: 500px;
+}
 .mw-600 {
   max-width: 600px;
 }
@@ -55,6 +67,9 @@ P + div.media.media--type-file {
 .mh-1000 {
   max-height: 1000px;
 }
+.overflow-hidden {
+  overflow: hidden;
+}
 .centered {
   margin-right: auto !important;
   margin-left: auto !important;
@@ -68,6 +83,20 @@ P + div.media.media--type-file {
 .caps {
   text-transform: uppercase;
 }
+pre.sms {
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+  word-break: break-word;
+  background-color: #058bfb;
+  color: white;
+  a {
+    color: white;
+  }
+}
 .bg-white {
   background-color: white;
 }
@@ -76,14 +105,57 @@ P + div.media.media--type-file {
   color: white;
   a {
     color: white;
+    &:focus, &:hover {
+      text-decoration: underline;
+      color: white;
+    }
+  }
+  .typography {
+    a {
+      color: $yellow;
+      border-bottom: thin solid $yellow;
+      &:focus, &:hover {
+        color: white;
+        border-bottom: thin solid white;
+      }
+    }
   }
 }
 .bg-light {
   background-color: #e4e4e0;
 }
-.bg-dark {
-  background-color: #2c3e50;
+.bg-secondary {
   color: white;
+}
+.bg-dark {
+  background-color: #343a40;
+  color: white !important;
+  a {
+    color: $yellow;
+    border-bottom: 2px solid $yellow;
+    &:focus, &:hover {
+      text-decoration: none;
+      color: white;
+    }
+  }
+  .typography {
+    a {
+      color: $yellow;
+      border-bottom: thin solid $yellow;
+      &:focus, &:hover {
+        color: white;
+        border-bottom: thin solid white;
+      }
+    }
+  }
+  .a2a_kit a, .field--name-field-blog-categories a {
+    border-bottom: none;
+  }
+  .block-system-breadcrumb-block {
+    ol.breadcrumb {
+      background-color: #343a40;
+    }
+  }
 }
 .bg-darken {
   &::after {
@@ -117,7 +189,10 @@ P + div.media.media--type-file {
 
 
 // Navbar Styling
-
+.navbar-brand {
+  display: block;
+  max-width: 400px;
+}
 .navbar-dark .navbar-nav .nav-link {
   color: rgba(255,255,255,0.7);
   &:focus, &:hover {
@@ -338,12 +413,17 @@ button.moderation-sidebar-link[value="Reject Review"] {
       border: none;
       color: white;
       &.btn-warning {
-        color: inherit;
+        color: #212529;
       }
     }
   }
+
   p {
     margin: 34px 0;
+  }
+  p + pre {
+    margin-bottom: 0px;
+    margin-top: -20px;
   }
   h2, h3, h4, h5, h6 {
     margin: 40px 0 20px;
@@ -354,5 +434,52 @@ button.moderation-sidebar-link[value="Reject Review"] {
   }
   &:first-child h2:first-child {
     //margin-top: 25px;
+  }
+  .bg-blue {
+    a {
+      color: #fbea65 !important;
+      border-bottom: 2px solid #fbea65 !important;
+    }
+  }
+}
+.wrapper {
+  max-width: 700px;
+  margin: auto;
+  padding: 1.5rem;
+  @media screen and (min-width: 768px) {
+    padding: 0;
+  }
+}
+.wide-wrapper {
+  max-width: 1080px;
+  margin: auto;
+  padding: 1.5rem;
+  @media screen and (min-width: 768px) {
+    padding: 0;
+  }
+}
+
+.quote {
+  padding: 1.5rem 1.5rem 1.5rem 0;
+  margin-left: 0;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  font-weight: 700;
+  font-style: italic;
+  color: #0c2f7a;
+  @media screen and (min-width: 768px) {
+    margin: 0 -3rem 0 0rem !important;
+    width: 50%;
+    float: right;
+    text-align: right;
+    padding: 0rem 0rem 3rem 3rem;
+  }
+}
+
+
+.text,
+.headline {
+  @media screen and (min-width: 768px) {
+    margin-left: 150px;
   }
 }

@@ -240,7 +240,7 @@ body.full-nav .home_pillars_background {
 @media screen and (min-width: 980px) {
   .home_pillars_sections {
     width: calc(100% + 140px);
-    padding-top: 200px;
+    padding-top: 300px;
     position: relative;
     -webkit-transition: -webkit-transform 0.75s cubic-bezier(0.455, 0.03, 0.515, 0.955);
     transition: -webkit-transform 0.75s cubic-bezier(0.455, 0.03, 0.515, 0.955);
@@ -792,6 +792,10 @@ body.full-nav .home_pillars_background {
 .mobile_video_cta_link {
   position: relative;
   margin-left: -30px;
+  text-align: right;
+  @media screen and (min-width: 980px) {
+
+  }
 }
 
 .mobile_video_cta_link:hover .mobile_video_cta_label:after {

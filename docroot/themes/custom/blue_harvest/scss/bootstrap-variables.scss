@@ -23,27 +23,7 @@ $gray-700: #495057 !default;
 $gray-800: #343a40 !default;
 $gray-900: #212529 !default;
 $black:    #000 !default;
-$almost-black: #222;
-$light-gray: #e9ecef;
-$dark-gray: $gray-700;
 
-$limestone-blue: #0038a5;
-$primary-color: $limestone-blue;
-$limestone-blue-body: #2556a3;
-$limestone-light-blue: #1358de;
-$dark-blue: #0c173d;
-$limestone-yellow: #fbea65;
-
-$category: #ccb60f;
-$orange: #ec8a22;
-$red: #a84026;
-$twitter-blue: #0d91e2;
-$teal: #007390;
-$purple: #5c4973;
-$success-color: #759f29;
-$secondary-color: #767676;
-$warning-color: #ffef86;
-$alert-color: #cc4b37;
 $grays: () !default;
 // stylelint-disable-next-line scss/dollar-variable-default
 $grays: map-merge(
@@ -230,8 +210,7 @@ $grid-breakpoints: (
   sm: 576px,
   md: 768px,
   lg: 992px,
-  xl: 1200px,
-  xxl: 1600px
+  xl: 1200px
 ) !default;
 
 @include _assert-ascending($grid-breakpoints, "$grid-breakpoints");
@@ -246,7 +225,7 @@ $container-max-widths: (
   sm: 540px,
   md: 768px,
   lg: 960px,
-  xl: 1240px
+  xl: 1140px
 ) !default;
 
 @include _assert-ascending($container-max-widths, "$container-max-widths");
@@ -312,13 +291,6 @@ $embed-responsive-aspect-ratios: join(
 $font-family-sans-serif:      futura-pt, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
 $font-family-monospace:       SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
 $font-family-base:            $font-family-sans-serif !default;
-$header-font-family: futura-pt-bold, sans-serif;
-$menu-font-family: 'mr-eaves-xl-modern-narrow', "Arial", sans-serif;
-$site-header-font-family: 'futura-pt', "Arial Narrow", sans-serif;
-$body-font-family: $font-family-base;
-
-
-
 // stylelint-enable value-keyword-case
 
 $font-size-base:              1.1rem !default; // Assumes the browser default, typically `16px`

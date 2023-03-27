@@ -14,9 +14,11 @@
     .navbar-nav {
       &.ml#{$infix}-auto {
         .dropdown-menu {
-          left: auto;
-          right: 0;
-          transform: translateX(33%);
+          @media screen and (min-width: 768px) {
+            left: auto;
+            right: 50%;
+            transform: translateX(50%);
+          }
         }
       }
     }
@@ -57,7 +59,7 @@
         border: none;
       }
       &:focus, &:hover {
-        color: $blue;
+        //color: $blue;
         &::after {
           width: 100% !important;
         }
@@ -65,3 +67,4 @@
     }
   }
 }
+

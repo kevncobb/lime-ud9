@@ -19,7 +19,7 @@
 }
 
 .password-strength__indicator.is-weak {
-  background-color: #a84026;
+  background-color: #dc3545;
 }
 
 .password-strength__indicator.is-fair {
@@ -72,7 +72,7 @@
 }
 
 .password-confirm .error {
-  color: #a84026;
+  color: #dc3545;
   font-weight: bold;
 }
 

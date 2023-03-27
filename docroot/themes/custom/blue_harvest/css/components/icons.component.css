@@ -26,3 +26,11 @@
   text-indent: -9999px;
   background: url(../../images/feed.svg) no-repeat;
 }
+
+.circle-image img {
+  position: static;
+  display: block;
+  height: auto;
+  margin: 0 auto 0.5em;
+  border-radius: 50%;
+}

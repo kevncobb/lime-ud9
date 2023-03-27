@@ -16643,8 +16643,7 @@
                         "Issue #2741877: Nested modals don't work: opening a modal from a modal closes the original": "https://www.drupal.org/files/issues/2021-04-29/2741877-77.patch",
                         "Issue #3165435: Fix tour <front> route as route name when a selected node had been set as the front page for the site": "https://www.drupal.org/files/issues/2020-08-16/3165435-2.patch",
                         "Issue #3226791: Fix Validation error saving untranslatable Media reference field": "https://www.drupal.org/files/issues/2021-08-04/media_required_validation-3226791-2.patch",
-                        "Issue #3059955: It is possible to overflow the number of items allowed in Media Library": "https://www.drupal.org/files/issues/2020-11-16/3059955-107.patch",
-                        "Issue #3053881: Reverting entity revisions that contain custom blocks erroneously triggers EntityChangedConstraint": "https://www.drupal.org/files/issues/2021-10-29/3053881-60.patch"
+                        "Issue #3059955: It is possible to overflow the number of items allowed in Media Library": "https://www.drupal.org/files/issues/2020-11-16/3059955-107.patch"
                     },
                     "drupal/default_content": {
                         "Issue #3160146: Add Layout Builder Normalizer and Denormalize": "https://www.drupal.org/files/issues/2021-04-07/3160146-37.patch"

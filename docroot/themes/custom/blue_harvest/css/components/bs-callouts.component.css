@@ -41,11 +41,11 @@
 }
 
 .bs-callout-danger {
-  border-left-color: #a84026;
+  border-left-color: #dc3545;
 }
 
 .bs-callout-danger h4 {
-  color: #a84026;
+  color: #dc3545;
 }
 
 .bs-callout-warning {
@@ -70,7 +70,7 @@
 }
 
 [dir="rtl"] .bs-callout-danger {
-  border-right-color: #a84026;
+  border-right-color: #dc3545;
   border-left-color: #e9ecef;
 }
 

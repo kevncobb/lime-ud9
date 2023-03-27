@@ -159,6 +159,7 @@
 @media screen and (min-width: 500px) {
   .topic_block_header_link {
     position: absolute;
+    z-index: 1;
     bottom: 0;
     left: 50%;
     -webkit-transform: translate(-50%, 50%);
