@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * @file
+ * Layout Builder Save And Edit module file.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\layout_builder\Form\DefaultsEntityForm;
+use Drupal\layout_builder\Form\OverridesEntityForm;
+
+/**
+ * Implements hook_form_alter().
+ */
+function layout_builder_save_and_edit_form_alter(&$form, FormStateInterface $form_state) {
+  $form_object = $form_state->getFormObject();
+  if ($form_object instanceof DefaultsEntityForm || $form_object instanceof OverridesEntityForm) {
+    $form['#submit'][] = 'layout_builder_save_and_edit_layout_submit_handler';
+    $form['actions']['layout_builder_save_and_edit_layout'] = $form['actions']['submit'];
+    $form['actions']['layout_builder_save_and_edit_layout']['#value'] = t('Save and edit layout');
+    \Drupal::request()->query->remove('destination');
+    $form['actions']['layout_builder_save_and_edit_layout']['#submit'][] = 'layout_builder_save_and_edit_layout_submit_handler';
+  }
+}
+
+/**
+ * Submit callback to set the redirect for layout builder save and edit.
+ */
+function layout_builder_save_and_edit_layout_submit_handler(array &$form, FormStateInterface $form_state) {
+  $trigger = $form_state->getTriggeringElement();
+  if (isset($trigger['#id']) && $trigger['#id'] == 'edit-layout-builder-save-and-edit-layout') {
+    $current_path = \Drupal::service('path.current')->getPath();
+    $form_state->setRedirectUrl(Url::fromUserInput($current_path));
+  }
+}
