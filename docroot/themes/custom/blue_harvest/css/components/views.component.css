@@ -12,7 +12,7 @@
 
 .views-displays .tabs .open > a:hover,
 .views-displays .tabs .open > a:focus {
-  color: #0038a5;
+  color: #003c71;
 }
 
 .views-displays .tabs .action-list {
@@ -28,10 +28,10 @@
 }
 
 .views-ui-display-tab-actions .dropbutton .form-submit {
-  color: #001e59;
+  color: #001325;
 }
 
 .views-ui-display-tab-actions .dropbutton .form-submit:hover,
 .views-ui-display-tab-actions .dropbutton .form-submit:focus {
-  color: #0038a5;
+  color: #003c71;
 }

@@ -122,7 +122,7 @@
   letter-spacing: 0.0625rem;
   text-transform: uppercase;
   color: #fff;
-  background: #0038a5;
+  background: #003c71;
   font-size: 14px;
   font-size: 0.875rem;
   font-weight: 700;
@@ -261,7 +261,7 @@
   letter-spacing: 0.0625rem;
   text-transform: uppercase;
   color: #fff;
-  background: #0038a5;
+  background: #003c71;
   font-size: 14px;
   font-size: 0.875rem;
   font-weight: 700;
@@ -282,11 +282,11 @@
 }
 
 .bar_graph.color_blue .bar_graph_value {
-  background: #0038a5;
+  background: #003c71;
 }
 
 .bar_graph.color_blue .bar_graph_value_label.small_value {
-  color: #0038a5;
+  color: #003c71;
 }
 
 .bar_graph.color_green .bar_graph_button_link {

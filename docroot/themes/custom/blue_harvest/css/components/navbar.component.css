@@ -112,7 +112,7 @@
     -o-transition: width 0.325s ease;
     transition: width 0.325s ease;
     border: none;
-    background: #0038a5;
+    background: #003c71;
   }
   .nav-item .nav-link:focus::after,
   .nav-item .nav-link:hover::after {

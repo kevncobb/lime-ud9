@@ -101,7 +101,7 @@
 }
 
 .file > span {
-  color: #0038a5;
+  color: #003c71;
   border-top: 1px solid #ced4da;
   border-bottom: 1px solid #ced4da;
   background: #fff;
@@ -120,7 +120,7 @@
   display: table-cell;
   padding: 0 1em;
   vertical-align: middle;
-  color: #0038a5;
+  color: #003c71;
   border-left: 1px solid inherit;
   border-radius: 0;
   background: inherit;

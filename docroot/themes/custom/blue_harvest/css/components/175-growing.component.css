@@ -46,7 +46,7 @@
   -webkit-transform: skew(0deg, 70deg);
   -o-transform: skew(0deg, 70deg);
   transform: skew(0deg, 70deg);
-  background: rgba(0, 56, 165, 0.4);
+  background: rgba(0, 60, 113, 0.4);
 }
 
 .pillars-custom.column-one-active::before {
@@ -184,7 +184,7 @@ body.full-nav .home_pillars_background {
     clip-path: none;
   }
   .no-js #pillars-custom {
-    background: #0038a5;
+    background: #003c71;
   }
 }
 
@@ -864,7 +864,7 @@ body.full-nav .home_pillars_background {
   transform: translate3d(-99vw, -50%, 0);
   opacity: 0.8;
   background: rgba(75, 46, 132, 0.9);
-  background: transparent url("/themes/custom/blue_harvest/images/pillars_bg.svg") no-repeat;
+  background: transparent url("/themes/custom/blue_harvest/images/pillars_bg2.svg") no-repeat;
   background-position: right center;
   -webkit-background-size: cover;
   background-size: cover;

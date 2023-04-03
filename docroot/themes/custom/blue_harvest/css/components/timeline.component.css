@@ -92,7 +92,7 @@
   display: none;
   width: 6px;
   height: calc(100% + 140px);
-  background: #0038a5;
+  background: #003c71;
   background: -webkit-gradient(linear, left bottom, left top, from(rgba(0, 56, 165, 0)), color-stop(5%, #0038a5), color-stop(95%, #0038a5), to(rgba(0, 56, 165, 0)));
   background: -webkit-linear-gradient(bottom, rgba(0, 56, 165, 0) 0%, #0038a5 5%, #0038a5 95%, rgba(0, 56, 165, 0) 100%);
   background: -o-linear-gradient(bottom, rgba(0, 56, 165, 0) 0%, #0038a5 5%, #0038a5 95%, rgba(0, 56, 165, 0) 100%);

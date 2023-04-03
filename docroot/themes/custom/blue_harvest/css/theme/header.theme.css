@@ -26,11 +26,11 @@ header.navbar {
   color: #fff !important;
 }
 
-header.bg-blue .nav-item > a:hover,
-header.bg-blue .nav-item > a:focus {
+header.navbar-expand-md .nav-item > a:hover,
+header.navbar-expand-md .nav-item > a:focus {
   color: #fbea65;
 }
 
-header.bg-blue .navbar-toggler .navbar-toggler-icon {
+header.navbar-expand-md .navbar-toggler .navbar-toggler-icon {
   background-image: url("/themes/custom/blue_harvest/images/icons/menu-toggle-shield.svg");
 }

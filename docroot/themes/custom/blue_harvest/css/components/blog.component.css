@@ -136,7 +136,7 @@
   letter-spacing: 0.0625rem;
   text-transform: uppercase;
   color: #fff;
-  background: #0038a5;
+  background: #003c71;
   font-size: 14px;
   font-size: 0.875rem;
   font-weight: 700;
@@ -324,7 +324,7 @@
   letter-spacing: 1px;
   letter-spacing: 0.0625rem;
   text-transform: uppercase;
-  color: #0038a5;
+  color: #003c71;
   font-size: 14px;
   font-size: 0.875rem;
   font-size: 12px;
@@ -368,7 +368,7 @@
   -webkit-transform: skew(25deg);
   -o-transform: skew(25deg);
   transform: skew(25deg);
-  background: #0038a5;
+  background: #003c71;
 }
 
 .topic_tags a:hover:after {
@@ -385,7 +385,7 @@
 
 .topic_title {
   margin: 0;
-  color: #0038a5;
+  color: #003c71;
   font-size: 22px;
   font-size: 1.375rem;
   font-weight: 900;
@@ -441,7 +441,7 @@
   letter-spacing: 0.0625rem;
   text-transform: uppercase;
   color: #fff;
-  background: #0038a5;
+  background: #003c71;
   font-size: 14px;
   font-size: 0.875rem;
   font-weight: 700;
@@ -476,7 +476,7 @@
 
 .blog-featured .topic_row_inner {
   color: white;
-  background-color: #0038a5;
+  background-color: #003c71;
 }
 
 .blog-featured .topic_tags a:after {
@@ -518,7 +518,7 @@
   margin-right: -50vw !important;
   margin-left: -50vw !important;
   color: white;
-  background-color: #0038a5;
+  background-color: #003c71;
 }
 
 .blog-header .vlb-section-header {

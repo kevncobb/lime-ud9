@@ -131,7 +131,7 @@ pre.sms a {
 
 .bg-blue {
   color: white;
-  background-color: #0038a5;
+  background-color: #003c71;
 }
 
 .bg-blue a {
@@ -157,6 +157,10 @@ pre.sms a {
 
 .bg-light {
   background-color: #e4e4e0;
+}
+
+.bg-light-tan {
+  background-color: #eee8c5;
 }
 
 .bg-secondary {
@@ -288,7 +292,7 @@ h1.title {
   padding: 15px;
   text-transform: uppercase;
   color: white;
-  background: #0038a5;
+  background: #003c71;
   font-weight: 100;
 }
 
@@ -464,14 +468,14 @@ button.moderation-sidebar-link[value="Reject Review"] {
   -o-transition: color 0.25s;
   transition: color 0.25s;
   color: #222;
-  border-bottom: 2px solid #0038a5;
+  border-bottom: 2px solid #003c71;
   font-weight: 400;
 }
 
 .typography a:focus,
 .typography a:hover {
   text-decoration: none;
-  color: #0038a5;
+  color: #003c71;
 }
 
 .typography a.btn {
