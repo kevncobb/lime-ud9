@@ -24,7 +24,7 @@
   position: relative;
   z-index: 1;
   padding-top: 80px;
-  background: rgba(0, 175, 215, 0.65);
+  background: rgba(0, 160, 223, 0.65);
 
   -webkit-clip-path: polygon(0 60px, 100% 0, 100% 100%, 0% 100%);
   clip-path: polygon(0 60px, 100% 0, 100% 100%, 0% 100%);
@@ -59,7 +59,7 @@
 }
 
 .pillar_header_content.theme_yellow {
-  background: rgba(255, 217, 0, 0.65);
+  background: rgba(194, 174, 54, 0.65);
 }
 
 .pillar_header_content.theme_black {
