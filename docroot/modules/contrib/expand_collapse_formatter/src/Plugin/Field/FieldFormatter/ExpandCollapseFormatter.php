@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains the ExpandCollapseFormatter class.
- */
 
 namespace Drupal\expand_collapse_formatter\Plugin\Field\FieldFormatter;
 
@@ -26,17 +22,18 @@ use Drupal\Core\Form\FormStateInterface;
  * )
  */
 class ExpandCollapseFormatter extends FormatterBase {
+
   /**
    * {@inheritdoc}
    */
   public static function defaultSettings() {
     return [
-        'trim_length' => 300,
-        'default_state' => 'collapsed',
-        'link_text_open' => 'Show more',
-        'link_text_close' => 'Show less',
-        'link_class_open' => 'ecf-open',
-        'link_class_close' => 'ecf-close',
+      'trim_length' => 300,
+      'default_state' => 'collapsed',
+      'link_text_open' => 'Show more',
+      'link_text_close' => 'Show less',
+      'link_class_open' => 'ecf-open',
+      'link_class_close' => 'ecf-close',
     ] + parent::defaultSettings();
   }
 
@@ -73,7 +70,7 @@ class ExpandCollapseFormatter extends FormatterBase {
     ];
 
     $element['link_text_close'] = [
-      '#title' => t('Link text (close)'),
+      '#title' => t('Link text (closed)'),
       '#type' => 'textfield',
       '#default_value' => $this->getSetting('link_text_close'),
       '#required' => FALSE,
@@ -87,7 +84,7 @@ class ExpandCollapseFormatter extends FormatterBase {
     ];
 
     $element['link_class_close'] = [
-      '#title' => t('Link class (close)'),
+      '#title' => t('Link class (closed)'),
       '#type' => 'textfield',
       '#default_value' => $this->getSetting('link_class_close'),
       '#required' => FALSE,

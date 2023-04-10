@@ -14,7 +14,10 @@ use Drupal\Tests\contextual\FunctionalJavascript\ContextualLinkClickTrait;
 class ComponentAttributeTest extends WebDriverTestBase {
 
   use BlockCreationTrait;
-  use ContextualLinkClickTrait;
+
+  use ContextualLinkClickTrait {
+    clickContextualLink as protected contextualLinkClickTraitClickContextualLink;
+  }
 
   /**
    * {@inheritdoc}
@@ -33,6 +36,7 @@ class ComponentAttributeTest extends WebDriverTestBase {
    */
   protected static $modules = [
     'block',
+    'field_ui',
     'layout_builder',
     'layout_builder_component_attributes',
     'layout_builder_component_attributes_test',
@@ -465,6 +469,25 @@ class ComponentAttributeTest extends WebDriverTestBase {
     $page->checkField('Display title');
     $page->pressButton('Add block');
     $assert_session->assertWaitOnAjaxRequest();
+  }
+
+  /**
+   * Extends ContextualLinkClickTrait::clickContextualLink.
+   *
+   * @param string $selector
+   *   The selector for the element that contains the contextual link.
+   * @param string $link_locator
+   *   The link id, title, or text.
+   * @param bool $force_visible
+   *   If true then the button will be forced to visible so it can be clicked.
+   */
+  protected function clickContextualLink($selector, $link_locator, $force_visible = TRUE) {
+    $page = $this->getSession()->getPage();
+
+    // Beginning in Drupal 10, it is necessary to focus the contextual link
+    // element before executing clickContextualLink().
+    $page->find('css', "{$selector} .contextual .trigger")->focus();
+    $this->contextualLinkClickTraitClickContextualLink($selector, $link_locator, $force_visible);
   }
 
 }

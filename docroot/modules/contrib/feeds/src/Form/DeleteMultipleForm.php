@@ -42,7 +42,7 @@ class DeleteMultipleForm extends ActionMultipleForm {
         }
       }
       $this->storage->delete($feeds_to_delete);
-      $this->tempStoreFactory->get(static::ACTION)->delete($this->currentUser->id());
+      $this->tempStoreFactory->get(static::ACTION)->delete($this->currentUser->id() . ':feeds_feed');
       $count = count($feeds_to_delete);
       $this->logger('feeds')->notice('Deleted @count feeds.', ['@count' => $count]);
       $this->messenger()->addMessage($this->formatPlural($count, 'Deleted 1 feed.', 'Deleted @count feeds.'));

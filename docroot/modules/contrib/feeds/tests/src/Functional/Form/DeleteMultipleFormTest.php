@@ -80,6 +80,9 @@ class DeleteMultipleFormTest extends FeedsBrowserTestBase {
     // Check that both feeds no longer exist.
     $this->assertNull(Feed::load(1));
     $this->assertNull(Feed::load(2));
+
+    // Assert that the tempstore is now empty.
+    $this->assertNull($tempstore->get($this->adminUser->id() . ':feeds_feed'));
   }
 
   /**
@@ -121,6 +124,9 @@ class DeleteMultipleFormTest extends FeedsBrowserTestBase {
     // Check that feed 1 no longer exist, but feed 2 still does.
     $this->assertNull(Feed::load(1));
     $this->assertInstanceOf(Feed::class, Feed::load(2));
+
+    // Assert that the tempstore is now empty.
+    $this->assertNull($tempstore->get($account->id() . ':feeds_feed'));
   }
 
 }

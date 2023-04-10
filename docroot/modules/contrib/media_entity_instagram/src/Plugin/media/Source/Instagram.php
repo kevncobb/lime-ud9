@@ -101,7 +101,7 @@ class Instagram extends OEmbed {
 
     if (isset($this->configuration['source_field'])) {
       $source_field = $this->configuration['source_field'];
-      if ($media->hasField($source_field)) {
+      if ($media->hasField($source_field) && !$media->get($source_field)->isEmpty()) {
         $property_name = $media->{$source_field}->first()->mainPropertyName();
         foreach (static::$validationRegexp as $pattern => $key) {
           if (preg_match($pattern, $media->{$source_field}->{$property_name}, $matches)) {

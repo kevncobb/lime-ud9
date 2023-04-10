@@ -30,6 +30,13 @@ feeds.multiple_delete_confirm:
   requirements:
     _feeds_feed_delete_multiple_access: 'feeds_feed'
 
+feeds.multiple_import_confirm:
+  path: '/admin/content/feed/import'
+  defaults:
+    _form: 'Drupal\feeds\Form\ImportMultipleForm'
+  requirements:
+    _feeds_feed_import_multiple_access: 'feeds_feed'
+
 # Feed entity pages.
 entity.feeds_feed.import_form:
   path: '/feed/{feeds_feed}/import'

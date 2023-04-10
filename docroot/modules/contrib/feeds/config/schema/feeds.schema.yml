@@ -3,6 +3,10 @@ feeds.settings:
   type: config_object
   label: 'Feeds settings'
   mapping:
+    in_progress_dir:
+      type: string
+      label: 'Feeds in progress directory'
+      description: 'The location on the file system where temporary files are stored that are in progress of being imported.'
     lock_timeout:
       type: integer
       label: 'Feed lock timeout'
@@ -71,6 +75,10 @@ action.configuration.feeds_feed_clear_action:
 action.configuration.feeds_feed_delete_action:
   type: action_configuration_default
   label: 'Delete feeds configuration'
+
+action.configuration.feeds_feed_import_action:
+  type: action_configuration_default
+  label: 'Import feeds configuration'
 
 # Feeds item field.
 field.storage_settings.feeds_item:

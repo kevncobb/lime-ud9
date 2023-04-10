@@ -1,5 +1,6 @@
 name: Drupal Symfony Mailer Legacy Email Test
 type: module
+description: For testing of Drupal Symfony Mailer Legacy Emails.
 package: Testing
 hidden: true
 dependencies:

@@ -1,0 +1,24 @@
+# Schema for the configuration files of the expand_collapse_formatter module.
+
+field.formatter.settings.expand_collapse_formatter:
+  type: mapping
+  label: 'Expand collapse formatter display format settings'
+  mapping:
+    trim_length:
+      type: integer
+      label: 'Trim length'
+    default_state:
+      type: string
+      label: 'Default state'
+    link_text_open:
+      type: string
+      label: 'Link text (open)'
+    link_text_close:
+      type: string
+      label: 'Link text (closed)'
+    link_class_open:
+      type: string
+      label: 'Link class (open)'
+    link_class_close:
+      type: string
+      label: 'Link class (closed)'

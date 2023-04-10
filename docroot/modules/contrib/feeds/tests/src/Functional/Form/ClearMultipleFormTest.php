@@ -83,6 +83,9 @@ class ClearMultipleFormTest extends FeedsBrowserTestBase {
     $assert->pageTextContains('Deleted 25 Article items from ' . $this->feed1->label());
     $assert->pageTextContains('Deleted 6 Article items from ' . $this->feed2->label());
     $this->assertNodeCount(0);
+
+    // Assert that the tempstore is now empty.
+    $this->assertNull($tempstore->get($this->adminUser->id() . ':feeds_feed'));
   }
 
   /**
@@ -123,6 +126,9 @@ class ClearMultipleFormTest extends FeedsBrowserTestBase {
     $assert->pageTextNotContains('Deleted 6 Article items from ' . $this->feed2->label());
     $assert->pageTextContains('1 feed has not been cleared because you do not have the necessary permissions.');
     $this->assertNodeCount(6);
+
+    // Assert that the tempstore is now empty.
+    $this->assertNull($tempstore->get($account->id() . ':feeds_feed'));
   }
 
 }

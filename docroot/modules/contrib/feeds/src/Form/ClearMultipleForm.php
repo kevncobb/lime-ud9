@@ -42,7 +42,7 @@ class ClearMultipleForm extends ActionMultipleForm {
         }
       }
 
-      $this->tempStoreFactory->get(static::ACTION)->delete($this->currentUser->id());
+      $this->tempStoreFactory->get(static::ACTION)->delete($this->currentUser->id() . ':feeds_feed');
       $this->logger('feeds')->notice('Deleted imported items of @count feeds.', ['@count' => $count]);
       $this->messenger()->addMessage($this->formatPlural($count, 'Deleted items of 1 feed.', 'Deleted items of @count feeds.'));
     }

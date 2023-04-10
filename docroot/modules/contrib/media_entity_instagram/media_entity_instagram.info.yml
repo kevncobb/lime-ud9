@@ -7,7 +7,7 @@ configure: media_entity_instagram.settings
 dependencies:
   - drupal:media
 
-# Information added by Drupal.org packaging script on 2022-03-18
-version: '3.0.7'
+# Information added by Drupal.org packaging script on 2023-02-17
+version: '3.0.8'
 project: 'media_entity_instagram'
-datestamp: 1647604821
+datestamp: 1676644236

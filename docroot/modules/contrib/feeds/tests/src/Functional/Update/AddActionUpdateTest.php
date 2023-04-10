@@ -29,9 +29,13 @@ class AddActionUpdateTest extends UpdatePathTestBase {
   }
 
   /**
-   * Tests adding the action "feeds_feed_clear_action".
+   * Tests adding several new actions.
+   *
+   * Actions:
+   * - feeds_feed_clear_action;
+   * - feeds_feed_import_action.
    */
-  public function testAddClearFeedAction() {
+  public function testAddFeedActions() {
     // Install the feeds_feed view.
     $source = new FileStorage($this->absolutePath() . '/config/optional');
     $this->container->get('config.storage')
@@ -54,9 +58,10 @@ class AddActionUpdateTest extends UpdatePathTestBase {
     // Run the updates.
     $this->runUpdates();
 
-    // Ensure that the clear action option is available now.
+    // Ensure that the new action options are available now.
     $this->drupalGet('/admin/content/feed');
     $this->assertSession()->optionExists('action', 'feeds_feed_clear_action');
+    $this->assertSession()->optionExists('action', 'feeds_feed_import_action');
   }
 
 }
