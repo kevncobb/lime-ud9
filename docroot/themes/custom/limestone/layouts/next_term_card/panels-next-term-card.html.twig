@@ -1,0 +1,33 @@
+{#
+/**
+ * @file
+ * Template for a one column panel layout.
+ *
+ * This template provides a very simple "one column" panel display layout.
+ *
+ * Variables:
+ * - $id: An optional CSS id to use for the layout.
+ * - $content: An array of content, each item in the array is keyed to one
+ *   panel of the layout. This layout supports the following sections:
+ *   - content.middle: The only panel in the layout.
+ */
+#}
+<div class="next-term-card" {% if css_id %}{{ css_id }}{% endif %}>
+  <div class="image">
+    {{ content.image }}
+  </div>
+  <div class="ntc-location">
+    <span class="icon-location"></span> {{ content.location }}
+  </div>
+  <div class="ntc-duration">
+    <span class="icon-time"></span> {{ content.duration }}
+  </div>
+  <div class="ntc-date">
+    <span class="icon-calendar"></span> {{ content.date }}
+  </div>
+  <p>
+    {{ content.links }}
+  </p>
+</div>
+
+
