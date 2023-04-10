@@ -12,18 +12,20 @@
  *   - content.middle: The only panel in the layout.
  */
 #}
-<div class="next-term-card" {% if css_id %}{{ css_id }}{% endif %}>
+<div class="ntc" {% if css_id %}{{ css_id }}{% endif %}>
   <div class="image">
     {{ content.image }}
   </div>
-  <div class="ntc-location">
-    <span class="icon-location"></span> {{ content.location }}
-  </div>
-  <div class="ntc-duration">
-    <span class="icon-time"></span> {{ content.duration }}
-  </div>
-  <div class="ntc-date">
-    <span class="icon-calendar"></span> {{ content.date }}
+  <div class="ntc-info">
+    <div class="ntc-location">
+      <span class="icon-location"></span> {{ content.location }}
+    </div>
+    <div class="ntc-duration">
+      <span class="icon-time"></span> {{ content.duration }}
+    </div>
+    <div class="ntc-date">
+      <span class="icon-calendar"></span> {{ content.date }}
+    </div>
   </div>
 </div>
 
