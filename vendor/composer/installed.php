@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'eb8c38730560812397dc24b9e58c3e8744be1049',
+        'reference' => 'd8a4241304c895293fd87192c387d87a353d9ee0',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -2305,6 +2305,15 @@
             'reference' => '8.x-1.3',
             'dev_requirement' => false,
         ),
+        'drupal/search404' => array(
+            'pretty_version' => '2.1.2',
+            'version' => '2.1.2.0',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/search404',
+            'aliases' => array(),
+            'reference' => '2.1.2',
+            'dev_requirement' => false,
+        ),
         'drupal/search_api' => array(
             'pretty_version' => '1.29.0',
             'version' => '1.29.0.0',
@@ -2373,12 +2382,12 @@
             'dev_requirement' => false,
         ),
         'drupal/sendgrid_integration' => array(
-            'pretty_version' => '1.7.0',
-            'version' => '1.7.0.0',
+            'pretty_version' => '2.1.0',
+            'version' => '2.1.0.0',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/sendgrid_integration',
             'aliases' => array(),
-            'reference' => '8.x-1.7',
+            'reference' => '8.x-2.1',
             'dev_requirement' => false,
         ),
         'drupal/shield' => array(
@@ -3026,12 +3035,12 @@
             'dev_requirement' => false,
         ),
         'fastglass/sendgrid' => array(
-            'pretty_version' => '1.0.12',
-            'version' => '1.0.12.0',
+            'pretty_version' => '2.0.6',
+            'version' => '2.0.6.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../fastglass/sendgrid',
             'aliases' => array(),
-            'reference' => '2f118ad67787899a84a95a870fb90a67949c3b82',
+            'reference' => '7b4485d6c43be1c2b2dd357de717a5dee6eb1a7b',
             'dev_requirement' => false,
         ),
         'fileeye/mimemap' => array(
@@ -4209,21 +4218,6 @@
                 0 => '*',
             ),
         ),
-        'sendgrid/smtpapi' => array(
-            'pretty_version' => '0.7.0',
-            'version' => '0.7.0.0',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../sendgrid/smtpapi',
-            'aliases' => array(),
-            'reference' => 'b333108d86c7e40ba7427249b18b8841c758ef5e',
-            'dev_requirement' => false,
-        ),
-        'sendgrid/smtpapi-php' => array(
-            'dev_requirement' => false,
-            'replaced' => array(
-                0 => '*',
-            ),
-        ),
         'shama/baton' => array(
             'dev_requirement' => false,
             'replaced' => array(
@@ -4282,6 +4276,15 @@
             'install_path' => __DIR__ . '/../stack/builder',
             'aliases' => array(),
             'reference' => 'a4faaa6f532c6086bc66c29e1bc6c29593e1ca7c',
+            'dev_requirement' => false,
+        ),
+        'starkbank/ecdsa' => array(
+            'pretty_version' => '0.0.4',
+            'version' => '0.0.4.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../starkbank/ecdsa',
+            'aliases' => array(),
+            'reference' => '9369d35ed9019321adb4eb9fd3be21357d527c74',
             'dev_requirement' => false,
         ),
         'stecman/symfony-console-completion' => array(
@@ -4791,7 +4794,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'eb8c38730560812397dc24b9e58c3e8744be1049',
+            'reference' => 'd8a4241304c895293fd87192c387d87a353d9ee0',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(
