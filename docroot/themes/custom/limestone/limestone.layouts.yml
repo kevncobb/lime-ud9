@@ -73,6 +73,23 @@ rule_of_thirds_full:
     bottom:
       label: Bottom Content
 
+next_term_card:
+  label: Next Term Card
+  category: 'Limestone Layouts'
+  path: layouts/card
+  icon: next-term-card.png
+  css: ../../css/limestone.css
+  template: panels-next-term-card
+  regions:
+    image:
+      label: Image
+    location:
+      label: Location
+    duration:
+      label: Duration
+    date:
+      label: Date
+
 card:
   label: Card
   category: 'Limestone Layouts'
