@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '9c187df0c55d3450382b2de79d0f9434fd8f9699',
+        'reference' => 'eb8c38730560812397dc24b9e58c3e8744be1049',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -2500,6 +2500,15 @@
             'reference' => '8.x-1.3',
             'dev_requirement' => false,
         ),
+        'drupal/stable' => array(
+            'pretty_version' => '2.0.0',
+            'version' => '2.0.0.0',
+            'type' => 'drupal-theme',
+            'install_path' => __DIR__ . '/../../docroot/themes/contrib/stable',
+            'aliases' => array(),
+            'reference' => '2.0.0',
+            'dev_requirement' => false,
+        ),
         'drupal/stage_file_proxy' => array(
             'pretty_version' => '1.5.0',
             'version' => '1.5.0.0',
@@ -2943,6 +2952,17 @@
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/yoast_seo',
             'aliases' => array(),
             'reference' => '8.x-1.8',
+            'dev_requirement' => false,
+        ),
+        'drupal/zurb_foundation' => array(
+            'pretty_version' => 'dev-9.x',
+            'version' => 'dev-9.x',
+            'type' => 'drupal-theme',
+            'install_path' => __DIR__ . '/../../docroot/themes/contrib/zurb_foundation',
+            'aliases' => array(
+                0 => '9.x-dev',
+            ),
+            'reference' => '17e50e1494e2bc5e9d9951ae137102a0d65a60e5',
             'dev_requirement' => false,
         ),
         'drupal8-rector/drupal8-rector' => array(
@@ -4771,7 +4791,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '9c187df0c55d3450382b2de79d0f9434fd8f9699',
+            'reference' => 'eb8c38730560812397dc24b9e58c3e8744be1049',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(

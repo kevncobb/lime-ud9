@@ -97,3 +97,34 @@ body.toolbar-fixed .sticky.is-stuck.is-at-top {
         text-align: left;
     }
 }
+
+// Add A11y-related Classy styling for required form fields.
+.form-required:after {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin: 0 0.3em;
+  content: "";
+  vertical-align: super;
+  // Use a background image to prevent screen readers from announcing the text.
+  background-image: url(../images/foundation/misc/required.svg);
+  background-repeat: no-repeat;
+  background-size: 6px 6px;
+}
+
+// Fix overlapping dropdown on node preview page.
+.node-preview-container {
+  position: relative;
+
+  .node-preview-backlink {
+    margin-right: 1rem;
+  }
+
+  select {
+    width: auto;
+  }
+}
+//Spacing between comment box and action buttons
+#edit-comment-body-wrapper {
+  margin: 0 0 0.625rem;
+}

@@ -10,8 +10,7 @@
    */
   Drupal.behaviors.foundationAlertClose = {
     attach: function (context, settings) {
-
-      $('.zurb-foundation-callout').once('foundation-alert').on('closed.zf', function(event) {
+      $(once('foundation-alert', '.zurb-foundation-callout')).on('closed.zf', function(event) {
         var $target = $(event.target);
         var $region = $target.parent();
 

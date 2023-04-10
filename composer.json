@@ -86,7 +86,8 @@
     "drupal/name": "^1.0@RC",
     "drupal/pantheon_advanced_page_cache": "^2.1",
     "drupal/entity_browser": "^2.9",
-    "drupal/views_role_based_global_text": "^3.1"
+    "drupal/views_role_based_global_text": "^3.1",
+    "drupal/zurb_foundation": "9.x-dev@dev"
   },
   "require-dev": {
     "drupal/core-dev": "9.3.3",

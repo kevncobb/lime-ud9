@@ -3,6 +3,9 @@
  * @file
  * Zurb Foundations's theme implementation to display a single page.
  *
+ * The doctype, html, head and body tags are not in this template. Instead they
+ * can be found in the html.html.twig template in this directory.
+ *
  * Available variables:
  *
  * General utility variables:
@@ -16,19 +19,8 @@
  * Site identity:
  * - front_page: The URL of the front page. Use this instead of base_path when
  *   linking to the front page. This includes the language domain or prefix.
- * - logo: The url of the logo image, as defined in theme settings.
- * - linked_logo: The logo image, linked to <front>.
- * - site_name: The name of the site. This is empty when displaying the site
- *   name has been disabled in the theme settings.
- * - linked_site_name: The name of the site that also links to <front>.
  * - site_slogan: The slogan of the site. This is empty when displaying the site
  *   slogan has been disabled in theme settings.
- * - hide_site_name: A flag indicating if the site name has been toggled off on
- *   the theme settings page. If hidden, the "visually-hidden" class is added
- *   to make the site name visually hidden, but still accessible.
- * - hide_site_slogan: A flag indicating if the site slogan has been toggled off
- *   on the theme settings page. If hidden, the "visually-hidden" class is
- *   added to make the site slogan visually hidden, but still accessible.
  *
  * Page content (in order of occurrence in the default page.html.twig):
  * - messages: Status and error messages. Should be displayed prominently.
@@ -38,19 +30,18 @@
  *   comment/reply/12345).
  *
  * Regions:
- * - page.meta_header
- * - page.header
- * - page.help
- * - page.highlighted
- * - page.content
- * - page.sidebar_first
- * - page.sidebar_second
- * - page.footer_first
- * - page.footer_middle
- * - page.footer_last
+ * - page.meta_header: Extra items to come before the main Header.
+ * - page.header: Items for the header region.
+ * - page.help: Dynamic help text, mostly for admin pages.
+ * - page.highlighted: Items for the highlighted content region.
+ * - page.content: The main content of the current page.
+ * - page.sidebar_first: Items for the first sidebar.
+ * - page.sidebar_second: Items for the second sidebar.
+ * - page.footer_first: Items for the first footer column.
+ * - page.footer_middle: Items for the second footer column.
+ * - page.footer_last: Items for the last footer column.
  *
  * @see template_preprocess_page()
- * @see bartik_preprocess_page()
  * @see html.html.twig
  */
 #}
@@ -68,139 +59,95 @@
     <div class="off-canvas-content" data-off-canvas-content>
       {% if page.meta_header %}
         {% if meta_header_grid %}
-          <div class="row">
-            <div class="large-12 columns">
+          <div class="grid-container">
         {% endif %}
         {{ page.meta_header }}
         {% if meta_header_grid %}
-            </div>
           </div>
         {% endif %}
       {% endif %}
 
-      <header class="row" role="banner" aria-label="{{ 'Site header'|t }}">
-        {% if linked_site_name or linked_logo %}
-          <div class="large-2 columns">
-            {% if linked_logo %}
-              {{ linked_logo }}
-            {% endif %}
-          </div>
-          <div class="left large-4 columns">
-            {% if is_front %}
-              <h1 id="site-name">{{ linked_site_name }}</h1>
-            {% else %}
-              <div id="site-name">{{ linked_site_name }}</div>
-            {% endif %}
-          </div>
-        {% endif %}
+      <header class="header" role="banner" aria-label="{{ 'Site header'|t }}">
         {% if page.header %}
-          <div class="large-12 columns">
+          <div class="grid-container">
             {{ page.header }}
           </div>
         {% endif %}
       </header>
 
-      <div class="row">
-        {% if show_account_info %}
-          <div class="{{ site_slogan ? 'large-6' : 'large-4 columns large-offset-8' }} columns hide-for-small">
-            <p>
-              {% if logged_in %}
-                <a href="{{ path('user.page') }}">{{ 'My Account'|t }}</a>
-                <a href="{{ path('user.logout') }}">{{ 'Logout'|t }}</a>
-              {% else %}
-                <a href="{{ path('user.login') }}">{{ 'Login'|t }}</a>
-                <a href="{{ path('user.register') }}">{{ 'Sign Up'|t }}</a>
-              {% endif %}
-            </p>
-          </div>
-        {% endif %}
-        {% if site_slogan %}
-          <div class="large-6 columns hide-for-small">
-            {{ site_slogan }}
-          </div>
-        {% endif %}
-        {% if show_account_info %}
-          <div class="show-for-small">
-            <div class="six mobile-two columns">
-              <p>
-                <a href="{{ path('user.login') }}" class="radius button">{{ 'Login'|t }}</a>
-              </p>
-            </div>
-            <div class="six mobile-two columns">
-              <p>
-                <a href="{{ path('user.register') }}" class="radius success button">{{ 'Sign Up'|t }}</a>
-              </p>
-            </div>
-          </div>
-        {% endif %}
-      </div>
-
-      {% if messages and not zurb_foundation_messages_modal %}
-      <div class="l-messages row">
-        <div class="large-12 columns">
-          {{ messages }}
-        </div>
-      </div>
-      {% endif %}
-
       {% if page.help %}
-      <div class="l-help row">
-        <div class="large-12 columns">
+        <div class="l-help grid-container">
           {{ page.help }}
         </div>
-      </div>
       {% endif %}
 
-      <div class="row">
-        <main id="main" class="{{ main_grid }} columns" role="main">
+      <div class="grid-container">
+        <main id="main" class="grid-x grid-margin-x" role="main">
+          <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
+
           {% if page.highlighted %}
-            {% spaceless %}
+            <div id="highlighted" class="cell">
               {{ page.highlighted }}
-            {% endspaceless %}
+            </div>
           {% endif %}
-          <a id="main-content"></a>
+
           {% if breadcrumb %} {{ breadcrumb }} {% endif %}
-          <section>
+
+          <div class="{{ main_grid }}">
             {{ page.content }}
-          </section>
+          </div>
+          {% if page.sidebar_first %}
+            <div id="sidebar-first" class="{{ sidebar_first_grid }} sidebar" role="complementary">
+              {{ page.sidebar_first }}
+            </div>
+          {% endif %}
+          {% if page.sidebar_second %}
+            <div id="sidebar-second" class="{{ sidebar_sec_grid }} sidebar" role="complementary">
+              {{ page.sidebar_second }}
+            </div>
+          {% endif %}
+
         </main>
-        {% if page.sidebar_first %}
-          <div id="sidebar-first" class="{{ sidebar_first_grid }} columns sidebar ">
-            {{ page.sidebar_first }}
-          </div>
-        {% endif %}
-        {% if page.sidebar_second %}
-          <div id="sidebar-second" class="{{ sidebar_sec_grid }} columns sidebar">
-            {{ page.sidebar_second }}
-          </div>
-        {% endif %}
       </div>
+
       {% if page.footer_first or page.footer_middle or page.footer_last %}
-        <footer class="row">
-          {% if page.footer_first %}
-            <div id="footer-first" class="large-4 columns">
-              {{ page.footer_first }}
-            </div>
-          {% endif %}
-          {% if page.footer_middle %}
-            <div id="footer-middle" class="large-4 columns">
-              {{ page.footer_middle }}
-            </div>
-          {% endif %}
-          {% if page.footer_last %}
-            <div id="footer-last" class="large-4 columns">
-              {{ page.footer_last }}
-            </div>
-          {% endif %}
+        <footer class="grid-container footer" id="footer">
+          <div class="grid-x grid-margin-x">
+
+            {% if page.footer_first %}
+              <div id="footer-first" class="cell large-4">
+                {{ page.footer_first }}
+              </div>
+            {% endif %}
+
+            {% if page.footer_middle %}
+              <div id="footer-middle" class="cell large-4">
+                {{ page.footer_middle }}
+              </div>
+            {% endif %}
+
+            {% if page.footer_last %}
+              <div id="footer-last" class="cell large-4">
+                {{ page.footer_last }}
+              </div>
+            {% endif %}
+
+          </div>
         </footer>
       {% endif %}
-      <div class="bottom-bar callout secondary">
-        <div class="row">
-          <div class="large-12 columns">
-          &copy; {{ "now"|date('Y') }} {{ site_name }} {{ 'All rights reserved.'|t }}
-          </div>
+
+      {% if block_copyright_show %}
+        <div class="bottom-bar callout secondary grid-x">
+
+          {% if not block_copyright_custom_text %}
+            <p>&copy; {{ "now"|date('Y') }} {{ site_name }} {{ 'All rights reserved.'|t }}</p>
+          {% else %}
+            {{ block_copyright }}
+          {% endif %}
+
         </div>
-      </div>
+      {% endif %}
+
     </div>
   </div>
 </div>

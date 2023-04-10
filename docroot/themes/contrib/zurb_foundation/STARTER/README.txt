@@ -14,9 +14,9 @@ http://foundation.zurb.com/docs/faq.php or use the script in the starter
 template.php THEMENAME_preprocess_html function.
 
 *** IMPORTANT NOTE ***
-* After adding a new theme in Drupal 8, you'll need to clear the theme registry's
-cache, which you can do by clearing all cache in the UI or running `drush cr` ,
-if you have Drush installed.
+* After adding a new theme in Drupal 8, you'll need to clear the theme
+registry's cache, which you can do by clearing all cache in the UI or running
+`drush cr` , if you have Drush installed.
 
 Using Drush
 -------------------------------
@@ -32,7 +32,7 @@ included in the repository by default.
 
 **Drush and Gulp**
 
-The `gulpfile.js` includes drush commands that can be run every time scss/css
+The `gulpfile.babel.js` includes drush commands that can be run every time scss/css
 is updated. To use drush, edit the `config.js` file. In the `drush` option:
 
 1. Set `enabled: false` to `enabled: true`
@@ -58,13 +58,13 @@ Manual sub-theme setup
 
  2. Setup the basic information for your sub-theme.
 
-    In your new sub-theme folder, rename the STARTER.info.yml.txt file to include
-    the name of your new sub-theme and remove the ".txt" extension. Then edit
-    the .info file by editing the name and description field.
+    In your new sub-theme folder, rename the STARTER.info.yml.txt file to
+    include the name of your new sub-theme and remove the ".txt" extension. Then
+    edit the .info file by editing the name and description field.
 
-    For example, rename the foo/STARTER.info.yml.txt file to foo/foo.info.yml. Edit the
-    foo.info.yml file and change "name: Foundation Sub-theme Starter" to
-    "name: Foo" and "description: Read..." to "description: A sub-theme".
+    For example, rename the foo/STARTER.info.yml.txt file to foo/foo.info.yml.
+    Edit the foo.info.yml file and change "name: Foundation Sub-theme Starter"
+    to "name: Foo" and "description: Read..." to "description: A sub-theme".
 
       Why? The .info.yml file describes the basic things about your theme: its
       name, description, features, template regions, and libraries.
@@ -75,8 +75,8 @@ Manual sub-theme setup
 
  3. Edit your sub-theme to use the proper function names.
 
-    First, rename STARTER.theme to include the name of your new sub-theme. In this
-    example we'll assume that it's renamed foo.theme.
+    First, rename STARTER.theme to include the name of your new sub-theme. In
+    this example we'll assume that it's renamed foo.theme.
 
     Edit the foo.theme and theme-settings.php files in your sub-theme's
     folder; replace ALL occurrences of "STARTER" with the name of your
@@ -118,7 +118,8 @@ Optional steps:
     For example, copy zurb_foundation/templates/page.html.twig to
     THEMENAME/templates/page.html.twig.
 
- 8. Optionally override existing Drupal core *.html.twig templates in your sub-theme.
+ 8. Optionally override existing Drupal core *.html.twig templates in your
+    sub-theme.
 
  9. Add custom css and js files to your sub-theme
 

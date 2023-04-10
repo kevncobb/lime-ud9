@@ -4,7 +4,6 @@
  *
  */
 (function ($, Drupal) {
-
   /**
    * Adds the "active" class to top bar <li> elements with active child links.
    */
@@ -12,7 +11,7 @@
     attach: function (context, settings) {
       var $active_links = $(context).find('.top-bar .menu-item > a.is-active');
       if ($active_links.length) {
-        $active_links.once('foundationTopBarActive').each(function() {
+        $(once('foundationTopBarActive', $active_links)).each(function() {
           $(this).parent().addClass('active');
         });
       }

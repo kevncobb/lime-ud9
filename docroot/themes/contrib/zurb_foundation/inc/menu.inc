@@ -1,10 +1,19 @@
 <?php
 
+/**
+ * @file
+ * Theme preprocess hooks related to menu elements.
+ */
+
 use Drupal\Core\Url;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Link;
 
-
+/**
+ * Implements theme_preprocess_menu_local_task().
+ *
+ * Switches between active or secondary classes on local menu buttons.
+ */
 function zurb_foundation_preprocess_menu_local_task(&$variables) {
   $link = $variables['element']['#link'];
   $link_text = [
@@ -58,17 +67,14 @@ function zurb_foundation_preprocess_menu__main(&$variables) {
     $top_bar_attributes = new Attribute();
 
     if (theme_get_setting('zurb_foundation_top_bar_grid')) {
-      $top_bar_attributes->addClass('row column');
+      $top_bar_attributes->addClass('grid-container');
     }
 
     if (theme_get_setting('zurb_foundation_top_bar_sticky')) {
-      $top_bar_attributes->addClass('sticky', 'large-12');
+      $top_bar_attributes->addClass('sticky');
       $top_bar_attributes->setAttribute('data-sticky', TRUE);
       $top_bar_attributes->setAttribute('data-top-anchor', 'top-bar-sticky-container');
-      // 9999999(px) is used as no other bottom anchor stopped the top-bar from
-      // jumping back to the top of the screen after scrolling past 50% of the
-      // screen. Super silly, but hours of work led to this.
-      $top_bar_attributes->setAttribute('data-btm-anchor', 9999999);
+      $top_bar_attributes->setAttribute('data-btm-anchor', 'main:bottom');
       $top_bar_attributes->setAttribute('data-margin-top', 0);
       $top_bar_attributes->setAttribute('data-margin-bottom', 0);
       $top_bar_attributes->setAttribute('data-options', 'stickyOn:small');
@@ -76,12 +82,11 @@ function zurb_foundation_preprocess_menu__main(&$variables) {
     }
 
     if ($variables['top_bar'] == 2) {
-      $top_bar_attributes->addClass('show-for-small');
+      $top_bar_attributes->addClass('show-for-small-only');
     }
 
     $variables['top_bar_attributes'] = $top_bar_attributes;
     $variables['top_bar_menu_text'] = theme_get_setting('zurb_foundation_top_bar_menu_text');
-
 
     if ($back_text = theme_get_setting('zurb_foundation_top_bar_back_text')) {
       $variables['attributes']['data-back-button'] = "<li class=\"js-drilldown-back\"><a>{$back_text}</a></li>";

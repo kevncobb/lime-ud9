@@ -8,7 +8,7 @@
  * - root_path: The root path of the current page (e.g., node, admin, user).
  * - node_type: The content type for the current node, if the page is a node.
  * - head_title: List of text elements that make up the head_title variable.
- *   May contain or more of the following:
+ *   May contain one or more of the following:
  *   - title: The title of the page.
  *   - name: The name of the site.
  *   - slogan: The slogan of the site.
@@ -19,19 +19,18 @@
  * - db_offline: A flag indicating if the database is offline.
  * - placeholder_token: The token for generating head, css, js and js-bottom
  *   placeholders.
- * - html_attributes: Raw HTML attributes for the <html> tag.
- *   Contains langcode and text direction.
  *
  * @see template_preprocess_html()
  */
 #}
 {%
-set body_classes = [
-logged_in ? 'user-logged-in',
-not root_path ? 'path-frontpage' : 'path-' ~ root_path|clean_class,
-node_type ? 'node--type-' ~ node_type|clean_class,
-db_offline ? 'db-offline',
-]
+  set body_classes = [
+    logged_in ? 'user-logged-in',
+    not root_path ? 'path-frontpage' : 'path-' ~ root_path|clean_class,
+    node_type ? 'node--type-' ~ node_type|clean_class,
+    node_type ? 'page-node-type-' ~ node_type|clean_class,
+    db_offline ? 'db-offline',
+  ]
 %}
 <!DOCTYPE html>
 <html{{ html_attributes }} class="no-js">
@@ -42,7 +41,7 @@ db_offline ? 'db-offline',
     <js-placeholder token="{{ placeholder_token }}">
   </head>
   <body{{ attributes.addClass(body_classes) }}>
-  <a href="#main-content" class="visually-hidden focusable skip-link">
+  <a href="#main-content" class="show-on-focus skip-link">
     {{ 'Skip to main content'|t }}
   </a>
   {{ page_top }}

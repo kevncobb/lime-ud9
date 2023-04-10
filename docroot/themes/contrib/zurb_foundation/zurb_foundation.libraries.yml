@@ -2,7 +2,7 @@ global:
   version: VERSION
   css:
     base:
-      css/foundation-float.min.css: {}
+      css/foundation.min.css: {}
       css/motion-ui.min.css: {}
       css/zurb_foundation.css: {}
   js:
@@ -13,7 +13,7 @@ global:
   dependencies:
     - core/drupal
     - core/jquery
-    - core/jquery.once
+    - core/once
 
 status_in_reveal:
   version: VERSION
@@ -22,7 +22,7 @@ status_in_reveal:
   dependencies:
     - core/drupal
     - core/jquery
-    - core/jquery.once
+    - core/once
 
 alert_close:
   version: VERSION
@@ -31,4 +31,4 @@ alert_close:
   dependencies:
     - core/drupal
     - core/jquery
-    - core/jquery.once
+    - core/once

@@ -15,7 +15,8 @@
 {%
   set classes = [
     title_display == 'after' ? 'option',
-    title_display == 'invisible' ? 'visually-hidden',
+    title_display == 'invisible' ? 'show-for-sr',
+    required ? 'js-form-required',
     required ? 'form-required',
   ]
 %}

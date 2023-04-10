@@ -17061,6 +17061,61 @@
             "install-path": "../../docroot/modules/contrib/sophron"
         },
         {
+            "name": "drupal/stable",
+            "version": "2.0.0",
+            "version_normalized": "2.0.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/stable.git",
+                "reference": "2.0.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/stable-2.0.0.zip",
+                "reference": "2.0.0",
+                "shasum": "1d1ba799280bd6b9a3c46a158e6026663e080f3f"
+            },
+            "require": {
+                "drupal/core": "^9 || ^10"
+            },
+            "type": "drupal-theme",
+            "extra": {
+                "drupal": {
+                    "version": "2.0.0",
+                    "datestamp": "1663102967",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "installation-source": "dist",
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "bnjmnm",
+                    "homepage": "https://www.drupal.org/user/2369194"
+                },
+                {
+                    "name": "Cottser",
+                    "homepage": "https://www.drupal.org/user/1167326"
+                },
+                {
+                    "name": "lauriii",
+                    "homepage": "https://www.drupal.org/user/1078742"
+                }
+            ],
+            "description": "A base theme using Drupal 8.0.0's core markup and CSS.",
+            "homepage": "https://www.drupal.org/project/stable",
+            "support": {
+                "source": "https://git.drupalcode.org/project/stable"
+            },
+            "install-path": "../../docroot/themes/contrib/stable"
+        },
+        {
             "name": "drupal/stage_file_proxy",
             "version": "1.5.0",
             "version_normalized": "1.5.0.0",
@@ -20713,6 +20768,75 @@
                 "source": "https://git.drupalcode.org/project/yoast_seo"
             },
             "install-path": "../../docroot/modules/contrib/yoast_seo"
+        },
+        {
+            "name": "drupal/zurb_foundation",
+            "version": "dev-9.x",
+            "version_normalized": "dev-9.x",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/zurb-foundation.git",
+                "reference": "17e50e1494e2bc5e9d9951ae137102a0d65a60e5"
+            },
+            "require": {
+                "drupal/core": "^9.3 || ^10",
+                "drupal/stable": "^2.0"
+            },
+            "type": "drupal-theme",
+            "extra": {
+                "branch-alias": {
+                    "dev-9.x": "9.x-dev"
+                },
+                "drupal": {
+                    "version": "9.0.0-beta1+0-dev",
+                    "datestamp": "1675276522",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Dev releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "installation-source": "source",
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Kevin Quillen (kevinquillen)",
+                    "homepage": "https://www.drupal.org/u/kevinquillen",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Samuel Mortensen (samuelmortenson)",
+                    "homepage": "https://www.drupal.org/u/samuelmortenson",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Simone Wood (sim_1)",
+                    "homepage": "https://www.drupal.org/u/sim_1",
+                    "role": "Co-Maintainer"
+                },
+                {
+                    "name": "Dan Feidt (HongPong)",
+                    "homepage": "https://www.drupal.org/u/hongpong",
+                    "role": "Co-Maintainer"
+                },
+                {
+                    "name": "sim_1",
+                    "homepage": "https://www.drupal.org/user/3515959"
+                }
+            ],
+            "description": "Base Drupal theme based on Zurb Foundation 6.x.",
+            "homepage": "http://drupal.org/project/zurb_foundation",
+            "keywords": [
+                "Drupal"
+            ],
+            "support": {
+                "source": "http://cgit.drupalcode.org/zurb_foundation",
+                "issues": "http://drupal.org/project/issues/zurb_foundation"
+            },
+            "install-path": "../../docroot/themes/contrib/zurb_foundation"
         },
         {
             "name": "drush/drush",

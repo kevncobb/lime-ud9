@@ -1,39 +1,60 @@
-var gulp = require('gulp');
-var $    = require('gulp-load-plugins')();
-var gutil = require('gulp-util');
+// This build process is based off of the basic starter project
+// for Foundation for Sites 6.
+// https://github.com/foundation/foundation-sites-template
+
+var gulp          = require('gulp');
+var browserSync   = require('browser-sync').create();
+var $             = require('gulp-load-plugins')();
+var autoprefixer  = require('autoprefixer');
 
 var sassPaths = [
   'node_modules/foundation-sites/scss',
   'node_modules/motion-ui/src'
 ];
 
-gulp.task('sass', function() {
+// Build CSS files.
+function sass() {
   return gulp.src('scss/zurb_foundation.scss')
     .pipe($.sass({
-      includePaths: sassPaths
+      includePaths: sassPaths,
+      outputStyle: 'compressed' // if css compressed **file size**
     })
-    .on('error', $.sass.logError))
-    .pipe($.autoprefixer({
-      browsers: ['last 2 versions', 'ie >= 9']
-    }))
-    .pipe(gulp.dest('css'));
-});
+      .on('error', $.sass.logError))
+    .pipe($.postcss([
+      autoprefixer()
+    ]))
+    .pipe(gulp.dest('css'))
+    .pipe(browserSync.stream());
+};
 
-gulp.task('copy', function() {
-  gulp.src('node_modules/foundation-sites/dist/css/*.css')
-    .pipe($.copy('css', {prefix: 4}));
-  gulp.src('node_modules/foundation-sites/dist/js/*.js')
-    .pipe($.copy('js', {prefix: 4}));
-  gulp.src('node_modules/motion-ui/dist/*.css')
-    .pipe($.copy('css', {prefix: 3}));
-  gulp.src('node_modules/motion-ui/dist/*.js')
-    .pipe($.copy('js', {prefix: 3}));
-  var activity = "Stylesheets and scripts from /node_modules/foundation-sites/dist and";
-  activity += " node_modules/motion-ui/dist copied to /css and /js.";
-  gutil.log(activity);
-});
+// Copy files from Foundation node modules.
+function copy() {
+  return gulp.src(
+    'node_modules/foundation-sites/dist/css/*.css',
+    'node_modules/motion-ui/dist/*.css')
+    .pipe(gulp.dest('css')),
+    gulp.src(
+    'node_modules/foundation-sites/dist/js/*.js',
+    'node_modules/motion-ui/dist/*.js')
+    .pipe(gulp.dest('js'));
+};
 
-gulp.task('default', ['sass', 'copy'], function() {
-  gutil.log('watching for .scss file changes in /scss.');
-  gulp.watch(['scss/**/*.scss'], ['sass']);
-});
+// WIP: BrowserSync.
+function serve() {
+  browserSync.init({
+    server: "./"
+  });
+
+  gulp.watch("scss/*.scss", sass);
+  gulp.watch("*.html").on('change', browserSync.reload);
+}
+
+// Watch for changes in scss files.
+function watch() {
+  gulp.watch(['scss/**/*.scss'], sass)
+};
+
+// Gulp tasks:
+gulp.task('copy', copy);
+gulp.task('sass', gulp.series('copy', sass));
+gulp.task('default', gulp.series(sass, copy, watch));
