@@ -1,0 +1,250 @@
+.box-outer {
+  margin: -10px -20px 0 -20px;
+  .box {
+    overflow: hidden;
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    border-spacing: 20px;
+    margin: 0 0 40px;
+    .tile {
+      display: table-cell;
+      padding: 0 50px 20px;
+      -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+      box-shadow: 0 1px 2px rgba(0,0,0,.2);
+      vertical-align: top;
+    }
+  }
+  .box-inner {
+    overflow: hidden;
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    border-spacing: 20px;
+
+    > div > div {
+      display: block;
+      padding: 0 2.5em 20px;
+      -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      background-color: rgba($dark-gray, 0.02);
+      vertical-align: top;
+      margin-bottom: 1em;
+
+      @include breakpoint(medium) {
+        display: table-cell;
+        width: 50%;
+        margin-bottom: 0;
+      }
+
+
+      img {
+        width: 100%;
+        height: auto;
+        margin: 0 0 30px;
+        display: block;
+      }
+
+      .card-image {
+        margin: 0 -2.5em;
+      }
+    }
+
+    h2 > a {
+      text-decoration: none;
+
+      &:hover,
+      &:focus {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.thirds-aside {
+  .box-outer {
+    margin: (-12px) -30px 0 -30px;
+
+    .box {
+      > div > div {
+        @include breakpoint(medium) {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+
+
+.card-row {
+  margin-bottom: 1em;
+}
+.slick--view--news {
+  .card {
+    width: 361px;
+  }
+}
+
+.card {
+  background-color: #fff;
+  padding: 0 36px 20px;
+  //display: table-cell;
+  -webkit-box-shadow: 0 1px 1px rgba(100,100,100,0.1);
+  box-shadow: 0 1px 1px rgba(100,100,100,0.1);
+  vertical-align: top;
+  max-width: 600px;
+
+  .lc-btn {
+    margin: 10px 0;
+  }
+
+  .image {
+    height: auto;
+    margin: 0 -36px 13px;
+    display: block;
+    img {
+      margin-bottom: 0;
+      padding: 0 36px;
+    }
+  }
+
+  h3 {
+    font-size: 2.3rem;
+    margin-bottom: 5px;
+    a {
+      text-decoration: none;
+      color: $limestone-blue;
+      &:focus, &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  p {
+    //font-size: $small-font-size;
+  }
+}
+
+//Profile Card Styles
+/*
+.card {
+  // Float location left so Room No will be to the right
+  .block-entity-fieldnodefield-location {
+    .field-item {
+      font-size: 80%;
+      &::before {
+        content: "Building: ";
+        font-style: italic;
+      }
+    }
+  }
+
+  .field-name-field-profile-name, .block-entity-fieldnodefield-profile-name {
+    font-family: $header-font-family;
+    color: $limestone-blue;
+    font-size: $lead-font-size;
+    font-weight: 600;
+  }
+
+  .field-name-field-profile-office {
+    .field-item {
+      font-size: 80%;
+      &::before {
+        content: "Room No: ";
+        font-style: italic;
+      }
+    }
+  }
+  .field-node--field-profile-job-title {
+    @extend .category;
+    font-size: 0.8rem;
+  }
+}
+*/
+
+.title-on-image, .node--view-mode-title-on-image {
+  position: relative;
+  margin: 0 auto 1.8rem auto;
+  .node-title a, .node-title button {
+    &:focus, &:hover { text-decoration: underline; }
+  }
+  .cover-image img {
+    //margin-bottom: 1rem;
+  }
+  &:hover {
+    .node-title a, .node-title button {
+      text-decoration: underline;
+    }
+  }
+  &.smaller-title {
+    max-width: 350px;
+    .title-on-image { margin: 0; }
+    img {
+      margin: 0;
+    }
+    .node-title {
+      font-size: 1.4rem;
+    }
+  }
+  &.with-overlay {
+    img {
+      position: relative;
+      :before {
+        content: "";
+        opacity: 0.4;
+        position: absolute;
+        content: '';
+        background: #0e0e0e;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 0.98;
+      }
+    }
+  }
+  .node-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+    width: 85%;
+    text-align: center;
+    z-index: 1;
+    a, button {
+      text-decoration: none;
+      color: white;
+      text-shadow: #222 1px 1px 6px;
+      font-weight: 700;
+    }
+  }
+  .sub-title {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    -ms-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+    width: 100%;
+    text-align: center;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.66);
+  }
+}
+
+// Next Term Card
+.ntc {
+  margin-bottom: 1rem;
+  .title-on-image {
+    margin-bottom: 0;
+  }
+  .ntc-info {
+    padding: 1rem;
+    background-color: $light-gray;
+    border: thin solid #cacaca;
+  }
+  .ntc-duration {
+    padding: 0.5rem 0;
+  }
+}

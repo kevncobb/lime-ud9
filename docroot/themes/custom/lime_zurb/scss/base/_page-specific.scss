@@ -1,0 +1,33 @@
+body.path-frontpage .thirds .thirds-top {
+  .block-region-top section:nth-child(3) {
+    padding-top: 100px;
+    background-image: url("/sites/default/files/big-tree.jpg");
+    background-size: cover;
+  }
+}
+
+.lc-body-copy {
+  a {
+    text-decoration: underline;
+    color: $limestone-blue;
+    &.button {
+      color: white;
+    }
+  }
+  h3 {
+    a {
+      text-decoration: none;
+    }
+  }
+  .menu {
+    a {
+      text-decoration: none;
+    }
+  }
+  figure {
+    img {
+      display: block;
+      margin: 0 auto;
+    }
+  }
+}

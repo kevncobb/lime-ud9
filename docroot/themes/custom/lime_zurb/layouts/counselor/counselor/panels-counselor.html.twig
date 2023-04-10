@@ -1,0 +1,49 @@
+{#
+/**
+ * @file
+ * Template for a one column panel layout.
+ *
+ * This template provides a very simple "one column" panel display layout.
+ *
+ * Variables:
+ * - $id: An optional CSS id to use for the layout.
+ * - $content: An array of content, each item in the array is keyed to one
+ *   panel of the layout. This layout supports the following sections:
+ *   - content.middle: The only panel in the layout.
+ */
+#}
+
+<div class="fibonacci" {% if css_id %}{{ css_id }}{% endif %}>
+  <div class="fibonacci-top">
+      {{ content.top }}
+  </div>
+  <div class="container">
+    <div class="fibonacci-main">
+      <div class="counselor" {% if css_id %}{{ css_id }}{% endif %}>
+        <div class="counselor-image left">
+            {{ content.image }}
+        </div>
+        <div class="counselor-info">
+          <span style="font-weight: 700;">From: </span>{{ content.from }}
+            {{ content.degree }}
+            {{ content.area }}
+            {{ content.email }}
+        </div>
+        <div class="fill">
+            {{ content.body }}
+        </div>
+      </div>
+    </div>
+    <div class="fibonacci-aside">
+        {{ content.aside }}
+    </div>
+  </div>
+  <div class="fibonacci-penultimate">
+      {{ content.penultimate }}
+  </div>
+  <div class="fibonacci-bottom">
+      {{ content.bottom }}
+  </div>
+</div>
+
+

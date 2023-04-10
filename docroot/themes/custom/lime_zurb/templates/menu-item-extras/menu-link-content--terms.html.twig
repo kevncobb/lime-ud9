@@ -1,0 +1,77 @@
+{#
+/**
+ * @file
+ * Theme override to display a menu.
+ *
+ * Available variables:
+ * - menu_name: The machine name of the menu.
+ * - items: A nested list of menu items. Each menu item contains:
+ *   - attributes: HTML attributes for the menu item.
+ *   - below: The menu item child items.
+ *   - title: The menu link title.
+ *   - url: The menu link url, instance of \Drupal\Core\Url
+ *   - localized_options: Menu link localized options.
+ */
+#}
+{% import _self as menus %}
+
+{#
+We call a macro which calls itself to render the full tree.
+@see http://twig.sensiolabs.org/doc/tags/macro.html
+
+THIS TEMPLATE IS TO OVERRIDE THE DEFAULT IN THE ZURB CONTRIB BASE THEME
+#}
+{{ menus.menu_links(items, attributes, 0) }}
+
+{% macro menu_links(items, attributes, menu_level) %}
+  {% import _self as menus %}
+  {% if items %}
+    {% if menu_level == 0 %}
+<ul{{ attributes.addClass('root-level vertical menu side-submenu accordion-menu') }} role="menubar" data-accordion-menu data-submenu-toggle="true">
+  {% elseif menu_level == 1 %}
+  <ul class="menu vertical nested" role="menu">
+    {% else %}
+    <ul>
+      {% endif %}
+      {% for item in items %}
+        {%
+          set classes = [
+          'menu-item',
+          item.is_expanded ? 'menu-item--expanded',
+          item.is_collapsed ? 'menu-item--collapsed',
+          item.in_active_trail ? 'menu-item--active-trail',
+        ]
+        %}
+        {% if menu_level == 0 %}
+          <li role="menuitem" {{ item.attributes.setAttribute('tabindex', '0').addClass(classes) }} >
+            {{ link(item.title, item.url) }}
+            {% if item.below %}
+              {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+            {% endif %}
+          </li>
+        {% elseif menu_level == 1 %}
+          <li{{ item.attributes.setAttribute('tabindex', '-1').addClass(classes) }} role="menuitem">
+            {{ link(item.title, item.url) }}
+            {% if item.below %}
+              {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+            {% endif %}
+          </li>
+        {% elseif menu_level == 2 %}
+          <li{{ item.attributes.setAttribute('tabindex', '-1').addClass(classes) }} role="menuitem level-2">
+            {{ link(item.title, item.url) }}
+            {% if item.below %}
+              {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+            {% endif %}
+          </li>
+        {% elseif menu_level == 3 %}
+          <li{{ item.attributes.setAttribute('tabindex', '-1').addClass(classes) }} role="menuitem level-3">
+            {{ link(item.title, item.url) }}
+            {% if item.below %}
+              {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+            {% endif %}
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% endmacro %}

@@ -1,0 +1,88 @@
+.node--type-profile.node--view-mode-teaser, .node--type-profile.node--view-mode-profile-staff-council, .node--type-profile.node--view-mode-vertical-media-teaser-xlarge {
+  text-align: center;
+  img {
+    border-radius: 50%;
+    height: auto;
+    width: 220px;
+    display: block;
+    margin: 0 auto 0.5em;
+    position: static;
+  }
+  .field-name-field-name {
+    font-family: $header-font-family;
+    font-weight: bold;
+    font-size: 2rem;
+  }
+  .field-label {
+    font-weight: 900;
+  }
+}
+
+.circle-image {
+
+  img {
+    border-radius: 50%;
+    height: auto;
+    display: block;
+    margin: 0 auto 0.5em;
+    position: static;
+  }
+  &.smaller-inline-image {
+    a {
+      text-decoration: none;
+    }
+    img {
+      width: 40px;
+      height: auto;
+      position: relative;
+      margin: -10px 5px -4px 0;
+      display: inline;
+      float: none;
+    }
+  }
+}
+
+.related-faculty-horizontal {
+  .lc-header-field > .field-label {
+    text-align: center;
+    &::before, &::after {
+      display: none;
+    }
+  }
+  .field-node--field-related-faculty {
+    width: 100% !important;
+    margin: 0;
+    > .field-items > .field-item {
+      @extend .small-6;
+      @extend .large-3;
+      @extend .align-center;
+      display: inline-block;
+      margin: 0 -3px;
+    }
+  }
+  .field-item {
+    .group-left, .group-right {
+      width: 100% !important;
+      margin: 0;
+    }
+    .group-left.degree-faculty {
+      width: 100%;
+      max-width: 165px;
+      margin: 0 auto;
+    }
+    .group-right.degree-faculty {
+      .field-item {
+        margin: 0 auto;
+      }
+    }
+  }
+}
+
+.node--type-profile.node--view-mode-text-teaser-small {
+  .field-node--field-name {
+    font-size: 110%;
+  }
+  p {
+    margin-bottom: 0;
+  }
+}

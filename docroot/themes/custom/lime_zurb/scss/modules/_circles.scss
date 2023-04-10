@@ -1,0 +1,132 @@
+$big-circle-size: 11em;
+$circle-size: 2em;
+.circle {
+  display: block;
+  width: $circle-size;
+  height: $circle-size;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+  background: rgba($limestone-blue, 0.9);
+  margin: 0 auto;
+  font-size: 70px;
+  color: #fff;
+  i {
+    margin: 0.4em 0 0 0.38em;
+    font-size: 4.5rem;
+  }
+  i.fa-user {
+    margin: 0.4em 0 0 0.5em;
+  }
+  i.fa-usd {
+    margin: 0.3em 0 0 0.5em;
+    font-size: 125%;
+  }
+  i.fa-money {
+    margin: 0.45em 0 0 0.38em;
+  }
+  [class^="icon-"], [class*=" icon-"] {
+    margin: 0.5em 0 0 0.5em;
+    display: inline-block;
+  }
+
+  .icon-dollar, .icon-dollar2 {
+    margin: 51px 0 0 4px !important;
+  }
+  img.icon-logo {
+    width: 105px;
+    margin: 16px 0 0 14px;
+  }
+  img.icon-saints-logo {
+    margin: 16px 0 0 17px;
+    width: 100px;
+  }
+  @include breakpoint(smedium) {
+    width: 2.5em;
+    height: 2.5em;
+    i {
+      font-size: 4.5rem;
+      margin: 0.5em 0 0 0.5em;
+    }
+    i.fa-user {
+      font-size: 5.5rem;
+      margin: 0.3em 0 0 0.43em;
+    }
+    i.fa-usd {
+      margin: 42px 0 0 56px;
+    }
+    i.fa-money {
+      margin: 0.55em 0 0 0.49em;
+    }
+    i.fa-laptop {
+      font-size: 5.5rem;
+      margin: 0.35em 0 0 0.3em;
+    }
+    [class^="icon-"], [class*=" icon-"] {
+      margin: 0.8em 0 0 0.75em;
+    }
+    img.icon-logo {
+      width: 133px;
+      margin: 42px 0 0 15px;
+    }
+    img.icon-saints-logo {
+      margin: 19px 0 0 19px;
+      width: 121px;
+    }
+  }
+}
+.circles {
+  //min-height: 460px;
+  z-index: 2;
+  position: relative;
+  //display: block;
+  padding: 0;
+  list-style-type: none;
+  a, button {
+    &:hover,
+    &:focus {
+      .text { color: $success-color; }
+      .circle {
+        background: rgba($limestone-blue, 1);
+        transition: background .15s ease-in-out;
+        -moz-transition: background .15s ease-in-out;
+        -webkit-transition: background .15s ease-in-out;
+        box-shadow: 0px 0px 21px white;
+      }
+    }
+    span.text {
+      //color: $light-gray;
+    }
+  }
+  span.text {
+    //font-family: 'mr-eaves-xl-modern-narrow', Helvetica, Arial;
+  }
+
+  span.text {
+    clear: both;
+    text-align: center;
+    display: block;
+    width: 100%;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    margin: 0.5em auto;
+    color: rgba($limestone-blue, 0.9);
+  }
+  a, button {
+    text-decoration: none;
+    width: 100%;
+    &:hover,
+    &:focus {
+      text-decoration: none !important;
+    }
+  }
+  a .circle .icon-graduate {
+    margin: 0.5em 0 0 0.35em;
+    @include breakpoint(smedium) {
+      margin: 0.8em 0 0 0.6em;
+    }
+  }
+  button .circle .icon-graduate {
+    margin: 51px 0 0 4px !important;
+  }
+}

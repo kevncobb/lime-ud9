@@ -1,0 +1,14 @@
+.sitemap {
+  nav {
+    //padding: 1rem;
+    ul ul, ol ul, ul ol, ol ol {
+      list-style-type: none;
+    }
+    > ul > li {
+      padding: 0.5rem 1rem;
+      &:nth-child(odd) {
+        background-color: #e4e2e2;
+      }
+    }
+  }
+}

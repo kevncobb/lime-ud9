@@ -1,0 +1,222 @@
+.slick--view .slick-list .slick__slide.slide .slide__grid {
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
+}
+
+nav.slick__arrow {
+  button.slick-prev {
+    left: -45px;
+  }
+  button.slick-next {
+    right: -45px;
+  }
+}
+
+
+
+/*
+.views_slideshow_cycle_main,
+
+.views_slideshow_cycle_slide {
+  width: 100% !important;
+}
+
+.lc-slider {
+  position: relative;
+  height: 450px;
+  overflow: hidden;
+  .views_slideshow_slide {
+    width: 100% !important;
+    height: 450px !important;
+    float: left;
+    z-index: 0 !important;
+  }
+  .view-footer {
+    display: none;
+  }
+  .slideshow-controls {
+    position: absolute;
+    z-index: 3;
+    bottom: 23px;
+    width: 240px;
+    box-shadow: 0px 33px 140px 71px rgba(0,0,0,0.4);
+    background-color: rgba(0,0,0,0.24);
+    right: 34%;
+    @include breakpoint(large) {
+      right: 10%;
+    }
+    &::before {
+      content: "";
+      position: absolute;
+      left: -30px;
+      top: 25%;
+      margin-top: -14px;
+      width: 16px;
+      height: 28px;
+      background: url('/themes/custom/limestone/images/lc-sprite.svg') no-repeat -485px -59px transparent;
+      background-size: 723px;
+    }
+
+    &::after {
+      background: url('/themes/custom/limestone/images/lc-sprite.svg') no-repeat -643px 0px transparent;
+      background-size: 723px;
+      content: "";
+      position: absolute;
+      bottom: -7px;
+      width: 38px;
+      height: 60px;
+      margin-right: 279px;
+      right: 0%;
+      opacity: 0;
+    }
+
+    .next-headline {
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 0; //display: none
+      font-family: "interstate-boldregular", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+      letter-spacing: 0;
+      line-height: 1.3;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: white;
+      cursor: pointer;
+      text-shadow: 2px 1px 1px rgba(0, 0, 0, 0.6);
+      outline: none;
+
+      span {
+        position: absolute;
+        top: -25px;
+        left: 0;
+        content: "Next";
+        color: #fbea65;
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.75);
+        text-transform: uppercase;
+        font-style: italic;
+      }
+    }
+  }
+}
+.lc-slide-background {
+  background-color: $limestone-blue;
+}
+.lc-slide {
+  height: 100%;
+  position: relative;
+  z-index: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 400px;
+  .slide-cover-image {
+    @extend .cover-image;
+    position: absolute;
+  }
+  .lc-slide-container {
+    position: relative;
+    z-index: 1;
+    color: white;
+    padding: 0 0 140px 0;
+    img {
+      max-height: 460px;
+      width: auto;
+    }
+    @include breakpoint(smedium) {
+      width: 1180px;
+      padding: 40px 0 0;
+      height: 460px;
+      position: relative;
+    }
+    p {
+      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.9);
+      @include breakpoint(smedium) {
+        margin-right: 250px;
+        padding: 10px 5px;
+        margin-bottom: 9px;
+        font-size: 1.1rem;
+      }
+      &.dark {
+        color: black;
+        text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.9);
+
+        @include breakpoint(smedium) {
+          color: black;
+          background-color: rgba(255, 255, 255, 0.6);
+        }
+      }
+    }
+
+
+    .field-type-link a {
+      @extend .lc-btn;
+      float: left;
+      clear: both;
+      text-shadow: none;
+    }
+    h3 {
+      color: #fff;
+      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+      font-family: $site-header-font-family;
+      font-weight: 900;
+      letter-spacing: -3  px;
+      text-transform: uppercase;
+      overflow: hidden;
+      font-size: 25px;
+      line-height: 30px;
+      padding-right: 0;
+      margin: 0 0 10px 0;
+      position: relative;
+      @include breakpoint(smedium) {
+        font-size: 50px;
+        line-height: 50px;
+        padding-right: 60px;
+        margin: 10px 0 8px;
+        position: relative;
+        padding-bottom: 30px;
+        &:before, &:after {
+          position: absolute;
+          left: 0;
+          bottom: 0.5rem;
+          content: "";
+          height: 10px;
+        }
+
+        &:before {
+          width: 9rem;
+          background-color: $limestone-yellow;
+          transform: skewX(-35deg) skewY(0);
+          -ms-transform: skewX(-35deg) skewY(0);
+          transform: skew(-35deg,0);
+          left: 5px;
+          margin-left: -10px;
+        }
+      }
+
+      &.dark {
+        color: $almost-black;
+        text-shadow: none;
+      }
+
+      &.blue {
+        color: $limestone-blue;
+        text-shadow: none;
+      }
+
+    }
+
+    .large-text {
+      font-size: $lead-font-size;
+    }
+  }
+}
+
+.lc-slide-next {
+
+}
+.field_full_control_body {
+  position: absolute;
+  top: 0px;
+}
+ */

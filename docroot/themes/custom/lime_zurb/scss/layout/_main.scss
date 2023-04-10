@@ -1,0 +1,20 @@
+// Non-modular or client styles for the .l-content region.
+
+.caps {
+  text-transform: uppercase;
+}
+
+main, .reveal {
+  @include breakpoint(smedium) {
+    font-size: 1.15rem;
+    line-height: 1.9rem;
+  }
+  @include breakpoint(xxlarge) {
+    font-size: 1.25rem;
+    line-height: 1.9rem;
+  }
+}
+
+.block-field-blocktaxonomy-termacademic-schooldescription {
+  padding-top: 1.7rem;
+}

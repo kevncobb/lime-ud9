@@ -1,0 +1,21 @@
+// Profile Blocks
+.field-node--field-program-faculty {
+  .gallery-cell {
+    width: 300px;
+  }
+}
+
+//Fast Facts
+.field-node--field-program-grid-block {
+  font-size: $small-font-size;
+  font-family: $header-font-family;
+  .field-item.col-md-12 {
+    &:not(:last-child)::after {
+      content: "";
+      width: 100%;
+      border-bottom: thin solid $limestone-blue;
+      margin: 0 auto 1rem;
+      display: block;
+    }
+  }
+}

@@ -1,0 +1,121 @@
+.fast-facts-list {
+  color: $limestone-blue;
+  li {
+    padding: 1.16667rem;
+    border-bottom: 1px solid #ccc;
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+.image-buttons {
+  a[target=_blank]::after {
+    display: none;
+  }
+  img {
+    max-width: 450px;
+    width: 100%;
+  }
+}
+ul.list-unstyled, ul.unstyled-list {
+  margin-left: 0;
+  &.centered {
+    margin-left: auto;
+  }
+  li {
+    list-style-type: none;
+  }
+}
+ul.bullets {
+  margin-left: 1.25rem;
+  list-style-type: disc;
+  li {
+    list-style-type: disc;
+  }
+}
+ul.line-items {
+  padding: 0;
+  margin: 0;
+  li {
+    list-style-type: none;
+    width: 100%;
+    float: left;
+    //border-bottom: thin dotted black;
+    .right {
+      display: inline-block;
+      float: right;
+    }
+    &::after {
+      content: "";
+      width: 80%;
+      height: 1px;
+      margin: 0 auto;
+      background: url("/themes/custom/limestone/images/stripes-dark-tile.svg") repeat-x;
+    }
+  }
+}
+.striped {
+  &:nth-child(even) {
+    background-color: $lighter-gray;
+  }
+}
+.field-type-text-long .field-item ul li {
+  line-height: 1.9rem;
+}
+.views-row.border-separated {
+  border-bottom: 1px solid #dcdcdc;
+  padding: 0rem 0rem 2rem;
+  margin: 0rem 0rem 2rem;
+  &:last-child {
+    border-bottom: none;
+  }
+}
+.blog-posts {
+  ul {
+    padding: 0;
+  }
+  li {
+    clear: both;
+    padding-top: 5px;
+    list-style: none;
+    margin: 0;
+  }
+  img {
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    border-radius: 100%;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    overflow: hidden;
+    display: block;
+    height: 70px;
+    width: 70px;
+    margin: 5px 25px 15px 0;
+    float: left;
+  }
+  a.widget-link {
+    color: $limestone-blue;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.4;
+    overflow: hidden;
+    display: block;
+    text-decoration: none;
+    p {
+      margin: 0;
+      position: relative;
+      padding-bottom: 20px;
+      color: $dark-gray;
+      &::after {
+        position: absolute;
+        bottom: 10px;
+        left: 0;
+        content: "";
+        height: 1px;
+        width: 50px;
+        background-color: #c9c9c9;
+      }
+    }
+  }
+}

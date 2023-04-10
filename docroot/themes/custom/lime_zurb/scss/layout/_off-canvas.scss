@@ -1,0 +1,186 @@
+// search
+.position-top {
+  height: 227px;
+}
+#top-off-canvas-search {
+  padding-top: rem-calc(85);
+  padding-bottom: rem-calc(33);
+  position: absolute;
+  > div {
+    max-width: 1300px;
+    width: 90%;
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+    margin: 0 auto;
+}
+  .form-item {
+    float: left;
+    width: calc(100% - 100px);
+    input {
+      height: 54px;
+      line-height: 54px;
+      font-size: 35px;
+      color: $almost-black;
+    }
+  }
+  .search-bar form .form-actions {
+    top: 1px;
+  }
+  .form-actions input {
+    width: 100px;
+    color: white;
+    font-size: initial;
+    margin-top: 0;
+  }
+}
+
+.right-off-canvas-menu {
+  background-color: $almost-black;
+  li {
+    width: 100%;
+  }
+  a {
+    color: white;
+    line-height: 1.2rem;
+    &:focus, &:hover {
+      color: $limestone-yellow;
+      text-decoration: underline;
+    }
+  }
+  nav.block-quicklinks, nav.block-gatewaymenu-2 {
+    //padding-left: 15px;
+    h2 {
+      color: white;
+      background-color: #436abc;
+      font-size: 1.4rem;
+      padding: 1rem 0 1rem 1.5rem;
+      //margin-bottom: 14px;
+      font-family: $site-header-font-family;
+      font-weight: 400;
+      display: inline-block;
+      width: 100%;
+    }
+    ul.accordion-menu {
+      > li {
+        width: 100%;
+        //padding: 0 0 10px 0;
+        button {
+          background-color: #fff;
+          height: 43px;
+          .submenu-toggle::after {
+            border: inset 10px;
+            border-color: #436abc transparent transparent;
+          }
+        }
+        a {
+          font-size: 19px;
+          padding: 12px 0 12px 22px;
+          margin-left: 0;
+          background: transparent;
+        }
+        >ul.nested.is-accordion-submenu {
+          background-color: #444343;
+          margin-right: 0;
+          margin-left: 0rem;
+          padding-left: 0.5rem;
+          > li a {
+            font-size: 16px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.off-canvas-content.is-open-top.has-transition-push {
+  -ms-transform: translateY(170px);
+  transform: translateY(170px);
+}
+
+div.apply-now-wrapper {
+  overflow: hidden;
+  position: fixed;
+  z-index: 9;
+  top: 34%;
+  right: 0px;
+  width: 53px;
+  padding-left: 65px;
+  -webkit-transition: 0.3s ease-in-out;
+  -moz-transition: 0.3s ease-in-out;
+  -ms-transition: 0.3s ease-in-out;
+  transition: 0.3s ease-in-out;
+  &.open {
+    width: 240px;
+    height: 192px;
+  }
+  div.apply-tab {
+    cursor: pointer;
+    position: relative;
+    display: block;
+    left: -108px;
+    top: 70px;
+    width: 166px;
+    height: 50px;
+    padding-top: 16px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: $header-font-family;
+    font-weight: 600;
+    font-size: 29px;
+    line-height: 20px;
+    color: white;
+    background-color: rgba($alert-color, 0.9);
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+    .half-circle-top {
+      background-color: rgba($alert-color, 0.9);
+      position: absolute;
+      bottom: -9px;
+      left: 42%;
+      display: inline-block;
+      transform: rotate(180deg);
+    }
+  }
+  ul {
+    list-style-type: none;
+    display: block;
+    width: 180px;
+    background: rgba($alert-color, 0.9);
+    margin: 0;
+    border-left: thin solid darken($alert-color, 10);
+    top: -38px;
+    position: relative;
+    li {
+      list-style-type: none;
+      &::before {
+        content: none;
+      }
+      a {
+        display: block;
+        padding: 5px 8px;
+        text-align: center;
+        text-transform: uppercase;
+        text-decoration: none;
+        font-size: 1rem;
+        font-family: $header-font-family;
+        font-weight: 300;
+        color: white;
+        border-bottom-width: 2px;
+        border-bottom-style: solid;
+        border-bottom-color: darken($alert-color, 10);
+        -webkit-transition: 0.2s;
+        -moz-transition: 0.2s;
+        -ms-transition: 0.2s;
+        transition: 0.2s;
+      }
+      &.last {
+        a {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,129 @@
+global:
+  version: VERSION
+  css:
+    base:
+      css/lime_zurb.css: {}
+      fonts/icomoon.css: {}
+  js:
+    js/lime_zurb.js: { }
+    js/foundation.min.js: {minified: true}
+    js/foundation_init.js: {}
+    js/motion-ui.min.js: {minified: true}
+    js/trunk8.min.js: { }
+    js/colorbox.js: { }
+  dependencies:
+    - core/drupal
+    - core/jquery
+    - core/once
+
+colorbox-fix:
+  dependencies:
+    - core/drupalSettings
+lc-slider:
+  version: 1.x
+  css:
+    state:
+      css/lc-slider.css: {}
+  js:
+    js/lc-slider.js: {}
+  dependencies:
+    - core/jquery
+lc-menu:
+  version: 1.x
+  js:
+    js/menu.js: {}
+lc-sticky:
+  version: 1.x
+  js:
+    js/jquery.stickybits.min.js: {}
+alert:
+  version: 1.x
+  css:
+    state:
+      css/alert.css: {}
+  js:
+    js/alert.js: {}
+    js/js.cookie.min.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+error:
+  version: 1.x
+  js:
+    js/error.js: {}
+da-thumbs:
+  version: 1.x
+  css:
+    state:
+      css/da-thumbs.css: {}
+  js:
+    js/lc-da-thumbs.js: {}
+    js/jquery.hoverdir.js: {}
+  dependencies:
+    - core/jquery
+ec-map:
+  version: 1.x
+  css:
+    state:
+      css/ec-map.css: {}
+  js:
+    js/ec-map.js: {}
+  dependencies:
+    - core/jquery
+combobox-autocomplete:
+  version: 1.x
+  css:
+    base:
+      css/combobox-autocomplete.css: {}
+  js:
+    js/combobox-autocomplete.js: {}
+lc-parallax:
+  version: 1.x
+  js:
+    js/parallax.min.js: {}
+    js/lc-parallax.js: {}
+masonry:
+  version: 1.x
+  js:
+    js/masonry.pkgd.min.js: {}
+lc-tabs:
+  version: 1.x
+  css:
+    base:
+      css/lc-tabs.css: {}
+faqs:
+  version: 1.x
+  css:
+    base:
+      css/faqs.css: {}
+  js:
+    js/faqs.js: {}
+trunk8:
+  version: 1.x
+  js:
+    js/trunk8.min.js: {}
+print-styling:
+  version: 1.x
+  css:
+    theme:
+      css/print.css: { media: "print" }
+jquery:
+  version: 1.x
+  dependencies:
+    - core/jquery
+juicer:
+  version: 1.x
+  js:
+    js/juicer.js: {}
+  css:
+    base:
+      fonts/juicer.css: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+library-chat:
+  version: 1.x
+  header: true
+  js:
+    https://libanswers.limestone.edu/load_chat.php?hash=3ae9316081b06c525ac5da9b910d025d: { type: external }
+

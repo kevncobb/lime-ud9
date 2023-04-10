@@ -1,0 +1,67 @@
+.top-bar, .top-bar ul.menu {
+  background-color: $black !important;
+  font-family: $site-header-font-family;
+  font-weight: normal;
+  padding: 0;
+  font-size: 0.65rem;
+  z-index: 10;
+  @include breakpoint(phone) {
+    font-size: 0.7rem;
+  }
+  @include breakpoint(smedium) {
+    font-size: 0.8rem;
+  }
+  h2 {
+    color: white;
+  }
+  a.is-submenu-item {
+    padding: 0.7rem 1rem;
+  }
+  nav.block-topmenu.cell {
+    margin-right: 0;
+  }
+  a {
+    color: $white;
+
+    &:focus, &:hover {
+      color: $limestone-yellow;
+      &::before {
+        color: $limestone-yellow;
+      }
+    }
+  }
+}
+.top-bar nav.block-topmenu ul.dropdown.menu > li:first-child {
+  a {
+    padding-left: 0;
+    padding-right: 10px;
+  }
+}
+
+.top-bar nav.block-topmenu {
+  ul.dropdown.menu a {
+    padding: 0.7rem 0.5rem;
+    @include breakpoint(smedium) {
+      padding: 0.7rem 1rem;
+    }
+  }
+  .dropdown.menu>li.is-dropdown-submenu-parent>a {
+    position: relative;
+    padding-right: 1.5rem;
+  }
+}
+
+.top-bar ul.dropdown.menu, .top-bar ul {
+  background-color: $black !important;
+  li.is-active > a {
+    color: $limestone-yellow;
+  }
+}
+
+
+
+@include breakpoint(smedium down) {
+  .top-bar, .bottom-bar {
+    font-size: 17px; //for small screens
+  }
+}

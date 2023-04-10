@@ -1,0 +1,33 @@
+aside.off-canvas, .top-bar, .site-header, .main-menu-region, .site-footer, .bottom-bar, .alert-section .block-views-blockcampus-alert-block-1, #block-limestone-local-tasks, .lc-footer, .block-limestone-breadcrumbs, .sidebar {
+  display: none;
+}
+h1.sub-header-title {
+  color: #0038a5;
+}
+.sub-page-header, .paragraph--type--sub-header-title {
+  background: none;
+}
+.thirds {
+  .thirds-main {
+    width: 100% !important;
+  }
+  .thirds-right {
+    display: none;
+  }
+}
+.layout__region.layout__region--content >
+.paragraph--type--bp-columns-two-uneven.paragraph--view-mode--default >
+.grid-container > div > div.grid-x > {
+  .large-8.cell, large-9.cell {
+    width: 100%;
+  }
+  .large-3 {
+    display: none;
+  }
+}
+.lead {
+  font-size: 1rem;
+}
+a[href*="/"]:after, a[href*="/"]:visited:after {content: normal;}
+
+

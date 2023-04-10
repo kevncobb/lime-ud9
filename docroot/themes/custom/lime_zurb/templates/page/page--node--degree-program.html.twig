@@ -1,0 +1,249 @@
+{#
+/**
+ * @file
+ * Zurb Foundations's theme implementation to display a single page.
+ *
+ * Available variables:
+ *
+ * General utility variables:
+ * - base_path: The base URL path of the Drupal installation. Will usually be
+ *   "/" unless you have installed Drupal in a sub-directory.
+ * - is_front: A flag indicating if the current page is the front page.
+ * - logged_in: A flag indicating if the user is registered and signed in.
+ * - is_admin: A flag indicating if the user has permission to access
+ *   administration pages.
+ *
+ * Site identity:
+ * - front_page: The URL of the front page. Use this instead of base_path when
+ *   linking to the front page. This includes the language domain or prefix.
+ * - logo: The url of the logo image, as defined in theme settings.
+ * - linked_logo: The logo image, linked to <front>.
+ * - site_name: The name of the site. This is empty when displaying the site
+ *   name has been disabled in the theme settings.
+ * - linked_site_name: The name of the site that also links to <front>.
+ * - site_slogan: The slogan of the site. This is empty when displaying the site
+ *   slogan has been disabled in theme settings.
+ * - hide_site_name: A flag indicating if the site name has been toggled off on
+ *   the theme settings page. If hidden, the "visually-hidden" class is added
+ *   to make the site name visually hidden, but still accessible.
+ * - hide_site_slogan: A flag indicating if the site slogan has been toggled off
+ *   on the theme settings page. If hidden, the "visually-hidden" class is
+ *   added to make the site slogan visually hidden, but still accessible.
+ *
+ * Page content (in order of occurrence in the default page.html.twig):
+ * - messages: Status and error messages. Should be displayed prominently.
+ * - node: Fully loaded node, if there is an automatically-loaded node
+ *   associated with the page and the node ID is the second argument in the
+ *   page's path (e.g. node/12345 and node/12345/revisions, but not
+ *   comment/reply/12345).
+ *
+ * Regions:
+ * - page.meta_header
+ * - page.header
+ * - page.help
+ * - page.highlighted
+ * - page.content
+ * - page.sidebar_first
+ * - page.sidebar_second
+ * - page.footer_first
+ * - page.footer_middle
+ * - page.footer_last
+ *
+ * @see template_preprocess_page()
+ * @see bartik_preprocess_page()
+ * @see html.html.twig
+ */
+#}
+
+<div class="off-canvas-wrapper">
+  <div class="inner-wrap off-canvas-wrapper-inner" id="inner-wrap" data-off-canvas-wrapper>
+    <aside id="top-off-canvas-search" class="off-canvas position-top" role="complementary" data-off-canvas>
+      {{ page.top_off_canvas }}
+    </aside>
+    <aside id="left-off-canvas-menu" class="off-canvas left-off-canvas-menu position-left" role="complementary"
+           data-off-canvas>
+      {{ page.left_off_canvas }}
+    </aside>
+    <aside id="right-off-canvas-menu" class="off-canvas right-off-canvas-menu position-right" role="complementary"
+           data-off-canvas>
+      {{ page.right_off_canvas }}
+    </aside>
+    {% if page.alert %}
+      <div class="alert-section">{{ page.alert }}</div>
+    {% endif %}
+    <div class="off-canvas-content" data-off-canvas-content>
+      {% if page.top_bar %}
+        <div class="top-bar">
+          <div class="small-12 grid-container">
+            <div class="grid-x grid-margin-x">
+              {{ page.top_bar }}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+      <header class="site-header" role="banner" aria-label="{{ 'Site header'|t }}">
+        <div class="grid-container">
+          <div class="grid-x grid-margin-x">
+            {{ page.header }}
+          </div>
+        </div>
+      </header>
+      <div class="main-menu-region">
+        {{ page.main_menu_region }}
+      </div>
+      {{ drupal_block('local_tasks_block') }}
+      {% if node.title.value %}
+        <div class="splash-header degree-header stripes-dark-tile grid-x align-middle" role="heading">
+          {{ drupal_field('field_background_splash_image', 'node', node.id) }}
+          <table class="cell small-12">
+            <tbody><tr>
+              <td>
+                {{ title_prefix }}
+                <h1 class="h1 max-1000 splash-header-title align-center">{{ title }}</h1>
+              </td>
+            </tr>
+            <tr><td>{{ drupal_field('field_program_type_term', 'node', node.id) }}</td></tr>
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
+      {% if messages and not zurb_foundation_messages_modal %}
+        <div class="l-messages grid-container">
+          <div class="large-12 cell">
+            {{ messages }}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if page.help %}
+        <div class="l-help grid-container">
+          <div class="large-12 cell">
+            {{ page.help }}
+          </div>
+        </div>
+      {% endif %}
+
+      <main id="main" class="{{ main_grid }} cell" role="main">
+        {% if page.highlighted %}
+          {% spaceless %}
+            {{ page.highlighted }}
+          {% endspaceless %}
+        {% endif %}
+        <a id="main-content"></a>
+        <section class="grid-container content-bump-up bg-white spacing-xs padding-sides-sm">
+          <div class="grid-x grid-margin-x">
+            <div class="cell medium-7">
+              {{ drupal_block('addtoany_block') }}
+              {{ drupal_field('body', 'node', node.id) }}
+            </div>
+            <div class="cell medium-5">
+              {{ drupal_field('field_fast_facts', 'node',  node.id) }}
+              {% if node.field_hide_saints_map_block.value == '0' %}
+                <div class="large reveal" id="ModalSaintsMap" tabindex="-1" role="dialog" aria-labelledby="ModalSaintsMap" aria-hidden="true" data-reveal>
+                  {{ drupal_view('saints_maps', 'block_2',  view.id) }}
+                  <button class="close-button" data-close aria-label="Close modal" type="button">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="box vbp_color_02" style="margin: 0;padding: 10px 20px;">
+                  <h2 class="centered-header show-for-sr field-label-above">Explore Experiental Major Map</h2><p class="mb-0"><img alt="saints maps" src="/sites/default/files/2022-08/Saints%20Maps%20Logo%20white%20wordmark2.png">Use this map to help plan and guide your experience at Limestone. Each student’s experience is unique so please keep in mind the activities outlined in this map are suggestions and can be tailored to you! Always consult with your advisors whenever possible for new opportunities and updates.</p>
+                  <p class="text-align-right mb-0"><button class="button success modal-button" data-open="ModalSaintsMap">Open Saints Map</button></p>
+                </div>
+              {% endif %}
+
+              {% if node.field_display_faculty_horizontal.value == '0' %}
+                {{ drupal_field('field_related_faculty', 'node',  node.id) }}
+              {% endif %}
+              {{ drupal_field('field_optional_text_below_relate', 'node',  node.id) }}
+              {% if node.field_display_related_news_below.value == '1' %}
+                {{ drupal_view('news', 'block_5',  view.id) }}
+              {% endif %}
+            </div>
+          </div>
+
+          {% if node.field_display_faculty_horizontal.value == '1' %}
+            <div class="grid-x grid-margin-x related-faculty-horizontal">
+              {{ drupal_field('field_related_faculty', 'node',  node.id) }}
+            </div>
+          {% endif %}
+        </section>
+
+        <section class="spacing-xs padding-sides-sm" style="background-color: #f6f6f6;border-top: thin solid #f2f2f2;">
+          <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+              <div class="cell medium-7">
+                {{ drupal_field('field_courses', 'node',  node.id) }}
+                {{ drupal_field('field_optional_text_below_course', 'node',  node.id) }}
+                {{ drupal_field('field_required_courses', 'node',  node.id) }}
+              </div>
+              <div class="cell medium-5 sidebar">
+                {{ drupal_entity('block', 'degreemenu') }}
+                {{ drupal_entity('block', 'finearts_2') }}
+                {{ drupal_entity('block', 'finearts') }}
+                {{ drupal_entity('block', 'finearts_3') }}
+                {{ drupal_field('field_optional_text_for_current_', 'node',  node.id) }}
+                {{ drupal_field('field_link_to_catalog_page', 'node',  node.id, 'default') }}
+                {% if ( node.field_display_day_financial_aid_.value == '1' ) or
+                  ( node.field_display_o_e_financial_aid_.value == '1' ) or
+                  ( node.field_display_grad_financial_aid.value == '1' ) %}
+                  <div class="lc-header">Financial Aid Information</div>
+                {% endif %}
+                {% if node.field_display_day_financial_aid_.value == '1' %}
+                  {{ drupal_entity('block', 'daycampusfinancialaidinfomodalbutton',  33) }}
+                {% endif %}
+
+                {% if node.field_display_o_e_financial_aid_.value == '1' %}
+                  {{ drupal_entity('block', 'oecampusfinancialaidinfomodalbutton',  35) }}
+                {% endif %}
+
+                {% if node.field_display_grad_financial_aid.value == '1' %}
+                  {{ drupal_entity('block', 'gradfinancialaidinfomodalbutton',  34) }}
+                {% endif %}
+                <hr>
+                <a class="button green" href="/apply"><span class="icon-checkmark"></span> Apply Now</a><br>
+                <a class="button twitter-blue" href="/request-info"><span class="icon-info2"></span> Request Information</a><br>
+                <a class="button purple" href="/visit"><span class="icon-location"></span> Schedule a Visit</a><br>
+                {{ drupal_field('field_related_minors', 'node',  node.id) }}
+                {% if node.field_display_related_news_below.value == '0' %}
+                  {{ drupal_view('news', 'block_5', view.id) }}
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="background-darkblue">
+          <h2 class="centered-header text-align-center spacing-sm">Similar Majors</h2>
+          {{ drupal_field('field_similar_majors', 'node',  node.id) }}
+        </section>
+
+      </main>
+
+      <div class="lc-footer">
+        <div class="lc-footer-layer" data-speed="-2" id="layer2"></div>
+        <div class="lc-footer-layer" data-speed="10" id="layer3"></div>
+        <div class="lc-footer-layer" data-speed="17" id="layer4"></div>
+        <div class="lc-footer-layer" data-speed="25" id="layer5"></div>
+        <img alt="campus skyline" id="mobileLayer" src="/themes/custom/limestone/images/lc-footer-background.png">
+      </div>
+      {% if page.footer %}
+        <footer class="site-footer">
+          <div class="grid-container">
+            <div id="footer" class="large-12 cell">
+              {{ page.footer }}
+            </div>
+          </div>
+        </footer>
+      {% endif %}
+      {% if page.lower_footer %}
+        <div class="lower-footer-region">
+          {{ page.lower_footer }}
+        </div>
+      {% endif %}
+      {% if page.bottom_bar %}
+        <div class="bottom-bar panel">
+          {{ page.bottom_bar }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

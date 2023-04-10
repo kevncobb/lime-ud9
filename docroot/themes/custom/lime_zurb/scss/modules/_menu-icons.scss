@@ -1,0 +1,251 @@
+[class^="menu-icon-"], [class*=" menu-icon-"] {
+  position: relative;
+  &::before {
+    content: "";
+    position: relative;
+    display: block;
+    float: left;
+    width: 36px;
+    height: 31px;
+    top: -5px;
+    left: -6px;
+    background: url("/themes/custom/limestone/images/lc-sprite.svg") no-repeat 0 35px;
+    background-size: 700px;
+  }
+  &:focus, &:hover {
+    &::before {
+      color: white;
+    }
+  }
+}
+.block-newstudentmenu {
+  ul {
+    float: right;
+  }
+}
+.top-bar {
+  [class^="menu-icon-"]::before, [class*=" menu-icon-"]::before {
+    position: absolute;
+    font-size: 17px;
+    top: 9px;
+    left: -23px;
+  }
+  a.menu-button {
+    padding: 11px 8px 11px 25px;
+    margin: 0 0 0 2px;
+    @include breakpoint(smedium) {
+      padding: 11px 10px 11px 28px;
+      margin: 0 0 0 10px;
+    }
+    &::before {
+      left: 6px;
+      top: 8px;
+    }
+    &.red {
+      background: smart-scale($alert-color, 5%, 5%) !important;
+      color: white;
+      &:hover, &:focus {
+        background: smart-scale($alert-color, 12%, 12%) !important;
+        color: white;
+        &::before {
+          color: white;
+        }
+      }
+    }
+    &.green {
+      background: smart-scale($success-color, 9%, 9%) !important;
+      color: white;
+
+      &:hover, &:focus {
+        background: smart-scale($success-color, 15%, 15%) !important;
+        color: white;
+        &::before {
+          color: white;
+        }
+      }
+    }
+    &.yellow {
+      background-color: $warning-color;
+      color: black;
+      &:hover, &:focus {
+        background: smart-scale($warning-color, 10%, 10%) !important;
+        color: black;
+        &::before {
+          color: black;
+        }
+      }
+    }
+  }
+}
+.menu-icon-saints {
+  padding: 20px 40px !important;
+  bottom: -1px !important;
+  &::before {
+    background-position: -65px -6px;
+    background-size: 400px;
+    position: absolute;
+    width: 61px;
+    height: 50px;
+    top: 7px;
+    left: 11px;
+  }
+}
+.menu-icon-degrees::before {
+  background-position: -163px -270px;
+  background-size: 551px;
+}
+.menu-icon-canvas::before {
+  background-position: -235px -270px;
+  background-size: 551px;
+}
+.menu-icon-apply::before {
+  content: "\e95f";
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: auto;
+  height: auto;
+  top: 6px;
+  left: -4px;
+}
+.menu-icon-visit::before {
+  content: "\e915";
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: auto;
+  height: auto;
+  top: 6px;
+  left: -4px;
+}
+.menu-icon-lc-portal::before {
+  background-position: -126px -235px;
+  top: -7px;
+  left: -8px;
+  background-size: 561px;
+}
+.menu-icon-directory::before {
+  content: "\e944";
+  // use !important to prevent issues with browser extensions that change fonts
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  // Better Font Rendering ===========
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  // icon sizing ===========
+  font-size: 19px;
+  top: 1px;
+  left: 7px;
+}
+.menu-icon-info::before {
+  content: "\ea0c";
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: auto;
+  height: auto;
+  font-size: 18px;
+  top: 8px;
+  left: -22px;
+}
+.menu-icon-mail::before {
+  content: "\e945";
+  // use !important to prevent issues with browser extensions that change fonts
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  // Better Font Rendering ===========
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  // icon sizing ===========
+  font-size: 19px;
+  top: 0px;
+  left: 6px;
+}
+
+.menu-icon-events::before {
+  content: "\e953";
+  // use !important to prevent issues with browser extensions that change fonts
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  // Better Font Rendering ===========
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 18px;
+  top: 1px;
+  left: 6px;
+}
+.icon {
+  width: 36px;
+  max-height: 30px;
+  position: relative;
+  float: left;
+  top: -4px;
+  padding: 5px;
+}
+.large-icon {
+  width: 60px;
+}
+.accordion .accordion-title .icon {
+  width: 36px;
+  position: relative;
+  float: left;
+  top: -10px;
+  padding: 5px;
+}
+.fibonacci-aside, .sidebar, .thirds-right, .large-4 {
+  a[class^="menu-icon-"]::before, a[class*=" menu-icon-"]::before {
+    filter: contrast(0);
+    font-size: 18px;
+    background-size: 700px;
+    top: -1px;
+    height: 21px;
+    width: 23px;
+  }
+  a.menu-icon-blackboard::before {
+    background-position: -152px -245px;
+    background-size: 494px;
+    width: 25px;
+  }
+  a.menu-icon-lc-portal::before {
+    background-size: 509px;
+    background-position: -126px -218px;
+    top: -2px;
+    left: -4px;
+  }
+}

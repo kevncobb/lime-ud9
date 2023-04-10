@@ -1,0 +1,33 @@
+form.search-form {
+  .js-form-type-search {
+    width: 80%;
+    display: inline-block;
+    input {
+      height: 61px;
+      font-size: 25px;
+    }
+    label {
+      padding-bottom: 1rem;
+      display: block;
+    }
+  }
+  input.form-search {
+    margin-bottom: 0;
+    margin-top: -10px;
+  }
+  input.search-form__submit {
+    margin-top: 7px;
+  }
+}
+.search-result {
+  margin: 2rem 0.1rem;
+  border-bottom: thin solid #cecece;
+  padding-bottom: 1rem;
+  small {
+    font-size: 70%;
+    font-style: italic;
+  }
+  h3 {
+    margin: 0;
+  }
+}
