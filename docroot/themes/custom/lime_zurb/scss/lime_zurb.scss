@@ -129,22 +129,42 @@
 // Drupal-specific styles copied from base theme. (Required)
 @import "base/drupal";
 // Import your mixins early so they can be used by other partials. (optional)
-// @import "base/mixins";
-// @import "base/common";
+@import 'base/mixins';
+@import 'base/common';
 // @import "base/elements";
 
-// --- Layout ---
+// Layout
 // Each section of the document has it's own partial seperated out to improve
 // developer experience. Additionally, grids can be declared in layouts as well.
-//@import "layout/header";
-//@import "layout/main";
-//@import "layout/aside";
-//@import "layout/footer";
+@import 'layout/header';
+@import 'layout/top-bar';
+@import 'layout/menu-main-region';
+@import 'layout/main';
+@import 'layout/aside';
+@import 'layout/footer';
+@import 'layout/off-canvas';
+@import 'layout/layouts';
 
 // --- Modules ---
 // @import "modules/block";
 // @import "modules/button";
-
+@import 'modules/block';
+@import 'modules/news';
+@import 'modules/paragraphs';
+@import 'modules/slide';
+@import 'modules/events';
+@import 'modules/views';
+@import 'modules/menu-block';
+@import 'modules/flip-cards';
+@import 'modules/menu-icons';
+@import 'modules/callout';
+@import 'modules/button';
+@import 'modules/card';
+@import 'modules/colorbox';
+@import 'modules/courses';
+@import 'modules/circles';
+@import 'modules/degree';
+@import 'modules/profile';
 // --- States ---
 // @import "states/collapse";
 

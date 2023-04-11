@@ -34,7 +34,7 @@ function loadConfig() {
   return yaml.load(ymlFile, {schema});
 }
 
-const { BROWSERSYNC, PATHS } = loadConfig();
+// const { BROWSERSYNC, PATHS } = loadConfig();
 
 // Build the compiled js and css by running all of the below tasks.
 // Sass must be run later so UnCSS can search for used classes in the others assets.
