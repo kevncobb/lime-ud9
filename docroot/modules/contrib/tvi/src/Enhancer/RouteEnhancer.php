@@ -3,9 +3,11 @@
 namespace Drupal\tvi\Enhancer;
 
 use Drupal\Core\Routing\EnhancerInterface;
+use Drupal\taxonomy\TermInterface;
 use Drupal\tvi\Service\TaxonomyViewsIntegratorManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Enhancer to set correct views defaults arguments for Term based on TVI.
@@ -25,6 +27,13 @@ use Symfony\Component\Routing\Route;
 class RouteEnhancer implements EnhancerInterface {
 
   /**
+   * The TVI Manager.
+   *
+   * @var \Drupal\tvi\Service\TaxonomyViewsIntegratorManagerInterface
+   */
+  protected $tviManager;
+
+  /**
    * RouteEnhancer constructor.
    */
   public function __construct(TaxonomyViewsIntegratorManagerInterface $tvi_manager) {
@@ -32,9 +41,15 @@ class RouteEnhancer implements EnhancerInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * Check if the route applies to the current path.
+   *
+   * @param \Symfony\Component\Routing\Route $route
+   *   The route that is being enhanced.
+   *
+   * @return bool
+   *   Return true if the route path applies.
    */
-  protected function applies(Route $route) {
+  private function applies(Route $route) {
     return $route->getPath() == '/taxonomy/term/{taxonomy_term}';
   }
 
@@ -42,12 +57,32 @@ class RouteEnhancer implements EnhancerInterface {
    * {@inheritdoc}
    */
   public function enhance(array $defaults, Request $request) {
-    if (!empty($defaults['taxonomy_term']) && $term = $defaults['taxonomy_term']) {
+    // Guard the route.
+    if (!$this->applies($defaults['_route_object'])) {
+      return $defaults;
+    }
+
+    // If the route has no term, ignore it.
+    if (empty($defaults['taxonomy_term'])) {
+      return $defaults;
+    }
+
+    $term = $defaults['taxonomy_term'];
+
+    // Attempt to load the term if passed a TID.
+    if (is_numeric($term)) {
+      $term = Term::load($term);
+    }
+
+    // Enhance the route if we have a full term.
+    if ($term instanceof TermInterface) {
       $term_view = $this->tviManager->getTaxonomyTermViewAndDisplayId($term);
       $defaults['view_id'] = $term_view['view_id'];
       $defaults['display_id'] = $term_view['display_id'];
     }
+
     return $defaults;
   }
 
 }
+

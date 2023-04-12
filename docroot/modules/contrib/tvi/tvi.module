@@ -9,7 +9,25 @@ use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\views\Views;
+use Drupal\Core\Routing\RouteMatchInterface;
 
+/**
+ * Implements hook_help().
+ */
+function tvi_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the tvi module.
+    case 'help.page.tvi':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The TVI (Taxonomy Views Integrator) module allows selective
+      overriding of taxonomy terms and/or vocabulary with the view of your choice. Using
+      TVI you can easily create custom views to output all terms in X vocabulary.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
 /**
  * Implements hook_entity_extra_field_info().
  */

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a3f43135d482753a8e3f4ab06d5e7921",
+    "content-hash": "c4e750cb69208eae2dcb9a641f0c9bac",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -15876,6 +15876,71 @@
             "homepage": "https://www.drupal.org/project/tour_ui",
             "support": {
                 "source": "https://git.drupalcode.org/project/tour_ui"
+            }
+        },
+        {
+            "name": "drupal/tvi",
+            "version": "2.0.0-alpha1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/tvi.git",
+                "reference": "2.0.0-alpha1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/tvi-2.0.0-alpha1.zip",
+                "reference": "2.0.0-alpha1",
+                "shasum": "1153f2e1b1e58a427cfc1fd75731a864dfbe3eb4"
+            },
+            "require": {
+                "drupal/core": "^8 || ^9 || ^10"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.0.0-alpha1",
+                    "datestamp": "1674496868",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Alpha releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Kevin Quillen (kevinquillen)",
+                    "homepage": "https://www.drupal.org/u/kevinquillen",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "DuaelFr",
+                    "homepage": "https://www.drupal.org/user/931394"
+                },
+                {
+                    "name": "kevinquillen",
+                    "homepage": "https://www.drupal.org/user/317279"
+                },
+                {
+                    "name": "mikeohara",
+                    "homepage": "https://www.drupal.org/user/1118796"
+                },
+                {
+                    "name": "richgerdes",
+                    "homepage": "https://www.drupal.org/user/3437973"
+                }
+            ],
+            "description": "Enables you to change the presentation of taxonomy term pages with Views, allowing you to create multiple Views on the same path with different output.",
+            "homepage": "http://drupal.org/project/tvi",
+            "keywords": [
+                "Drupal"
+            ],
+            "support": {
+                "source": "http://cgit.drupalcode.org/tvi",
+                "issues": "http://drupal.org/project/issues/tvi"
             }
         },
         {
@@ -32012,7 +32077,8 @@
         "drupal/pdf": 20,
         "drupal/inline_entity_form": 5,
         "drupal/name": 5,
-        "drupal/zurb_foundation": 20
+        "drupal/zurb_foundation": 20,
+        "drupal/tvi": 15
     },
     "prefer-stable": true,
     "prefer-lowest": false,

@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '8bd62eb1477604da35fad0465054ab15678d1778',
+        'reference' => '90f33a378091a2e60eb971a12f11562919317907',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -2610,6 +2610,15 @@
             'reference' => '8.x-1.0-beta3',
             'dev_requirement' => false,
         ),
+        'drupal/tvi' => array(
+            'pretty_version' => '2.0.0-alpha1',
+            'version' => '2.0.0.0-alpha1',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/tvi',
+            'aliases' => array(),
+            'reference' => '2.0.0-alpha1',
+            'dev_requirement' => false,
+        ),
         'drupal/twig_field_value' => array(
             'pretty_version' => '2.0.2',
             'version' => '2.0.2.0',
@@ -4794,7 +4803,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '8bd62eb1477604da35fad0465054ab15678d1778',
+            'reference' => '90f33a378091a2e60eb971a12f11562919317907',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(

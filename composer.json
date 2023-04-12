@@ -89,7 +89,8 @@
     "drupal/views_role_based_global_text": "^3.1",
     "drupal/zurb_foundation": "9.x-dev@dev",
     "drupal/search404": "^2.1",
-    "drupal/stable": "^2.0"
+    "drupal/stable": "^2.0",
+    "drupal/tvi": "^2.0@alpha"
   },
   "require-dev": {
     "drupal/core-dev": "9.3.3",
