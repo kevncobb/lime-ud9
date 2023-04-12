@@ -95,7 +95,7 @@
                 <div class="sub-page-header" role="heading">
                   {{ drupal_field('field_header_background_image', 'node', node.id, 'default') }}
                     {{ title_prefix }}
-                    <h1 class="sub-header-title grid-container">{{ title }}</h1>
+                    <h1 class="sub-header-title grid-container">{{ drupal_title() }}</h1>
                     {{ title_suffix }}
                 </div>
             {% endif %}
