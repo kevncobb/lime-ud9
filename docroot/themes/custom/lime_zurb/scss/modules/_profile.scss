@@ -58,6 +58,12 @@
       @extend .align-center;
       display: inline-block;
       margin: 0 -3px;
+      @include breakpoint(small) {
+        @include xy-cell(6 of 12);
+      }
+      @include breakpoint(large) {
+        @include xy-cell(3 of 12);
+      }
     }
   }
   .field-item {
