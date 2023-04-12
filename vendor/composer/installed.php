@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '90f33a378091a2e60eb971a12f11562919317907',
+        'reference' => 'c75d85bfb2193051dac9e2bcffe2bf60bf5cf6ed',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -2637,6 +2637,15 @@
             'reference' => '3.2.1',
             'dev_requirement' => false,
         ),
+        'drupal/twigsuggest' => array(
+            'pretty_version' => '1.0.0-rc1',
+            'version' => '1.0.0.0-RC1',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/twigsuggest',
+            'aliases' => array(),
+            'reference' => '8.x-1.0-rc1',
+            'dev_requirement' => false,
+        ),
         'drupal/ultimate_cron' => array(
             'pretty_version' => '2.0.0-alpha6',
             'version' => '2.0.0.0-alpha6',
@@ -4803,7 +4812,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '90f33a378091a2e60eb971a12f11562919317907',
+            'reference' => 'c75d85bfb2193051dac9e2bcffe2bf60bf5cf6ed',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c4e750cb69208eae2dcb9a641f0c9bac",
+    "content-hash": "ba4d836e1a95f108a82c434ea400f2d7",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -16057,6 +16057,70 @@
             }
         },
         {
+            "name": "drupal/twigsuggest",
+            "version": "1.0.0-rc1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/twigsuggest.git",
+                "reference": "8.x-1.0-rc1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/twigsuggest-8.x-1.0-rc1.zip",
+                "reference": "8.x-1.0-rc1",
+                "shasum": "6fb96a25173dcdcdf760363a9b0f2e1d6e184538"
+            },
+            "require": {
+                "drupal/core": "^8 || ^9 || ^10"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-1.0-rc1",
+                    "datestamp": "1675155848",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "RC releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "beunerd",
+                    "homepage": "https://www.drupal.org/user/1312798"
+                },
+                {
+                    "name": "leymannx",
+                    "homepage": "https://www.drupal.org/user/2482808"
+                },
+                {
+                    "name": "MegaKeegMan",
+                    "homepage": "https://www.drupal.org/user/3620027"
+                },
+                {
+                    "name": "mlncn",
+                    "homepage": "https://www.drupal.org/user/64383"
+                }
+            ],
+            "description": "Provides template suggestions for things Drupal doesn't.",
+            "homepage": "https://www.drupal.org/project/twigsuggest",
+            "keywords": [
+                "drupal",
+                "styling",
+                "template suggestions",
+                "templates",
+                "theming"
+            ],
+            "support": {
+                "source": "https://git.drupalcode.org/project/twigsuggest.git",
+                "issues": "https://www.drupal.org/project/issues/twigsuggest"
+            }
+        },
+        {
             "name": "drupal/ultimate_cron",
             "version": "2.0.0-alpha6",
             "source": {
@@ -32078,7 +32142,8 @@
         "drupal/inline_entity_form": 5,
         "drupal/name": 5,
         "drupal/zurb_foundation": 20,
-        "drupal/tvi": 15
+        "drupal/tvi": 15,
+        "drupal/twigsuggest": 5
     },
     "prefer-stable": true,
     "prefer-lowest": false,

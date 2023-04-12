@@ -35,7 +35,7 @@
     "drupal/core-composer-scaffold": "^9",
     "drupal/core-project-message": "^9",
     "webflo/drupal-finder": "~1.0",
-    "vardot/varbase": "~9.0.0",
+    "vardot/varbase": "~9.0.11",
     "vardot/varbase-updater": "~2.0",
     "drupal/upgrade_status": "^3.13",
     "drupal/search_api_solr": "^4.2",
@@ -90,7 +90,8 @@
     "drupal/zurb_foundation": "9.x-dev@dev",
     "drupal/search404": "^2.1",
     "drupal/stable": "^2.0",
-    "drupal/tvi": "^2.0@alpha"
+    "drupal/tvi": "^2.0@alpha",
+    "drupal/twigsuggest": "^1.0@RC"
   },
   "require-dev": {
     "drupal/core-dev": "9.3.3",

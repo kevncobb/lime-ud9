@@ -25,6 +25,9 @@ function twigsuggest_theme_suggestions_block(array $variables) {
   if (isset($variables['elements']['#id']) || !empty($variables['elements']['#id'])) {
 
     if ($block = Block::load($variables['elements']['#id'])) {
+      if (isset($variables['elements']['content']['#block_content'])) {
+        $suggestions[] = 'block__bundle__' . $variables['elements']['content']['#block_content']->bundle();
+      }
       $suggestions[] = 'block__' . $block->getRegion();
       $suggestions[] = 'block__' . $block->getRegion() . '__' . $variables['elements']['#id'];
       if ($block->get('settings') && $provider = $block->get('settings')['provider']) {
@@ -150,6 +153,18 @@ function twigsuggest_theme_suggestions_container(array $variables) {
 }
 
 /**
+ * Implements hook_theme_suggestions_HOOK() for form templates.
+ *
+ * Add suggestions, as by default none are provided.
+ */
+function twigsuggest_theme_suggestions_form_alter(array &$suggestions, array $variables){
+  $formId = $variables['element']['#id'] ?? null;
+  if ($formId) {
+      $suggestions[] = 'form__' . str_replace('-', '_', $formId);
+  }
+}
+
+/**
  * Implements hook_theme_suggestions_HOOK() for form element templates.
  *
  * Add suggestions, as by default none are provided.
@@ -187,7 +202,7 @@ function twigsuggest_theme_suggestions_input(array $variables) {
   $element = $variables['element'];
 
   if (isset($element['#id'])) {
-    $suggestions[] = 'input__' . $element['#id'];
+    $suggestions[] = 'input__' . str_replace('-', '_', $element['#id']);
   }
 
   return $suggestions;
