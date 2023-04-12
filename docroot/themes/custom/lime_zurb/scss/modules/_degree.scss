@@ -1,6 +1,9 @@
 .degree-header {
   .cover-image {
     position: absolute;
+    .field[data-blazy] {
+      height: 100%;
+    }
   }
   table {
     position: relative;

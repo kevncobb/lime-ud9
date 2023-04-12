@@ -232,19 +232,3 @@
     background-color: rgba(0, 0, 0, 0.66);
   }
 }
-
-// Next Term Card
-.ntc {
-  margin-bottom: 1rem;
-  .title-on-image {
-    margin-bottom: 0;
-  }
-  .ntc-info {
-    padding: 1rem;
-    background-color: $light-gray;
-    border: thin solid #cacaca;
-  }
-  .ntc-duration {
-    padding: 0.5rem 0;
-  }
-}
