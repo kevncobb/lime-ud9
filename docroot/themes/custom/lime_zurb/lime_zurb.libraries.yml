@@ -1,5 +1,5 @@
 global:
-  version: VERSION
+  version: 1.x
   css:
     base:
       css/lime_zurb.css: {}

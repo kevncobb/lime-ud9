@@ -6,7 +6,7 @@ use Drupal\block\Entity\Block;
 /**
  * Implements hook_preprocess_block()
  */
-function limestone_preprocess_block(&$variables) {
+function lime_zurb_preprocess_block(&$variables) {
   if(isset($variables['attributes']['id'])) {
     $variables['content']['#attributes']['block'] = $variables['attributes']['id'];
   }
@@ -15,7 +15,7 @@ function limestone_preprocess_block(&$variables) {
 /**
  * Implements template_preprocess_field().
  */
-function limestone_preprocess_field(&$variables, $hook) {
+function lime_zurb_preprocess_field(&$variables, $hook) {
   $variables['nodenid'] = \Drupal::routeMatch()->getRawParameter('node');
 }
 
@@ -24,7 +24,7 @@ function limestone_preprocess_field(&$variables, $hook) {
  *
  * Adds additional classes
  */
-function limestone_preprocess_html(&$variables) {
+function lime_zurb_preprocess_html(&$variables) {
 
 }
 
@@ -33,7 +33,7 @@ function limestone_preprocess_html(&$variables) {
  *
  * Add template suggestions and classes
  */
-function limestone_preprocess_node(&$variables) {
+function lime_zurb_preprocess_node(&$variables) {
   $nid = $variables['node']->id();
   // attach da-thumbs library to undergrad landing page
   if($nid === 2525){
@@ -46,7 +46,7 @@ function limestone_preprocess_node(&$variables) {
  *
  * Add convenience variables and template suggestions
  */
-function limestone_preprocess_page(&$variables) {
+function lime_zurb_preprocess_page(&$variables) {
   $site_name = isset($variables['site_name']) ? $variables['site_name'] : \Drupal::config('system.site')->get('name');
 
   $variables['logo_img'] = '';
@@ -163,7 +163,7 @@ function limestone_preprocess_page(&$variables) {
 /**
  * Implements template_preprocess_views_view().
  */
-function limestone_preprocess_views_view(&$variables) {}
+function lime_zurb_preprocess_views_view(&$variables) {}
 
 
 use Drupal\taxonomy\Entity\Term;
@@ -202,7 +202,7 @@ function limestone_theme_suggestions_image_formatter_alter(array &$suggestions, 
   $suggestions[] = 'image_formatter__' . $entity->getEntityTypeId() . '__' . $entity->bundle() . '__' . $field_name;
 }
 
-function limestone_preprocess_media(&$variables) {
+function lime_zurb_preprocess_media(&$variables) {
   $media = $variables['media'];
   $name = $media->getName();
   if (!empty($name)) {
@@ -244,7 +244,7 @@ function limestone_theme_suggestions_views_view_list_alter (&$suggestions, $vars
   ];
 }
 
-function limestone_preprocess_search_result(&$variables) {
+function lime_zurb_preprocess_search_result(&$variables) {
   $language_interface = \Drupal::languageManager()
     ->getCurrentLanguage();
   $result = $variables['result'];
