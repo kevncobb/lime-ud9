@@ -93,7 +93,7 @@
                 <div class="grid-container grid-x" id="lc-news-header">
                     <div class="cell auto">
                         {{ title_prefix }}
-                        <h1 class="news-category-page-title">{{ drupal_title() }}</h1>
+                        <h1 class="news-category-page-title">{{ title|t() }}</h1>
                         {{ title_suffix }}
                     </div>
 
@@ -169,7 +169,7 @@
                                         <li>
                                             <a href="/news">News</a>
                                         </li>
-                                        <li class="current"><a href="#">{{ drupal_title() }}</a></li>
+                                        <li class="current"><a href="#">{{ title|t() }}</a></li>
                                     </ul>
                                 </nav>
                             </section>
@@ -197,7 +197,7 @@
                         {{ page.content|without('node.field_lp_paragraphs') }}
                     </section>
                     <section>
-                        {{ drupal_field('field_lp_paragraphs', 'node.id', 'full') }}
+                        {{ drupal_field('field_lp_paragraphs', 'node', 'full') }}
                     </section>
                 </main>
             {% endif %}
