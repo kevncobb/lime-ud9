@@ -204,10 +204,19 @@ header.site-header {
     }
   }
   nav.block-lime-zurb-topmenu {
-    .dropdown.menu > li.is-dropdown-submenu-parent > a::after {
+    ul.menu.dropdown {
+      .is-dropdown-submenu {
+        li a {
+          &:focus, &:hover {
+            background-color: $limestone-blue;
+          }
+        }
+      }
+    }
+    ul.menu.dropdown > li.is-dropdown-submenu-parent > a::after {
       border-color: #ffffff transparent transparent !important;
     }
-    .is-dropdown-submenu .is-dropdown-submenu-parent.opens-right > a::after {
+    ul.menu.dropdown .is-dropdown-submenu-parent.opens-right > a::after {
       border-color: transparent transparent transparent #ffffff !important;
     }
   }
