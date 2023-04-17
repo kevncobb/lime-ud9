@@ -53,9 +53,7 @@
     width: 100% !important;
     margin: 0;
     > .field-items > .field-item {
-      @extend .small-6;
-      @extend .large-3;
-      @extend .align-center;
+      text-align: center;
       display: inline-block;
       margin: 0 -3px;
       @include breakpoint(small) {
