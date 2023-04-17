@@ -24,6 +24,12 @@
     list-style: none;
     display: inline-block;
     position: relative;
+    &.current {
+      font-size: 15px;
+      padding: 0 25px 0 0;
+      text-transform: none;
+      color: #535353;
+    }
     a, span {
       color: #535353;
       font-weight: 400;
