@@ -195,7 +195,7 @@ header.site-header {
   nav.block-lime-zurb-gatewaymenu {
     ul > li > ul {
       a {
-        color: $limestone-blue;
+        color: $limestone-blue !important;
         &:focus, &:hover {
           text-decoration: underline;
           background-color: #ccc;
@@ -205,10 +205,10 @@ header.site-header {
   }
   nav.block-lime-zurb-topmenu {
     .dropdown.menu > li.is-dropdown-submenu-parent > a::after {
-      border-color: #ffffff transparent transparent;
+      border-color: #ffffff transparent transparent !important;
     }
     .is-dropdown-submenu .is-dropdown-submenu-parent.opens-right > a::after {
-      border-color: transparent transparent transparent #ffffff;
+      border-color: transparent transparent transparent #ffffff !important;
     }
   }
   button {
