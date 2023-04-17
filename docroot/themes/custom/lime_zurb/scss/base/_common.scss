@@ -154,10 +154,13 @@ p {
   width: 100%;
   height: 100%;
   position: relative;
-
   article, .cover-image-inner {
     width: 100%;
     height: 100%;
+    .field-name-bp-image-field {
+      width: 100%;
+      height: 100%;
+    }
   }
   img {
     object-fit: cover;
