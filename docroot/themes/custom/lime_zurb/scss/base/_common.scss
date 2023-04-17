@@ -270,6 +270,7 @@ p {
     color: $limestone-yellow;
   }
   .separator-center::after {
+    content: "";
     border-bottom-color: white;
   }
   table tbody {
@@ -626,9 +627,14 @@ p {
   height: 90vh;
 }
 
-.separator-center::after {
-  margin: 0.5rem auto 0.5rem;
+.separator-center {
+  text-align: center;
+  &::after {
+    content: "";
+    margin: 0.5rem auto 0.5rem;
+  }
 }
+
 
 .stripes-dark-tile {
   &:before {
