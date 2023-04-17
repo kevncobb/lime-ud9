@@ -192,6 +192,25 @@ header.site-header {
       }
     }
   }
+  nav.block-lime-zurb-gatewaymenu {
+    ul > li > ul {
+      a {
+        color: $limestone-blue;
+        &:focus, &:hover {
+          text-decoration: underline;
+          background-color: #ccc;
+        }
+      }
+    }
+  }
+  nav.block-lime-zurb-topmenu {
+    .dropdown.menu > li.is-dropdown-submenu-parent > a::after {
+      border-color: #ffffff transparent transparent;
+    }
+    .is-dropdown-submenu .is-dropdown-submenu-parent.opens-right > a::after {
+      border-color: transparent transparent transparent #ffffff;
+    }
+  }
   button {
     font-size: 1rem;
     margin: 0;
