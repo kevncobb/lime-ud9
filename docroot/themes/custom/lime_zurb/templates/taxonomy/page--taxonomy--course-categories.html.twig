@@ -140,11 +140,7 @@
         {% endif %}
       <div class="bottom-bar panel">
         <div class="grid-container">
-          <div class="large-12 cell">
-              &copy; {{ "now"|date('Y') }} {{ site_name }} {{ 'All rights reserved.'|t }} <a href="https://goo.gl/maps/HgKHGbrkNoS2"><span class="icon-location"></span> Gaffney, SC</a>
-              <a class="phone" href="tel:8644897151"><span class="icon-phone"></span> 864.489.7151</a>
-              <a class="info" href="/contact"><span class="icon-info"></span> Contact LC</a>
-          </div>
+          {{ page.bottom_bar }}
         </div>
       </div>
     </div>
