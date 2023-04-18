@@ -71,6 +71,7 @@ header.site-header {
   .dropdown.menu>li.is-dropdown-submenu-parent>a::after {
     right: 4px;
     margin-top: -2px;
+    border-color: #ffffff transparent transparent;
   }
   a, button {
     color: white !important;
@@ -193,6 +194,9 @@ header.site-header {
     }
   }
   nav.block-lime-zurb-gatewaymenu {
+    .dropdown.menu > li.is-dropdown-submenu-parent > a::after {
+      border-color: #ffffff transparent transparent;
+    }
     ul > li > ul {
       a {
         color: $limestone-blue !important;
@@ -203,28 +207,29 @@ header.site-header {
       }
     }
   }
-  nav.block-lime-zurb-topmenu {
-    ul.menu.dropdown {
-      .is-dropdown-submenu {
-        li a {
-          &:focus, &:hover {
-            background-color: $limestone-blue;
-          }
-        }
-      }
-    }
-    ul.menu.dropdown > li.is-dropdown-submenu-parent > a::after {
-      border-color: #ffffff transparent transparent !important;
-    }
-    ul.menu.dropdown .is-dropdown-submenu-parent.opens-right > a::after {
-      border-color: transparent transparent transparent #ffffff !important;
-    }
-  }
+
   button {
     font-size: 1rem;
     margin: 0;
     padding: 0.55rem 0.7rem;
     position: relative;
+  }
+}
+nav.block-lime-zurb-topmenu {
+  ul.menu.dropdown {
+    .is-dropdown-submenu {
+      li a {
+        &:focus, &:hover {
+          background-color: $limestone-blue;
+        }
+      }
+    }
+  }
+  ul.menu.dropdown > li.is-dropdown-submenu-parent > a::after {
+    border-color: #ffffff transparent transparent !important;
+  }
+  ul.menu.dropdown .is-dropdown-submenu-parent.opens-right > a::after {
+    border-color: transparent transparent transparent #ffffff !important;
   }
 }
 .block-system-branding-block img {
