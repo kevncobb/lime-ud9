@@ -236,8 +236,24 @@
 // Next Term Card
 .ntc {
   margin-bottom: 1rem;
+  .field-label-inline {
+    display: inline;
+  }
   .title-on-image {
     margin-bottom: 0;
+    .node-title {
+      text-align: left;
+      top: auto;
+      bottom: 0%;
+    }
+  }
+  .cover-image {
+    img::after {
+      content: "";
+      background-color: rgba(0, 0, 0, 0.5);
+      height: 100%;
+      width: 100%;
+    }
   }
   .ntc-info {
     padding: 1rem;
