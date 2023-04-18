@@ -236,8 +236,15 @@
 // Next Term Card
 .ntc {
   margin-bottom: 1rem;
+  [class^="icon-"], [class*=" icon-"] {
+    font-size: 1rem;
+  }
+  .with-overlay::after {
+    background: rgba(17,17,17,0.3);
+  }
   .field-label-inline {
     display: inline;
+    font-weight: lighter;
   }
   .title-on-image {
     margin-bottom: 0;
@@ -260,6 +267,7 @@
     padding: 1rem;
     background-color: $light-gray;
     border: thin solid #cacaca;
+    font-weight: bold;
   }
   .ntc-duration {
     padding: 0.5rem 0;
