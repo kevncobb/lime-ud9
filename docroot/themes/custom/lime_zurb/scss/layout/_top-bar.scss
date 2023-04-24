@@ -17,7 +17,7 @@
   a.is-submenu-item {
     padding: 0.7rem 1rem;
   }
-  nav.block-topmenu.cell {
+  nav.block-lime-zurb-topmenu.cell {
     margin-right: 0;
   }
   a {
@@ -31,14 +31,14 @@
     }
   }
 }
-.top-bar nav.block-topmenu ul.dropdown.menu > li:first-child {
+.top-bar nav.block-lime-zurb-topmenu ul.dropdown.menu > li:first-child {
   a {
     padding-left: 0;
     padding-right: 10px;
   }
 }
 
-.top-bar nav.block-topmenu {
+.top-bar nav.block-lime-zurb-topmenu {
   ul.dropdown.menu a {
     padding: 0.7rem 0.5rem;
     @include breakpoint(smedium) {
