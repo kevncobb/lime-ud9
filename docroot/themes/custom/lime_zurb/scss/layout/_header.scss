@@ -24,7 +24,7 @@ header.site-header {
   .is-dropdown-submenu a {
     color: $primary-color;
   }
-  .block-lime-zurb-gatewaymenu-2 {
+  .block-lime-zurb-gatewaymenu-2, .block-lime-zurb-gatewaymenu {
     margin-right: -1rem;
     a {
       color: $primary-color;
@@ -199,7 +199,7 @@ header.site-header {
       }
     }
   }
-  nav.block-lime-zurb-gatewaymenu-2 {
+  nav.block-lime-zurb-gatewaymenu-2, nav.block-lime-zurb-gatewaymenu {
     .dropdown.menu > li.is-dropdown-submenu-parent > a::after {
       border-color: #ffffff transparent transparent;
     }
