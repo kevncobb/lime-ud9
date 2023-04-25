@@ -31,6 +31,14 @@
     }
   }
 }
+.top-bar {
+  .grid-container {
+    width: 100%;
+  }
+  .is-dropdown-submenu .is-dropdown-submenu-parent.opens-right > a::after {
+    border-color: transparent transparent transparent white;
+  }
+}
 .top-bar nav.block-lime-zurb-topmenu ul.dropdown.menu > li:first-child {
   a {
     padding-left: 0;
