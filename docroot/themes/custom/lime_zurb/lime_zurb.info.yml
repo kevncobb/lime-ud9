@@ -52,4 +52,4 @@ features:
   - node_user_picture
 
 ckeditor_stylesheets:
-  - css/limestone.css
+  - css/lime_zurb.css
