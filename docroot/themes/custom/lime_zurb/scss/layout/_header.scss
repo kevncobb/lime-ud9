@@ -27,7 +27,7 @@ header.site-header {
   .block-lime-zurb-gatewaymenu-2, .block-lime-zurb-gatewaymenu {
     margin-right: -1rem;
     a {
-      color: $primary-color;
+      //color: $primary-color;
     }
     h2 {
       color: white;
@@ -172,7 +172,7 @@ header.site-header {
     a {
       padding: 0.7rem;
       font-size: 1rem;
-      color: $primary-color;
+      //color: $primary-color;
       @include breakpoint(medium) {
         padding: 0.7rem 0.5rem;
         font-size: 1.2rem;
