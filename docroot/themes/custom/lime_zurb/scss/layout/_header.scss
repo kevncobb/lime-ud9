@@ -21,6 +21,9 @@ header.site-header {
       width: 100%;
     }
   }
+  .dropdown.menu > li.is-active > a {
+    color: $limestone-yellow;
+  }
   ul.is-dropdown-submenu a {
     color: $primary-color !important;
   }
