@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'e4aa7e9e096c6e502149c4cbcafb340193520c87',
+        'reference' => '9872d4ba8fa5154e83700686829620eface56cca',
         'name' => 'vardot/varbase-project',
         'dev' => true,
     ),
@@ -745,12 +745,12 @@
             'dev_requirement' => false,
         ),
         'drupal/ckeditor_paste_filter' => array(
-            'pretty_version' => '1.0.1',
-            'version' => '1.0.1.0',
+            'pretty_version' => '1.1.1',
+            'version' => '1.1.1.0',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/ckeditor_paste_filter',
             'aliases' => array(),
-            'reference' => '1.0.1',
+            'reference' => '1.1.1',
             'dev_requirement' => false,
         ),
         'drupal/coder' => array(
@@ -4812,7 +4812,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'e4aa7e9e096c6e502149c4cbcafb340193520c87',
+            'reference' => '9872d4ba8fa5154e83700686829620eface56cca',
             'dev_requirement' => false,
         ),
         'vardot/varbase-updater' => array(
