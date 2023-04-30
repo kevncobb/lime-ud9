@@ -13,21 +13,21 @@
 
 @media screen and (min-width: 768px) {
   .navbar-brand img {
-    width: 300px;
+    width: 250px;
     margin-top: 45px;
   }
 }
 
 @media screen and (min-width: 992px) {
   .navbar-brand img {
-    width: 333px;
+    width: 275px;
     margin-top: 0;
   }
 }
 
 @media screen and (min-width: 1200px) {
   .navbar-brand img {
-    width: 400px;
+    width: 300px;
     margin-top: 0;
   }
 }
