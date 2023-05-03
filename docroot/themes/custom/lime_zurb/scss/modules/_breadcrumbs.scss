@@ -2,10 +2,10 @@
   clear: both;
 }
 
-.block-limestone-breadcrumbs {
+.block-lime-zurb-breadcrumbs {
   width: 100%;
 }
-.block-limestone-breadcrumbs nav {
+.block-lime-zurb-breadcrumbs nav {
   margin: 0px 0 5px -30px;
   @include breakpoint(medium) {
     margin: -17px 0 15px -30px;
@@ -72,6 +72,6 @@
   }
 }
 
-.block-limestone-breadcrumbs.bg-l-gray nav {
+.block-lime-zurb-breadcrumbs.bg-l-gray nav {
   background-color: $light-gray;
 }
