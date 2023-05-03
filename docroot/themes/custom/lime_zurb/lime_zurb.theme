@@ -167,7 +167,7 @@ function lime_zurb_preprocess_views_view(&$variables) {}
 
 
 use Drupal\taxonomy\Entity\Term;
-function limestone_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+function lime_zurb_theme_suggestions_page_alter(array &$suggestions, array $variables) {
   // Add content type suggestions.
   if ($node = \Drupal::request()->attributes->get('node')) {
     array_splice($suggestions, 1, 0, 'page__node__' . $node->getType());
@@ -181,7 +181,7 @@ function limestone_theme_suggestions_page_alter(array &$suggestions, array $vari
 /**
  * Implements hook__suggestions_HOOK_alter().
  */
-function limestone_theme_suggestions_block_alter(array &$suggestions, array $variables) {
+function lime_zurb_theme_suggestions_block_alter(array &$suggestions, array $variables) {
   if (!empty($variables['elements']['#id'])) {
     $block = Block::load($variables['elements']['#id']);
     if ($block !== null) {
@@ -196,7 +196,7 @@ function limestone_theme_suggestions_block_alter(array &$suggestions, array $var
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
  */
-function limestone_theme_suggestions_image_formatter_alter(array &$suggestions, array $variables) {
+function lime_zurb_theme_suggestions_image_formatter_alter(array &$suggestions, array $variables) {
   $entity = $variables['item']->getEntity();
   $field_name = $variables['item']->getParent()->getName();
   $suggestions[] = 'image_formatter__' . $entity->getEntityTypeId() . '__' . $entity->bundle() . '__' . $field_name;
@@ -216,7 +216,7 @@ function lime_zurb_preprocess_media(&$variables) {
 }
 
 
-function limestone_theme_suggestions_field_alter(&$suggestions, $variables) {
+function lime_zurb_theme_suggestions_field_alter(&$suggestions, $variables) {
   $suggestions[] = 'field__node__' .
     $variables['element']['#field_name'] . '__' .
     $variables['element']['#bundle'] . '__' .
@@ -233,12 +233,12 @@ function limestone_theme_suggestions_taxonomy_term_alter(&$suggestions, $vars, $
 }
 
 
-function limestone_theme_suggestions_menu_alter(&$suggestions, array $variables) {
+function lime_zurb_theme_suggestions_menu_alter(&$suggestions, array $variables) {
   // Remove the block and replace dashes with underscores in the block ID to
   // use for the hook name.
 }
 
-function limestone_theme_suggestions_views_view_list_alter (&$suggestions, $vars) {
+function lime_zurb_theme_suggestions_views_view_list_alter (&$suggestions, $vars) {
   return [
     'views_view_list__' . $vars['view']->id()
   ];
