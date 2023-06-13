@@ -92,7 +92,9 @@
     "drupal/stable": "^2.0",
     "drupal/tvi": "^2.0@alpha",
     "drupal/twigsuggest": "^1.0@RC",
-    "drupal/ckeditor_paste_filter": "^1.1"
+    "drupal/ckeditor_paste_filter": "^1.1",
+    "drupal/bootstrap": "^3.28",
+    "drupal/admin_toolbar": "^3.4"
   },
   "require-dev": {
     "drupal/core-dev": "9.3.3",
