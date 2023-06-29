@@ -49,7 +49,6 @@ content:
       autoplay: false
       loop: false
       muted: false
-      playsinline: true
     third_party_settings:
       ds:
         ft:

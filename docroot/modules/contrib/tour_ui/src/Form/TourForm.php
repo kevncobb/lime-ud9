@@ -369,6 +369,9 @@ class TourForm extends EntityForm {
       foreach ($form_state->getValue('tips') as $key => $values) {
         $data = $form['#data'][$key];
         $tips[$key] = array_merge($data, $values);
+        if (!is_array($tips[$key]['attributes'])) {
+          $tips[$key]['attributes'] = [];
+        }
       }
       $form_state->setValue('tips', $tips);
     }

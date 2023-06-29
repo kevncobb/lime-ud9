@@ -14,10 +14,8 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\field_ui\FieldUI;
-use Drupal\layout_builder\DefaultsSectionStorageInterface;
 use Drupal\layout_builder\Entity\LayoutBuilderSampleEntityGenerator;
 use Drupal\layout_builder\Plugin\SectionStorage\SectionStorageBase;
-use Drupal\layout_library\Entity\Layout;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -38,7 +36,7 @@ use Symfony\Component\Routing\RouteCollection;
  *   },
  * )
  */
-class Library extends SectionStorageBase implements ContainerFactoryPluginInterface, DefaultsSectionStorageInterface {
+class Library extends SectionStorageBase implements ContainerFactoryPluginInterface {
 
   /**
    * Entity type manager.
@@ -267,12 +265,6 @@ class Library extends SectionStorageBase implements ContainerFactoryPluginInterf
     $is_library_enabled = FALSE;
     $values = $this->getContextValues();
 
-    // Coming from a layout save, should always be applicable.
-    if (!is_null($values['entity']) && $values['entity'] instanceof Layout) {
-      $this->setContextValue('layout', $values['entity']);
-      return TRUE;
-    }
-
     if (!is_null($values['layout'])) {
       $cacheability->addCacheableDependency($values['layout']);
 
@@ -309,87 +301,6 @@ class Library extends SectionStorageBase implements ContainerFactoryPluginInterf
    */
   protected function getSectionList() {
     return $this->getContextValue('layout');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isOverridable() {
-    return TRUE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isLayoutBuilderEnabled() {
-    return TRUE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getThirdPartySetting($module, $key, $default = NULL) {
-    return $this->getLayout()->getThirdPartySetting($module, $key, $default);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setThirdPartySetting($module, $key, $value) {
-    $this->getLayout()->setThirdPartySetting($module, $key, $value);
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getThirdPartySettings($module) {
-    return $this->getLayout()->getThirdPartySettings($module);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function unsetThirdPartySetting($module, $key) {
-    $this->getLayout()->unsetThirdPartySetting($module, $key);
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getThirdPartyProviders() {
-    return $this->getLayout()->getThirdPartyProviders();
-  }
-
-  /**
-   * Helper to throw an exception for non implemented methods.
-   *
-   * @todo Refactor this once https://www.drupal.org/node/2985362 is complete.
-   */
-  protected function notImplemented() {
-    throw new \LogicException('Method not implemented');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setOverridable($overridable = TRUE) {
-    $this->notImplemented();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function enableLayoutBuilder() {
-    $this->notImplemented();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function disableLayoutBuilder() {
-    $this->notImplemented();
   }
 
 }

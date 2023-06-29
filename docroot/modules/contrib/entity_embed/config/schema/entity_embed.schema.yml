@@ -29,19 +29,6 @@ embed.embed_type_settings.entity:
         display_review:
           type: boolean
           label: 'Display review step'
-    inline_entity_form:
-      type: boolean
-      label: 'Inline Entity Form'
-    inline_entity_form_settings:
-      type: mapping
-      label: 'Inline Entity Form settings'
-      mapping:
-        entity_form_display:
-          type: string
-          label: 'Entity Form Display'
-        display_review:
-          type: boolean
-          label: 'Display review step'
 
 entity_embed.settings:
   type: config_object

@@ -25,3 +25,4 @@ config_bit:
         - varbase_total_control
         - varbase_default_content
         - varbase_tour
+        - varbase_update_helper

@@ -34,9 +34,9 @@ class TipPluginTextExtended extends TipPluginText {
       'plugin',
       'label',
       'weight',
-      'selector',
+      'attributes',
       'body',
-      'position',
+      'location',
     ];
     foreach ($names as $name) {
       $properties[$name] = $this->get($name);
@@ -79,34 +79,78 @@ class TipPluginTextExtended extends TipPluginText {
       '#delta' => 100,
     ];
 
-    $form['selector'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Selector'),
-      '#default_value' => $this->get('selector'),
-      '#description' => $this->t('This can be any selector string or a DOM element (e.g,. .some .selector-path or #some-id). If you don’t specify the element will appear in the middle of the screen.'),
+    $attributes = $this->getAttributes();
+    $form['attributes'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Attributes'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+      '#tree' => TRUE,
     ];
 
-    $form['position'] = [
+    // Determine the type identifier of the tip.
+    if (!empty($attributes['data-id'])) {
+      $tip_type = 'data-id';
+    }
+    elseif (!empty($attributes['data-class'])) {
+      $tip_type = 'data-class';
+    }
+    else {
+      $tip_type = 'modal';
+    }
+    $form['attributes']['selector_type'] = [
       '#type' => 'select',
-      '#title' => $this->t('Position'),
+      '#title' => $this->t('Selector type'),
+      '#description' => $this->t('The type of selector that this tip will target.'),
       '#options' => [
-        'auto' => $this->t('Auto'),
-        'auto-start' => $this->t('Auto start'),
-        'auto-end' => $this->t('Auto end'),
-        'top' => $this->t('Top'),
-        'top-start' => $this->t('Top start'),
-        'top-end' => $this->t('Top end'),
-        'bottom' => $this->t('Bottom'),
-        'bottom-start' => $this->t('Bottom start'),
-        'bottom-end' => $this->t('Bottom end'),
-        'right' => $this->t('Right'),
-        'right-start' => $this->t('Right start'),
-        'right-end' => $this->t('Right end'),
-        'left' => $this->t('Left'),
-        'left-start' => $this->t('Left start'),
-        'left-end' => $this->t('Left end'),
+        'data-id' => $this->t('Data ID'),
+        'data-class' => $this->t('Data Class'),
+        'modal' => $this->t('Modal'),
       ],
-      '#default_value' => $this->get('position'),
+      '#default_value' => $tip_type,
+      '#element_validate' => [[$this, 'optionsFormValidate']],
+    ];
+    $form['attributes']['data-id'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Data id'),
+      '#description' => $this->t('Provide the ID of the page element.'),
+      '#field_prefix' => '#',
+      '#default_value' => !empty($attributes['data-id']) ? $attributes['data-id'] : '',
+      '#states' => [
+        'visible' => [
+          'select[name="attributes[selector_type]"]' => ['value' => 'data-id'],
+        ],
+        'enabled' => [
+          'select[name="attributes[selector_type]"]' => ['value' => 'data-id'],
+        ],
+      ],
+    ];
+    $form['attributes']['data-class'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Data class'),
+      '#description' => $this->t('Provide the Class of the page element. You can provide more complex jquery selection like <pre>action-links a[href="/admin/structure/forum/add/forum"]</pre>'),
+      '#field_prefix' => '.',
+      '#default_value' => !empty($attributes['data-class']) ? $attributes['data-class'] : '',
+      '#states' => [
+        'visible' => [
+          'select[name="attributes[selector_type]"]' => ['value' => 'data-class'],
+        ],
+        'enabled' => [
+          'select[name="attributes[selector_type]"]' => ['value' => 'data-class'],
+        ],
+      ],
+    ];
+
+    $form['location'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Location'),
+      '#options' => [
+        'top' => $this->t('Top'),
+        'bottom' => $this->t('Bottom'),
+        'left' => $this->t('Left'),
+        'right' => $this->t('Right'),
+      ],
+      '#default_value' => $this->get('location'),
     ];
     $tags = Xss::getAdminTagList();
     $form['body'] = [
@@ -124,6 +168,48 @@ class TipPluginTextExtended extends TipPluginText {
    * {@inheritdoc}
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+  }
+
+  /**
+   * Validates the selector_type tip optionsForm().
+   *
+   * @param mixed $element
+   *   The form element that has the validate attached.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The state of the form after submission.
+   * @param array $form
+   *   The form array.
+   */
+  public function optionsFormValidate($element, FormStateInterface $form_state, array $form) {
+    $selector_type = $form_state->get(['attributes', 'selector_type']);
+    $form_state->unsetValue(['attributes', 'selector_type']);
+
+    // If selector_type is modal we need to ensure that there is
+    // no data-id or data-class specified.
+    if ($selector_type == 'modal') {
+      $form_state->unsetValue(['attributes', 'data-id']);
+      $form_state->unsetValue(['attributes', 'data-class']);
+    }
+
+    // If data-id was selected and no id provided.
+    if ($selector_type == 'data-id' && $form_state->isValueEmpty(['attributes', 'data-id'])) {
+      $form_state->setError($form['attributes']['data-id'], $this->t('Please provide a data id.'));
+    }
+
+    // If data-class was selected and no class provided.
+    if ($selector_type == 'data-class' && $form_state->isValueEmpty(['attributes', 'data-class'])) {
+      $form_state->setError($form['attributes']['data-class'], $this->t('Please provide a data class.'));
+    }
+
+    // Remove the data-class value if data-id is provided.
+    if ($selector_type == 'data-id') {
+      $form_state->unsetValue(['attributes', 'data-class']);
+    }
+
+    // Remove the data-id value is data-class is provided.
+    if ($selector_type == 'data-class') {
+      $form_state->unsetValue(['attributes', 'data-id']);
+    }
   }
 
 }

@@ -657,15 +657,4 @@ class VarbaseLayoutBuilderBootstrapLayout extends BootstrapLayout {
 
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function defaultConfiguration() {
-    $default_configuration = parent::defaultConfiguration();
-
-    return $default_configuration + [
-      'container_wrapper_id' => '',
-    ];
-  }
-
 }

@@ -7,7 +7,6 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Ajax\SetDialogTitleCommand;
-use Drupal\Core\Entity\Element\EntityAutocomplete;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -26,7 +25,6 @@ use Drupal\entity_embed\EntityEmbedDisplay\EntityEmbedDisplayManager;
 use Drupal\Component\Serialization\Json;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Drupal\inline_entity_form\Element\InlineEntityForm;
 
 /**
  * Provides a form to embed entities by specifying data attributes.
@@ -88,20 +86,6 @@ class EntityEmbedDialog extends FormBase {
    * @var array
    */
   protected $entityBrowserSettings = [];
-
-  /**
-   * The Inline Entity Form.
-   *
-   * @var Bool.
-   */
-  protected $inlineEntityForm;
-
-  /**
-   * The inline entity form settings from the entity embed button.
-   *
-   * @var array
-   */
-  protected $inlineEntityFormSettings = [];
 
   /**
    * Constructs a EntityEmbedDialog object.
@@ -207,7 +191,6 @@ class EntityEmbedDialog extends FormBase {
       'data-entity-embed-display' => 'entity_reference:entity_reference_entity_view',
       'data-entity-embed-display-settings' => isset($form_state->get('entity_element')['data-entity-embed-settings']) ? $form_state->get('entity_element')['data-entity-embed-settings'] : [],
     ];
-    $entity_element['data-entity-uuid'] = is_null($entity_element['data-entity-uuid']) ? '' : $entity_element['data-entity-uuid'];
     $form_state->set('entity_element', $entity_element);
     $entity = $this->loadEntityByAttributes($entity_element);
     $form_state->set('entity', $entity ?: NULL);
@@ -230,7 +213,6 @@ class EntityEmbedDialog extends FormBase {
     $form['#attributes']['class'][] = 'entity-embed-dialog-step--' . $form_state->get('step');
 
     $this->loadEntityBrowser($form_state);
-    $this->loadInlineEntityForm($form_state);
 
     if ($form_state->get('step') == 'select') {
       $form = $this->buildSelectStep($form, $form_state);
@@ -293,30 +275,6 @@ class EntityEmbedDialog extends FormBase {
         ],
       ];
     }
-    else if ($this->inlineEntityForm) {
-
-      $bundle = NULL;
-      // Get the first selected bundle. to use it for the inline entity form.
-      $bundles = $embed_button->getTypeSetting('bundles');
-      if (is_array($bundles) && count($bundles) > 0) {
-        $bundle = $bundles[0];
-      }
-
-      $entity_form_display = $embed_button->getTypePlugin()
-        ->getConfigurationValue('inline_entity_form_settings')['entity_form_display'];
-
-      $form['inline_entity_form'] = [
-        '#type' => 'inline_entity_form',
-        '#op' => 'add',
-        '#entity_type' => $entity_element['data-entity-type'],
-        '#entity' => $entity,
-        '#default_value' => $entity,
-        '#required' => TRUE,
-        '#bundle' => $bundle,
-        '#form_mode' => $entity_form_display,
-        '#cardinality' => 1,
-      ];
-    }
     else {
       $form['entity_id'] = [
         '#type' => 'entity_autocomplete',
@@ -363,13 +321,6 @@ class EntityEmbedDialog extends FormBase {
         ],
       ],
     ];
-
-    if ($this->inlineEntityForm) {
-      $form['#submit'] = [['Drupal\inline_entity_form\ElementSubmit', 'trigger']];
-      $form['actions']['save_modal']['#ief_submit_trigger'] = TRUE;
-      $form['actions']['save_modal']['#ief_submit_trigger_all'] = TRUE;
-      $form['actions']['save_modal']['#attributes']['class'] = [];
-    }
 
     return $form;
   }
@@ -543,32 +494,6 @@ class EntityEmbedDialog extends FormBase {
       elseif (is_string($entity_element['data-entity-embed-display-settings'])) {
         $entity_element['data-entity-embed-display-settings'] = Json::decode($entity_element['data-entity-embed-display-settings']);
       }
-
-      // Supress Drupal's "Link image to" dropdown when embedding an image,
-      // since the 'Link to' option provides this functionality.
-      if (isset($form['attributes']['data-entity-embed-display-settings']['image_link'])) {
-        $form['attributes']['data-entity-embed-display-settings']['image_link']['#type'] = 'hidden';
-        $form['attributes']['data-entity-embed-display-settings']['image_link']['#value'] = '';
-      }
-      $form['attributes']['data-entity-embed-display-settings']['link_url'] = [
-        '#title' => t('Link to'),
-        '#type' => 'entity_autocomplete',
-        '#target_type' => 'node',
-        '#attributes' => [
-          'data-autocomplete-first-character-blacklist' => '/#?'
-        ],
-        '#element_validate' => [[get_called_class(), 'validateUriElement']],
-        '#process_default_value' => FALSE,
-        '#description' => $this->t('Start typing the title of a piece of content to select it. You can also enter an internal path such as %add-node or an external URL such as %url. Enter %front to link to the front page.', ['%front' => '<front>', '%add-node' => '/node/add', '%url' => 'http://example.com']),
-        '#default_value' => isset($entity_element['data-entity-embed-display-settings']['link_url']) ? $this->getUriAsDisplayableString($entity_element['data-entity-embed-display-settings']['link_url']) : '',
-        '#maxlength' => 2048,
-      ];
-      $form['attributes']['data-entity-embed-display-settings']['link_url_target'] = [
-        '#title' => t('Open in a new window?'),
-        '#type' => 'checkbox',
-        '#default_value' => isset($entity_element['data-entity-embed-display-settings']['link_url_target']) ? Html::decodeEntities($entity_element['data-entity-embed-display-settings']['link_url_target']) : '',
-      ];
-
       $display = $this->entityEmbedDisplayManager->createInstance($plugin_id, $entity_element['data-entity-embed-display-settings']);
       $display->setContextValue('entity', $entity);
       $display->setAttributes($entity_element);
@@ -618,12 +543,6 @@ class EntityEmbedDialog extends FormBase {
         'event' => 'click',
       ],
     ];
-
-    if ($this->inlineEntityForm) {
-      $form['actions']['back']['#value'] = $this->t('Edit');
-      $form['actions']['back']['#ajax']['callback'] = $this->inlineEntityFormSettings['display_review'] ? '::submitAndShowReview' : '::submitAndShowSelect'; 
-    }
-
     $form['actions']['save_modal'] = [
       '#type' => 'submit',
       '#value' => $this->t('Embed'),
@@ -637,118 +556,6 @@ class EntityEmbedDialog extends FormBase {
     ];
 
     return $form;
-  }
-
-  /**
-   * Gets the URI without the 'internal:' or 'entity:' scheme.
-   *
-   * The following two forms of URIs are transformed:
-   * - 'entity:' URIs: to entity autocomplete ("label (entity id)") strings;
-   * - 'internal:' URIs: the scheme is stripped.
-   *
-   * This method is the inverse of ::getUserEnteredStringAsUri().
-   *
-   * @param string $uri
-   *   The URI to get the displayable string for.
-   *
-   * @return string
-   *
-   * @see static::getUserEnteredStringAsUri()
-   */
-  protected function getUriAsDisplayableString($uri) {
-    $uri = Html::decodeEntities($uri);
-    $scheme = parse_url($uri, PHP_URL_SCHEME);
-
-    // By default, the displayable string is the URI.
-    $displayable_string = $uri;
-
-    // A different displayable string may be chosen in case of the 'internal:'
-    // or 'entity:' built-in schemes.
-    if ($scheme === 'internal') {
-      $uri_reference = explode(':', $uri, 2)[1];
-
-      // @todo '<front>' is valid input for BC reasons, may be removed by
-      //   https://www.drupal.org/node/2421941
-      $path = parse_url($uri, PHP_URL_PATH);
-      if ($path === '/') {
-        $uri_reference = '<front>' . substr($uri_reference, 1);
-      }
-
-      $displayable_string = $uri_reference;
-    }
-    elseif ($scheme === 'entity') {
-      list($entity_type, $entity_id) = explode('/', substr($uri, 7), 2);
-      // Show the 'entity:' URI as the entity autocomplete would.
-      // @todo Support entity types other than 'node'. Will be fixed in
-      //    https://www.drupal.org/node/2423093.
-      if ($entity_type == 'node' && $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($entity_id)) {
-        $displayable_string = EntityAutocomplete::getEntityLabels([$entity]);
-      }
-    }
-
-    return $displayable_string;
-  }
-
-  /**
-   * Gets the user-entered string as a URI.
-   *
-   * The following two forms of input are mapped to URIs:
-   * - entity autocomplete ("label (entity id)") strings: to 'entity:' URIs;
-   * - strings without a detectable scheme: to 'internal:' URIs.
-   *
-   * This method is the inverse of ::getUriAsDisplayableString().
-   *
-   * @param string $string
-   *   The user-entered string.
-   *
-   * @return string
-   *   The URI, if a non-empty $uri was passed.
-   *
-   * @see static::getUriAsDisplayableString()
-   */
-  protected static function getUserEnteredStringAsUri($string) {
-    // By default, assume the entered string is an URI.
-    $uri = $string;
-
-    // Detect entity autocomplete string, map to 'entity:' URI.
-    $entity_id = EntityAutocomplete::extractEntityIdFromAutocompleteInput($string);
-    if ($entity_id !== NULL) {
-      // @todo Support entity types other than 'node'. Will be fixed in
-      //    https://www.drupal.org/node/2423093.
-      $uri = 'entity:node/' . $entity_id;
-    }
-    // Detect a schemeless string, map to 'internal:' URI.
-    elseif (!empty($string) && parse_url($string, PHP_URL_SCHEME) === NULL) {
-      // @todo '<front>' is valid input for BC reasons, may be removed by
-      //   https://www.drupal.org/node/2421941
-      // - '<front>' -> '/'
-      // - '<front>#foo' -> '/#foo'
-      if (strpos($string, '<front>') === 0) {
-        $string = '/' . substr($string, strlen('<front>'));
-      }
-      $uri = 'internal:' . $string;
-    }
-
-    return $uri;
-  }
-
-  /**
-   * Form element validation handler for the 'uri' element.
-   *
-   * Disallows saving inaccessible or untrusted URLs.
-   */
-  public static function validateUriElement($element, FormStateInterface $form_state, $form) {
-    $uri = static::getUserEnteredStringAsUri($element['#value']);
-    $form_state->setValueForElement($element, $uri);
-
-    // If getUserEnteredStringAsUri() mapped the entered value to a 'internal:'
-    // URI , ensure the raw value begins with '/', '?' or '#'.
-    // @todo '<front>' is valid input for BC reasons, may be removed by
-    //   https://www.drupal.org/node/2421941
-    if (parse_url($uri, PHP_URL_SCHEME) === 'internal' && !in_array($element['#value'][0], ['/', '?', '#'], TRUE) && substr($element['#value'], 0, 7) !== '<front>') {
-      $form_state->setError($element, t('Manually entered paths should start with /, ? or #.'));
-      return;
-    }
   }
 
   /**
@@ -779,28 +586,6 @@ class EntityEmbedDialog extends FormBase {
         $id = $form_state->getValue(['entity_browser', 'entities', 0])->id();
       }
       $element = $form['entity_browser'];
-    }
-    else if ($this->inlineEntityForm) {
-
-      InlineEntityForm::validateEntityForm($form['inline_entity_form'], $form_state);
-      if ($form_state->hasAnyErrors()) {
-        return;
-      }
-
-      // Create a new entity to be embedded.
-      InlineEntityForm::submitEntityForm($form['inline_entity_form'], $form_state);
-
-      if (isset($form['inline_entity_form']['#entity'])) {
-        /** @var \Drupal\Core\Entity\EntityInterface $ief_entity */
-        $ief_entity = $form['inline_entity_form']['#entity'];
-
-        $entity_element = $form_state->get('entity_element');
-        $entity_element['data-entity-uuid'] = $ief_entity->uuid();
-        $form_state->set('entity_element', $entity_element);
-
-        $id = $ief_entity->Id();
-        $element = $ief_entity;
-      }
     }
     else {
       $id = trim($form_state->getValue(['entity_id']));
@@ -937,13 +722,7 @@ class EntityEmbedDialog extends FormBase {
       $response->addCommand(new HtmlCommand('#entity-embed-dialog-form', $form));
     }
     else {
-      if ($this->entityBrowser) {
-        $form_state->set('step', !empty($this->entityBrowserSettings['display_review']) ? 'review' : 'embed');
-      }
-      else if ($this->inlineEntityForm) {
-        $form_state->set('step', $this->inlineEntityFormSettings['display_review'] ? 'review' : 'embed');
-      }
-
+      $form_state->set('step', !empty($this->entityBrowserSettings['display_review']) ? 'review' : 'embed');
       $form_state->setRebuild(TRUE);
       $rebuild_form = $this->formBuilder->rebuildForm('entity_embed_dialog', $form_state, $form);
       unset($rebuild_form['#prefix'], $rebuild_form['#suffix']);
@@ -1121,28 +900,6 @@ class EntityEmbedDialog extends FormBase {
     if ($embed_button && $entity_browser_id = $embed_button->getTypePlugin()->getConfigurationValue('entity_browser')) {
       $this->entityBrowser = $this->entityTypeManager->getStorage('entity_browser')->load($entity_browser_id);
       $this->entityBrowserSettings = $embed_button->getTypePlugin()->getConfigurationValue('entity_browser_settings');
-    }
-  }
-
-  /**
-   * Load the current inline entity form and its settings from the form state.
-   *
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The form state object.
-   */
-  protected function loadInlineEntityForm(FormStateInterface $form_state) {
-    $this->inlineEntityForm = FALSE;
-    $this->inlineEntityFormSettings = [];
-
-    /** @var \Drupal\embed\EmbedButtonInterface $embed_button */
-    $embed_button = $form_state->get('embed_button');
-
-    if ($embed_button
-      && $embed_button->getTypePlugin()->getConfigurationValue('inline_entity_form')
-      && $this->moduleHandler->moduleExists('inline_entity_form')) {
-
-      $this->inlineEntityForm = TRUE;
-      $this->inlineEntityFormSettings = $embed_button->getTypePlugin()->getConfigurationValue('inline_entity_form_settings');
     }
   }
 

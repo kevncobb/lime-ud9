@@ -103,7 +103,6 @@ class InlineEntityFormComplex extends InlineEntityFormBase implements ContainerF
     $defaults += [
       'allow_new' => TRUE,
       'allow_existing' => FALSE,
-      'allow_edit' => TRUE,
       'match_operator' => 'CONTAINS',
       'allow_duplicate' => FALSE,
     ];
@@ -128,11 +127,6 @@ class InlineEntityFormComplex extends InlineEntityFormBase implements ContainerF
       '#type' => 'checkbox',
       '#title' => $this->t('Allow users to add existing @label.', ['@label' => $labels['plural']]),
       '#default_value' => $this->getSetting('allow_existing'),
-    ];
-    $element['allow_edit'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Allow users to edit existing @label.', ['@label' => $labels['plural']]),
-      '#default_value' => $this->getSetting('allow_edit'),
     ];
     $element['match_operator'] = [
       '#type' => 'select',
@@ -359,7 +353,7 @@ class InlineEntityFormComplex extends InlineEntityFormBase implements ContainerF
 
         // Make sure entity_access is not checked for unsaved entities.
         $entity_id = $entity->id();
-        if (empty($entity_id) || ($settings['allow_edit'] && $entity->access('update'))) {
+        if (empty($entity_id) || $entity->access('update')) {
           $row['actions']['ief_entity_edit'] = [
             '#type' => 'submit',
             '#value' => $this->t('Edit'),
@@ -596,23 +590,6 @@ class InlineEntityFormComplex extends InlineEntityFormBase implements ContainerF
     }
     $triggering_element = $form_state->getTriggeringElement();
     if (empty($triggering_element['#ief_submit_trigger'])) {
-      $field_name = $this->fieldDefinition->getName();
-      $parents = array_merge($form['#parents'], [$field_name, 'form']);
-      // Build IEF ID form inline field
-      $ief_id = $this->makeIefId($parents);
-      $this->setIefId($ief_id);
-      // Get values entities by IEF ID in inline_entity_form
-      $widget_state = &$form_state->get(['inline_entity_form', $ief_id]);
-      // Sort items items base on weights.
-      if(isset($widget_state['entities']) && !empty($widget_state['entities'])){
-        $values = $widget_state['entities'];
-        uasort($values, '\Drupal\Component\Utility\SortArray::sortByWeightElement');
-        // Let the widget massage the submitted values.
-        $values = $this->massageFormValues($values, $form, $form_state);
-        // Assign the values and remove the empty ones.
-        $items->setValue($values);
-        $items->filterEmptyItems();
-      }
       return;
     }
 

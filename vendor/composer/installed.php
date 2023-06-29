@@ -3,7 +3,7 @@
         'name' => 'vardot/varbase-project',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '65a7b6773a0ae160a9e6b4d6bd295b13dae1f52d',
+        'reference' => 'f5f237d5ae55f8d9d4d85a5bc5d91e37ca461f47',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -3961,8 +3961,8 @@
         'psr/container-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '^1.0',
-                1 => '1.0',
+                0 => '1.0',
+                1 => '^1.0',
             ),
         ),
         'psr/event-dispatcher' => array(
@@ -4001,8 +4001,8 @@
         'psr/http-factory-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '^1.0',
-                1 => '1.0',
+                0 => '1.0',
+                1 => '^1.0',
             ),
         ),
         'psr/http-message' => array(
@@ -4824,7 +4824,7 @@
         'vardot/varbase-project' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '65a7b6773a0ae160a9e6b4d6bd295b13dae1f52d',
+            'reference' => 'f5f237d5ae55f8d9d4d85a5bc5d91e37ca461f47',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

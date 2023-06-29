@@ -352,10 +352,6 @@ class ViewsBulkOperationsActionProcessor implements ViewsBulkOperationsActionPro
     // query. Give those modules the opportunity to alter the query again.
     $this->view->query->alter($this->view);
 
-    // Use a different pager ID so we don't break the real pager.
-    $pager = $this->view->getPager();
-    $pager->options['id'] += $this->view->getItemsPerPage();
-
     // Execute the view.
     $this->moduleHandler->invokeAll('views_pre_execute', [$this->view]);
     $this->view->query->execute($this->view);

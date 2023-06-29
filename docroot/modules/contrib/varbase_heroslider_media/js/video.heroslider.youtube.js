@@ -33,7 +33,7 @@
         if (currentVideo.length > 0) {
           currentVideo.get(0).contentWindow.postMessage('play', '*');
         } else {
-          mediaSliders.slick('slickPlay');
+          $('.slick__slider').slick('slickPlay');
         }
       });
 
@@ -44,25 +44,19 @@
         .find('.varbase-video-player iframe[src*="youtube.com"]', context);
       if (firstIframeVideo.length > 0) {
         firstIframeVideo.on('load', function () {
-          mediaSliders.slick('slickPause');
+          $('.slick__slider').slick('slickPause');
           $(this).get(0).contentWindow.postMessage('play', '*');
         });
       }
 
       function youtubeActionProcessor(e) {
         if (e.data === 'endedYoutube' || e.message === 'endedYoutube') {
-          if ($('.varbase-heroslider-media .slide').length > 1) {
-            // When having 2 or more slides.
-            mediaSliders.slick('slickNext');
-          } else {
-            // When only having one Youtube slide.
-            firstIframeVideo.get(0).contentWindow.postMessage('play', '*');
-          }
+          $('.slick__slider').slick('slickNext');
         } else if (
           e.data === 'playingYoutube' ||
           e.message === 'playingYoutube'
         ) {
-          mediaSliders.slick('slickPause');
+          $('.slick__slider').slick('slickPause');
         }
       }
 

@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit394befdd71e4af2912826c89f60dbc05
+class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -320,8 +320,8 @@ class ComposerStaticInit394befdd71e4af2912826c89f60dbc05
         'phpDocumentor\\Reflection\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
         ),
         'mglaman\\PHPStanDrupal\\' => 
         array (
@@ -601,8 +601,8 @@ class ComposerStaticInit394befdd71e4af2912826c89f60dbc05
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            1 => __DIR__ . '/..' . '/psr/http-factory/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -674,8 +674,8 @@ class ComposerStaticInit394befdd71e4af2912826c89f60dbc05
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri/src',
-            1 => __DIR__ . '/..' . '/league/uri-interfaces/src',
+            0 => __DIR__ . '/..' . '/league/uri-interfaces/src',
+            1 => __DIR__ . '/..' . '/league/uri/src',
         ),
         'League\\OAuth2\\Server\\' => 
         array (
@@ -907,10 +907,10 @@ class ComposerStaticInit394befdd71e4af2912826c89f60dbc05
         ),
         'Doctrine\\Common\\' => 
         array (
-            0 => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common',
+            0 => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common',
             1 => __DIR__ . '/..' . '/doctrine/event-manager/src',
             2 => __DIR__ . '/..' . '/doctrine/persistence/lib/Doctrine/Common',
-            3 => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common',
+            3 => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common',
         ),
         'Defuse\\Crypto\\' => 
         array (
@@ -986,8 +986,8 @@ class ComposerStaticInit394befdd71e4af2912826c89f60dbc05
         ),
         'Behat\\Mink\\Driver\\' => 
         array (
-            0 => __DIR__ . '/..' . '/behat/mink-selenium2-driver/src',
-            1 => __DIR__ . '/..' . '/friends-of-behat/mink-browserkit-driver/src',
+            0 => __DIR__ . '/..' . '/friends-of-behat/mink-browserkit-driver/src',
+            1 => __DIR__ . '/..' . '/behat/mink-selenium2-driver/src',
         ),
         'Behat\\Mink\\' => 
         array (
@@ -10691,11 +10691,11 @@ class ComposerStaticInit394befdd71e4af2912826c89f60dbc05
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit394befdd71e4af2912826c89f60dbc05::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit394befdd71e4af2912826c89f60dbc05::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit394befdd71e4af2912826c89f60dbc05::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit394befdd71e4af2912826c89f60dbc05::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit394befdd71e4af2912826c89f60dbc05::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit4e2b923f1c545ea0ac4424925651915d::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit4e2b923f1c545ea0ac4424925651915d::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit4e2b923f1c545ea0ac4424925651915d::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit4e2b923f1c545ea0ac4424925651915d::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit4e2b923f1c545ea0ac4424925651915d::$classMap;
 
         }, null, ClassLoader::class);
     }

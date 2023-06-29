@@ -165,7 +165,7 @@ body {
     }
   }
 
-  // Remove warning message location icon in layout builder.
+  // Remvoe warning message location icon in layout builder.
   .layout-builder__message--overrides {
     .messages {
       background-image: none;
@@ -349,7 +349,6 @@ body {
   input[type="submit"] {
     &.button--primary {
       text-align: center;
-      width: auto;
     }
   }
 
@@ -502,43 +501,12 @@ body {
     border-bottom: 0;
   }
 
-  .inline-block-create-button,
-  .inline-block-list__item {
-    width: auto;
-  }
-
   .inline-block-list {
-
-    li {
-      padding: 0 0.5rem 2.5rem 0.5rem;
-
-      width: 100%;
-
-      @media (min-width: 576px) {
-        width: 41%;
-      }
-
-      @media (min-width: 768px) {
-        width: 42%;
-      }
-
-      @media (min-width: 992px) {
-        width: 43%;
-      }
-
-      @media (min-width: 1200px) {
-        width: 45%;
-      }
-
-      &:last-child { 
-        padding-bottom: 1rem;
-      }
-    }
-
-    .inline-block-list__item {
-      width: 100%;
+    li:last-child {
+      padding-bottom: 1rem;
     }
   }
+
 
   .form-select,
   .form-text,
@@ -573,17 +541,6 @@ body {
     &.form-type-search {
       width: 100% !important;
     }
-  }
-
-  .block-categories {
-    .links li {
-      padding: 0;
-      margin: 0.3125rem 0;
-    }
-  }
-
-  #bs_nav-tabs {
-    position:relative !important;
   }
 }
 
@@ -663,19 +620,4 @@ body {
     color: #fff !important;
   }
 
-}
-
-.ui-dialog.ui-dialog-off-canvas {
-  .ui-resizable-w {
-    &:before {
-      position: absolute !important;
-      top: 39% !important;
-    }
-
-    &:after {
-      display: none !important;
-      left: auto;
-      top: auto;
-    }
-  }
 }

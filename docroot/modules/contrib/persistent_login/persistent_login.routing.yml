@@ -12,6 +12,5 @@ persistent_login.user_tokens_list:
     _controller: '\Drupal\persistent_login\Controller\UserController::listTokens'
     _title: 'Persistent Logins'
   requirements:
-    _permission: 'access persistent logins tab'
     _entity_access: 'user.update'
     user: \d+

@@ -178,10 +178,8 @@ class UpdateChecklist {
     $flatKeys = [];
 
     foreach ($module_update_list as $module_name => $updates) {
-      if (is_array($updates) && count($updates) > 0) {
-        foreach ($updates as $update) {
-          $flatKeys[] = str_replace('.', '_', $module_name . ':' . $update);
-        }
+      foreach ($updates as $update) {
+        $flatKeys[] = str_replace('.', '_', $module_name . ':' . $update);
       }
     }
 
@@ -209,9 +207,7 @@ class UpdateChecklist {
       }
     }
 
-    if (isset($current_progress['#items']) && is_array($current_progress['#items'])) {
-      $current_progress['#completed_items'] = count($current_progress['#items']);
-    }
+    $current_progress['#completed_items'] = count($current_progress['#items']);
     $current_progress['#changed'] = $time;
     $current_progress['#changed_by'] = $user;
 
@@ -237,7 +233,6 @@ class UpdateChecklist {
       '#title',
       '#description',
       '#weight',
-      '#module',
     ];
 
     foreach ($this->getChecklist()->items as $version_items) {

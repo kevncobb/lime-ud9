@@ -29,8 +29,8 @@ There isn't yet a way to specify route parameters through the UI. This means you
 1. In the **Routes** field, enter the route of each page on which you want your tour to be available, one route per line. See "Determining Routes for Your Tours" section below for instructions.
 1. Create any number of steps for your tour by selecting **Select a new tip>Text** and clicking on **Add**.
 1. For each step, enter a **Label** and the **Body** text.
-1. Next, add the **Selector** to attch the tip to. This can be any selector string or a DOM element (e.g,. .some .selector-path or #some-id).  If you don’t specify the element will appear in the middle of the screen.
-1. Finally, set **Position** to determine the position of the tour dialog relative to the id or class you entered above (e.g,. top, bottom, left, right).
+1. Next, select a **Selector Type** under **Attributes**. For example, select Data ID and enter the id of the element where the tour step will be positioned.
+1. Finally, set **Location** to determine the position of the tour dialog relative to the id or class you entered above (e.g,. top, bottom, left, right).
 1. **Save** changes and repeat, creating as many steps as necessary.
 1. The order of the steps can be changed using the drag and drop feature on the tour edit page.
 1. Once order is set, **Save** your tour.

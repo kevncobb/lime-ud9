@@ -57,7 +57,7 @@ class StyleguideThemeNegotiator implements ThemeNegotiatorInterface, ContainerIn
    *   decide.
    */
   public function applies(RouteMatchInterface $route_match) {
-    if (strpos((string) $route_match->getRouteName(), 'styleguide.') === FALSE) {
+    if (strpos($route_match->getRouteName(), 'styleguide.') === FALSE) {
       return FALSE;
     }
 

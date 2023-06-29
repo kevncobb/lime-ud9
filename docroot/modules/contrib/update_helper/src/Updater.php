@@ -20,13 +20,6 @@ class Updater implements UpdaterInterface {
 
   use StringTranslationTrait;
 
-  const CONFIG_NOT_FOUND = 0;
-  const CONFIG_ALREADY_APPLIED = 1;
-  const CONFIG_NOT_EXPECTED = 2;
-  const CONFIG_APPLIED_SUCCESSFULLY = 3;
-  const MODULES_FOUND = 4;
-  const MODULES_NOT_FOUND = 5;
-
   /**
    * Site configFactory object.
    *
@@ -137,25 +130,10 @@ class Updater implements UpdaterInterface {
   /**
    * {@inheritdoc}
    */
-  public function executeUpdate($module, $update_definition_name, $force = FALSE) {
+  public function executeUpdate($module, $update_definition_name) {
     $this->warningCount = 0;
 
     $update_definitions = $this->configHandler->loadUpdate($module, $update_definition_name);
-
-    if (isset($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS])) {
-      if (isset($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS][UpdateDefinitionInterface::GLOBAL_CONDITION_EXPECTED_MODULES])) {
-        $result = $this->checkExpectedModulesArray($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS][UpdateDefinitionInterface::GLOBAL_CONDITION_EXPECTED_MODULES]);
-        if (!empty($result)) {
-          return $this->logWarning($this->t('The following module(s) "@neededModules" are required for update @updateName.',
-            [
-              '@neededModules' => implode(", ", $result),
-              '@updateName' => $update_definition_name,
-            ]));
-        }
-      }
-      unset($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS]);
-    }
-
     if (isset($update_definitions[UpdateDefinitionInterface::GLOBAL_ACTIONS])) {
       $this->executeGlobalActions($update_definitions[UpdateDefinitionInterface::GLOBAL_ACTIONS]);
 
@@ -171,57 +149,6 @@ class Updater implements UpdaterInterface {
     $this->eventDispatcher->dispatch(UpdateHelperEvents::CONFIGURATION_UPDATE, $event);
 
     return $this->warningCount === 0;
-  }
-
-  /**
-   * Check update status of configuration from update definitions.
-   *
-   * @param string $module
-   *   Module name where update definition is saved.
-   * @param string $update_definition_name
-   *   Update definition name. Usually same name as update hook.
-   *
-   * @return bool
-   *   Returns update status.
-   */
-  public function checkUpdate($module, $update_definition_name) {
-    $this->warningCount = 0;
-    $moduleHandler = \Drupal::service('module_handler');
-    $modulesInstalled = [];
-    $update_definitions = $this->configHandler->loadUpdate($module, $update_definition_name);
-
-    if (isset($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS])) {
-      if (isset($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS][UpdateDefinitionInterface::GLOBAL_CONDITION_EXPECTED_MODULES])) {
-        $result = $this->checkExpectedModulesArray($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS][UpdateDefinitionInterface::GLOBAL_CONDITION_EXPECTED_MODULES]);
-        if (!empty($result)) {
-          return Updater::MODULES_NOT_FOUND;
-        }
-      }
-      unset($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS]);
-    }
-
-    if (isset($update_definitions[UpdateDefinitionInterface::GLOBAL_ACTIONS])) {
-      if (isset($update_definitions[UpdateDefinitionInterface::GLOBAL_ACTIONS][UpdateDefinitionInterface::GLOBAL_ACTION_INSTALL_MODULES])) {
-        $modules = $update_definitions[UpdateDefinitionInterface::GLOBAL_ACTIONS][UpdateDefinitionInterface::GLOBAL_ACTION_INSTALL_MODULES];
-        foreach ($modules as $module) {
-          if (!$moduleHandler->moduleExists($module)) {
-            return Updater::MODULES_NOT_FOUND;
-          }
-          $modulesInstalled[] = $module;
-        }
-      }
-      unset($update_definitions[UpdateDefinitionInterface::GLOBAL_ACTIONS]);
-    }
-
-    if (!empty($update_definitions)) {
-      return $this->executeConfigurationActions($update_definitions, FALSE, TRUE);
-    }
-
-    if (empty($update_definitions) && !empty($modulesInstalled)) {
-      return Updater::MODULES_FOUND;
-    }
-
-    return Updater::CONFIG_NOT_FOUND;
   }
 
   /**
@@ -245,83 +172,18 @@ class Updater implements UpdaterInterface {
   }
 
   /**
-   * Check if modules are enabled and installed.
-   *
-   * @param string $module
-   *   Module name where update definition is saved.
-   * @param string $update_definition_name
-   *   Update definition name. Usually same name as update hook.
-   *
-   * @return array
-   *   Returns array needed modules.
-   */
-  public function checkExpectedModules($module, $update_definition_name) {
-    $update_definitions = $this->configHandler->loadUpdate($module, $update_definition_name);
-    if (isset($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS])) {
-      if (isset($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS][UpdateDefinitionInterface::GLOBAL_CONDITION_EXPECTED_MODULES])) {
-        return $this->checkExpectedModulesArray($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS][UpdateDefinitionInterface::GLOBAL_CONDITION_EXPECTED_MODULES]);
-      }
-    }
-    return [];
-  }
-
-  /**
-   * Check if modules are enabled and installed.
-   *
-   * @param array $expected_modules
-   *   Array with list of expected modules.
-   *
-   * @return array
-   *   Returns array needed modules.
-   */
-  public function checkExpectedModulesArray(array $expected_modules) {
-    $needed_modules = [];
-    $moduleHandler = \Drupal::service('module_handler');
-    foreach ($expected_modules as $expected_module) {
-      if (!$moduleHandler->moduleExists($expected_module)) {
-        $needed_modules[] = $expected_module;
-      }
-    }
-    return $needed_modules;
-  }
-
-  /**
    * Execute configuration update definitions for configurations.
    *
    * @param array $update_definitions
    *   List of configurations with update definitions for them.
-   * @param bool $force
-   *   Force the update.
-   * @param bool $checkOnly
-   *   Check the update status and don't apply the update.
-   *
-   * @return bool
-   *   Returns update status if checkOnly flag is set.
    */
-  protected function executeConfigurationActions(array $update_definitions, $force = FALSE, $checkOnly = FALSE) {
+  protected function executeConfigurationActions(array $update_definitions) {
     foreach ($update_definitions as $configName => $configChange) {
-      $result = $this->updateConfig($configName, $configChange['update_actions'], $configChange['expected_config'], $force, $checkOnly);
-
-      if ($checkOnly) {
-        return $result;
+      if ($this->updateConfig($configName, $configChange['update_actions'], $configChange['expected_config'])) {
+        $this->logInfo($this->t('Configuration @configName has been successfully updated.', ['@configName' => $configName]));
       }
-
-      switch ($result) {
-        case Updater::CONFIG_APPLIED_SUCCESSFULLY:
-          $this->logInfo($this->t('Configuration @configName has been successfully updated.', ['@configName' => $configName]));
-          break;
-
-        case Updater::CONFIG_ALREADY_APPLIED:
-          $this->logWarning($this->t('Configuration @configName is already updated.', ['@configName' => $configName]));
-          break;
-
-        case Updater::CONFIG_NOT_EXPECTED:
-          $this->logWarning($this->t('Expected current configuration for @configName is not matching. Unable to apply new config.', ['@configName' => $configName]));
-          break;
-
-        case Updater::CONFIG_NOT_FOUND:
-          $this->logWarning($this->t('Unable to find config @configName. Skipping update.', ['@configName' => $configName]));
-          break;
+      else {
+        $this->logWarning($this->t('Unable to update configuration for @configName.', ['@configName' => $configName]));
       }
     }
   }
@@ -482,52 +344,38 @@ class Updater implements UpdaterInterface {
    *   Configuration update actions.
    * @param array $expected_configuration
    *   Only if current config is same like old config we are updating.
-   * @param bool $force
-   *   Force the update.
-   * @param bool $checkOnly
-   *   Check the update status and don't apply the update.
    *
    * @return bool
    *   Returns TRUE if update of configuration was successful.
    */
-  protected function updateConfig($config_name, array $update_actions, array $expected_configuration = [], $force = FALSE, $checkOnly = FALSE) {
+  protected function updateConfig($config_name, array $update_actions, array $expected_configuration = []) {
     $config = $this->configFactory->getEditable($config_name);
 
     $config_data = $config->get();
 
-    // Reset expected_config in case of force flag.
-    if ($force) {
-      $expected_configuration = [];
-    }
-
     // Check that configuration exists before executing update.
     if (empty($config_data)) {
-      return Updater::CONFIG_NOT_FOUND;
+      return FALSE;
     }
 
     // Apply configuration update actions.
     $update_config_data = $this->applyConfigActions($config_data, $update_actions);
 
     // Check if configuration is already in new state.
-    if (!$force
-      && empty(DiffArray::diffAssocRecursive($config_data, $update_config_data))
+    if (
+      empty(DiffArray::diffAssocRecursive($config_data, $update_config_data))
       && empty(DiffArray::diffAssocRecursive($update_config_data, $config_data))) {
-      return Updater::CONFIG_ALREADY_APPLIED;
+      return TRUE;
     }
 
-    if (empty($expected_configuration) || !DiffArray::diffAssocRecursive($expected_configuration, $config_data)) {
-      if ($checkOnly) {
-        return Updater::CONFIG_APPLIED_SUCCESSFULLY;
-      }
-
-      $config->setData($update_config_data);
-      $config->save();
-
-      return Updater::CONFIG_APPLIED_SUCCESSFULLY;
+    if (!empty($expected_configuration) && DiffArray::diffAssocRecursive($expected_configuration, $config_data)) {
+      return FALSE;
     }
-    else {
-      return Updater::CONFIG_NOT_EXPECTED;
-    }
+
+    $config->setData($update_config_data);
+    $config->save();
+
+    return TRUE;
   }
 
 }

@@ -5,7 +5,7 @@ defaults: &defaults
       auth:
         username: mydockerhub-user
         password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
-    - image: cimg/mysql:8.0
+    - image: circleci/mysql:8.0.23
       auth:
         username: mydockerhub-user
         password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
@@ -27,12 +27,12 @@ commands:
             sudo apt -qq update
             sudo apt -qqy upgrade
             sudo apt -yqq install vim links lynx git diffutils htop curl wget p7zip-full unzip zip sed gcc g++ make libfreetype6-dev libaio1 libaio-dev libonig-dev libpng-dev mysql-client default-mysql-client
-            sudo apt -yqq install xvfb libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 libnss3 libu2f-udev
+            sudo apt -yqq install xvfb libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 libnss3
 
       ## Configure and run the virtual display.
       - run:
           name: Configure and run the virtual display.
-          command: Xvfb -ac :99 -screen 0 1920x1080x24 > /dev/null 2>&1
+          command: Xvfb -ac :99 -screen 0 1600x1200x24 > /dev/null 2>&1
           background: true
 
       ## Setup Apache2 and PHP8.1
@@ -68,12 +68,22 @@ commands:
             done
             echo Failed waiting for MySQL && exit 1
 
-      ## Install composer ~2
+      ## Install composer ~2.1
       - run:
-          name: Install composer ~2
+          name: Install composer ~2.1
           command: |
             sudo curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin/ --filename=composer --2;
             composer config -g github-oauth.github.com $GITHUB_TOKEN
+
+      ## Install node js, npm, yarn, and gulp
+      - run:
+          name: Install node js
+          command: |
+            curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -
+            sudo apt install -y nodejs 
+            sudo npm install -g yarn
+            sudo npm install gulp-cli -g ;
+            sudo npm install gulp -D ;
 
       ## Install Java.
       - run:
@@ -109,6 +119,9 @@ commands:
           name: List tools versions
           command: |
             php --version
+            node --version
+            yarn --version
+            gulp --version
             java -version
             google-chrome --version
             chromedriver --version
@@ -136,6 +149,7 @@ commands:
             cp -r /var/www/html/test/varbase-code /var/www/html/test/varbase
             cd /var/www/html/test/varbase
             composer install --no-interaction -vvv
+            composer require drupal/drush_language:~1.0
             cp -r /var/www/html/test/varbase-code /var/www/html/test/varbase/docroot/profiles/varbase
             cd /var/www/html/test/varbase
             sudo rm -rf config configbit css images libraries scripts src tests traslations varbase.info.yml varbase.install varbase.libraries.yml varbase.profile varbase.services.yml yarn.lock
@@ -188,8 +202,10 @@ commands:
             ../bin/drush pm:enable social_auth_facebook --yes
             ../bin/drush pm:enable social_auth_twitter --yes
             ../bin/drush pm:enable social_auth_linkedin --yes
-            ../bin/drush pm:enable varbase_update_helper --yes
-            ../bin/drush cache:rebuild
+            ../bin/drush config:set system.performance css.preprocess 0 --yes
+            ../bin/drush config:set system.performance js.preprocess 0 --yes
+            ../bin/drush config:set system.logging error_level all --yes
+            ../bin/drush cr
 
       ## Run Selenium Standalone server.
       - run:
@@ -207,13 +223,14 @@ commands:
             cd /var/www/html/test/varbase/docroot/profiles/varbase/scripts
             bash add-testing-users.sh
 
-      ## Import and Update local RTL language
+      ## Enable the Drush Language Command module and add RTL language
       - run:
-          name: Import and Update local RTL language
+          name: Enable the Drush Language Command module and add RTL language
           command: |
             cd /var/www/html/test/varbase/docroot
-            ../bin/drush locale-import ar --autocreate-language profiles/varbase/translations/ar.po
-            ../bin/drush locale-update --langcodes=ar
+            ../bin/drush pm:enable drush_language --yes
+            ../bin/drush language-add ar
+            ../bin/drush language-info
             ../bin/drush cr
 
       ## Uninstall Antibot module to let the selenium bot work  
@@ -236,27 +253,17 @@ jobs:
           command: |
             cd /var/www/html/test/varbase/docroot/profiles/varbase
             ../../../bin/behat tests/features/varbase/01-website-base-requirements/
-  varbase-testing-02-user-management:
+  varbase-testing-02-user-management-03-admin-management:
     <<: *defaults
     steps:
       - varbase-build
-      ## Automated Functional Acceptance Testing group - 02 user management
+      ## Automated Functional Acceptance Testing group - 02 user management - 03 admin management
       - run:
-          name: Automated Functional Acceptance Testing group - 02 user management
+          name: Automated Functional Acceptance Testing group - 02 user management - 03 admin management
           no_output_timeout: 30m
           command: |
             cd /var/www/html/test/varbase/docroot/profiles/varbase
             ../../../bin/behat tests/features/varbase/02-user-management/
-  varbase-testing-03-admin-management:
-    <<: *defaults
-    steps:
-      - varbase-build
-      ## Automated Functional Acceptance Testing group - 03 admin management
-      - run:
-          name: Automated Functional Acceptance Testing group - 03 admin management
-          no_output_timeout: 30m
-          command: |
-            cd /var/www/html/test/varbase/docroot/profiles/varbase
             ../../../bin/behat tests/features/varbase/03-admin-management/
   varbase-testing-04-content-structure:
     <<: *defaults
@@ -291,13 +298,7 @@ workflows:
               only: /^9.0.*/
             branches:
               only: /^9.0.x/
-      - varbase-testing-02-user-management:
-          filters:
-            tags:
-              only: /^9.0.*/
-            branches:
-              only: /^9.0.x/
-      - varbase-testing-03-admin-management:
+      - varbase-testing-02-user-management-03-admin-management:
           filters:
             tags:
               only: /^9.0.*/

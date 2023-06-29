@@ -179,6 +179,21 @@ class TourTipForm extends FormBase {
       }
     }
 
+    // We have to cleanup the attributes as these are selection dependent.
+    // @see \Drupal\tour_ui\Plugin\tour_ui\tip\TipPluginTextExtended::buildConfigurationForm
+    $input = $form_state->getUserInput();
+    $selected = $input['attributes']['selector_type'];
+    $attributes = &$new_tip['attributes'];
+    if ($selected !== 'data-id') {
+      unset($attributes['data-id']);
+    }
+    if ($selected !== 'data-class') {
+      unset($attributes['data-class']);
+    }
+
+    if (!is_array($new_tip['attributes'])) {
+      $new_tip['attributes'] = [];
+    }
     // Add our tip and save.
     $new_tips[$new_tip['id']] = $new_tip;
     $tour->set('tips', $new_tips);

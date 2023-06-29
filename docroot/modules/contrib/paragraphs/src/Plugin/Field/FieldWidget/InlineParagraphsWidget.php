@@ -651,6 +651,9 @@ class InlineParagraphsWidget extends WidgetBase {
         if (method_exists(FormatterHelper::class, 'formProcess')) {
           $element['subform']['#process'][] = [FormatterHelper::class, 'formProcess'];
         }
+        elseif (function_exists('field_group_form_pre_render')) {
+          $element['subform']['#pre_render'][] = 'field_group_form_pre_render';
+        }
         elseif (function_exists('field_group_form_process')) {
           $element['subform']['#process'][] = 'field_group_form_process';
         }

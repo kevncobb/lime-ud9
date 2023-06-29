@@ -4,6 +4,3 @@ paragraphs.settings:
     show_unpublished:
       type: boolean
       label: 'Allow users with "View unpublished paragraphs" permission to see unpublished paragraphs.'
-    allow_reference_changes:
-      type: boolean
-      label: 'Allow reference changes for paragraphs.'

@@ -15,30 +15,33 @@ tips:
     plugin: text
     label: 'Tour edit'
     weight: 1
-    selector: { }
+    attributes: { }
     body: '<p>On this page you edit a tour.</p><p>Note that after saving a tour you need to make sure the tour file is copied for later use into a module config directory or into an issue queue.</p>'
-    position: top
+    location: top
   tour-label:
     id: tour-label
     plugin: text
     label: Label
     weight: 3
-    selector: '#edit-label'
+    attributes:
+      data-id: edit-label
     body: '<p>The label is for administrative purposed. Used by Tour UI to list a Tour.</p>'
-    position: top
+    location: top
   tour-paths:
     id: tour-paths
     plugin: text
     label: Paths
     weight: 5
-    selector: '#edit-paths'
+    attributes:
+      data-id: edit-paths
     body: '<p>Here you define the path or paths a Tour should be displayed.</p><p>You may use * as a wildcard for a path element. Ie node/*edit</p>'
-    position: top
+    location: top
   tour-tips:
     id: tour-tips
     plugin: text
     label: Tips
     weight: 7
-    selector: '#edit-tips'
+    attributes:
+      data-id: edit-tips
     body: '<p>These are the tips.</p>'
-    position: { }
+    location: null

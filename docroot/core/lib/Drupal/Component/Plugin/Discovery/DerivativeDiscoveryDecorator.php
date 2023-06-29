@@ -99,23 +99,14 @@ class DerivativeDiscoveryDecorator implements DiscoveryInterface {
       $deriver = $this->getDeriver($base_plugin_id, $plugin_definition);
       if ($deriver) {
         $derivative_definitions = $deriver->getDerivativeDefinitions($plugin_definition);
-        if (!is_array($derivative_definitions)) {
-          // log warning about plugin uncorrectly implementing getDerivativeDefinitions()
-          \Drupal::logger('plugin discovery')->warning(
-            'getDerivativeDefinitions() does not return an array for plugin "@plugin".',
-            ['@plugin' => $base_plugin_id]
-          );
-        }
-        else {
-          foreach ($derivative_definitions as $derivative_id => $derivative_definition) {
-            $plugin_id = $this->encodePluginId($base_plugin_id, $derivative_id);
-            // Use this definition as defaults if a plugin already defined
-            // itself as this derivative.
-            if ($derivative_id && isset($base_plugin_definitions[$plugin_id])) {
-              $derivative_definition = $this->mergeDerivativeDefinition($base_plugin_definitions[$plugin_id], $derivative_definition);
-            }
-            $plugin_definitions[$plugin_id] = $derivative_definition;
+        foreach ($derivative_definitions as $derivative_id => $derivative_definition) {
+          $plugin_id = $this->encodePluginId($base_plugin_id, $derivative_id);
+          // Use this definition as defaults if a plugin already defined
+          // itself as this derivative.
+          if ($derivative_id && isset($base_plugin_definitions[$plugin_id])) {
+            $derivative_definition = $this->mergeDerivativeDefinition($base_plugin_definitions[$plugin_id], $derivative_definition);
           }
+          $plugin_definitions[$plugin_id] = $derivative_definition;
         }
       }
       // If a plugin already defined itself as a derivative it might already

@@ -57,9 +57,6 @@ field.widget.settings.inline_entity_form_complex:
     allow_existing:
       type: boolean
       label: "Allow existing"
-    allow_edit:
-      type: boolean
-      label: "Allow edit"
     match_operator:
       type: string
       label: "Match operator"
