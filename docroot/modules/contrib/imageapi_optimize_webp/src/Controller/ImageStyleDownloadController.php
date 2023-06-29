@@ -35,6 +35,9 @@ class ImageStyleDownloadController extends CoreImageStyleDownloadController {
    */
   public function deliver(Request $request, $scheme, ImageStyleInterface $image_style) {
     $target = $request->query->get('file');
+    if (!$target) {
+      throw new NotFoundHttpException();
+    }
     $path_info = pathinfo($target);
     // If .webp file, look for image to derive from.
     if ($path_info['extension'] == 'webp') {

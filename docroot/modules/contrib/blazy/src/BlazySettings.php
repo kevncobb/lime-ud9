@@ -46,7 +46,7 @@ class BlazySettings implements \Countable {
    * @return mixed
    *   A mixed value (array, string, bool, null, etc.).
    */
-  public function get($key, $default_value = NULL) {
+  public function get($key = NULL, $default_value = NULL) {
     if (empty($key)) {
       return $this->storage;
     }
@@ -55,29 +55,28 @@ class BlazySettings implements \Countable {
     if (count($parts) == 1) {
       return $this->storage[$key] ?? $default_value;
     }
-    else {
-      $value = NestedArray::getValue($this->storage, $parts, $key_exists);
-      return $key_exists ? $value : $default_value;
-    }
+
+    $value = NestedArray::getValue($this->storage, $parts, $key_exists);
+    return $key_exists ? $value : $default_value;
   }
 
   /**
-   * Returns values from a key.
+   * Returns a convenient shortcut to get a feature with an `is` key.
    *
    * @param string $key
    *   The storage key.
    * @param string $default_value
    *   The storage default_value.
    *
-   * @return mixed
-   *   Normally bool, but can be mixed values (array, string, bool, null, etc.).
+   * @return bool
+   *   Returns TRUE or FALSE.
    */
   public function is($key, $default_value = NULL) {
     return $this->get('is.' . $key, $default_value);
   }
 
   /**
-   * Returns TRUE if a feature identified by the key was processed.
+   * Returns a convenient shortcut to get a feature with a `was` key.
    *
    * To verify if the expected workflow is by-passed when the key was missing.
    *
@@ -86,11 +85,41 @@ class BlazySettings implements \Countable {
    * @param string $default_value
    *   The storage default_value.
    *
-   * @return mixed
-   *   Normally bool, but can be mixed values (array, string, bool, null, etc.).
+   * @return bool
+   *   Returns TRUE or FALSE.
    */
   public function was($key, $default_value = NULL) {
     return $this->get('was.' . $key, $default_value);
+  }
+
+  /**
+   * Returns a convenient shortcut to get a feature with a `use` key.
+   *
+   * @param string $key
+   *   The storage key.
+   * @param string $default_value
+   *   The storage default_value.
+   *
+   * @return bool
+   *   Returns TRUE or FALSE.
+   */
+  public function use($key, $default_value = NULL) {
+    return $this->get('use.' . $key, $default_value);
+  }
+
+  /**
+   * Returns a convenient shortcut to get a feature with a `ui` key.
+   *
+   * @param string $key
+   *   The storage key.
+   * @param string $default_value
+   *   The storage default_value.
+   *
+   * @return bool
+   *   Returns TRUE or FALSE.
+   */
+  public function ui($key, $default_value = NULL) {
+    return $this->get('ui.' . $key, $default_value);
   }
 
   /**

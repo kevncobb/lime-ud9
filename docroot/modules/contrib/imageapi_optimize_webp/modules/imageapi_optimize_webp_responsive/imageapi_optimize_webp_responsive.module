@@ -49,8 +49,8 @@ function imageapi_optimize_webp_responsive_preprocess_responsive_image(&$variabl
         // If WebP processor exits on pipeline, build another map for jpg => webp paths.
         if ($pipeline_webp_map[$image_style->getPipeline()]) {
           $image_uri = $image_style->buildUri($variables['uri']);
-          $image_url = file_create_url($image_uri);
-          $image_relative_path = file_url_transform_relative($image_url);
+          $image_url = \Drupal::service('file_url_generator')->generateAbsoluteString($image_uri);
+          $image_relative_path = \Drupal::service('file_url_generator')->transformRelative($image_url);
 
           $image_relative_path_file = explode('?', $image_relative_path)[0];
           $webp_relative_path = str_replace($image_relative_path_file,

@@ -15,14 +15,14 @@ class BlazyEntity implements BlazyEntityInterface {
   /**
    * The blazy oembed service.
    *
-   * @var object
+   * @var \Drupal\blazy\Media\BlazyOEmbedInterface
    */
   protected $oembed;
 
   /**
    * The blazy manager service.
    *
-   * @var object
+   * @var \Drupal\blazy\BlazyManagerInterface
    */
   protected $blazyManager;
 
@@ -44,14 +44,14 @@ class BlazyEntity implements BlazyEntityInterface {
   }
 
   /**
-   * Returns the blazy oembed service.
+   * {@inheritdoc}
    */
   public function oembed() {
     return $this->oembed;
   }
 
   /**
-   * Returns the blazy manager service.
+   * {@inheritdoc}
    */
   public function blazyManager() {
     return $this->blazyManager;
@@ -94,7 +94,7 @@ class BlazyEntity implements BlazyEntityInterface {
 
     // Only pass to Blazy for known entities related to File or Media.
     if (in_array($entity->getEntityTypeId(), ['file', 'media'])) {
-      /** @var Drupal\image\Plugin\Field\FieldType\ImageItem $item */
+      /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $data['item'] */
       if (empty($data['item'])) {
         $data['content'][] = $this->view($entity, $settings, $fallback);
       }
@@ -113,7 +113,7 @@ class BlazyEntity implements BlazyEntityInterface {
       $build = $this->view($entity, $settings, $fallback);
     }
 
-    $manager->getModuleHandler()->alter('blazy_build_entity', $build, $entity, $settings);
+    $manager->moduleHandler()->alter('blazy_build_entity', $build, $entity, $settings);
     return $build;
   }
 
@@ -134,9 +134,9 @@ class BlazyEntity implements BlazyEntityInterface {
       $langcode       = $entity->language()->getId();
 
       // If entity has view_builder handler.
-      if ($manager->getEntityTypeManager()
+      if ($manager->entityTypeManager()
         ->hasHandler($entity_type_id, 'view_builder')) {
-        $build = $manager->getEntityTypeManager()
+        $build = $manager->entityTypeManager()
           ->getViewBuilder($entity_type_id)
           ->view($entity, $view_mode, $langcode);
 

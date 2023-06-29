@@ -98,18 +98,8 @@ field.field_settings.feeds_item:
 
 # Field formatter configurations.
 field.formatter.settings.feeds_item_imported:
-  type: mapping
+  type: field.formatter.settings.timestamp
   label: 'Feeds item imported display format settings'
-  mapping:
-    date_format:
-      type: string
-      label: 'Date format'
-    custom_date_format:
-      type: string
-      label: 'Custom date format'
-    timezone:
-      type: string
-      label: 'Time zone'
 
 field.formatter.settings.feeds_item_url:
   type: mapping

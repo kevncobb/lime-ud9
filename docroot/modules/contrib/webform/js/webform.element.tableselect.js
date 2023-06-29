@@ -5,7 +5,7 @@
  * @see core/misc/tableselect.es6.js
  */
 
-(function ($, Drupal, once) {
+(function ($, Drupal) {
 
   'use strict';
 
@@ -16,7 +16,9 @@
    */
   Drupal.behaviors.webformTableSelect = {
     attach: function (context) {
-      $(once('webform-tableselect', 'table.js-webform-tableselect', context))
+      $(context)
+        .find('table.js-webform-tableselect')
+        .once('webform-tableselect')
         .each(Drupal.webformTableSelect);
     }
   };
@@ -44,10 +46,14 @@
       });
     }
 
-    // Add click event handler to the table row that toggles the
-    // checkbox or radio.
+    // Add click event handler to the table row that toggles the checkbox or
+    // radio.
     $table.find('tr').on('click', function (event) {
-      if ($.inArray(event.target.tagName, ['A', 'BUTTON', 'INPUT', 'SELECT']) !== -1) {
+
+      // Elements of table row.
+      var $tableRowElements = ['A', 'BUTTON', 'INPUT', 'SELECT', 'LABEL'];
+
+      if ($.inArray(event.target.tagName, $tableRowElements) !== -1) {
         return true;
       }
 
@@ -61,4 +67,4 @@
     });
   };
 
-})(jQuery, Drupal, once);
+})(jQuery, Drupal);

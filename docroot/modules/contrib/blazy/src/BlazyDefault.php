@@ -43,7 +43,7 @@ class BlazyDefault {
   /**
    * Returns alterable plugin settings to pass the tests.
    */
-  public function alterableSettings(array &$settings = []) {
+  public function alterableSettings(array &$settings) {
     $context = ['class' => get_called_class()];
     \Drupal::moduleHandler()->alter('blazy_base_settings', $settings, $context);
 
@@ -99,26 +99,8 @@ class BlazyDefault {
       'loading'                => 'lazy',
       'preload'                => FALSE,
       'responsive_image_style' => '',
+      'use_theme_field'        => FALSE,
     ] + self::cherrySettings();
-  }
-
-  /**
-   * Returns deprecated, or previously wrong room settings.
-   *
-   * @todo remove custom breakpoints anytime before 3.x.
-   */
-  public static function deprecatedSettings() {
-    return [
-      'breakpoints' => [],
-      'current_view_mode' => '',
-      'fx' => '',
-      'icon' => '',
-      'id' => '',
-      'sizes' => '',
-      'grid_header' => '',
-      'loading' => 'lazy',
-      'preload' => FALSE,
-    ];
   }
 
   /**
@@ -286,21 +268,6 @@ class BlazyDefault {
       'id' => '',
       'route_name' => '',
       'is_preview' => FALSE,
-      // 'namespace' => 'blazy',
-      // 'label' => '',
-      // 'unstyled' => FALSE,
-      // '_resimage' => FALSE,
-      // '_image_url' => '',
-      // 'check_blazy' => FALSE,
-      // 'first_image' => NULL,
-      // '_richbox' => FALSE,
-      // 'blazy_data' => [],
-      // 'compat' => FALSE,
-      // 'lightbox' => FALSE,
-      // 'resimage' => FALSE,
-      // 'unlazy' => FALSE,
-      // 'view_name' => '',
-      // @todo revert  + self::uiSettings()
     ] + self::imageSettings()
       + self::gridSettings();
   }
@@ -314,25 +281,6 @@ class BlazyDefault {
       'image_url' => '',
       'height' => NULL,
       'width' => NULL,
-
-      // @todo move into and deprecated for BlazySettings under blazies:
-      // 'delta' => 0,
-      // 'embed_url' => '',
-      // 'extension' => '',
-      // 'scheme' => '',
-      // 'type' => 'image',
-      // 'uri' => '',
-      // 'content_url' => '',
-      // 'use_data_uri' => FALSE,
-      // 'use_loading' => TRUE,
-      // 'use_media' => FALSE,
-      // 'item_id' => 'blazy',
-      // 'lazy_attribute' => 'src',
-      // 'lazy_class' => 'b-lazy',
-      // 'placeholder_fx' => '',
-      // 'placeholder_ui' => '',
-      // 'player' => FALSE,
-      // 'entity_type_id' => '',
     ] + self::htmlSettings();
   }
 
@@ -444,6 +392,27 @@ class BlazyDefault {
   public static function ondemandPolyfills(): array {
     return [
       'fullscreen',
+    ];
+  }
+
+  /**
+   * Returns deprecated, or previously wrong room settings.
+   *
+   * @todo remove custom breakpoints anytime before 3.x.
+   */
+  public static function deprecatedSettings() {
+    return [
+      'breakpoints' => [],
+      'current_view_mode' => '',
+      'fx' => '',
+      'icon' => '',
+      'id' => '',
+      'sizes' => '',
+      'grid_header' => '',
+      'loading' => 'lazy',
+      'preload' => FALSE,
+      '_item' => '',
+      '_uri' => '',
     ];
   }
 

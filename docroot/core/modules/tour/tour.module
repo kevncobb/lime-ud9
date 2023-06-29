@@ -83,11 +83,6 @@ function tour_page_bottom(array &$page_bottom) {
   $route_match = \Drupal::routeMatch();
   $route_name = $route_match->getRouteName();
 
-  // Check if the current matching path is the front page.
-  if (\Drupal::service('path.matcher')->isFrontPage()) {
-    $route_name = '<front>';
-  }
-
   $results = \Drupal::entityQuery('tour')
     ->condition('routes.*.route_name', $route_name)
     ->execute();

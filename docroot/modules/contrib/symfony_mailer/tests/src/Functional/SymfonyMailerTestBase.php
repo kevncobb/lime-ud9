@@ -12,6 +12,9 @@ abstract class SymfonyMailerTestBase extends BrowserTestBase {
 
   use MailerTestTrait;
 
+  /**
+   * Human-readable string representing 'all'.
+   */
   protected const TYPE_ALL = '<b>*All*</b>';
 
   /**

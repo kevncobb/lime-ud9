@@ -14,6 +14,22 @@ namespace Drupal\blazy;
 interface BlazyEntityInterface {
 
   /**
+   * Returns the blazy oembed service.
+   *
+   * @return \Drupal\blazy\Media\BlazyOEmbedInterface
+   *   The blazy oembed.
+   */
+  public function oembed();
+
+  /**
+   * Returns the blazy manager service.
+   *
+   * @return \Drupal\blazy\BlazyManagerInterface
+   *   The blazy manager.
+   */
+  public function blazyManager();
+
+  /**
    * Build image/video preview either using theme_blazy(), or view builder.
    *
    * @param array $data
@@ -38,8 +54,8 @@ interface BlazyEntityInterface {
    * @param string $fallback
    *   The fallback content when all fails, probably just entity label.
    *
-   * @return array|bool
-   *   The renderable array of the view builder, or false if not applicable.
+   * @return array
+   *   The renderable array of the view builder, or empty if not applicable.
    */
   public function view($entity, array $settings = [], $fallback = ''): array;
 

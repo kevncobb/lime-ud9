@@ -9,9 +9,11 @@ So far:
 * Page templates per node type
 * User templates per highest role|uid (and view mode)
 * Field templates per view mode (and bundle)
-* Form templates per form ID
+* Form templates per form ID and per region
+* Menu templates per region
 * Container templates per form or not (has-parent or no-parent), type, and view.
 * Page templates per entity type (a fix for core).
+* Book tree templates (from book module) per region
 
 [Suggestions are welcome in the issue queue][1]
 
