@@ -257,6 +257,7 @@ body .layout-builder__add-block.is-layout-builder-highlighted {
 #drupal-off-canvas input[type=submit].button--primary,
 #layout-builder-modal button.button--primary,
 #layout-builder-modal input[type=submit].button--primary {
+  width: auto;
   text-align: center;
 }
 #drupal-off-canvas .fieldgroup.form-composite.form-wrapper,
@@ -388,9 +389,48 @@ body .layout-builder__add-block.is-layout-builder-highlighted {
 #layout-builder-modal ol li {
   border-bottom: 0;
 }
+#drupal-off-canvas .inline-block-create-button,
+#drupal-off-canvas .inline-block-list__item,
+#layout-builder-modal .inline-block-create-button,
+#layout-builder-modal .inline-block-list__item {
+  width: auto;
+}
+#drupal-off-canvas .inline-block-list li,
+#layout-builder-modal .inline-block-list li {
+  width: 100%;
+  padding: 0 0.5rem 2.5rem 0.5rem;
+}
+@media (min-width: 576px) {
+  #drupal-off-canvas .inline-block-list li,
+  #layout-builder-modal .inline-block-list li {
+    width: 41%;
+  }
+}
+@media (min-width: 768px) {
+  #drupal-off-canvas .inline-block-list li,
+  #layout-builder-modal .inline-block-list li {
+    width: 42%;
+  }
+}
+@media (min-width: 992px) {
+  #drupal-off-canvas .inline-block-list li,
+  #layout-builder-modal .inline-block-list li {
+    width: 43%;
+  }
+}
+@media (min-width: 1200px) {
+  #drupal-off-canvas .inline-block-list li,
+  #layout-builder-modal .inline-block-list li {
+    width: 45%;
+  }
+}
 #drupal-off-canvas .inline-block-list li:last-child,
 #layout-builder-modal .inline-block-list li:last-child {
   padding-bottom: 1rem;
+}
+#drupal-off-canvas .inline-block-list .inline-block-list__item,
+#layout-builder-modal .inline-block-list .inline-block-list__item {
+  width: 100%;
 }
 #drupal-off-canvas .form-select,
 #drupal-off-canvas .form-text,
@@ -434,6 +474,15 @@ body .layout-builder__add-block.is-layout-builder-highlighted {
 #drupal-off-canvas fieldset.form-type-search,
 #layout-builder-modal fieldset.form-type-search {
   width: 100% !important;
+}
+#drupal-off-canvas .block-categories .links li,
+#layout-builder-modal .block-categories .links li {
+  margin: 0.3125rem 0;
+  padding: 0;
+}
+#drupal-off-canvas #bs_nav-tabs,
+#layout-builder-modal #bs_nav-tabs {
+  position: relative !important;
 }
 
 #layout-builder-modal .form-item--editor-format .form-element--editor-format {
@@ -487,4 +536,14 @@ body .layout-builder__add-block.is-layout-builder-highlighted {
 }
 #layout-builder-modal .fieldset__label {
   color: #fff !important;
+}
+
+.ui-dialog.ui-dialog-off-canvas .ui-resizable-w:before {
+  position: absolute !important;
+  top: 39% !important;
+}
+.ui-dialog.ui-dialog-off-canvas .ui-resizable-w:after {
+  top: auto;
+  left: auto;
+  display: none !important;
 }

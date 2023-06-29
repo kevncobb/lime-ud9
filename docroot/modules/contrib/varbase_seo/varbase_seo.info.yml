@@ -1,9 +1,9 @@
 name: "Varbase SEO"
 description: "Provide Search Engine Optimization (SEO) Core features and settings."
 type: module
-core_version_requirement: ^9
+core_version_requirement: ~9.5.0 || ~10.1.0
 package: Varbase
-dependencies: []
+dependencies: { }
 install:
   - rdf
   - metatag
@@ -27,7 +27,7 @@ install:
   - yoast_seo
   - script_manager
 
-# Information added by Drupal.org packaging script on 2022-04-21
-version: '9.0.4'
+# Information added by Drupal.org packaging script on 2023-06-28
+version: '9.0.10'
 project: 'varbase_seo'
-datestamp: 1650551468
+datestamp: 1687984942

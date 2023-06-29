@@ -31,7 +31,6 @@
   "require": {
     "composer/installers": "~1.0 || ~2.0",
     "oomphinc/composer-installers-extender": "~1.0 || ~2.0",
-    "cweagans/composer-patches": "~1.0",
     "drupal/core-composer-scaffold": "^9",
     "drupal/core-project-message": "^9",
     "webflo/drupal-finder": "~1.0",
@@ -112,14 +111,14 @@
     },
     "allow-plugins": {
       "composer/installers": true,
-      "cweagans/composer-patches": true,
       "oomphinc/composer-installers-extender": true,
       "drupal/core-composer-scaffold": true,
       "drupal/core-project-message": true,
       "vardot/varbase-updater": true,
       "drupal/drupal-library-installer-plugin": true,
       "dealerdirect/phpcodesniffer-composer-installer": true,
-      "drupal/console-extend-plugin": true
+      "drupal/console-extend-plugin": true,
+      "cweagans/composer-patches": false
     }
   },
   "scripts": {
@@ -223,7 +222,7 @@
       ]
     },
     "enable-patching": true,
-    "composer-exit-on-patch-failure": true,
+    "composer-exit-on-patch-failure": false,
     "patchLevel": {
       "drupal/core": "-p2"
     }

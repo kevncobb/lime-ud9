@@ -7,12 +7,17 @@
   Drupal.behaviors.varbaseHeroSliderMedia_local_video = {
     attach(context) {
       $(window).on('load', function () {
+        const mediaSliders = $(
+          '.slick--view--varbase-heroslider-media .slick__slider',
+          context
+        );
+
         // On before slide change.
-        $('.slick--view--varbase-heroslider-media .slick__slider', context).on(
+        mediaSliders.on(
           'beforeChange',
           function (event, slick, currentSlide, nextSlide) {
             const currentSlideObject = $(
-              `.slide--${currentSlide}.slick-active`
+              `.slide--${currentSlide}.slick - active`
             );
             const nextSlideObject = $(`.slide--${nextSlide}`);
             const currentVideo = currentSlideObject.find(
@@ -37,7 +42,7 @@
               nextPlayer.onplay = onPlayProgress;
               nextPlayer.play();
             } else {
-              $('.slick__slider').slick('slickPlay');
+              mediaSliders.slick('slickPlay');
             }
           }
         );
@@ -49,14 +54,14 @@
             .find('.varbase-video-player video', context);
 
           if (firstVideo.length > 0) {
-            $('.slick__slider').slick('slickPause');
+            mediaSliders.slick('slickPause');
 
             const firstVideoPlayer = firstVideo.get(0);
             firstVideoPlayer.muted = true;
             firstVideoPlayer.play();
 
             firstVideo.on('ended', function () {
-              $('.slick__slider').slick('slickPlay');
+              mediaSliders.slick('slickPlay');
             });
           }
         });
@@ -82,17 +87,17 @@
 
         // Play when paused.
         function onPause() {
-          $('.slick__slider').slick('slickNext');
+          mediaSliders.slick('slickNext');
         }
 
         // Play when finished.
         function onFinish() {
-          $('.slick__slider').slick('slickPlay');
+          mediaSliders.slick('slickPlay');
         }
 
-        // Pause on play prgress.
+        // Pause on play progress.
         function onPlayProgress() {
-          $('.slick__slider').slick('slickPause');
+          mediaSliders.slick('slickPause');
         }
       });
     }

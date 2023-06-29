@@ -5,7 +5,7 @@ namespace Drupal\layout_library\Entity;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\field_ui\FieldUI;
 use Drupal\layout_builder\SectionListInterface;
-use Drupal\layout_builder\SectionStorage\SectionStorageTrait;
+use Drupal\layout_builder\SectionListTrait;
 use Drupal\Core\Url;
 
 /**
@@ -50,7 +50,7 @@ use Drupal\Core\Url;
  */
 class Layout extends ConfigEntityBase implements SectionListInterface {
 
-  use SectionStorageTrait;
+  use SectionListTrait;
   /**
    * Unique ID for the config entity.
    *
