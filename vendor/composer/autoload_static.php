@@ -320,8 +320,8 @@ class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
         'phpDocumentor\\Reflection\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
         ),
         'mglaman\\PHPStanDrupal\\' => 
         array (
@@ -601,8 +601,8 @@ class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -674,8 +674,8 @@ class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri-interfaces/src',
-            1 => __DIR__ . '/..' . '/league/uri/src',
+            0 => __DIR__ . '/..' . '/league/uri/src',
+            1 => __DIR__ . '/..' . '/league/uri-interfaces/src',
         ),
         'League\\OAuth2\\Server\\' => 
         array (
@@ -907,10 +907,10 @@ class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
         ),
         'Doctrine\\Common\\' => 
         array (
-            0 => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common',
+            0 => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common',
             1 => __DIR__ . '/..' . '/doctrine/event-manager/src',
             2 => __DIR__ . '/..' . '/doctrine/persistence/lib/Doctrine/Common',
-            3 => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common',
+            3 => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common',
         ),
         'Defuse\\Crypto\\' => 
         array (
@@ -986,8 +986,8 @@ class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
         ),
         'Behat\\Mink\\Driver\\' => 
         array (
-            0 => __DIR__ . '/..' . '/friends-of-behat/mink-browserkit-driver/src',
-            1 => __DIR__ . '/..' . '/behat/mink-selenium2-driver/src',
+            0 => __DIR__ . '/..' . '/behat/mink-selenium2-driver/src',
+            1 => __DIR__ . '/..' . '/friends-of-behat/mink-browserkit-driver/src',
         ),
         'Behat\\Mink\\' => 
         array (
