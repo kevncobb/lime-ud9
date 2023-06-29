@@ -138,25 +138,16 @@
     "drupal/drupal": "*"
   },
   "extra": {
-    "patchLevel": {
-      "drupal/core": "-p2"
-    },
-    "composer-exit-on-patch-failure": false,
-    "drupal-scaffold": {
-      "allowed-packages": [
-        "drupal/core"
-      ],
-      "locations": {
-        "web-root": "docroot/"
-      }
+    "branch-alias": {
+        "dev-9.0.x": "9.0.x-dev"
     },
     "drupal-core-project-message": {
         "include-keys": ["homepage", "support"],
         "post-create-project-cmd-message": [
-            "<bg=blue;fg=white>                                                         </>",
-            "<bg=blue;fg=white>  Congratulations, you’ve installed the Varbase codebase </>",
-            "<bg=blue;fg=white>  from the vardot/varbase-project template!              </>",
-            "<bg=blue;fg=white>                                                         </>",
+            "<bg=blue;fg=white>                                                           </>",
+            "<bg=blue;fg=white>  Congratulations, you have installed the Varbase codebase </>",
+            "<bg=blue;fg=white>  from the vardot/varbase-project template!                </>",
+            "<bg=blue;fg=white>                                                           </>",
             "",
             "<bg=yellow;fg=black>Next steps</>:",
 
@@ -169,62 +160,72 @@
             "      composer remove drupal/core-project-message"
         ]
     },
-    "_readme": [
-      "NOTICE: We're now using composer patches from Vardot repository to suggest",
-      "several fixes and better handling of patches in your Drupal project.",
-      "You'll notice that we have included (https://github.com/vardot/composer-patches)",
-      "in this composer.json repositories. This will replace the original",
-      "library (cweagans/composer-patches) with our own from (vardot/composer-patches).",
-      "See https://github.com/cweagans/composer-patches/pull/243 and more details",
-      "on our changes on the composer-patches package. Once our changes get merged,",
-      "we will revert to using (cweagans/composer-patches) without this override."
-    ],
-    "branch-alias": {
-      "dev-9.0.x": "9.0.x-dev",
-      "dev-10.0.x": "10.0.x-dev"
+    "drupal-scaffold": {
+        "allowed-packages": [
+            "drupal/core",
+            "vardot/varbase"
+        ],
+        "gitignore": true,
+        "locations": {
+            "web-root": "./docroot"
+        },
+        "file-mapping": {
+            "[web-root]/sites/default/default.services.yml": {
+                "mode": "replace",
+                "overwrite": false,
+                "path": "docroot/core/assets/scaffold/files/default.services.yml"
+            },
+            "[web-root]/sites/default/default.settings.php": {
+                "mode": "replace",
+                "overwrite": false,
+                "path": "docroot/core/assets/scaffold/files/default.settings.php"
+            }
+        }
+    },
+    "installer-paths": {
+        "docroot/core": ["type:drupal-core"],
+        "docroot/profiles/{$name}": ["type:drupal-profile"],
+        "docroot/modules/contrib/{$name}": ["type:drupal-module"],
+        "docroot/themes/contrib/{$name}": ["type:drupal-theme"],
+        "docroot/libraries/slick": ["npm-asset/slick-carousel"],
+        "docroot/libraries/ace": ["npm-asset/ace-builds"],
+        "docroot/libraries/jquery-ui-touch-punch": ["bower-asset/jqueryui-touch-punch"],
+        "docroot/libraries/swagger-ui/dist": ["npm-asset/swagger-ui-dist"],
+        "docroot/libraries/{$name}": [
+            "type:drupal-library",
+            "type:bower-asset",
+            "type:npm-asset"
+        ],
+        "docroot/modules/custom/{$name}": ["type:drupal-custom-module"],
+        "docroot/themes/custom/{$name}": ["type:drupal-custom-theme"],
+        "drush/contrib/{$name}": ["type:drupal-drush"]
     },
     "installer-types": [
-      "bower-asset",
-      "npm-asset"
+        "bower-asset",
+        "npm-asset"
     ],
-    "installer-paths": {
-      "docroot/core": ["type:drupal-core"],
-      "docroot/profiles/{$name}": ["type:drupal-profile"],
-      "docroot/modules/contrib/{$name}": ["type:drupal-module"],
-      "docroot/themes/contrib/{$name}": ["type:drupal-theme"],
-      "docroot/libraries/slick": ["npm-asset/slick-carousel"],
-      "docroot/libraries/ace": ["npm-asset/ace-builds"],
-      "docroot/libraries/jquery-ui-touch-punch": ["bower-asset/jqueryui-touch-punch"],
-      "docroot/libraries/swagger-ui/dist": ["npm-asset/swagger-ui-dist"],
-      "docroot/libraries/{$name}": [
-        "type:drupal-library",
-        "type:bower-asset",
-        "type:npm-asset"
-      ],
-      "docroot/modules/custom/{$name}": ["type:drupal-custom-module"],
-      "docroot/themes/custom/{$name}": ["type:drupal-custom-theme"],
-      "drush/contrib/{$name}": ["type:drupal-drush"]
-    },
     "drupal-libraries": {
-      "library-directory": "docroot/libraries",
-      "libraries": [
-        {"name": "objectfitpolyfill", "package": "bower-asset/objectfitpolyfill"},
-        {"name": "chartjs", "package": "bower-asset/chartjs"},
-        {"name": "c3","package": "bower-asset/c3"},
-        {"name": "d3", "package": "bower-asset/d3"},
-        {"name": "dropzone","package": "npm-asset/dropzone"},
-        {"name": "blazy", "package": "npm-asset/blazy"},
-        {"name": "slick", "package": "npm-asset/slick-carousel"},
-        {"name": "ace", "package": "npm-asset/ace-builds"},
-        {"name": "jquery-ui-touch-punch", "package": "bower-asset/jqueryui-touch-punch"},
-        {"name": "imagesloaded", "package": "npm-asset/imagesloaded"},
-        {"name": "swagger-ui", "package": "npm-asset/swagger-ui-dist"}
-      ]
+        "library-directory": "docroot/libraries",
+        "libraries": [
+            {"name": "objectfitpolyfill", "package": "bower-asset/objectfitpolyfill"},
+            {"name": "chartjs", "package": "bower-asset/chartjs"},
+            {"name": "c3","package": "bower-asset/c3"},
+            {"name": "d3", "package": "bower-asset/d3"},
+            {"name": "dropzone","package": "npm-asset/dropzone"},
+            {"name": "blazy", "package": "npm-asset/blazy"},
+            {"name": "slick", "package": "npm-asset/slick-carousel"},
+            {"name": "ace", "package": "npm-asset/ace-builds"},
+            {"name": "jquery-ui-touch-punch", "package": "bower-asset/jqueryui-touch-punch"},
+            {"name": "imagesloaded", "package": "npm-asset/imagesloaded"},
+            {"name": "swagger-ui", "package": "npm-asset/swagger-ui-dist"}
+        ]
     },
     "enable-patching": true,
-    "composer-exit-on-patch-failure": false,
+    "composer-exit-on-patch-failure": true,
     "patchLevel": {
-      "drupal/core": "-p2"
-    }
-  }
+        "drupal/core": "-p2"
+    },
+    "patches": {  }
+}
+
 }

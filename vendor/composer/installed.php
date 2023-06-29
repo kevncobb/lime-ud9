@@ -3,7 +3,7 @@
         'name' => 'vardot/varbase-project',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '9891a75e1d89114332aa619176e69c11b7301bc3',
+        'reference' => 'b219cdb6917f26ae9bb2bd92633663726c699060',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -4824,7 +4824,7 @@
         'vardot/varbase-project' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '9891a75e1d89114332aa619176e69c11b7301bc3',
+            'reference' => 'b219cdb6917f26ae9bb2bd92633663726c699060',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
