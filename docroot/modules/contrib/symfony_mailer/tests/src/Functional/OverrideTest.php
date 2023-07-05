@@ -2,12 +2,17 @@
 
 namespace Drupal\Tests\symfony_mailer\Functional;
 
+use Drupal\Component\Utility\Html;
+use Drupal\Tests\Traits\Core\CronRunTrait;
+
 /**
  * Test Mailer overrides.
  *
  * @group symfony_mailer
  */
 class OverrideTest extends SymfonyMailerTestBase {
+
+  use CronRunTrait;
 
   /**
    * URL for override info page.
@@ -25,16 +30,10 @@ class OverrideTest extends SymfonyMailerTestBase {
   const IMPORT_USER = '/admin/config/system/mailer/override/user/import';
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * Test mailer override form.
    */
-  protected static $modules = ['contact', 'user'];
-
-  /**
-   * Test sending a test email.
-   */
-  public function testOverride() {
+  public function testForm() {
+    \Drupal::service('module_installer')->install(['contact', 'user']);
     $session = $this->assertSession();
     $this->drupalLogin($this->adminUser);
 
@@ -85,6 +84,51 @@ class OverrideTest extends SymfonyMailerTestBase {
     $expected[2][3] = 'Re-import';
     $session->pageTextContains('Completed import for override User');
     $this->checkOverrideInfo($expected);
+  }
+
+  /**
+   * Test override of update module.
+   */
+  public function testUpdate() {
+    $this->container->get('module_installer')->install(['update', 'update_test']);
+    $this->resetAll();
+
+    // Enable and import, then clear the module setting to ensure we don't rely
+    // on it.
+    $this->drupalLogin($this->adminUser);
+    $this->config('update.settings')->set('notification.emails', [$this->siteEmail])->save();
+    $this->drupalGet('/admin/config/system/mailer/override/update/import');
+    $this->submitForm([], 'Enable & import');
+    $this->config('update.settings')->set('notification.emails', [])->save();
+
+    // Configure update test with an available update.
+    $system_info = [
+      '#all' => [
+        'version' => '8.0.0',
+      ],
+      'symfony_mailer' => [
+        'project' => 'symfony_mailer',
+        'version' => '8.x-1.0',
+        'hidden' => FALSE,
+      ],
+    ];
+    $xml_map = [
+      'drupal' => '0.0',
+      'symfony_mailer' => '1_0',
+    ];
+
+    $this->config('update_test.settings')
+      ->set('system_info', $system_info)
+      ->set('xml_map', $xml_map)
+      ->save();
+
+    // Trigger the email and check.
+    $this->cronRun();
+    $this->readMail();
+    $this->assertTo($this->siteEmail, $this->siteName);
+    $this->assertSubject("New release(s) available for $this->siteName");
+    $escaped_site_name = Html::escape($this->siteName);
+    $this->assertBodyContains("You need to take action to secure your server $escaped_site_name");
   }
 
   /**

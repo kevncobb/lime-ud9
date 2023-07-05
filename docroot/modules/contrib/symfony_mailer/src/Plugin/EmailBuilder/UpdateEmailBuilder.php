@@ -23,7 +23,7 @@ use Drupal\update\UpdateManagerInterface;
  *   import = @Translation("Update notification addresses"),
  *   config_overrides = {
  *     "update.settings" = {
- *       "notification" = { "emails" = "dummy" },
+ *       "notification" = { "emails" = { "dummy" } },
  *     },
  *   },
  *   form_alter = {

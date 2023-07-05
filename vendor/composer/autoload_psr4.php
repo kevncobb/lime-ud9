@@ -9,7 +9,7 @@ return array(
     'vardot\\Composer\\' => array($vendorDir . '/vardot/varbase-updater/src'),
     'phpDocumentor\\Reflection\\' => array($vendorDir . '/phpdocumentor/reflection-common/src', $vendorDir . '/phpdocumentor/reflection-docblock/src', $vendorDir . '/phpdocumentor/type-resolver/src'),
     'mglaman\\PHPStanDrupal\\' => array($vendorDir . '/mglaman/phpstan-drupal/src'),
-    'lsolesen\\pel\\' => array($vendorDir . '/lsolesen/pel/src'),
+    'lsolesen\\pel\\' => array($vendorDir . '/fileeye/pel/src'),
     'cweagans\\Composer\\' => array($vendorDir . '/cweagans/composer-patches/src'),
     'ZipStream\\' => array($vendorDir . '/maennchen/zipstream-php/src'),
     'Webmozart\\PathUtil\\' => array($vendorDir . '/webmozart/path-util/src'),

@@ -12,3 +12,8 @@ configuration:
         <hr>
         {{ body }}
       format: email_html
+  email_to:
+    addresses:
+      -
+        value: '<site>'
+        display: ''
