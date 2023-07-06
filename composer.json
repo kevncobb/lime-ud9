@@ -85,7 +85,8 @@
     "drupal/twigsuggest": "^1.0@RC",
     "drupal/ckeditor_paste_filter": "^1.1",
     "drupal/bootstrap": "^3.28",
-    "drupal/admin_toolbar": "^3.4"
+    "drupal/admin_toolbar": "^3.4",
+    "drupal/addtoany": "^1.21"
   },
   "require-dev": {
     "drupal/core-dev": "~9.0 || ~10.0",
