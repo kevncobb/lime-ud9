@@ -2,7 +2,7 @@
 
 namespace Drupal\paragraphs_previewer\Plugin\Field\FieldWidget;
 
-use Drupal\paragraphs\Plugin\Field\FieldWidget\InlineParagraphsWidget;
+use Drupal\paragraphs\Plugin\Field\FieldWidget\ParagraphsWidget;
 
 /**
  * Plugin implementation of the 'entity_reference paragraphs' widget.
@@ -20,7 +20,7 @@ use Drupal\paragraphs\Plugin\Field\FieldWidget\InlineParagraphsWidget;
  *   weight = 10
  * )
  */
-class InlineParagraphsPreviewerWidget extends InlineParagraphsWidget {
+class InlineParagraphsPreviewerWidget extends ParagraphsWidget {
 
   use ParagraphsPreviewerWidgetTrait;
 

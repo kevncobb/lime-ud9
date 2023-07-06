@@ -13,11 +13,16 @@ use Drupal\Tests\BrowserTestBase;
 class LoadTest extends BrowserTestBase {
 
   /**
+   * Set theme to be used for testing.
+   */
+  protected $defaultTheme = 'classy';
+
+  /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = ['media_library_edit'];
+  protected static $modules = ['media_library_edit'];
 
   /**
    * A user with permission to administer site configuration.
@@ -29,7 +34,7 @@ class LoadTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->user = $this->drupalCreateUser(['administer site configuration']);
     $this->drupalLogin($this->user);

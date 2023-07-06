@@ -2,7 +2,7 @@ name: "Varbase Editor"
 description: "Editor profile and settings to be used in most websites."
 type: module
 package: Varbase
-core_version_requirement: ^9
+core_version_requirement: ~9.5.0 || ~10.1.0
 dependencies:
   - drupal:node
   - drupal:editor
@@ -22,8 +22,3 @@ install:
   - pathologic
   - token
   - token_filter
-
-# Information added by Drupal.org packaging script on 2022-04-21
-version: '9.0.5'
-project: 'varbase_editor'
-datestamp: 1650542258

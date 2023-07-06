@@ -86,3 +86,18 @@ entity_clone.settings:
               type: boolean
             hidden:
               type: boolean
+    no_suffix:
+      type: boolean
+    take_ownership:
+      type: boolean
+
+entity_clone.cloneable_entities:
+  type: config_object
+  label: 'Cloneable entities setting'
+  mapping:
+    cloneable_entities:
+      type: sequence
+      label: 'Cloneable entities'
+      sequence:
+        type: string
+        label: 'Entity type'

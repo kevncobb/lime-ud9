@@ -73,8 +73,6 @@
   #content-moderation-entity-moderation-form > div fieldset.form-item-moderation-state-0-state label {
     margin-top: 0.5rem;
   }
-}
-@media (min-width: 768px) {
   #edit-moderation-state-wrapper > div fieldset .form-control,
   #content-moderation-entity-moderation-form > div fieldset .form-control {
     float: left;
@@ -82,16 +80,12 @@
     width: fit-content;
     max-width: 20em;
   }
-}
-@media (min-width: 768px) {
   #edit-moderation-state-wrapper .entity-moderation-form,
   #content-moderation-entity-moderation-form .entity-moderation-form {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-start;
   }
-}
-@media (min-width: 768px) {
   #edit-moderation-state-wrapper .entity-moderation-form__item,
   #content-moderation-entity-moderation-form .entity-moderation-form__item {
     display: table;
@@ -112,8 +106,6 @@
   #content-moderation-entity-moderation-form .entity-moderation-form__item .form-item-revision-log {
     width: 15rem;
   }
-}
-@media (min-width: 768px) {
   [dir=rtl] #edit-moderation-state-wrapper > div fieldset,
   [dir=rtl] #content-moderation-entity-moderation-form > div fieldset {
     margin-right: 0;
@@ -132,20 +124,14 @@
     float: right;
     margin: 0 0 0 0.5rem;
   }
-}
-@media (min-width: 768px) {
   [dir=rtl] #edit-moderation-state-wrapper > div fieldset.form-item-moderation-state-0-state label,
   [dir=rtl] #content-moderation-entity-moderation-form > div fieldset.form-item-moderation-state-0-state label {
     margin-top: 0.5rem;
   }
-}
-@media (min-width: 768px) {
   [dir=rtl] #edit-moderation-state-wrapper > div fieldset .form-control,
   [dir=rtl] #content-moderation-entity-moderation-form > div fieldset .form-control {
     float: right;
   }
-}
-@media (min-width: 768px) {
   [dir=rtl] #edit-moderation-state-wrapper .entity-moderation-form__item,
   [dir=rtl] #content-moderation-entity-moderation-form .entity-moderation-form__item {
     margin-right: 0;

@@ -21,12 +21,12 @@ class LibraryAccessTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['layout_library'];
+  protected static $modules = ['layout_library'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->layoutAdmin = $this->drupalCreateUser(['configure any layout']);

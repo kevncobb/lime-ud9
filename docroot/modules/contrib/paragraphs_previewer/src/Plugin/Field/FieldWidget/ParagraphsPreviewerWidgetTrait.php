@@ -97,7 +97,7 @@ trait ParagraphsPreviewerWidgetTrait {
       ],
       '#access' => $paragraphs_entity->access('view'),
       '#attributes' => [
-        'class' => ['link', 'paragraphs-previewer'],
+        'class' => ['paragraphs-previewer'],
       ],
       '#attached' => [
         'library' => ['paragraphs_previewer/dialog'],
@@ -114,16 +114,24 @@ trait ParagraphsPreviewerWidgetTrait {
 
     if (isset($element['top']['actions']['actions'])) {
       // Support "paragraphs" widget.
-      $element['top']['actions']['actions']['previewer_button'] = $previewer_element;
+      $button_container = &$element['top']['actions']['actions'];
     }
     elseif (isset($element['top']['links'])) {
       // Support legacy "entity_reference_paragraphs" widget.
-      $element['top']['links']['previewer_button'] = $previewer_element;
+      $button_container = &$element['top']['links'];
     }
     else {
       // Place in the top as a fallback.
-      $element['top']['previewer_button'] = $previewer_element;
+      $button_container = &$element['top'];
     }
+
+    // Adjust button CSS classes.
+    $existing_button = reset($button_container);
+    $previewer_element['#attributes']['class'] += isset($existing_button['#attributes']['class'])
+      ? $existing_button['#attributes']['class']
+      : ['link'];
+
+    $button_container['previewer_button'] = $previewer_element;
 
     return $element;
   }

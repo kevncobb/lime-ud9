@@ -7,11 +7,11 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\PathProcessor\InboundPathProcessorInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Url;
 use Drupal\path_alias\AliasManagerInterface;
 use Drupal\redirect\Exception\RedirectLoopException;
+use Drupal\redirect\PathProcessor\RedirectPathProcessorManagerInterface;
 use Drupal\redirect\RedirectChecker;
 use Drupal\redirect\RedirectRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -64,11 +64,11 @@ class RedirectRequestSubscriber implements EventSubscriberInterface {
   protected $context;
 
   /**
-   * A path processor manager for resolving the system path.
+   * The redirect path processor manager.
    *
-   * @var \Drupal\Core\PathProcessor\InboundPathProcessorInterface
+   * @var \Drupal\redirect\PathProcessor\RedirectPathProcessorManagerInterface
    */
-  protected $pathProcessor;
+  protected $redirectPathProcessor;
 
   /**
    * Constructs a \Drupal\redirect\EventSubscriber\RedirectRequestSubscriber object.
@@ -89,8 +89,10 @@ class RedirectRequestSubscriber implements EventSubscriberInterface {
    *   The redirect checker service.
    * @param \Symfony\Component\Routing\RequestContext
    *   Request context.
+   * @param \Drupal\redirect\PathProcessor\RedirectPathProcessorManagerInterface $redirect_path_processor
+   *   The redirect path processor manager.
    */
-  public function __construct(RedirectRepository $redirect_repository, LanguageManagerInterface $language_manager, ConfigFactoryInterface $config, AliasManagerInterface $alias_manager, ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager, RedirectChecker $checker, RequestContext $context, InboundPathProcessorInterface $path_processor) {
+  public function __construct(RedirectRepository $redirect_repository, LanguageManagerInterface $language_manager, ConfigFactoryInterface $config, AliasManagerInterface $alias_manager, ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager, RedirectChecker $checker, RequestContext $context, RedirectPathProcessorManagerInterface $redirect_path_processor) {
     $this->redirectRepository = $redirect_repository;
     $this->languageManager = $language_manager;
     $this->config = $config->get('redirect.settings');
@@ -99,7 +101,7 @@ class RedirectRequestSubscriber implements EventSubscriberInterface {
     $this->entityTypeManager = $entity_type_manager;
     $this->checker = $checker;
     $this->context = $context;
-    $this->pathProcessor = $path_processor;
+    $this->redirectPathProcessor = $redirect_path_processor;
   }
 
   /**
@@ -124,25 +126,14 @@ class RedirectRequestSubscriber implements EventSubscriberInterface {
     // Get URL info and process it to be used for hash generation.
     $request_query = $request->query->all();
 
-    if (strpos($request->getPathInfo(), '/system/files/') === 0 && !$request->query->has('file')) {
-      // Private files paths are split by the inbound path processor and the
-      // relative file path is moved to the 'file' query string parameter. This
-      // is because the route system does not allow an arbitrary amount of
-      // parameters. We preserve the path as is returned by the request object.
-      // @see \Drupal\system\PathProcessor\PathProcessorFiles::processInbound()
-      $path = $request->getPathInfo();
-    }
-    else {
-      // Do the inbound processing so that for example language prefixes are
-      // removed.
-      $path = $this->pathProcessor->processInbound($request->getPathInfo(), $request);
-    }
-    $path = trim($path, '/');
+    // Get the possible paths for the current request.
+    $paths = $this->redirectPathProcessor->getRedirectRequestPaths($request);
 
+    // Store current request context.
     $this->context->fromRequest($request);
 
     try {
-      $redirect = $this->redirectRepository->findMatchingRedirect($path, $request_query, $this->languageManager->getCurrentLanguage()->getId());
+      $redirect = $this->redirectRepository->findMatchingRedirectMultiple($paths, $request_query, $this->languageManager->getCurrentLanguage()->getId());
     }
     catch (RedirectLoopException $e) {
       \Drupal::logger('redirect')->warning('Redirect loop identified at %path for redirect %rid', ['%path' => $e->getPath(), '%rid' => $e->getRedirectId()]);

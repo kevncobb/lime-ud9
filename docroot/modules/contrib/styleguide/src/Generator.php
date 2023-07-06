@@ -2,12 +2,12 @@
 
 namespace Drupal\styleguide;
 
+use Drupal\Component\Utility\Random;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Pager\PagerManagerInterface;
-use Drupal\Core\Url;
-use Drupal\Component\Utility\Random;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\Url;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class Generator.
@@ -155,7 +155,7 @@ class Generator implements GeneratorInterface {
       ];
     }
 
-    return $render ? render($output) : $output;
+    return $render ? \Drupal::service('renderer')->render($output) : $output;
   }
 
   /**
@@ -178,26 +178,21 @@ class Generator implements GeneratorInterface {
    * {@inheritdoc}
    */
   public function sentence($link = FALSE) {
-    $graph = $this->random->sentences(mt_rand(60, 180));
-    $explode = explode('.', $graph);
-    $rand = array_rand($explode);
-    $sentence = trim($explode[$rand]);
+    $sentence = $this->random->sentences(10);
     if ($link) {
-      $explode = explode(' ', $sentence);
+      $words = explode(' ', $sentence);
+      $link_word_count = random_int(2, floor(count($words) / 2));
+      $link_words = array_slice($words, 0, $link_word_count);
       $link = [
         '#type' => 'link',
-        '#title' => $explode[0],
+        '#title' => implode(' ', $link_words),
         '#url' => $link,
-        '#options' => [
-          'attributes' => [],
-          'html' => FALSE,
-        ],
-        '#text' => $explode[0],
       ];
-      $explode[0] = render($link);
-      $sentence = implode(' ', $explode);
+      $rendered_link = \Drupal::service('renderer')->renderPlain($link);
+      array_splice($words, 0, $link_word_count, [$rendered_link]);
+      $sentence = implode(' ', $words);
     }
-    return Markup::create($sentence . '.');
+    return Markup::create($sentence);
   }
 
   /**

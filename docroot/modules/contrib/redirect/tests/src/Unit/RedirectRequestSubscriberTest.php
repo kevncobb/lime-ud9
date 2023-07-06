@@ -135,11 +135,12 @@ class RedirectRequestSubscriberTest extends UnitTestCase {
 
     $context = $this->createMock('Symfony\Component\Routing\RequestContext');
 
-    $inbound_path_processor = $this->createMock('Drupal\Core\PathProcessor\InboundPathProcessorInterface');
+    $inbound_path_processor = $this->createMock('Drupal\redirect\PathProcessor\RedirectPathProcessorManagerInterface');
     $inbound_path_processor->expects($this->any())
-      ->method('processInbound')
-      ->with($request->getPathInfo(), $request)
-      ->willReturnCallback(function ($path, Request $request) {
+        ->method('getRedirectRequestPaths')
+        ->with($request)
+        ->willReturnCallback(function (Request $request) {
+        $path = $request->getPathInfo();
         if (strpos($path, '/system/files/') === 0 && !$request->query->has('file')) {
           // Private files paths are split by the inbound path processor and the
           // relative file path is moved to the 'file' query string parameter.
@@ -148,7 +149,7 @@ class RedirectRequestSubscriberTest extends UnitTestCase {
           // @see \Drupal\system\PathProcessor\PathProcessorFiles::processInbound()
           $path = '/system/files';
         }
-        return $path;
+        return [trim($path, '/')];
       });
 
     $alias_manager = $this->createMock(AliasManagerInterface::class);
@@ -156,7 +157,7 @@ class RedirectRequestSubscriberTest extends UnitTestCase {
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
 
     $subscriber = new RedirectRequestSubscriber(
-      $this->getRedirectRepositoryStub('findMatchingRedirect', $redirect),
+      $this->getRedirectRepositoryStub('findMatchingRedirectMultiple', $redirect),
       $this->getLanguageManagerStub(),
       $this->getConfigFactoryStub(['redirect.settings' => ['passthrough_querystring' => $retain_query]]),
       $alias_manager,

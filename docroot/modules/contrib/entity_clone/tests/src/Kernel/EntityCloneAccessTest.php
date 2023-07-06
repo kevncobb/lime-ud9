@@ -17,16 +17,16 @@ class EntityCloneAccessTest extends KernelTestBase {
   use UserCreationTrait;
 
   /**
-    * {@inheritdoc}
-    */
-   public static $modules = [
-     'node',
-     'field',
-     'text',
-     'user',
-     'entity_clone',
-     'system',
-   ];
+   * {@inheritdoc}
+   */
+  protected static $modules = [
+    'node',
+    'field',
+    'text',
+    'user',
+    'entity_clone',
+    'system',
+  ];
 
   /**
    * {@inheritdoc}
@@ -61,18 +61,29 @@ class EntityCloneAccessTest extends KernelTestBase {
    * Tests that users need to have the correct permissions to clone an entity.
    */
   public function testCloneAccess() {
+    $cloneable_entities_config = $this->container->get('config.factory')->getEditable('entity_clone.cloneable_entities');
+    $cloneable_entities_config->set('cloneable_entities', ['node'])->save();
     $node = Node::create([
       'type' => 'page',
       'title' => 'My node to clone',
       'status' => TRUE,
     ]);
-
     $node->save();
 
     $user_no_permissions = $this->createUser(['access content']);
-    $user_that_can_create = $this->createUser(['access content', 'create page content']);
-    $user_that_can_clone = $this->createUser(['access content', 'clone node entity']);
-    $user_that_can_do_both = $this->createUser(['access content', 'clone node entity', 'create page content']);
+    $user_that_can_create = $this->createUser([
+      'access content',
+      'create page content',
+    ]);
+    $user_that_can_clone = $this->createUser([
+      'access content',
+      'clone node entity',
+    ]);
+    $user_that_can_do_both = $this->createUser([
+      'access content',
+      'clone node entity',
+      'create page content',
+    ]);
 
     $url = $node->toUrl('clone-form');
 
@@ -98,5 +109,12 @@ class EntityCloneAccessTest extends KernelTestBase {
     $this->assertTrue($access_control_handler->createAccess('page', $user_that_can_do_both));
     $this->assertTrue($access_control_handler->access($node, 'clone', $user_that_can_do_both));
     $this->assertTrue($url->access($user_that_can_do_both));
+
+    // User that can do both, cannot clone without nodes being cloneable.
+    $cloneable_entities_config->set('cloneable_entities', [])->save();
+    $access_control_handler->resetCache();
+    $this->assertFalse($access_control_handler->access($node, 'clone', $user_that_can_do_both));
+    $this->assertFalse($url->access($user_that_can_do_both));
   }
+
 }

@@ -7,7 +7,9 @@ use Drupal\layout_builder\Event\PrepareLayoutEvent;
 use Drupal\layout_builder\LayoutBuilderEvents;
 use Drupal\layout_builder\LayoutTempstoreRepositoryInterface;
 use Drupal\layout_builder\OverridesSectionStorageInterface;
+use Drupal\layout_builder\Section;
 use Drupal\layout_library\Entity\Layout;
+use Drupal\layout_library\SectionCloningTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -16,6 +18,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * @package Drupal\layout_library\EventSubscriber
  */
 class PrepareLayout implements EventSubscriberInterface {
+  use SectionCloningTrait;
 
   /**
    * The layout tempstore repository.
@@ -71,7 +74,11 @@ class PrepareLayout implements EventSubscriberInterface {
         if ($layout instanceof Layout) {
           $sections = $layout->getLayout();
           foreach ($sections as $section) {
-            $section_storage->appendSection($section);
+            // Deep clone section.
+            $deep_cloned_section = $this->deepCloneSection($section);
+
+            // Create a new section.
+            $section_storage->appendSection($deep_cloned_section);
           }
           $this->layoutTempstoreRepository->set($section_storage);
         }

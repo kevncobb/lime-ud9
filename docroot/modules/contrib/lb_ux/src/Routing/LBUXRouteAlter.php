@@ -31,10 +31,6 @@ class LBUXRouteAlter implements EventSubscriberInterface {
     $new_route = clone $route;
     $new_route->setPath('/layout_builder/configure-form/section/{section_storage_type}/{section_storage}/{delta}/{plugin_id}');
     $collection->add('layout_builder.configure_section_form', $new_route);
-
-    // Change the existing route to use the auto-submit controller. This will be
-    // used when adding a new section.
-    $route->setDefault('_controller', ConfigureSectionController::class . '::build');
   }
 
   /**

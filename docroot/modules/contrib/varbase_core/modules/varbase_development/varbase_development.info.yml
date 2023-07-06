@@ -2,7 +2,7 @@ name: "Varbase Development"
 description: "Development Environment Modules and Features, make sure to disable this feature in production."
 type: module
 package: Varbase
-core_version_requirement: ^9
+core_version_requirement: ~9.5.0 || ~10.1.0
 dependencies: []
 install:
   - dblog
@@ -25,8 +25,3 @@ install:
 #  - devel_generate
 #  - slick_ui
 #  - config_inspector
-
-# Information added by Drupal.org packaging script on 2022-01-23
-version: '9.0.14'
-project: 'varbase_core'
-datestamp: 1642948695

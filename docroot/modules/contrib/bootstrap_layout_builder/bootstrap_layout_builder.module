@@ -46,6 +46,7 @@ function bootstrap_layout_builder_theme() {
     'blb_section' => [
       'template' => 'blb-section',
       'render element' => 'content',
+      'base hook' => 'layout',
     ],
   ];
 }

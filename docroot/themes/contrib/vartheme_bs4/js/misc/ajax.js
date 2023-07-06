@@ -89,7 +89,6 @@
     }
   };
 
-
   /**
    * Handler for the form redirection completion.
    *

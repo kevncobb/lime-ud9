@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\ParamConverter\ParamConverterManagerInterface;
+use Drupal\Core\Routing\RouteObjectInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Url;
 use Drupal\jsonapi\ResourceType\ResourceType;
@@ -21,7 +22,6 @@ use Drupal\jsonapi\Routing\Routes;
 use Drupal\jsonapi\Routing\Routes as JsonApiRoutes;
 use Drupal\openapi\Plugin\openapi\OpenApiGeneratorBase;
 use Drupal\schemata\SchemaFactory;
-use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Route;
@@ -217,7 +217,19 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
   public function getPaths() {
     $routes = $this->getJsonApiRoutes();
     $api_paths = [];
+    $read_only_mode_is_enabled = $this->configFactory->get('jsonapi.settings')->get('read_only');
+    $read_only_methods = ['GET', 'HEAD', 'OPTIONS', 'TRACE'];
+
     foreach ($routes as $route_name => $route) {
+      if ($read_only_mode_is_enabled === TRUE) {
+        $supported_methods = $route->getMethods();
+        assert(count($supported_methods) > 0, 'JSON:API routes always have a method specified.');
+        $is_read_only_route = empty(array_diff($supported_methods, $read_only_methods));
+        if ($is_read_only_route === FALSE) {
+          continue;
+        }
+      }
+
       /** @var \Drupal\jsonapi\ResourceType\ResourceType $resource_type */
       $resource_type = $this->getResourceType($route_name, $route);
       if (!$resource_type instanceof ResourceType) {
@@ -560,6 +572,7 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
             )->toString(),
           ]
         ),
+        'items' => [],
       ];
       $parameters[] = [
         'name' => 'sort',
@@ -573,6 +586,7 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
             )->toString(),
           ]
         ),
+        'items' => [],
       ];
       $parameters[] = [
         'name' => 'page',
@@ -586,6 +600,7 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
             )->toString(),
           ]
         ),
+        'items' => [],
       ];
       $parameters[] = [
         'name' => 'include',

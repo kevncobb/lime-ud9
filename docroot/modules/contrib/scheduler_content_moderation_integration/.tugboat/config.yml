@@ -28,6 +28,11 @@ services:
         # Composer package repository.
         composer config repositories.tugboat vcs $TUGBOAT_ROOT
 
+        # Scheduler does not yet have a full 2.0 release so fails the default
+        # minimum stability if it is loaded via SCMI composer.json. We can get
+        # it here specifically, to avoid this problem.
+        composer require drupal/scheduler ^2.0@RC
+
         # Now we can require this module, specifing the branch name we created
         # above that uses the $TUGBOAT_REPO_ID environment variable.
         composer require drupal/scheduler_content_moderation_integration:dev-$TUGBOAT_REPO_ID
@@ -35,12 +40,14 @@ services:
         # Get other useful modules to assist testing.
         composer require drupal/devel_generate
         composer require drupal/module_filter
+        composer require drupal/config_inspector
+        composer require drupal/config_update
 
         # Install Drupal on the site.
         vendor/bin/drush \
           --yes \
           --db-url=mysql://tugboat:tugboat@mysql:3306/tugboat \
-          --site-name="SCMI issue ${TUGBOAT_PREVIEW_NAME}" \
+          --site-name="SCMI ${TUGBOAT_PREVIEW_NAME}" \
           --account-pass=admin \
           site:install standard
 
@@ -52,7 +59,7 @@ services:
 
         # Enable modules.
         vendor/bin/drush --yes pm:enable scheduler devel devel_generate module_filter \
-          scheduler_content_moderation_integration
+          scheduler_content_moderation_integration media config_update
 
         # Show versions.
         composer show drupal/scheduler | egrep 'name |vers'
@@ -74,13 +81,29 @@ services:
         vendor/bin/drush -y config-set node.type.article third_party_settings.scheduler.publish_past_date 'schedule'
         vendor/bin/drush config-get node.type.article third_party_settings
 
+        # Scheduler media settings.
+        vendor/bin/drush -y config-set media.type.image third_party_settings.scheduler.publish_enable 1
+        vendor/bin/drush -y config-set media.type.image third_party_settings.scheduler.unpublish_enable 1
+        vendor/bin/drush -y config-set media.type.image third_party_settings.scheduler.expand_fieldset 'when_required'
+        vendor/bin/drush -y config-set media.type.image third_party_settings.scheduler.fields_display_mode 'vertical_tab'
+        vendor/bin/drush -y config-set media.type.image third_party_settings.scheduler.publish_past_date 'schedule'
+        vendor/bin/drush config-get media.type.image third_party_settings
+
+        # Media settings.
+        vendor/bin/drush -y config-set media.settings standalone_url 1
+        vendor/bin/drush config-get media.settings
+        vendor/bin/drush -y config-set field.field.media.image.field_media_image required 0
+        vendor/bin/drush config-get field.field.media.image.field_media_image
+
         # Turn on moderation for article and image, using default editorial workflow
         vendor/bin/drush -y config-set workflows.workflow.editorial type_settings.entity_types.node.0 article
+        vendor/bin/drush -y config-set workflows.workflow.editorial type_settings.entity_types.media.0 image
         vendor/bin/drush config-get workflows.workflow.editorial type_settings.entity_types
 
         # Create a role which has all of the scheduler permissions.
         vendor/bin/drush role-create 'scheduler_editor' 'Scheduler Editor'
-        vendor/bin/drush role-add-perm 'scheduler_editor' 'schedule publishing of nodes, view scheduled content'
+        vendor/bin/drush role-add-perm 'scheduler_editor' "schedule publishing of nodes, view scheduled content, \
+          schedule publishing of media, view scheduled media"
 
         # Create a role which has all permissions for the default editorial workflow.
         vendor/bin/drush role-create 'moderator' 'Moderator'
@@ -90,8 +113,9 @@ services:
           use editorial transition archived_draft, view latest version, view any unpublished content"
 
         # Add some permissions for all authenticated users.
-        vendor/bin/drush role-add-perm 'authenticated' "create article content, edit any article content,\
-          delete any article content, access content overview, view own unpublished content, switch users"
+        vendor/bin/drush role-add-perm 'authenticated' "create article content, edit any article content, \
+          delete any article content, access content overview, view own unpublished content, switch users, \
+          create media, update any media, delete any media, access media overview, view own unpublished media"
 
         # Create users and give them roles.
         vendor/bin/drush user-create 'Eddie editor'
@@ -103,7 +127,8 @@ services:
         vendor/bin/drush user-add-role 'moderator' 'Paisley publisher'
 
         # Generate content.
-        vendor/bin/drush devel-generate-content 5 --bundles=article --verbose
+        vendor/bin/drush devel-generate-content 5 --bundles=article --authors=1,2,3,4 --verbose
+        vendor/bin/drush devel-generate-media 5 --media-types=image --verbose
 
         # @todo Place the 'Switch users' block in first sidebar.
         # @todo Add 'content overview' to tools menu.

@@ -377,6 +377,30 @@ class UrlHelper {
   }
 
   /**
+   * Strips subdirectories from a URI.
+   *
+   * URIs created by \Drupal\Core\Url::toString() always contain the
+   * subdirectories. When further processing needs to be done on a URI, the
+   * subdirectories need to be stripped before feeding the URI to
+   * \Drupal\Core\Url::fromUserInput().
+   *
+   * @param string $uri
+   *   A plain-text URI that might contain a subdirectory.
+   *
+   * @return string
+   *   A plain-text URI stripped of the subdirectories.
+   *
+   * @see \Drupal\Core\Url::fromUserInput()
+   */
+  public static function stripSubdirectories($uri) {
+    $current_request = \Drupal::requestStack()->getCurrentRequest();
+    if ($current_request && !empty($current_request->getBasePath()) && strpos($uri, $current_request->getBasePath()) === 0) {
+      return substr($uri, mb_strlen($current_request->getBasePath()));
+    }
+    return $uri;
+  }
+
+  /**
    * Verifies the syntax of the given URL.
    *
    * This function should only be used on actual URLs. It should not be used for

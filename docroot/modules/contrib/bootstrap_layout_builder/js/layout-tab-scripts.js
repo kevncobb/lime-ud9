@@ -21,7 +21,8 @@
       $('.blb_container_type .fieldset-wrapper label', context).on('click', function () {
         $(this).parents('.fieldset-wrapper').find('label').removeClass('active');
         $(this).parents('.fieldset-wrapper').find('input').prop("checked", false);
-        $(this).parent().find('input').prop('checked', true);
+        // Temp comment the following line because of conflict with live preview.
+        // $(this).parent().find('input').prop('checked', true);
         $(this).addClass('active');
       });
 
@@ -29,7 +30,7 @@
       $('.blb_breakpoint_cols', context).each(function () {
         const numOfCols = 12;
         // .custom-control, .custom-radio to solve Bario issues.
-        $(this).find('.form-item, .custom-control, .custom-radio').each(function () {
+        $(this).find('.form-item, .custom-control, .custom-radio').once().each(function () {
           var cols = $(this).find('input').val().replace('blb_col_', '');
           var colsConfig = cols.split('_');
           var colsLabel = $(this).find('label');

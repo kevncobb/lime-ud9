@@ -769,9 +769,6 @@ class ParagraphsWidget extends WidgetBase {
         if (method_exists(FormatterHelper::class, 'formProcess')) {
           $element['subform']['#process'][] = [FormatterHelper::class, 'formProcess'];
         }
-        elseif (function_exists('field_group_form_pre_render')) {
-          $element['subform']['#pre_render'][] = 'field_group_form_pre_render';
-        }
         elseif (function_exists('field_group_form_process')) {
           $element['subform']['#process'][] = 'field_group_form_process';
         }
@@ -949,6 +946,7 @@ class ParagraphsWidget extends WidgetBase {
       '#name' => 'button_add_modal',
       '#attributes' => [
         'class' => [
+          'field-add-more-submit',
           'paragraph-type-add-modal-button',
           'js-show',
           'button--small',
@@ -1060,7 +1058,7 @@ class ParagraphsWidget extends WidgetBase {
     $field_prefix = strtr($this->fieldIdPrefix, '_', '-');
     if (count($this->fieldParents) == 0) {
       if ($items->getEntity()->getEntityTypeId() != 'paragraph') {
-        $tabs = '<ul class="paragraphs-tabs tabs primary clearfix"><li class="tabs__tab paragraphs_content_tab"><a href="#' . $field_prefix . '-values">' . $this->t('Content', [], ['context' => 'paragraphs']) . '</a></li><li class="tabs__tab paragraphs_behavior_tab"><a href="#' . $field_prefix . '-values">' . $this->t('Behavior', [], ['context' => 'paragraphs']) . '</a></li></ul>';
+        $tabs = '<ul class="paragraphs-tabs tabs primary tabs--secondary paragraphs-tabs-hide clearfix"><li class="tabs__tab paragraphs_content_tab"><a href="#' . $field_prefix . '-values" class="tabs__link">' . $this->t('Content', [], ['context' => 'paragraphs']) . '</a></li><li class="tabs__tab paragraphs_behavior_tab"><a href="#' . $field_prefix . '-values" class="tabs__link">' . $this->t('Behavior', [], ['context' => 'paragraphs']) . '</a></li></ul>';
       }
     }
     if (count($this->fieldParents) > 0) {
@@ -2711,7 +2709,7 @@ class ParagraphsWidget extends WidgetBase {
    *   TRUE if we can allow reference changes, otherwise FALSE.
    */
   protected function allowReferenceChanges() {
-    return !$this->isTranslating;
+    return !$this->isTranslating || \Drupal::configFactory()->getEditable('paragraphs.settings')->get('allow_reference_changes');
   }
 
   /**

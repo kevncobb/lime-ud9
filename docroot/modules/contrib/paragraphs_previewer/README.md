@@ -2,26 +2,48 @@
 
 Provides a rendered preview of a paragraphs item while on an entity form.
 
-# Features
+Features:
 
-* Preview the rendered paragraph before saving the entity.
-* Previewer can be enabled per field instance.
-* Full width window to preview the design.
-* Resizable window to preview responsive designs.
+- Preview the rendered paragraph before saving the entity.
+- Previewer can be enabled per field instance.
+- Full width window to preview the design.
+- Resizable window to preview responsive designs.
 
-# Caveats
+Caveats:
 
-* Preview popup uses the front end theme to style the rendered markup.  This
+- Preview popup uses the front end theme to style the rendered markup. This
   assumes that all styling is applied to that paragraph's markup and does not
-  need any other page context / wrapping markup, example node markup.
+  need any other page context/wrapping markup, for example node markup.
 
-# Installation
+For a full description of the module, visit the
+[project page](https://www.drupal.org/project/paragraphs_previewer).
 
-* Install "Paragraphs Previewer" module per https://www.drupal.org/node/1897420.
-* Create / Edit a paragraphs field:
-  * Set widget to "Paragraphs Previewer"
-  * Set "Default edit mode" to "Closed" or "Preview".
+Submit bug reports and feature suggestions, or track changes in the
+[issue queue](https://www.drupal.org/project/issues/paragraphs_previewer).
 
-# Requirements
+## Table of contents
 
-* Paragraphs module (https://www.drupal.org/project/paragraphs)
+- Requirements
+- Installation
+- Configuration
+- Maintainers
+
+## Requirements
+
+- [Paragraphs](https://www.drupal.org/project/paragraphs)
+
+## Installation
+
+Install as you would normally install a contributed Drupal module. For further
+information, see
+[Installing Drupal Modules](https://www.drupal.org/docs/extending-drupal/installing-drupal-modules).
+
+## Configuration
+
+- Create / Edit a paragraphs field:
+  - Set widget to "Paragraphs Previewer"
+  - Set "Default edit mode" to "Closed" or "Preview".
+
+## Maintainers
+
+- Michael Vanetta - [recrit](https://www.drupal.org/u/recrit)

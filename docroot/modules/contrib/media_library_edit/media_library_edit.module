@@ -74,6 +74,13 @@ function media_library_edit_field_widget_third_party_settings_form(WidgetInterfa
  * Implements hook_field_widget_form_alter().
  */
 function media_library_edit_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+
+}
+
+/**
+ * Implements hook_field_widget_single_element_form_alter().
+ */
+function media_library_edit_field_widget_single_element_form_alter(array &$element, FormStateInterface $form_state, array $context) {
   $plugin_id = $context['widget']->getPluginId();
 
   if ($plugin_id == 'media_library_widget') {
@@ -107,7 +114,7 @@ function media_library_edit_field_widget_form_alter(&$element, FormStateInterfac
                     'width' => $dialog_options['width'],
                     'classes' => ['ui-dialog-content' => 'media-library-edit__modal'],
                   ]),
-                  'data-dialog-type' => 'dialog',
+                  'data-dialog-type' => 'modal',
                 ],
                 '#attached' => [
                   'library' => [

@@ -5,32 +5,18 @@
  * Contains install and update for Varbase Internationalization module.
  */
 
-use Symfony\Component\Yaml\Yaml;
 use Vardot\Entity\EntityDefinitionUpdateManager;
+use Vardot\Installer\ModuleInstallerFactory;
 
 /**
  * Implements hook_install().
  */
 function varbase_internationalization_install() {
 
-  $module_name = preg_replace('/_install$/', '', __FUNCTION__);
-  $module_path = Drupal::service('module_handler')->getModule($module_name)->getPath();
-
-  // Processer for install: in [$module_name].info.yml file.
+  // Processor for install: in varbase_internationalization.info.yml file using ModuleInstallerFactory.
   // ---------------------------------------------------------------------------.
-  $module_info_file = $module_path . '/' . $module_name . '.info.yml';
-  if (file_exists($module_info_file)) {
-    $module_info_data = (array) Yaml::parse(file_get_contents($module_info_file));
-    if (isset($module_info_data['install'])
-      && is_array($module_info_data['install'])) {
+  ModuleInstallerFactory::installList('varbase_internationalization');
 
-      foreach ($module_info_data['install'] as $module) {
-        if (!\Drupal::moduleHandler()->moduleExists($module)) {
-          \Drupal::service('module_installer')->install([$module], TRUE);
-        }
-      }
-    }
-  }
   // ---------------------------------------------------------------------------
   // Entity updates to clear up any mismatched entity and/or field definitions
   // And Fix changes were detected in the entity type and field definitions.
@@ -51,4 +37,15 @@ function varbase_internationalization_update_86001() {
   if (\Drupal::moduleHandler()->moduleExists('l10n_client_ui')) {
     \Drupal::service('module_installer')->uninstall(['l10n_client_ui'], FALSE);
   }
+}
+
+/**
+ * Issue #3270834: Switch to use the Module Installer Factory.
+ *
+ * In the Varbase Internationalization module.
+ */
+function varbase_internationalization_update_90001() {
+  // Set the weight of the module after installation of list of modules.
+  // To make sure that any hook or event subscriber workers after all used modules.
+  ModuleInstallerFactory::setModuleWeightAfterInstallation('varbase_internationalization');
 }

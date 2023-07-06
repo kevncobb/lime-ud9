@@ -8,14 +8,13 @@ use Drupal\Tests\BrowserTestBase;
  * Tests the functionality of this module.
  *
  * @group prevent_homepage_deletion
- *
  */
 class DeleteHomepageTest extends BrowserTestBase {
 
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'user', 'prevent_homepage_deletion'];
+  protected static $modules = ['node', 'user', 'prevent_homepage_deletion'];
 
   /**
    * {@inheritdoc}
@@ -30,28 +29,35 @@ class DeleteHomepageTest extends BrowserTestBase {
   protected $contentType;
 
   /**
-   * Our two nodes.
+   * Homepage node.
+   *
    * @var \Drupal\node\NodeInterface
    */
-  protected $page_home;
-  protected $page_not_home;
+  protected $pageHome;
+
+  /**
+   * Node that is not the homepage.
+   *
+   * @var \Drupal\node\NodeInterface
+   */
+  protected $pageNotHome;
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     // Add a content type.
     $this->contentType = $this->createContentType(['type' => 'page']);
     // Create a first page (homepage).
-    $this->page_home = $this->drupalCreateNode(['type' => 'page']);
+    $this->pageHome = $this->drupalCreateNode(['type' => 'page']);
     // Set page to be homepage.
     \Drupal::configFactory()
       ->getEditable('system.site')
-      ->set('page.front', '/node/'.$this->page_home->id())
+      ->set('page.front', '/node/' . $this->pageHome->id())
       ->save(TRUE);
     // Create a second page (not homepage).
-    $this->page_not_home = $this->drupalCreateNode(['type' => 'page']);
+    $this->pageNotHome = $this->drupalCreateNode(['type' => 'page']);
   }
 
   /**
@@ -67,7 +73,7 @@ class DeleteHomepageTest extends BrowserTestBase {
     );
 
     // Step 2: Try to delete the homepage.
-    $this->drupalGet('node/' . $this->page_home->id() . '/delete');
+    $this->drupalGet('node/' . $this->pageHome->id() . '/delete');
     $this->assertSession()->statusCodeEquals(200);
 
     // Step 3: Logout, and login as user without the permission.
@@ -79,11 +85,11 @@ class DeleteHomepageTest extends BrowserTestBase {
     );
 
     // Step 4: Try to delete the homepage.
-    $this->drupalGet('node/' . $this->page_home->id() . '/delete');
+    $this->drupalGet('node/' . $this->pageHome->id() . '/delete');
     $this->assertSession()->statusCodeEquals(403);
 
     // Step 5: Try to delete the non-homepage.
-    $this->drupalGet('node/' . $this->page_not_home->id() . '/delete');
+    $this->drupalGet('node/' . $this->pageNotHome->id() . '/delete');
     $this->assertSession()->statusCodeEquals(200);
 
   }

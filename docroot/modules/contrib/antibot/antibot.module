@@ -46,6 +46,14 @@ function antibot_theme($existing, $type, $theme, $path) {
  * Implements hook_form_alter().
  */
 function antibot_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  $skip_antibot = FALSE;
+
+  // Set skip antibot to true if user has appropriate permission.
+  if (\Drupal::currentUser()->hasPermission('skip antibot')) {
+    $skip_antibot = TRUE;
+  }
+
   $protection = FALSE;
 
   // Load module config.
@@ -56,8 +64,11 @@ function antibot_form_alter(&$form, FormStateInterface $form_state, $form_id) {
     // Check if this form is a match.
     $pathMatcher = \Drupal::service('path.matcher');
     if ($pathMatcher->matchPath($form_id, implode("\n", $form_ids)) || $pathMatcher->matchPath($form['#id'], implode("\n", $form_ids))) {
-      // Enable protection for this form.
-      antibot_protect_form($form);
+
+      // Enable protection for this form if user doesn't have skip permission.
+      if (!$skip_antibot) {
+        antibot_protect_form($form);
+      }
 
       // Track that protection was added.
       $protection = TRUE;
@@ -116,7 +127,7 @@ function antibot_protect_form(array &$form) {
   $form['#antibot_key'] = $key;
 
   // Add a hidden value which will receive the key via JS.
-  // The point of this is to add an additonal layer of protection for remotely
+  // The point of this is to add an additional layer of protection for remotely
   // POSTed forms. Since the key will not be present in that scenario, the
   // remote post will fail.
   $form['antibot_key'] = [
@@ -153,7 +164,7 @@ function antibot_form_validation($form, FormStateInterface $form_state) {
   $input = $form_state->getUserInput();
 
   // Extract the submitted key.
-  $submitted_key = isset($input['antibot_key']) ? $input['antibot_key'] : NULL;
+  $submitted_key = $input['antibot_key'] ?? NULL;
 
   // Views exposed forms will initially load and submit without the key.
   if (($form['#form_id'] == 'views_exposed_form') && ($submitted_key === NULL)) {

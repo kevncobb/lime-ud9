@@ -3,6 +3,7 @@
 namespace Drupal\config_inspector\Controller;
 
 use Drupal\config_inspector\ConfigInspectorManager;
+use Drupal\config_inspector\ConfigSchemaValidatability;
 use Drupal\Core\Config\Schema\ArrayElement;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Controller\ControllerBase;
@@ -130,9 +131,13 @@ class ConfigInspectorController extends ControllerBase {
 
     $page['table'] = [
       '#type' => 'table',
+      '#caption' => $this->t('<h6>Legend for <q>Data</q>:</h6><dl><dt>✅❓</dt><dd>Correct primitive type, detailed validation impossible.</dd><dt>✅✅</dt><dd>Correct primitive type, passed all validation constraints.</dd></dl>'),
+      '#sticky' => TRUE,
       '#header' => [
         'name' => $this->t('Configuration key'),
         'schema' => $this->t('Schema'),
+        'validatability' => $this->t('Validatable'),
+        'violations' => $this->t('Data'),
         'list' => $this->t('List'),
         'tree' => $this->t('Tree'),
         'form' => $this->t('Form'),
@@ -168,6 +173,8 @@ class ConfigInspectorController extends ControllerBase {
       else {
         $schema = $this->t('Correct');
         $result = $this->configInspectorManager->checkValues($name);
+        $raw_violations = $this->configInspectorManager->validateValues($name);
+        $raw_validatability = $this->configInspectorManager->checkValidatabilityValues($name);
         if (is_array($result)) {
           // The no-schema case is covered above already, if we got errors, the
           // schema is partial.
@@ -179,6 +186,26 @@ class ConfigInspectorController extends ControllerBase {
             '#markup' => $schema,
             '#wrapper_attributes' => [
               'data-has-errors' => is_array($result),
+            ],
+          ],
+          'validatability' => [
+            '#markup' => $raw_validatability->isComplete()
+              ? $this->t('Validatable')
+              : $this->t('@validatability%', ['@validatability' => intval($raw_validatability->computePercentage() * 100)]),
+          ],
+          'violations' => [
+            '#markup' => $raw_violations->count() === 0
+              ? ($raw_validatability->isComplete()
+                ? $this->t('<abbr title="Correct primitive type, passed all validation constraints.">✅✅</abbr>')
+                : $this->t('<abbr title="Correct primitive type, detailed validation impossible.">✅❓</abbr>')
+              )
+              : $this->translationManager->formatPlural(
+                $raw_violations->count(),
+                '@count error',
+                '@count errors',
+              ),
+            '#wrapper_attributes' => [
+              'data-has-errors' => $raw_violations->count() > 0,
             ],
           ],
           'list' => [
@@ -229,7 +256,21 @@ class ConfigInspectorController extends ControllerBase {
    */
   public function getTree($name) {
     $config_schema = $this->configInspectorManager->getConfigSchema($name);
-    $output = $this->formatTree($config_schema);
+    $validatability = $this->configInspectorManager->checkValidatabilityValues($name);
+    $output = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => [
+          'config-inspector-tree'
+        ],
+      ],
+      '#attached' => [
+        'library' => [
+          'config_inspector/config_inspector',
+        ],
+      ],
+    ];
+    $output += $this->formatTree($config_schema, $validatability);
     $output['#title'] = $this->t('Tree of configuration data for %name', ['%name' => $name]);
     return $output;
   }
@@ -313,7 +354,13 @@ class ConfigInspectorController extends ControllerBase {
    */
   protected function formatList($config_name, $config_schema) {
     $rows = [];
+    // Check compliance with the underlying primitives (string, boolean …).
     $errors = (array) $this->configInspectorManager->checkValues($config_name);
+    // Check validatability (beyond primitives).
+    $raw_validatability = $this->configInspectorManager->checkValidatabilityValues($config_name);
+    // Check compliance with the validation constraints, if any.
+    $raw_violations = $this->configInspectorManager->validateValues($config_name);
+    $violations = ConfigInspectorManager::violationsToArray($raw_violations);
     $schema = $this->configInspectorManager->convertConfigElementToList($config_schema);
     foreach ($schema as $key => $element) {
       $definition = $element->getDataDefinition();
@@ -325,8 +372,17 @@ class ConfigInspectorController extends ControllerBase {
           $key,
           $definition['label'],
           $definition['type'],
+          $raw_validatability->getValidatabilityPerPropertyPath()[$key]
+            ? $this->t('Yes')
+            : $this->t('No'),
           $this->formatValue($element),
           @$errors[$config_name . ':' . $key] ?: '',
+          !array_key_exists($key, $violations)
+            ? ''
+            : (!is_array($violations[$key])
+              ? $violations[$key]
+              : implode('<br>', $violations[$key])
+            ),
         ],
       ];
     }
@@ -338,8 +394,10 @@ class ConfigInspectorController extends ControllerBase {
         $this->t('Name'),
         $this->t('Label'),
         $this->t('Type'),
+        $this->t('Validatable'),
         $this->t('Value'),
         $this->t('Error'),
+        $this->t('Validation error'),
       ],
       '#rows' => $rows,
     ];
@@ -350,6 +408,8 @@ class ConfigInspectorController extends ControllerBase {
    *
    * @param array|object $schema
    *   The schema.
+   * @param \Drupal\config_inspector\ConfigSchemaValidatability $validatability
+   *   The associated validatability.
    * @param bool $collapsed
    *   (Optional) Indicates whether the details are collapsed by default.
    * @param string $base_key
@@ -358,29 +418,58 @@ class ConfigInspectorController extends ControllerBase {
    * @return array
    *   The tree in the form of a render array.
    */
-  public function formatTree($schema, $collapsed = FALSE, $base_key = '') {
+  public function formatTree($schema, ConfigSchemaValidatability $validatability, $collapsed = FALSE, $base_key = '') {
     $build = [];
     foreach ($schema as $key => $element) {
       $definition = $element->getDataDefinition();
       $label = $definition['label'] ?: $this->t('N/A');
       $type = $definition['type'];
       $element_key = $base_key . $key;
+      $is_validatable = $validatability->getValidatabilityPerPropertyPath()[$base_key . $key]
+        ? $this->t('validatable')
+        : '<s>' . $this->t('validatable') . '</s>';
       if ($element instanceof ArrayElement) {
         $build[$key] = [
           '#type' => 'details',
           '#title' => $label,
-          '#description' => $element_key . ' (' . $type . ')',
+          '#description' => $element_key . ' (' . $type . ', ' . $is_validatable . ')',
           '#description_display' => 'after',
           '#open' => !$collapsed,
-        ] + $this->formatTree($element, TRUE, $element_key . '.');
+        ] + $this->formatTree($element, $validatability, TRUE, $element_key . '.');
       }
       else {
         $build[$key] = [
           '#type' => 'item',
           '#title' => $label,
           '#plain_text' => $this->formatValue($element),
-          '#description' => $element_key . ' (' . $type . ')',
+          '#description' => $element_key . ' (' . $type . ', ' . $is_validatable . ')',
           '#description_display' => 'after',
+        ];
+      }
+      // For validatable properties, expand the description to show the
+      // validation constraints.
+      if ($is_validatable) {
+        $all_constraints = $validatability->getConstraints($base_key . $key);
+        $local_constraints = array_map(
+          fn (string $constraint_name, $constraints_options) => ['#markup' => sprintf("<code>%s</code>", trim(Yaml::encode([$constraint_name => $constraints_options])))],
+          array_keys($all_constraints['local']),
+          array_values($all_constraints['local'])
+        );
+        $inherited_constraints = array_map(
+          fn (string $constraint_name, $constraints_options) => ['#markup' => sprintf('<span class="inherited"><code>%s</code> <small>→ %s</small></span>', trim(Yaml::encode([$constraint_name => $constraints_options])), $this->t('inherited'))],
+          array_keys($all_constraints['inherited']),
+          array_values($all_constraints['inherited'])
+        );
+        $constraints = array_merge($local_constraints, $inherited_constraints);
+        $build[$key]['#description'] = [
+          '#prefix' => $build[$key]['#description'],
+          '#theme' => 'item_list',
+          '#items' => $constraints,
+          '#attributes' => [
+            'class' => [
+              'config-inspector--validation-constraints-list',
+            ],
+          ],
         ];
       }
     }

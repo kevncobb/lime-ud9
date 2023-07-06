@@ -2,21 +2,12 @@
 
 namespace Drupal\styleguide\Plugin\Styleguide;
 
-use Drupal\Core\Block\BlockManager;
-use Drupal\Core\Breadcrumb\ChainBreadcrumbBuilderInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Form\FormBuilder;
 use Drupal\Core\Form\FormState;
-use Drupal\Core\Menu\MenuLinkTreeInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Render\Element;
-use Drupal\Core\Routing\CurrentRouteMatch;
-use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\Core\Url;
-use Drupal\styleguide\GeneratorInterface;
 use Drupal\styleguide\Plugin\StyleguidePluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Default Styleguide items implementation.
@@ -27,13 +18,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * )
  */
 class DefaultStyleguide extends StyleguidePluginBase {
-
-  /**
-   * The styleguide generator service.
-   *
-   * @var \Drupal\styleguide\Generator
-   */
-  protected $generator;
 
   /**
    * The request stack.
@@ -48,13 +32,6 @@ class DefaultStyleguide extends StyleguidePluginBase {
    * @var \Drupal\Core\Menu\MenuLinkTreeInterface
    */
   protected $linkTree;
-
-  /**
-   * The form builder.
-   *
-   * @var \Drupal\Core\Form\FormBuilder
-   */
-  protected $formBuilder;
 
   /**
    * The breadcrumb manager.
@@ -85,75 +62,17 @@ class DefaultStyleguide extends StyleguidePluginBase {
   protected $themeManager;
 
   /**
-   * The module handler service.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
-   */
-  protected $moduleHandler;
-
-  /**
-   * Constructs a new defaultStyleguide.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin_id for the plugin instance.
-   * @param array $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Drupal\styleguide\GeneratorInterface $styleguide_generator
-   *   The styleguide generator service.
-   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
-   *   The request stack.
-   * @param \Drupal\Core\Menu\MenuLinkTreeInterface $link_tree
-   *   The menu link tree.
-   * @param \Drupal\Core\Form\FormBuilder $form_builder
-   *   The form builder.
-   * @param \Drupal\Core\Breadcrumb\ChainBreadcrumbBuilderInterface $breadcrumb_manager
-   *   The breadcrumb manager.
-   * @param \Drupal\Core\Routing\CurrentRouteMatch $current_route_match
-   *   The current_route_match service.
-   * @param \Drupal\Core\Block\BlockManager $block_manager
-   *   The block plugin manager.
-   * @param \Drupal\Core\Theme\ThemeManagerInterface $theme_manager
-   *   The theme manager service.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler service.
-   *
-   * @internal param \Drupal\Core\Breadcrumb\ChainBreadcrumbBuilderInterface $breadcrumb
-   * @internal param \Drupal\styleguide\GeneratorInterface $generator
-   */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, GeneratorInterface $styleguide_generator, RequestStack $request_stack, MenuLinkTreeInterface $link_tree, FormBuilder $form_builder, ChainBreadcrumbBuilderInterface $breadcrumb_manager, CurrentRouteMatch $current_route_match, BlockManager $block_manager, ThemeManagerInterface $theme_manager, ModuleHandlerInterface $module_handler) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->generator = $styleguide_generator;
-    $this->requestStack = $request_stack;
-    $this->linkTree = $link_tree;
-    $this->formBuilder = $form_builder;
-    $this->breadcrumbManager = $breadcrumb_manager;
-    $this->currentRouteMatch = $current_route_match;
-    $this->blockManager = $block_manager;
-    $this->themeManager = $theme_manager;
-    $this->moduleHandler = $module_handler;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('styleguide.generator'),
-      $container->get('request_stack'),
-      $container->get('menu.link_tree'),
-      $container->get('form_builder'),
-      $container->get('breadcrumb'),
-      $container->get('current_route_match'),
-      $container->get('plugin.manager.block'),
-      $container->get('theme.manager'),
-      $container->get('module_handler')
-    );
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->requestStack = $container->get('request_stack');
+    $instance->linkTree = $container->get('menu.link_tree');
+    $instance->breadcrumbManager = $container->get('breadcrumb');
+    $instance->currentRouteMatch = $container->get('current_route_match');
+    $instance->blockManager = $container->get('plugin.manager.block');
+    $instance->themeManager = $container->get('theme.manager');
+    return $instance;
   }
 
   /**
@@ -565,23 +484,20 @@ class DefaultStyleguide extends StyleguidePluginBase {
     $tabs = [];
     $markup = [];
     foreach (Element::children($elements) as $key) {
-      if ($key == 'vertical_tabs' && !in_array($key, $tabs)) {
+      if ($key === 'vertical_tabs' && !in_array($key, $tabs)) {
         $tabs[] = $key;
       }
-      elseif (!isset($elements[$key]['#type']) || $elements[$key]['#type'] == 'item') {
+      elseif (!isset($elements[$key]['#type']) || $elements[$key]['#type'] === 'item') {
         $markup[] = $key;
       }
-      elseif ($elements[$key]['#type'] == 'details') {
+      elseif ($elements[$key]['#type'] === 'details') {
         $details[] = $key;
       }
-      // We skip these.
-      elseif (in_array($elements[$key]['#type'], [
-        'button',
-        'submit',
+      // We skip these since they are called out individually below.
+      elseif (!in_array($elements[$key]['#type'], [
+        'actions',
         'image_button',
       ])) {
-      }
-      else {
         $basic[] = $key;
       }
     }
@@ -590,19 +506,9 @@ class DefaultStyleguide extends StyleguidePluginBase {
       'content' => $this->formBuilder->getForm('Drupal\styleguide\Form\StyleguideForm', $basic),
       'group' => $this->t('Forms'),
     ];
-    $items['form-submit'] = [
-      'title' => $this->t('Forms, submit'),
-      'content' => $this->formBuilder->getForm('Drupal\styleguide\Form\StyleguideForm', ['submit']),
-      'group' => $this->t('Forms'),
-    ];
-    $items['form-button'] = [
-      'title' => $this->t('Forms, button'),
-      'content' => $this->formBuilder->getForm('Drupal\styleguide\Form\StyleguideForm', ['button']),
-      'group' => $this->t('Forms'),
-    ];
-    $items['form-button-disabled'] = [
-      'title' => $this->t('Forms, button - disabled'),
-      'content' => $this->formBuilder->getForm('Drupal\styleguide\Form\StyleguideForm', ['button_disabled']),
+    $items['form-actions'] = [
+      'title' => $this->t('Forms, actions'),
+      'content' => $this->formBuilder->getForm('Drupal\styleguide\Form\StyleguideForm', ['actions']),
       'group' => $this->t('Forms'),
     ];
     $items['form-image-button'] = [
@@ -661,32 +567,6 @@ class DefaultStyleguide extends StyleguidePluginBase {
       'content' => $this->formBuilder->getForm('Drupal\styleguide\Form\StyleguideConfirmForm'),
       'group' => $this->t('System'),
     ];
-
-    if ($this->moduleHandler->moduleExists('filter')) {
-      $items['text_format'] = [
-        'title' => t('Text format'),
-        'content' => $this->formBuilder->getForm('Drupal\styleguide\Form\StyleguideForm', ['text_format']),
-        'group' => t('System'),
-      ];
-      $items['filter_tips'] = [
-        'title' => t('Filter tips, short'),
-        'content' => [
-          '#theme' => 'filter_tips',
-          '#tips' => _filter_tips(-1, FALSE),
-          '#long' => FALSE,
-        ],
-        'group' => t('System'),
-      ];
-      $items['filter_tips_long'] = [
-        'title' => t('Filter tips, long'),
-        'content' => [
-          '#theme' => 'filter_tips',
-          '#tips' => _filter_tips(-1, TRUE),
-          '#long' => TRUE,
-        ],
-        'group' => t('System'),
-      ];
-    }
 
     $items['pager'] = [
       'title' => $this->t('Pager'),

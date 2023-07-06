@@ -275,4 +275,60 @@ class RedirectUITest extends BrowserTestBase {
     $this->drupalLogin($this->adminUser);
   }
 
+  /**
+   * Test redirects with node aliases.
+   */
+  public function testNodeAliasRedirects() {
+    $this->drupalLogin($this->adminUser);
+
+    // Create a node with alias "test-alias".
+    $node = $this->drupalCreateNode([
+      'type' => 'article',
+      'title' => 'Test node redirect',
+      'langcode' => Language::LANGCODE_NOT_SPECIFIED,
+      'path' => ['alias' => '/test-alias'],
+    ]);
+
+    // Create a redirect from "test-alias" to "/node" and assert redirect.
+    $this->drupalPostForm('admin/config/search/redirect/add', [
+      'redirect_source[0][path]' => 'test-alias',
+      'redirect_redirect[0][uri]' => '/node',
+    ], t('Save'));
+    $this->assertRedirect('test-alias', '/node', 301);
+
+    // Update the node alias to "test-alias-updated".
+    $this->drupalPostForm('node/' . $node->id() . '/edit', ['path[0][alias]' => '/test-alias-updated'], t('Save'));
+    // Assert the "test-alias" redirect is still present and was duplicated for
+    // the new alias.
+    $this->assertRedirect('test-alias', '/node', 301);
+    $this->assertRedirect('test-alias-updated', '/node', 301);
+
+    // Delete the node and assert redirects are still present.
+    $node->delete();
+    $this->assertRedirect('test-alias', '/node', 301);
+    $this->assertRedirect('test-alias-updated', '/node', 301);
+  }
+
+  /**
+   * Test adding a node alias when a redirect already exists..
+   */
+  public function testNodeAliasOnExistingRedirect() {
+    $this->drupalLogin($this->adminUser);
+
+    $this->drupalPostForm('admin/config/search/redirect/add', [
+      'redirect_source[0][path]' => 'some-url',
+      'redirect_redirect[0][uri]' => '/node',
+    ], t('Save'));
+
+    $this->assertRedirect('some-url', '/node', 301);
+
+    $this->drupalCreateNode([
+      'type' => 'article',
+      'title' => 'Test node redirect',
+      'path' => ['alias' => '/some-url'],
+    ]);
+
+    $this->assertRedirect('some-url', '/node', 301);
+  }
+
 }

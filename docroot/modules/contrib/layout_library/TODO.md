@@ -5,4 +5,3 @@
   from layout_builder
 - subclass \Drupal\layout_builder\Entity\LayoutBuilderEntityViewDisplay::getRuntimeSections
 - field for storing selection of layout on content entity
-- tests

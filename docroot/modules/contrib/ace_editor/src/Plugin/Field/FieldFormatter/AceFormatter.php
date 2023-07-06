@@ -91,7 +91,7 @@ class AceFormatter extends FormatterBase implements ContainerFactoryPluginInterf
    */
   public static function defaultSettings() {
     // Get default ace_editor configuration.
-    $config = \Drupal::config('ace_editor.settings')->get();
+    $config = $this->configFactory->get('ace_editor.settings');
     return $config + parent::defaultSettings();
   }
 

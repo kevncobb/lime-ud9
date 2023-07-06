@@ -57,7 +57,7 @@ class LayoutBuilderUX extends LayoutBuilder {
         $route_parameters = $build['layout-builder__section'][$region][$uuid]['#contextual_links']['layout_builder_block']['route_parameters'];
 
         // Remove default contextual links.
-        unset($build['layout-builder__section'][$region][$uuid]['#contextual_links']['layout_builder_block']);
+        // unset($build['layout-builder__section'][$region][$uuid]['#contextual_links']['layout_builder_block']);
 
         // Ensure the 'content' key is present, as set by
         // \Drupal\layout_builder\EventSubscriber\BlockComponentRenderArray.

@@ -22,12 +22,12 @@ class LayoutSelectionTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['node', 'layout_library', 'options'];
+  protected static $modules = ['node', 'field_ui', 'layout_library', 'options'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->drupalCreateContentType(['type' => 'alpha']);

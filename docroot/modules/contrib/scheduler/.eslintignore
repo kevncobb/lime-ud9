@@ -3,4 +3,5 @@
 # See https://www.drupal.org/project/scheduler/issues/3314451
 drupalci.yml
 js/scheduler_default_time.js
+js/scheduler_default_time_8x.js
 js/scheduler_vertical_tabs.js

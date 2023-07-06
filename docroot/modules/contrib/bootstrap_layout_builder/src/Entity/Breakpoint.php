@@ -126,7 +126,7 @@ class Breakpoint extends ConfigEntityBase implements BreakpointInterface {
     // Full width case.
     $sufix = '12';
     if (count($strucutre) > 1) {
-      $sufix = $strucutre[$key];
+      $sufix = (isset($strucutre[$key])) ? $strucutre[$key] : $strucutre[0];
     }
     $class = $this->getBaseClass() . '-' . $sufix;
     return $class;

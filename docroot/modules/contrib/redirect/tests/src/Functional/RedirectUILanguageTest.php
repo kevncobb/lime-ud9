@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\redirect\Functional;
 
+use Drupal\Core\Language\Language;
 use Drupal\language\Entity\ConfigurableLanguage;
 
 /**
@@ -125,6 +126,38 @@ class RedirectUILanguageTest extends RedirectUITest {
 
     // Check that redirect for Germany is now working.
     $this->assertRedirect('de/langpath', '/de/user', 301);
+  }
+
+  /**
+   * Test language specific redirects with node aliases.
+   */
+  public function testLanguageSpecificNodeAliasRedirects() {
+    $this->drupalLogin($this->adminUser);
+
+    // Create a node with alias "test-alias".
+    $this->drupalCreateNode([
+       'type' => 'article',
+      'title' => 'Test english node',
+      'path' => ['alias' => '/test-alias'],
+    ]);
+
+    // Create a redirect with en language.
+    $this->drupalPostForm('admin/config/search/redirect/add', [
+      'redirect_source[0][path]' => 'test-alias',
+      'redirect_redirect[0][uri]' => '/node',
+      'language[0][value]' => 'en',
+    ], t('Save'));
+    $this->assertRedirect('test-alias', '/node', 301);
+    $this->assertRedirect('de/test-alias', NULL, 404);
+
+    // Create a redirect with de language.
+    $this->drupalPostForm('admin/config/search/redirect/add', [
+     'redirect_source[0][path]' => 'test-alias',
+     'redirect_redirect[0][uri]' => '/node/add',
+     'language[0][value]' => 'de',
+    ], t('Save'));
+    $this->assertRedirect('test-alias', '/node', 301);
+    $this->assertRedirect('de/test-alias', 'de/node/add', 301);
   }
 
 }

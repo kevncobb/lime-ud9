@@ -48,13 +48,37 @@ class RedirectRepository {
   }
 
   /**
-   * Gets a redirect for given path, query and language.
+   * Finds a redirect from the given paths, query and language.
+   *
+   * @param array $source_paths
+   *   An array of redirect source paths.
+   * @param array $query
+   *   The redirect source path query.
+   * @param $language
+   *   The language for which is the redirect.
+   *
+   * @return \Drupal\redirect\Entity\Redirect|null
+   *   The matched redirect entity or null if not found.
+   *
+   * @throws \Drupal\redirect\Exception\RedirectLoopException
+   */
+  public function findMatchingRedirectMultiple(array $source_paths, array $query = [], $language = Language::LANGCODE_NOT_SPECIFIED) {
+    $hashes = [];
+    foreach ($source_paths as $source_path) {
+      $hashes = array_merge($hashes, $this->getHashesByPath($source_path, $query, $language));
+    }
+
+    return $this->findRedirectByHashes($hashes, reset($source_paths), $language);
+  }
+
+  /**
+   * Finds a redirect from the given path, query and language.
    *
    * @param string $source_path
    *   The redirect source path.
    * @param array $query
    *   The redirect source path query.
-   * @param $language
+   * @param string $language
    *   The language for which is the redirect.
    *
    * @return \Drupal\redirect\Entity\Redirect
@@ -63,6 +87,24 @@ class RedirectRepository {
    * @throws \Drupal\redirect\Exception\RedirectLoopException
    */
   public function findMatchingRedirect($source_path, array $query = [], $language = Language::LANGCODE_NOT_SPECIFIED) {
+    $hashes = $this->getHashesByPath($source_path, $query, $language);
+    return $this->findRedirectByHashes($hashes, $source_path, $language);
+  }
+
+  /**
+   * Returns redirect hashes for the given source path.
+   *
+   * @param string $source_path
+   *   The redirect source path.
+   * @param array $query
+   *   The redirect source path query.
+   * @param string $language
+   *   The language for which is the redirect.
+   *
+   * @return array
+   *   An array of redirect hashes.
+   */
+  protected function getHashesByPath($source_path, array $query, $language) {
     $source_path = ltrim($source_path, '/');
     $hashes = [Redirect::generateHash($source_path, $query, $language)];
     if ($language != Language::LANGCODE_NOT_SPECIFIED) {
@@ -77,6 +119,23 @@ class RedirectRepository {
       }
     }
 
+    return $hashes;
+  }
+
+  /**
+   * Finds a redirect from the given hashes.
+   *
+   * @param array $hashes
+   *   An array of redirect hashes.
+   * @param string $source_path
+   *   The redirect source path.
+   * @param string $language
+   *   The language for which is the redirect.
+   *
+   * @return \Drupal\redirect\Entity\Redirect|null
+   *   The matched redirect entity or null if not found.
+   */
+  protected function findRedirectByHashes(array $hashes, $source_path, $language) {
     // Load redirects by hash. A direct query is used to improve performance.
     $rid = $this->connection->query('SELECT rid FROM {redirect} WHERE hash IN (:hashes[]) ORDER BY LENGTH(redirect_source__query) DESC', [':hashes[]' => $hashes])->fetchField();
 
@@ -128,8 +187,8 @@ class RedirectRepository {
    * @param string $source_path
    *   The redirect source path (without the query).
    *
-   * @return \Drupal\redirect\Entity\Redirect[]
-   *   Array of redirect entities.
+   * @return \Drupal\redirect\Entity\Redirect|null
+   *   The matched redirect entity or null if not found.
    */
   public function findBySourcePath($source_path) {
     $ids = $this->manager->getStorage('redirect')->getQuery()

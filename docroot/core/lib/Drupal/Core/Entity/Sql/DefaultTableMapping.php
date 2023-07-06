@@ -570,7 +570,7 @@ class DefaultTableMapping implements TableMappingInterface {
       // with table names longer than 64 characters, we hash the unique storage
       // identifier and return the first 10 characters so we end up with a short
       // unique ID.
-      return "field_deleted_data_" . substr(hash('sha256', $storage_definition->getUniqueStorageIdentifier()), 0, 10);
+      return "field_deleted_data_" . substr(hash('sha256', $storage_definition->getUniqueStorageIdentifier() ?? ''), 0, 10);
     }
     else {
       return $this->generateFieldTableName($storage_definition, FALSE);
@@ -596,7 +596,7 @@ class DefaultTableMapping implements TableMappingInterface {
       // up with table names longer than 64 characters, we hash the unique
       // storage identifier and return the first 10 characters so we end up with
       // a short unique ID.
-      return "field_deleted_revision_" . substr(hash('sha256', $storage_definition->getUniqueStorageIdentifier()), 0, 10);
+      return "field_deleted_revision_" . substr(hash('sha256', $storage_definition->getUniqueStorageIdentifier() ?? ''), 0, 10);
     }
     else {
       return $this->generateFieldTableName($storage_definition, TRUE);
@@ -629,7 +629,7 @@ class DefaultTableMapping implements TableMappingInterface {
       // Use a shorter separator and a hash of the field storage unique
       // identifier.
       $separator = $revision ? '_r__' : '__';
-      $field_hash = substr(hash('sha256', $storage_definition->getUniqueStorageIdentifier()), 0, 10);
+      $field_hash = substr(hash('sha256', $storage_definition->getUniqueStorageIdentifier() ?? ''), 0, 10);
 
       $table_name = $this->prefix . $entity_type_id . $separator . $field_hash;
 

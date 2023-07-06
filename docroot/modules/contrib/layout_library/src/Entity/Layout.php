@@ -5,7 +5,7 @@ namespace Drupal\layout_library\Entity;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\field_ui\FieldUI;
 use Drupal\layout_builder\SectionListInterface;
-use Drupal\layout_builder\SectionStorage\SectionStorageTrait;
+use Drupal\layout_builder\SectionListTrait;
 use Drupal\Core\Url;
 
 /**
@@ -50,7 +50,7 @@ use Drupal\Core\Url;
  */
 class Layout extends ConfigEntityBase implements SectionListInterface {
 
-  use SectionStorageTrait;
+  use SectionListTrait;
   /**
    * Unique ID for the config entity.
    *
@@ -87,12 +87,24 @@ class Layout extends ConfigEntityBase implements SectionListInterface {
   protected $layout = [];
 
   /**
-   * Gets value of targetEntityType.
+   * Alias of getTargetEntityTypeId().
+   *
+   * @todo refactor in favor of getTargetEntityTypeId() to align with core.
    *
    * @return string
    *   Value of targetEntityType
    */
   public function getTargetEntityType() {
+    return $this->targetEntityType;
+  }
+
+  /**
+   * Gets value of targetEntityType.
+   *
+   * @return string
+   *   Value of targetEntityType
+   */
+  public function getTargetEntityTypeId() {
     return $this->targetEntityType;
   }
 

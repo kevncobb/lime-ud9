@@ -24,12 +24,18 @@ class LayoutDisplayTest extends BrowserTestBase {
    *
    * @var array
    */
-  protected static $modules = ['layout_library', 'block', 'node', 'options'];
+  protected static $modules = [
+    'layout_library',
+    'field_ui',
+    'block',
+    'node',
+    'options',
+  ];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->drupalPlaceBlock('local_actions_block');

@@ -5,6 +5,7 @@ namespace Drupal\styleguide\Form;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\styleguide\GeneratorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -157,6 +158,38 @@ class StyleguideForm extends FormBase {
       '#delta' => 10,
       '#description' => $this->generator->sentence(),
     ];
+    $form['image_button'] = [
+      '#type' => 'image_button',
+      '#src' => 'core/misc/druplicon.png',
+      '#attributes' => ['height' => 40],
+      '#name' => $this->t('Image button'),
+    ];
+    $form['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Submit'),
+    ];
+    $form['submit_disabled'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Submit - disabled'),
+      '#disabled' => TRUE,
+    ];
+    $form['button'] = [
+      '#type' => 'button',
+      '#value' => $this->t('Button'),
+    ];
+    $form['button_disabled'] = [
+      '#type' => 'button',
+      '#value' => $this->t('Button - disabled'),
+      '#disabled' => TRUE,
+    ];
+    $form['button_link'] = [
+      '#type' => 'link',
+      '#url' => Url::fromUri('internal:#'),
+      '#title' => $this->t('Link button'),
+      '#attributes' => [
+        'class' => ['button'],
+      ],
+    ];
     $form['details-close'] = [
       '#type' => 'details',
       '#title' => $this->t('Details closed'),
@@ -202,25 +235,6 @@ class StyleguideForm extends FormBase {
       '#markup' => $this->generator->paragraphs(1, TRUE),
       '#description' => $this->generator->sentence(),
     ];
-    $form['image_button'] = [
-      '#type' => 'image_button',
-      '#src' => 'core/misc/druplicon.png',
-      '#attributes' => ['height' => 40],
-      '#name' => $this->t('Image button'),
-    ];
-    $form['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Submit'),
-    ];
-    $form['button'] = [
-      '#type' => 'button',
-      '#value' => $this->t('Button'),
-    ];
-    $form['button_disabled'] = [
-      '#type' => 'button',
-      '#value' => $this->t('Button - disabled'),
-      '#disabled' => TRUE,
-    ];
 
     if ($this->moduleHandler->moduleExists('filter')) {
       $form['text_format'] = [
@@ -230,6 +244,32 @@ class StyleguideForm extends FormBase {
         '#format' => filter_default_format(),
       ];
     }
+
+    $form['actions'] = [
+      '#type' => 'actions',
+    ];
+    $form['actions']['button-primary'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Submit - primary'),
+      '#button_type' => 'primary',
+    ];
+    $form['actions']['button-submit'] = [
+      '#type' => 'button',
+      '#value' => $this->t('Button'),
+    ];
+    $form['actions']['button-link'] = [
+      '#type' => 'link',
+      '#url' => Url::fromUri('internal:#'),
+      '#title' => $this->t('Link button'),
+      '#attributes' => [
+        'class' => ['button'],
+      ],
+    ];
+    $form['actions']['button-danger'] = [
+      '#type' => 'button',
+      '#value' => $this->t('Button - danger'),
+      '#button_type' => 'danger',
+    ];
 
     if (!empty($form_keys)) {
       $items = [];

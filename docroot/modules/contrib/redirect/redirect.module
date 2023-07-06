@@ -99,14 +99,22 @@ function redirect_path_alias_update(PathAliasInterface $path_alias) {
   // Delete all redirects having the same source as this alias.
   redirect_delete_by_path($path_alias->getAlias(), $path_alias->language()->getId(), FALSE);
 
-  // Create redirect from the old path alias to the new one.
   if ($original_path_alias->getAlias() != $path_alias->getAlias()) {
-    if (!redirect_repository()->findMatchingRedirect($original_path_alias->getAlias(), [], $original_path_alias->language()->getId())) {
+    $existing_redirect = redirect_repository()->findMatchingRedirect($original_path_alias->getAlias(), [], $original_path_alias->language()->getId());
+    if (!$existing_redirect) {
+      // Create redirect from the old path alias to the new one.
       $redirect = Redirect::create();
       $redirect->setSource($original_path_alias->getAlias());
       $redirect->setRedirect($path_alias->getPath());
       $redirect->setLanguage($original_path_alias->language()->getId());
       $redirect->setStatusCode($config->get('default_status_code'));
+      $redirect->save();
+    }
+    else {
+      // Duplicate the existing redirect with:
+      // source = [new alias], dest = [existing redirect].
+      $redirect = $existing_redirect->createDuplicate();
+      $redirect->setSource($path_alias->getAlias());
       $redirect->save();
     }
   }
@@ -261,13 +269,6 @@ function locale_form_redirect_edit_form_alter(array &$form, FormStateInterface $
     '#default_value' => $form['language']['#value'],
     '#description' => t('A redirect set for a specific language will always be used when requesting this page in that language, and takes precedence over redirects set for <em>All languages</em>.'),
   ];
-}
-
-/**
- * Ajax callback for the redirect link widget.
- */
-function redirect_source_link_get_status_messages(array $form, FormStateInterface $form_state) {
-  return $form['redirect_source']['widget'][0]['status_box'];
 }
 
 /**

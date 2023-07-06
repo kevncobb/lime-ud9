@@ -6,9 +6,11 @@ use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityTypeRepositoryInterface;
+use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginDependencyTrait;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\embed\EmbedType\EmbedTypeBase;
 use Drupal\entity_browser\EntityBrowserInterface;
 use Drupal\entity_embed\EntityEmbedDisplay\EntityEmbedDisplayManager;
@@ -54,6 +56,20 @@ class Entity extends EmbedTypeBase implements ContainerFactoryPluginInterface {
   protected $displayPluginManager;
 
   /**
+   * The module handler service.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+   protected $moduleHandler;
+
+  /**
+   * The file URL generator.
+   *
+   * @var \Drupal\Core\File\FileUrlGeneratorInterface
+   */
+  protected $fileUrlGenerator;
+
+  /**
    * {@inheritdoc}
    *
    * @param array $configuration
@@ -70,13 +86,19 @@ class Entity extends EmbedTypeBase implements ContainerFactoryPluginInterface {
    *   The entity type bundle info service.
    * @param \Drupal\entity_embed\EntityEmbedDisplay\EntityEmbedDisplayManager $display_plugin_manager
    *   The plugin manager.
+   * @param \Drupal\Core\File\FileUrlGeneratorInterface
+   *   The file URL generator.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityTypeRepositoryInterface $entity_type_repository, EntityTypeBundleInfoInterface $bundle_info, EntityEmbedDisplayManager $display_plugin_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityTypeRepositoryInterface $entity_type_repository, EntityTypeBundleInfoInterface $bundle_info, EntityEmbedDisplayManager $display_plugin_manager, FileUrlGeneratorInterface $file_url_generator, ModuleHandlerInterface $module_handler) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityTypeManager = $entity_type_manager;
     $this->entityTypeRepository = $entity_type_repository;
     $this->entityTypeBundleInfo = $bundle_info;
     $this->displayPluginManager = $display_plugin_manager;
+    $this->fileUrlGenerator = $file_url_generator;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -90,7 +112,9 @@ class Entity extends EmbedTypeBase implements ContainerFactoryPluginInterface {
       $container->get('entity_type.manager'),
       $container->get('entity_type.repository'),
       $container->get('entity_type.bundle.info'),
-      $container->get('plugin.manager.entity_embed.display')
+      $container->get('plugin.manager.entity_embed.display'),
+      $container->get('file_url_generator'),
+      $container->get('module_handler')
     );
   }
 
@@ -100,6 +124,11 @@ class Entity extends EmbedTypeBase implements ContainerFactoryPluginInterface {
   public function defaultConfiguration() {
     return [
       'entity_type' => 'node',
+      'inline_entity_form' => 0,
+      'inline_entity_form_settings' => [
+        'entity_form_display' => 'default',
+        'display_review' => 0,
+      ],
       'bundles' => [],
       'display_plugins' => [],
       'entity_browser' => '',
@@ -132,6 +161,7 @@ class Entity extends EmbedTypeBase implements ContainerFactoryPluginInterface {
 
     if ($entity_type_id) {
       $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
+      $selected_bundles = (array)$this->getConfigurationValue('bundles');
       $form['bundles'] = [
         '#type' => 'checkboxes',
         '#title' => $entity_type->getBundleLabel() ?: $this->t('Bundles'),
@@ -140,6 +170,13 @@ class Entity extends EmbedTypeBase implements ContainerFactoryPluginInterface {
         '#description' => $this->t('If none are selected, all are allowed.'),
       ];
       $form['bundles']['#access'] = !empty($form['bundles']['#options']);
+      if ($this->getConfigurationValue('inline_entity_form')) {
+        $form['bundles']['#type'] = 'select';
+        $form['bundles']['#required'] = TRUE;
+        if (count($selected_bundles) > 1) {
+          $form['bundles']['#default_value'] = [];
+        }
+      }
 
       // Allow option to limit Entity Embed Display plugins.
       $form['display_plugins'] = [
@@ -150,6 +187,49 @@ class Entity extends EmbedTypeBase implements ContainerFactoryPluginInterface {
         '#description' => $this->t('If none are selected, all are allowed. Note that these are the plugins which are allowed for this entity type, all of these might not be available for the selected entity.'),
       ];
       $form['display_plugins']['#access'] = !empty($form['display_plugins']['#options']);
+
+      // Manager an inline entity form to create and embed an entity.
+      if ($this->moduleHandler->moduleExists('inline_entity_form')) {
+        $form['inline_entity_form'] = [
+          '#type' => 'checkbox',
+          '#title' => 'Add new entities using Inline Entity Form',
+          '#default_value' => $this->getConfigurationValue('inline_entity_form'),
+          '#ajax' => array(
+            'callback' => array($form_state->getFormObject(), 'updateTypeSettings'),
+            'effect' => 'fade',
+          ),
+        ];
+
+        $form_modes = \Drupal::service('entity_display.repository')->getFormModes($entity_type_id);
+
+        $form_mode_options = ['default' => $this->t('Default')];
+        foreach ($form_modes as $form_mode_index => $form_mode) {
+          $form_mode_options[$form_mode_index] = $form_mode['label'];
+        }
+
+        $form['inline_entity_form_settings']['entity_form_display'] = [
+          '#type' => 'select',
+          '#title' => $this->t('Inline Entity Form display'),
+          '#options' => $form_mode_options,
+          '#default_value' => $this->getConfigurationValue('inline_entity_form_settings')['entity_form_display'],
+          '#description' => $this->t('If none are selected, the Default form mode will be used.'),
+          '#states' => [
+            'visible' => [
+              ':input[name="type_settings[inline_entity_form]"]' => ['checked' => TRUE],
+            ],
+          ],
+        ];
+        $form['inline_entity_form_settings']['display_review'] = [
+          '#type' => 'checkbox',
+          '#title' => 'Display the entity after selection',
+          '#default_value' => $this->getConfigurationValue('inline_entity_form_settings')['display_review'],
+          '#states' => [
+            'invisible' => [
+              ':input[name="type_settings[inline_entity_form]"]' => ['value' => '_none'],
+            ],
+          ],
+        ];
+      }
 
       /** @var \Drupal\entity_browser\EntityBrowserInterface[] $browsers */
       if ($this->entityTypeManager->hasDefinition('entity_browser') && ($browsers = $this->entityTypeManager->getStorage('entity_browser')->loadMultiple())) {
@@ -171,6 +251,11 @@ class Entity extends EmbedTypeBase implements ContainerFactoryPluginInterface {
           '#description' => $this->t('Entity browser to be used to select entities to be embedded. Only compatible browsers will be available to be chosen.'),
           '#options' => $options,
           '#default_value' => $this->getConfigurationValue('entity_browser'),
+          '#states' => [
+            'invisible' => [
+              ':input[name="type_settings[inline_entity_form]"]' => ['checked' => TRUE],
+            ],
+          ],
         ];
         $form['entity_browser_settings'] = [
           '#type' => 'details',
@@ -186,6 +271,11 @@ class Entity extends EmbedTypeBase implements ContainerFactoryPluginInterface {
           '#type' => 'checkbox',
           '#title' => 'Display the entity after selection',
           '#default_value' => $this->getConfigurationValue('entity_browser_settings')['display_review'],
+          '#states' => [
+            'invisible' => [
+              ':input[name="type_settings[entity_browser]"]' => ['value' => '_none'],
+            ],
+          ],
         ];
       }
       else {
@@ -205,12 +295,18 @@ class Entity extends EmbedTypeBase implements ContainerFactoryPluginInterface {
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     // Filter down the bundles and allowed Entity Embed Display plugins.
     $bundles = $form_state->getValue('bundles');
+    $bundles = is_array($bundles) ? $bundles : [$bundles => $bundles]; 
     $form_state->setValue('bundles', array_keys(array_filter($bundles)));
     $display_plugins = $form_state->getValue('display_plugins');
     $form_state->setValue('display_plugins', array_keys(array_filter($display_plugins)));
-    $entity_browser = $form_state->getValue('entity_browser') == '_none' ? '' : $form_state->getValue('entity_browser');
-    $form_state->setValue('entity_browser', $entity_browser);
-    $form_state->setValue('entity_browser_settings', $form_state->getValue('entity_browser_settings', []));
+    if ($form_state->getValue('inline_entity_form')) {
+      $form_state->setValue('entity_browser', '');
+    }
+    else {
+      $entity_browser = $form_state->getValue('entity_browser') == '_none' ? '' : $form_state->getValue('entity_browser');
+      $form_state->setValue('entity_browser', $entity_browser);
+      $form_state->setValue('entity_browser_settings', $form_state->getValue('entity_browser_settings'));
+    }
 
     parent::submitConfigurationForm($form, $form_state);
   }
@@ -273,7 +369,7 @@ class Entity extends EmbedTypeBase implements ContainerFactoryPluginInterface {
    * {@inheritdoc}
    */
   public function getDefaultIconUrl() {
-    return file_create_url(drupal_get_path('module', 'entity_embed') . '/js/plugins/drupalentity/entity.png');
+    return $this->fileUrlGenerator->generateAbsoluteString(\Drupal::service('extension.list.module')->getPath('entity_embed') . '/js/plugins/drupalentity/entity.png');
   }
 
   /**

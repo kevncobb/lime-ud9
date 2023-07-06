@@ -5,6 +5,7 @@ namespace Drupal\scheduler\Commands;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\scheduler\SchedulerManager;
 use Drush\Commands\DrushCommands;
+use Drush\Utils\StringUtils;
 
 /**
  * Drush 9 Scheduler commands for Drupal Core 8.4+.
@@ -59,6 +60,37 @@ class SchedulerCommands extends DrushCommands {
     $this->schedulerManager->runLightweightCron($options);
 
     $options['nomsg'] ? NULL : $this->messenger->addMessage(dt('Scheduler lightweight cron completed.'));
+  }
+
+  /**
+   * Entity Update - add Scheduler fields for entities covered by plugins.
+   *
+   * Use the standard drush parameter -q for quiet mode (no terminal output).
+   *
+   * @command scheduler:entity-update
+   * @aliases sch-ent-upd, sch-upd, scheduler-entity-update
+   */
+  public function entityUpdate() {
+    $result = $this->schedulerManager->entityUpdate();
+    $updated = $result ? implode(', ', $result) : dt('nothing to update');
+    $this->messenger->addMessage(dt('Scheduler entity update - @updated', ['@updated' => $updated]));
+  }
+
+  /**
+   * Entity Revert - remove Scheduler fields and third-party-settings.
+   *
+   * Use the standard drush parameter -q for quiet mode (no terminal output).
+   *
+   * @option types A comma-delimited list of entity type ids. Default is all
+   *    entity types that need reverting.
+   *
+   * @command scheduler:entity-revert
+   * @aliases sch-ent-rev, sch-rev, scheduler-entity-revert
+   */
+  public function entityRevert(array $options = ['types' => '']) {
+    $result = $this->schedulerManager->entityRevert(StringUtils::csvToArray($options['types']));
+    $reverted = $result ? implode(', ', $result) : dt('nothing to do');
+    $this->messenger->addMessage(dt('Scheduler entity revert - @reverted', ['@reverted' => $reverted]));
   }
 
 }

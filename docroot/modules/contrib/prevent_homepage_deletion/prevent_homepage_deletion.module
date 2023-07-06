@@ -23,7 +23,9 @@ function prevent_homepage_deletion_help($route_name, RouteMatchInterface $route_
       $output .= '<p>' . t("This module provides a new permission: delete
         homepage node. Only users with this permission can delete the node that
         is currently configured as the home page of the site. Other users will
-        not see the delete-tab, nor the delete option in the content overview.")
+        not see the delete-tab, nor the delete option in the content overview.
+        Please mind that if the user has the permission \"bypass node access\"
+        this module will be overruled.")
         . '</p>';
       return $output;
   }
@@ -49,9 +51,12 @@ function prevent_homepage_deletion_node_access(EntityInterface $entity, $operati
  * Helper function that checks if the current user can delete this node.
  *
  * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Current entity.
  * @param \Drupal\Core\Session\AccountInterface $account
+ *   User account.
  *
  * @return bool
+ *   True if the page can be deleted by this user.
  */
 function _prevent_homepage_deletion_check(EntityInterface $entity, AccountInterface $account) {
   $candelete = TRUE;
@@ -75,10 +80,7 @@ function _prevent_homepage_deletion_check(EntityInterface $entity, AccountInterf
 
   if (\Drupal::service('path.matcher')->isFrontPage() || $entity_id === $frontpage_id) {
     // Check for permission.
-    if ($account->hasPermission('delete_homepage_node')) {
-      $candelete = TRUE;
-    }
-    else {
+    if (!$account->hasPermission('delete_homepage_node')) {
       $candelete = FALSE;
     }
   }

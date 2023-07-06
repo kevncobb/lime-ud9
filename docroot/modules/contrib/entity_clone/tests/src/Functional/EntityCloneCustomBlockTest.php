@@ -3,7 +3,9 @@
 namespace Drupal\Tests\entity_clone\Functional;
 
 use Drupal\block_content\Entity\BlockContent;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Tests\block_content\Functional\BlockContentTestBase;
+use Drupal\user\Entity\Role;
 
 /**
  * Creat ea block and test a clone.
@@ -11,6 +13,8 @@ use Drupal\Tests\block_content\Functional\BlockContentTestBase;
  * @group entity_clone
  */
 class EntityCloneCustomBlockTest extends BlockContentTestBase {
+
+  use StringTranslationTrait;
 
   /**
    * Modules to enable.
@@ -20,20 +24,14 @@ class EntityCloneCustomBlockTest extends BlockContentTestBase {
    *
    * @var array
    */
-  public static $modules = ['entity_clone', 'block', 'block_content'];
+  protected static $modules = ['entity_clone', 'block', 'block_content'];
 
   /**
-   * Theme to enable by default
+   * Theme to enable by default.
+   *
    * @var string
    */
-  protected $defaultTheme = 'classy';
-
-  /**
-   * Permissions to grant admin user.
-   *
-   * @var array
-   */
-  protected $permissions = ['administer blocks', 'clone block_content entity'];
+  protected $defaultTheme = 'claro';
 
   /**
    * Sets the test up.
@@ -41,6 +39,15 @@ class EntityCloneCustomBlockTest extends BlockContentTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->drupalLogin($this->adminUser);
+    /** @var \Drupal\user\RoleInterface $role */
+    $role = Role::create([
+      'id' => 'entity_clone',
+      'label' => 'entity clone',
+    ]);
+    $role->grantPermission('clone block_content entity');
+    $role->save();
+    $this->adminUser->addRole($role->id());
+    $this->adminUser->save();
   }
 
   /**
@@ -51,7 +58,8 @@ class EntityCloneCustomBlockTest extends BlockContentTestBase {
     $edit = [];
     $edit['info[0][value]'] = 'Test block ready to clone';
     $edit['body[0][value]'] = $this->randomMachineName(16);
-    $this->drupalPostForm('block/add/basic', $edit, t('Save'));
+    $this->drupalGet('block/add/basic');
+    $this->submitForm($edit, $this->t('Save'));
 
     $blocks = \Drupal::entityTypeManager()
       ->getStorage('block_content')
@@ -60,8 +68,9 @@ class EntityCloneCustomBlockTest extends BlockContentTestBase {
       ]);
     $block = reset($blocks);
     $this->assertInstanceOf(BlockContent::class, $block, 'Test Block for clone found in database.');
+    $this->drupalGet('entity_clone/block_content/' . $block->id());
 
-    $this->drupalPostForm('entity_clone/block_content/' . $block->id(), [], t('Clone'));
+    $this->submitForm([], $this->t('Clone'));
 
     $blocks = \Drupal::entityTypeManager()
       ->getStorage('block_content')

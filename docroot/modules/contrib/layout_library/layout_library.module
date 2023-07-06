@@ -79,6 +79,7 @@ function layout_library_entity_view_display_update(LayoutEntityDisplayInterface 
     $field_is_used = (bool) \Drupal::entityTypeManager()
       ->getStorage($display->getEntityTypeId())
       ->getQuery()
+      ->accessCheck(TRUE)
       ->condition('targetEntityType', $display->getTargetEntityTypeId())
       ->condition('bundle', $display->getTargetBundle())
       ->condition('mode', $display->getMode(), '<>')

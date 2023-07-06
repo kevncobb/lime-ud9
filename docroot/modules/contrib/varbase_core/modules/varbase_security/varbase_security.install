@@ -5,68 +5,23 @@
  * Install, update and uninstall functions for the Varbase Security.
  */
 
-use Symfony\Component\Yaml\Yaml;
 use Drupal\Core\Config\InstallStorage;
-use Drupal\Core\Config\StorageInterface;
-use Drupal\Core\Config\FileStorage;
 use Vardot\Entity\EntityDefinitionUpdateManager;
+use Vardot\Installer\ModuleInstallerFactory;
 
 /**
  * Implements hook_install().
  */
 function varbase_security_install() {
 
-  $module_name = preg_replace('/_install$/', '', __FUNCTION__);
-  $module_path = Drupal::service('module_handler')->getModule($module_name)->getPath();
-
-  // Processer for install: in [$module_name].info.yml file.
+  // Processor for install: in varbase_security.info.yml file using ModuleInstallerFactory.
   // ---------------------------------------------------------------------------.
-  $module_info_file = $module_path . '/' . $module_name . '.info.yml';
-  if (file_exists($module_info_file)) {
-    $module_info_data = (array) Yaml::parse(file_get_contents($module_info_file));
-    if (isset($module_info_data['install'])
-      && is_array($module_info_data['install'])) {
-
-      foreach ($module_info_data['install'] as $module) {
-        if (!\Drupal::moduleHandler()->moduleExists($module)) {
-          \Drupal::service('module_installer')->install([$module], TRUE);
-        }
-      }
-    }
-  }
+  ModuleInstallerFactory::installList('varbase_security');
 
   // Install optional configs.
-  $optional_install_path = $module_path . '/' . InstallStorage::CONFIG_OPTIONAL_DIRECTORY;
-  if (is_dir($optional_install_path)) {
-    $config_installer = \Drupal::service('config.installer');
-    $config_installer->installDefaultConfig('module', $module_name);
+  ModuleInstallerFactory::importConfigsFromScanedDirectory('varbase_security', '/^field.storage.*\\.(yml)$/i');
+  ModuleInstallerFactory::importConfigsFromScanedDirectory('varbase_security', '/^.*(settings.yml)$/i');
 
-    // Create field storage configs first in active config.
-    $storage_config_files = \Drupal::service('file_system')->scanDirectory($optional_install_path, '/^field.storage.*\\.(yml)$/i');
-    if (isset($storage_config_files) && is_array($storage_config_files)) {
-      foreach ($storage_config_files as $storage_config_file) {
-        $storage_config_file_content = file_get_contents(DRUPAL_ROOT . '/' . $storage_config_file->uri);
-        $storage_config_file_data = (array) Yaml::parse($storage_config_file_content);
-        $config_factory = \Drupal::configFactory()->getEditable($storage_config_file->name);
-        $config_factory->setData($storage_config_file_data)->save(TRUE);
-      }
-    }
-
-    // Install any optional config the module provides.
-    $storage = new FileStorage($optional_install_path, StorageInterface::DEFAULT_COLLECTION);
-    $config_installer->installOptionalConfig($storage, '');
-
-    // Have the .settings.yml configs into the active config.
-    $settings_config_files = \Drupal::service('file_system')->scanDirectory($optional_install_path, '/^.*(settings.yml)$/i');
-    if (isset($settings_config_files) && is_array($settings_config_files)) {
-      foreach ($settings_config_files as $settings_config_file) {
-        $settings_config_file_content = file_get_contents(DRUPAL_ROOT . '/' . $settings_config_file->uri);
-        $settings_config_file_data = (array) Yaml::parse($settings_config_file_content);
-        $config_factory = \Drupal::configFactory()->getEditable($settings_config_file->name);
-        $config_factory->setData($settings_config_file_data)->save(TRUE);
-      }
-    }
-  }
   // ---------------------------------------------------------------------------
   // Entity updates to clear up any mismatched entity and/or field definitions
   // And Fix changes were detected in the entity type and field definitions.
@@ -75,17 +30,11 @@ function varbase_security_install() {
     ->applyUpdates();
 
   // Have forced configs import after the entity and definitions updates.
-  $forced_configs_import_after_entity_updates = [
+  $forced_configs = [
     'core.entity_form_display.user.user.default',
   ];
 
-  foreach ($forced_configs_import_after_entity_updates as $config_name) {
-    $config_path = $optional_install_path . '/' . $config_name . '.yml';
-    $config_content = file_get_contents($config_path);
-    $config_data = (array) Yaml::parse($config_content);
-    $config_factory = \Drupal::configFactory()->getEditable($config_name);
-    $config_factory->setData($config_data)->save(TRUE);
-  }
+  ModuleInstallerFactory::importConfigsFromList('varbase_security', $forced_configs, InstallStorage::CONFIG_OPTIONAL_DIRECTORY);
 
 }
 
@@ -110,7 +59,7 @@ function varbase_security_update_9001() {
 /**
  * Reinforce spam protection and enable "Honeypot" spam detection.
  *
- * Enabling protection on a wider array of forms and enabling time limit of 2 seconds.
+ * Enabling protection on a wider forms and enabling time limit of 2 seconds.
  */
 function varbase_security_update_9002() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
@@ -137,4 +86,72 @@ function varbase_security_update_9003() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Issue #3265975: Fix errors on validating Security Review.
+ *
+ * Config synchronization when the module is not enabled yet.
+ */
+function varbase_security_update_9004() {
+  if (!\Drupal::moduleHandler()->moduleExists('security_review')) {
+    // Managed configs for the Security Review module.
+    $managed_configs = [
+      'security_review.settings',
+      'security_review.check.security_review-admin_permissions',
+      'security_review.check.security_review-error_reporting',
+      'security_review.check.security_review-executable_php',
+      'security_review.check.security_review-failed_logins',
+      'security_review.check.security_review-field',
+      'security_review.check.security_review-file_perms',
+      'security_review.check.security_review-input_formats',
+      'security_review.check.security_review-private_files',
+      'security_review.check.security_review-query_errors',
+      'security_review.check.security_review-temporary_files',
+      'security_review.check.security_review-trusted_hosts',
+      'security_review.check.security_review-upload_extensions',
+      'security_review.check.security_review-views_access',
+    ];
+
+    // Delete all Security Review configs if the module is not enable yet.
+    // Which they will be imported again after installing the module.
+    foreach ($managed_configs as $config_name) {
+      \Drupal::configFactory()->getEditable($config_name)->delete();
+    }
+  }
+}
+
+/**
+ * Issue #3256029: Fix Revise password policy and password suggestions message.
+ *
+ * Change Varbase Security weight and make it after all modules installed by it.
+ */
+function varbase_security_update_90004() {
+  // Set the weight of the module after installation of list of modules.
+  // To make sure that any hook or event subscriber worker after all used modules.
+  ModuleInstallerFactory::setModuleWeightAfterInstallation('varbase_security');
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('varbase_core', 'varbase_security_update_90004');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Issue #3332656: Remove the hook implementation that unset password_policy_status key.
+ *
+ * And add show_policy_table: false to the configuration of the default policy.
+ */
+function varbase_security_update_90005() {
+
+  // Given that the Password Policy was enabled.
+  if (\Drupal::moduleHandler()->moduleExists('password_policy')) {
+    $password_policy_default_policy = \Drupal::service('config.factory')->getEditable('password_policy.password_policy.default_policy');
+    $password_policy_default_policy->set('show_policy_table', FALSE)->save(TRUE);
+  }
+
 }

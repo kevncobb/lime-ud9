@@ -7,11 +7,36 @@ use Drupal\Core\Plugin\PluginBase;
 use Drupal\styleguide\StyleguideInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base class for Styleguide plugins.
  */
 abstract class StyleguidePluginBase extends PluginBase implements StyleguideInterface, ContainerFactoryPluginInterface {
+
+  /**
+   * The styleguide generator service.
+   *
+   * @var \Drupal\styleguide\Generator
+   */
+  protected $generator;
+
+  /**
+   * The form builder.
+   *
+   * @var \Drupal\Core\Form\FormBuilder
+   */
+  protected $formBuilder;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $instance = new static($configuration, $plugin_id, $plugin_definition);
+    $instance->generator = $container->get('styleguide.generator');
+    $instance->formBuilder = $container->get('form_builder');
+    return $instance;
+  }
 
   /**
    * Build a link.

@@ -3,7 +3,10 @@
 namespace Drupal\Tests\Component\Utility;
 
 use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * @group Utility
@@ -475,6 +478,44 @@ class UrlHelperTest extends TestCase {
       // Colon not part of the URL scheme.
       ['/test:8888?foo&bar', '/test:8888?foo&amp;bar', ['http']],
     ];
+  }
+
+  /**
+   * Tests subdirectories filtering.
+   */
+  public function testStripSubdirectories() {
+    $uri = 'test';
+    $subdirs = ['', '/subdir', '/subdir/another-subdir'];
+    foreach ($subdirs as $subdir) {
+      $server = [];
+      if ($subdir) {
+        // Setup a fake request which looks like a Drupal installed under the
+        // subdir "subdir" on the domain www.example.com.
+        // To reproduce the values install Drupal like that and use a debugger.
+        $root = dirname(dirname(substr(__DIR__, 0, -strlen(__NAMESPACE__))));
+        $server = [
+          'SCRIPT_NAME' => $subdir . '/index.php',
+          'SCRIPT_FILENAME' => $root . $subdir . '/index.php',
+          'SERVER_NAME' => 'http://www.example.com',
+        ];
+        $request = Request::create($subdir . '/');
+      }
+      else {
+        $request = Request::create('/');
+      }
+      $request->server->add($server);
+      $request_stack = new RequestStack();
+      $request_stack->push($request);
+
+      $container = new ContainerBuilder();
+      $container->set('request_stack', $request_stack);
+      \Drupal::setContainer($container);
+
+      $subdir_uri = $subdir . $uri;
+
+      $stripped_uri = UrlHelper::stripSubdirectories($subdir_uri);
+      $this->assertSame('test', $stripped_uri);
+    }
   }
 
   /**

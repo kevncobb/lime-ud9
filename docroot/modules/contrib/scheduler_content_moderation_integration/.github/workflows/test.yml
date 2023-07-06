@@ -23,7 +23,11 @@ jobs:
 
     strategy:
       matrix:
-        DRUPAL_TESTING_DRUPAL_VERSION: ['~8.9.0', '~9.3.0', '~9.5.0']
+        include:
+          - DRUPAL_TESTING_DRUPAL_VERSION: '~9.3'
+            PHP_VERSION: '7.4'
+          - DRUPAL_TESTING_DRUPAL_VERSION: '~9.5'
+            PHP_VERSION: '8.0'
       fail-fast: false
 
     steps:
@@ -32,7 +36,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           coverage: none
-          php-version: '8.0'
+          php-version: ${{ matrix.PHP_VERSION }}
 
       - name: Start MySql service
         run: sudo /etc/init.d/mysql start

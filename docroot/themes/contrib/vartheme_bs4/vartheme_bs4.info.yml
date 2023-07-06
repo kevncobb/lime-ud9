@@ -2,7 +2,7 @@ type: theme
 base theme: bootstrap_barrio
 name: "Vartheme (Bootstrap 4 - SASS)"
 description: "Base theme for Varbase standard websites. Based on Bootstrap 4 framework using SASS, and extending Barrio contrib theme."
-core_version_requirement: ^9 || ^10
+core_version_requirement: ~9.5.0 || ~10.1.0
 regions:
   navigation: "Navigation"
   navigation_collapsible: "Navigation Collapsible"
@@ -34,7 +34,7 @@ libraries-override:
   # Barrio global styling theme.
   bootstrap_barrio/global-styling: false
 
-  # Barrio components overrieds.
+  # Barrio components overrides.
   bootstrap_barrio/verticaltabs: vartheme_bs4/verticaltabs
   bootstrap_barrio/tabs: vartheme_bs4/tabs
   bootstrap_barrio/sidebar-collapse: vartheme_bs4/sidebar-collapse
@@ -53,7 +53,7 @@ libraries-override:
   # Content Moderation overrides.
   content_moderation/content_moderation: vartheme_bs4/moderation-state
 
-  # Varbase module compnents overrides in Vartheme BS4.
+  # Varbase module components overrides in Vartheme BS4.
   varbase_bootstrap_paragraphs/vbp-colors: vartheme_bs4/vbp-colors
   betterlogin/betterlogin_css: vartheme_bs4/betterlogin
 
@@ -117,7 +117,50 @@ ckeditor_stylesheets:
   # Theme
   - css/theme/content.theme.css
 
-# Information added by Drupal.org packaging script on 2022-05-18
-version: '9.0.15'
-project: 'vartheme_bs4'
-datestamp: 1652876250
+ckeditor5-stylesheets:
+  # Base
+  - css/base/bootstrap.base.css
+  - css/base/bootstrap5-utilities.base.css
+  - css/base/vartheme_bs4.base.css
+  # Components
+  - css/components/ajax.component.css
+  - css/components/alerts.component.css
+  - css/components/autocomplete.component.css
+  - css/components/bs-callouts.component.css
+  - css/components/contextual.component.css
+  - css/components/details.component.css
+  - css/components/feed-icon.component.css
+  - css/components/field.component.css
+  - css/components/file.component.css
+  - css/components/header.component.css
+  - css/components/help.component.css
+  - css/components/icons.component.css
+  - css/components/image-button.component.css
+  - css/components/item-list.component.css
+  - css/components/list-group.component.css
+  - css/components/navbar.component.css
+  - css/components/node.component.css
+  - css/components/page.component.css
+  - css/components/progress-bar.component.css
+  - css/components/shortcut.component.css
+  - css/components/sidebar.component.css
+  - css/components/site-footer.component.css
+  - css/components/skip-link.component.css
+  - css/components/table.component.css
+  - css/components/tabledrag.component.css
+  - css/components/tableselect.component.css
+  - css/components/tablesort.component.css
+  - css/components/tablesort-indicator.component.css
+  - css/components/textarea.component.css
+  - css/components/ui-dialog.component.css
+  - css/components/ui-widget.component.css
+  - css/components/user.component.css
+  - css/components/varicons.component.css
+  - css/components/vb-tags.component.css
+  - css/components/views.component.css
+  - fonts/fontawesome-free/css/all.min.css
+  # Layout
+  - css/layout/edge2edge.layout.css
+  - css/layout/equal-height.layout.css
+  # Theme
+  - css/theme/content.theme.css

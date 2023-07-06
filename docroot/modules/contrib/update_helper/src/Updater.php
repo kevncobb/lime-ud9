@@ -5,6 +5,7 @@ namespace Drupal\update_helper;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\config_update\ConfigRevertInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\ConfigManagerInterface;
 use Drupal\Core\Extension\MissingDependencyException;
 use Drupal\Core\Extension\ModuleInstallerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -12,6 +13,7 @@ use Drupal\update_helper\Events\ConfigurationUpdateEvent;
 use Drupal\update_helper\Events\UpdateHelperEvents;
 use Drupal\Component\Utility\DiffArray;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Drupal\Core\Extension\ThemeInstallerInterface;
 
 /**
  * Helper class to update configuration.
@@ -19,6 +21,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class Updater implements UpdaterInterface {
 
   use StringTranslationTrait;
+
+  const CONFIG_NOT_FOUND = 0;
+  const CONFIG_ALREADY_APPLIED = 1;
+  const CONFIG_NOT_EXPECTED = 2;
+  const CONFIG_APPLIED_SUCCESSFULLY = 3;
+  const MODULES_FOUND = 4;
+  const MODULES_NOT_FOUND = 5;
 
   /**
    * Site configFactory object.
@@ -33,6 +42,13 @@ class Updater implements UpdaterInterface {
    * @var \Drupal\Core\Extension\ModuleInstallerInterface
    */
   protected $moduleInstaller;
+
+  /**
+   * The theme installer service.
+   *
+   * @var \Drupal\Core\Extension\ThemeInstallerInterface
+   */
+  protected $themeInstaller;
 
   /**
    * Config reverter service.
@@ -67,12 +83,21 @@ class Updater implements UpdaterInterface {
   protected $eventDispatcher;
 
   /**
+   * Config manager.
+   *
+   * @var \Drupal\Core\Config\ConfigManagerInterface
+   */
+  protected $configManager;
+
+  /**
    * Constructs the PathBasedBreadcrumbBuilder.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   Config factory service.
    * @param \Drupal\Core\Extension\ModuleInstallerInterface $module_installer
    *   Module installer service.
+   * @param \Drupal\Core\Extension\ThemeInstallerInterface $theme_installer
+   *   Theme installer service.
    * @param \Drupal\config_update\ConfigRevertInterface $config_reverter
    *   Config reverter service.
    * @param \Drupal\update_helper\ConfigHandler $config_handler
@@ -81,14 +106,18 @@ class Updater implements UpdaterInterface {
    *   Update logger.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher.
+   * @param \Drupal\Core\Config\ConfigManagerInterface $config_manager
+   *   The config manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, ModuleInstallerInterface $module_installer, ConfigRevertInterface $config_reverter, ConfigHandler $config_handler, UpdateLogger $logger, EventDispatcherInterface $event_dispatcher) {
+  public function __construct(ConfigFactoryInterface $config_factory, ModuleInstallerInterface $module_installer, ThemeInstallerInterface $theme_installer, ConfigRevertInterface $config_reverter, ConfigHandler $config_handler, UpdateLogger $logger, EventDispatcherInterface $event_dispatcher, ConfigManagerInterface $config_manager) {
     $this->configFactory = $config_factory;
     $this->moduleInstaller = $module_installer;
+    $this->themeInstaller = $theme_installer;
     $this->configReverter = $config_reverter;
     $this->configHandler = $config_handler;
     $this->logger = $logger;
     $this->eventDispatcher = $event_dispatcher;
+    $this->configManager = $config_manager;
   }
 
   /**
@@ -130,10 +159,25 @@ class Updater implements UpdaterInterface {
   /**
    * {@inheritdoc}
    */
-  public function executeUpdate($module, $update_definition_name) {
+  public function executeUpdate($module, $update_definition_name, $force = FALSE) {
     $this->warningCount = 0;
 
     $update_definitions = $this->configHandler->loadUpdate($module, $update_definition_name);
+
+    if (isset($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS])) {
+      if (isset($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS][UpdateDefinitionInterface::GLOBAL_CONDITION_EXPECTED_MODULES])) {
+        $result = $this->checkExpectedModulesArray($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS][UpdateDefinitionInterface::GLOBAL_CONDITION_EXPECTED_MODULES]);
+        if (!empty($result)) {
+          return $this->logWarning($this->t('The following module(s) "@neededModules" are required for update @updateName.',
+            [
+              '@neededModules' => implode(", ", $result),
+              '@updateName' => $update_definition_name,
+            ]));
+        }
+      }
+      unset($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS]);
+    }
+
     if (isset($update_definitions[UpdateDefinitionInterface::GLOBAL_ACTIONS])) {
       $this->executeGlobalActions($update_definitions[UpdateDefinitionInterface::GLOBAL_ACTIONS]);
 
@@ -146,9 +190,60 @@ class Updater implements UpdaterInterface {
 
     // Dispatch event after update has finished.
     $event = new ConfigurationUpdateEvent($module, $update_definition_name, $this->warningCount);
-    $this->eventDispatcher->dispatch(UpdateHelperEvents::CONFIGURATION_UPDATE, $event);
+    $this->eventDispatcher->dispatch($event, UpdateHelperEvents::CONFIGURATION_UPDATE);
 
     return $this->warningCount === 0;
+  }
+
+  /**
+   * Check update status of configuration from update definitions.
+   *
+   * @param string $module
+   *   Module name where update definition is saved.
+   * @param string $update_definition_name
+   *   Update definition name. Usually same name as update hook.
+   *
+   * @return bool
+   *   Returns update status.
+   */
+  public function checkUpdate($module, $update_definition_name) {
+    $this->warningCount = 0;
+    $moduleHandler = \Drupal::service('module_handler');
+    $modulesInstalled = [];
+    $update_definitions = $this->configHandler->loadUpdate($module, $update_definition_name);
+
+    if (isset($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS])) {
+      if (isset($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS][UpdateDefinitionInterface::GLOBAL_CONDITION_EXPECTED_MODULES])) {
+        $result = $this->checkExpectedModulesArray($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS][UpdateDefinitionInterface::GLOBAL_CONDITION_EXPECTED_MODULES]);
+        if (!empty($result)) {
+          return Updater::MODULES_NOT_FOUND;
+        }
+      }
+      unset($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS]);
+    }
+
+    if (isset($update_definitions[UpdateDefinitionInterface::GLOBAL_ACTIONS])) {
+      if (isset($update_definitions[UpdateDefinitionInterface::GLOBAL_ACTIONS][UpdateDefinitionInterface::GLOBAL_ACTION_INSTALL_MODULES])) {
+        $modules = $update_definitions[UpdateDefinitionInterface::GLOBAL_ACTIONS][UpdateDefinitionInterface::GLOBAL_ACTION_INSTALL_MODULES];
+        foreach ($modules as $module) {
+          if (!$moduleHandler->moduleExists($module)) {
+            return Updater::MODULES_NOT_FOUND;
+          }
+          $modulesInstalled[] = $module;
+        }
+      }
+      unset($update_definitions[UpdateDefinitionInterface::GLOBAL_ACTIONS]);
+    }
+
+    if (!empty($update_definitions)) {
+      return $this->executeConfigurationActions($update_definitions, FALSE, TRUE);
+    }
+
+    if (empty($update_definitions) && !empty($modulesInstalled)) {
+      return Updater::MODULES_FOUND;
+    }
+
+    return Updater::CONFIG_NOT_FOUND;
   }
 
   /**
@@ -156,6 +251,7 @@ class Updater implements UpdaterInterface {
    *
    * Global actions can be:
    * - install_modules: list of modules to install
+   * - install_themes: list of themes to install
    * - import_configs: list of configurations to import.
    *
    * @param array $global_actions
@@ -166,24 +262,94 @@ class Updater implements UpdaterInterface {
       $this->installModules($global_actions[UpdateDefinitionInterface::GLOBAL_ACTION_INSTALL_MODULES]);
     }
 
+    if (isset($global_actions[UpdateDefinitionInterface::GLOBAL_ACTION_INSTALL_THEMES])) {
+      $this->installThemes($global_actions[UpdateDefinitionInterface::GLOBAL_ACTION_INSTALL_THEMES]);
+    }
+
     if (isset($global_actions[UpdateDefinitionInterface::GLOBAL_ACTION_IMPORT_CONFIGS])) {
       $this->importConfigs($global_actions[UpdateDefinitionInterface::GLOBAL_ACTION_IMPORT_CONFIGS]);
     }
   }
+
+    /**
+   * Check if modules are enabled and installed.
+   *
+   * @param string $module
+   *   Module name where update definition is saved.
+   * @param string $update_definition_name
+   *   Update definition name. Usually same name as update hook.
+   *
+   * @return array
+   *   Returns array needed modules.
+   */
+  public function checkExpectedModules($module, $update_definition_name) {
+    $update_definitions = $this->configHandler->loadUpdate($module, $update_definition_name);
+    if (isset($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS])) {
+      if (isset($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS][UpdateDefinitionInterface::GLOBAL_CONDITION_EXPECTED_MODULES])) {
+        return $this->checkExpectedModulesArray($update_definitions[UpdateDefinitionInterface::GLOBAL_CONDITIONS][UpdateDefinitionInterface::GLOBAL_CONDITION_EXPECTED_MODULES]);
+      }
+    }
+    return [];
+  }
+
+  /**
+   * Check if modules are enabled and installed.
+   *
+   * @param array $expected_modules
+   *   Array with list of expected modules.
+   *
+   * @return array
+   *   Returns array needed modules.
+   */
+  public function checkExpectedModulesArray(array $expected_modules) {
+    $needed_modules = [];
+    $moduleHandler = \Drupal::service('module_handler');
+    foreach ($expected_modules as $expected_module) {
+      if (!$moduleHandler->moduleExists($expected_module)) {
+        $needed_modules[] = $expected_module;
+      }
+    }
+    return $needed_modules;
+  }
+
 
   /**
    * Execute configuration update definitions for configurations.
    *
    * @param array $update_definitions
    *   List of configurations with update definitions for them.
+   * @param bool $force
+   *   Force the update.
+   * @param bool $checkOnly
+   *   Check the update status and don't apply the update.
+   *
+   * @return bool
+   *   Returns update status if checkOnly flag is set.
    */
-  protected function executeConfigurationActions(array $update_definitions) {
+  protected function executeConfigurationActions(array $update_definitions, $force = FALSE, $checkOnly = FALSE) {
     foreach ($update_definitions as $configName => $configChange) {
-      if ($this->updateConfig($configName, $configChange['update_actions'], $configChange['expected_config'])) {
-        $this->logInfo($this->t('Configuration @configName has been successfully updated.', ['@configName' => $configName]));
+      $result = $this->updateConfig($configName, $configChange['update_actions'], $configChange['expected_config'], $force, $checkOnly);
+
+      if ($checkOnly) {
+        return $result;
       }
-      else {
-        $this->logWarning($this->t('Unable to update configuration for @configName.', ['@configName' => $configName]));
+
+      switch ($result) {
+        case Updater::CONFIG_APPLIED_SUCCESSFULLY:
+          $this->logInfo($this->t('Configuration @configName has been successfully updated.', ['@configName' => $configName]));
+          break;
+
+        case Updater::CONFIG_ALREADY_APPLIED:
+          $this->logWarning($this->t('Configuration @configName is already updated.', ['@configName' => $configName]));
+          break;
+
+        case Updater::CONFIG_NOT_EXPECTED:
+          $this->logWarning($this->t('Expected current configuration for @configName is not matching. Unable to apply new config.', ['@configName' => $configName]));
+          break;
+
+        case Updater::CONFIG_NOT_FOUND:
+          $this->logWarning($this->t('Unable to find config @configName. Skipping update.', ['@configName' => $configName]));
+          break;
       }
     }
   }
@@ -250,6 +416,28 @@ class Updater implements UpdaterInterface {
       }
       catch (MissingDependencyException $e) {
         $this->logWarning($this->t('Unable to enable @module because of missing dependencies.', ['@module' => $module]));
+      }
+    }
+  }
+
+  /**
+   * Installs themes.
+   *
+   * @param array $themes
+   *   List of theme names.
+   */
+  protected function installThemes(array $themes): void {
+    foreach ($themes as $theme) {
+      try {
+        if ($this->themeInstaller->install([$theme])) {
+          $this->logInfo($this->t('Theme @theme is successfully enabled.', ['@theme' => $theme]));
+        }
+        else {
+          $this->logWarning($this->t('Unable to enable @theme.', ['@theme' => $theme]));
+        }
+      }
+      catch (MissingDependencyException $e) {
+        $this->logWarning($this->t('Unable to enable @theme because of missing dependencies.', ['@theme' => $theme]));
       }
     }
   }
@@ -344,36 +532,69 @@ class Updater implements UpdaterInterface {
    *   Configuration update actions.
    * @param array $expected_configuration
    *   Only if current config is same like old config we are updating.
+   *    * @param bool $force
+   *   Force the update.
+   * @param bool $checkOnly
+   *   Check the update status and don't apply the update.
    *
    * @return bool
    *   Returns TRUE if update of configuration was successful.
    */
-  protected function updateConfig($config_name, array $update_actions, array $expected_configuration = []) {
+  protected function updateConfig($config_name, array $update_actions, array $expected_configuration = [], $force = FALSE, $checkOnly = FALSE) {
     $config = $this->configFactory->getEditable($config_name);
 
     $config_data = $config->get();
 
+    // Reset expected_config in case of force flag.
+    if ($force) {
+      $expected_configuration = [];
+    }
+
     // Check that configuration exists before executing update.
     if (empty($config_data)) {
-      return FALSE;
+      return Updater::CONFIG_NOT_FOUND;
     }
 
     // Apply configuration update actions.
     $update_config_data = $this->applyConfigActions($config_data, $update_actions);
 
     // Check if configuration is already in new state.
-    if (
-      empty(DiffArray::diffAssocRecursive($config_data, $update_config_data))
+    if (!$force
+      && empty(DiffArray::diffAssocRecursive($config_data, $update_config_data))
       && empty(DiffArray::diffAssocRecursive($update_config_data, $config_data))) {
-      return TRUE;
+        return Updater::CONFIG_ALREADY_APPLIED;
     }
 
-    if (!empty($expected_configuration) && DiffArray::diffAssocRecursive($expected_configuration, $config_data)) {
-      return FALSE;
+    if (empty($expected_configuration) || !DiffArray::diffAssocRecursive($expected_configuration, $config_data)) {
+      if ($checkOnly) {
+        return Updater::CONFIG_APPLIED_SUCCESSFULLY;
+      }
+
+      $config->setData($update_config_data);
+      $config->save();
+
+      return Updater::CONFIG_APPLIED_SUCCESSFULLY;
+    }
+    else {
+      return Updater::CONFIG_NOT_EXPECTED;
     }
 
-    $config->setData($update_config_data);
-    $config->save();
+    // Update configuration entities using their API to ensure dependencies are
+    // recalculated.
+    if ($entity_type = $this->configManager->getEntityTypeIdByName($config_name)) {
+      /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $entity_storage */
+      $entity_storage = $this->configManager
+        ->getEntityTypeManager()
+        ->getStorage($entity_type);
+      $id = $entity_storage->getIDFromConfigName($config_name, $entity_storage->getEntityType()->getConfigPrefix());
+      $entity = $entity_storage->load($id);
+      $entity = $entity_storage->updateFromStorageRecord($entity, $update_config_data);
+      $entity->save();
+    }
+    else {
+      $config->setData($update_config_data);
+      $config->save();
+    }
 
     return TRUE;
   }

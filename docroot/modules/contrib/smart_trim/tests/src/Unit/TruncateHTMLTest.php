@@ -2,13 +2,13 @@
 
 namespace Drupal\Tests\smart_trim\Unit;
 
-use Drupal\smart_trim\Truncate\TruncateHTML;
+use Drupal\smart_trim\TruncateHTML;
 use Drupal\Tests\UnitTestCase;
 
 /**
  * Unit Test coverage.
  *
- * @coversDefaultClass \Drupal\smart_trim\Truncate\TruncateHTML
+ * @coversDefaultClass \Drupal\smart_trim\TruncateHTML
  *
  * @group smart_trim
  */
@@ -29,25 +29,31 @@ class TruncateHTMLTest extends UnitTestCase {
   /**
    * Data provider for testTruncateChars().
    */
-  public function truncateCharsDataProvider() {
+  public function truncateCharsDataProvider(): array {
     return [
       [
         'A test string',
         5,
         '…',
-        'A tes…',
+        'A…',
       ],
       [
         '“I like funky quotes”',
         5,
         '',
-        '“I li',
+        '“I',
       ],
       [
         '“I <em>really, really</em> like funky quotes”',
         14,
         '',
-        '“I <em>really, rea</em>',
+        '“I <em>really</em>',
+      ],
+      [
+        'Armenian character test Հ from issue 3334442',
+        25,
+        '',
+        'Armenian character test Հ',
       ],
     ];
   }
@@ -59,7 +65,7 @@ class TruncateHTMLTest extends UnitTestCase {
    *
    * @dataProvider truncateWordsDataProvider
    */
-  public function testTruncateWords($html, $limit, $ellipsis, $expected) {
+  public function testTruncateWords($html, $limit, $ellipsis, $expected): void {
     $truncate = new TruncateHTML();
     $this->assertSame($expected, $truncate->truncateWords($html, $limit, $ellipsis));
   }
@@ -67,7 +73,7 @@ class TruncateHTMLTest extends UnitTestCase {
   /**
    * Data provider for testTruncateWords().
    */
-  public function truncateWordsDataProvider() {
+  public function truncateWordsDataProvider(): array {
     return [
       [
         'A test string',
@@ -97,7 +103,13 @@ class TruncateHTMLTest extends UnitTestCase {
         '“I <em>really, really</em> like funky quotes”',
         2,
         '',
-        '“I <em>really,</em>',
+        '“I <em>really</em>',
+      ],
+      [
+        '<p><strong>Every <em>man <s>who has lotted here over the centuries, has looked up</s> to the light</em> and imagined climbing to freedom.</strong></p>',
+        10,
+        '',
+        '<p><strong>Every <em>man <s>who has lotted here over the centuries, has</s></em></strong></p>',
       ],
     ];
   }
