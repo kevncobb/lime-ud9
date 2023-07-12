@@ -192,9 +192,27 @@
   top: 0px;
   left: 6px;
 }
+.menu-icon-mail::before {
+  content: "\e945";
+  // use !important to prevent issues with browser extensions that change fonts
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  // Better Font Rendering ===========
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
-.menu-icon-events::before {
-  content: "\e953";
+  // icon sizing ===========
+  font-size: 19px;
+  top: 0px;
+  left: 6px;
+}
+.menu-icon-transcripts::before {
+  content: "\e95c";
   // use !important to prevent issues with browser extensions that change fonts
   font-family: 'icomoon' !important;
   speak: none;
