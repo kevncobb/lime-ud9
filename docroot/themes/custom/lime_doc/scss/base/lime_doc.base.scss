@@ -78,19 +78,38 @@ h1.title {
   }
 }
 .group-headers-bar {
-  h3 {
+  > .view-content > h3 {
       color: white;
       background: #435f7b;
       text-transform: uppercase;
       padding: 7px 15px;
-      font-weight: 300;
+      //font-weight: 300;
       margin-top: 1rem;
-      font-size: 1.4rem;
+      //font-size: 1.4rem;
       max-width: 750px;
       letter-spacing: 0;
+      font-size: calc(1.475rem + 2.7vw);
+      font-weight: 300;
+      line-height: 1.2;
   }
 }
-
+.group-headers-display-3 {
+  > .view-content > h3 {
+    font-size: calc(1.575rem + 3.9vw);
+    font-weight: 300;
+    line-height: 1.2;
+  }
+}
+.group-headers-bar-header-title {
+  > .view-content > h3 {
+    color: white;
+    background: $primary;
+    text-transform: uppercase;
+    padding: 15px;
+    font-weight: 100;
+    margin: 0 0 3rem;
+  }
+}
 //Book Navigation Hidden
 .page-node-type-landing-page-lb .book-navigation {
   display: none !important;
