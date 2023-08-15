@@ -68,7 +68,7 @@
     box-shadow: none !important;
     text-shadow: none !important;
   }
-  .group-headers-bar h3 {
+  .group-headers-bar > .view-content > h3 {
     margin-top: 1rem;
     padding: 7px 15px;
     letter-spacing: 0;
@@ -78,12 +78,20 @@
     -webkit-print-color-adjust: exact !important;
     box-shadow: inset #435f7b 190px 190px 250px !important;
     color: #efefef !important;
-    font-size: 2.1rem;
+    font-size: 3.0rem;
     strong {
       -webkit-print-color-adjust: exact !important;
       box-shadow: inset #435f7b 190px 190px 250px !important;
       color: #efefef !important;
     }
   }
-
+  .pdf-view {
+    .views-row {
+      padding: 1rem 0;
+      border-bottom: 1px solid #ccc;
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
 }

@@ -83,16 +83,14 @@ h1.title {
       background: #435f7b;
       text-transform: uppercase;
       padding: 7px 15px;
-      //font-weight: 300;
+      font-weight: 300;
       margin-top: 1rem;
-      //font-size: 1.4rem;
+      font-size: 1.4rem;
       max-width: 750px;
       letter-spacing: 0;
-      font-size: calc(1.475rem + 2.7vw);
-      font-weight: 300;
-      line-height: 1.2;
   }
 }
+
 .group-headers-display-3 {
   > .view-content > h3 {
     font-size: calc(1.575rem + 3.9vw);

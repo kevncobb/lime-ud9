@@ -85,9 +85,8 @@ h1.title {
   text-transform: uppercase;
   color: white;
   background: #435f7b;
-  font-size: calc(1.475rem + 2.7vw);
+  font-size: 1.4rem;
   font-weight: 300;
-  line-height: 1.2;
 }
 
 .group-headers-display-3 > .view-content > h3 {
