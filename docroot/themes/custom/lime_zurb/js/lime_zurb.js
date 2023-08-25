@@ -14,7 +14,7 @@
       $(window).bind("load", function() {
         var ww = window.innerWidth;
         if (ww > 1023.98) {
-          $(context).find('#yt-player').append('<video playsinline autoplay style="width: 100%;" class="ratio-content" loop muted poster="/sites/default/files/styles/d06/public/images/2020-07/curtis_university_2.jpg"> <source class="show-for-medium-up" src="/sites/default/files/2021-04/2021-homepage-video-background_0.mp4" type="video/mp4"> </video>');
+          $(context).find('#yt-player').append('<video playsinline autoplay style="width: 100%;" class="ratio-content" loop muted poster="/sites/default/files/styles/d06/public/images/2020-07/curtis_university_2.jpg"> <source class="show-for-medium-up" src="/sites/default/files/2023-08/2023-homepage-video-background.mp4" type="video/mp4"> </video>');
         }
       });
     }
