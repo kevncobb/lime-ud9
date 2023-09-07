@@ -167,7 +167,11 @@
             </div>
           {% endif %}
         </section>
-
+        {% if node.field_show_components_section.value == '1' %}
+          <section class="degree-components">
+            {{ drupal_field('field_lp_paragraphs', 'node',  node.id) }}
+          </section>
+        {% endif %}
         <section class="spacing-xs padding-sides-sm" style="background-color: #f6f6f6;border-top: thin solid #f2f2f2;">
           <div class="grid-container">
             <div class="grid-x grid-margin-x">
