@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8d2d57b5cf2c157b00adcbe8c77540ef",
+    "content-hash": "d3242355afe7ab8854d0e9e8faee9239",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -10833,17 +10833,17 @@
         },
         {
             "name": "drupal/minifyhtml",
-            "version": "1.12.0",
+            "version": "1.13.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/minifyhtml.git",
-                "reference": "8.x-1.12"
+                "reference": "8.x-1.13"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/minifyhtml-8.x-1.12.zip",
-                "reference": "8.x-1.12",
-                "shasum": "c984141f5c43c9fd29004a5bed3c584179cdf75c"
+                "url": "https://ftp.drupal.org/files/projects/minifyhtml-8.x-1.13.zip",
+                "reference": "8.x-1.13",
+                "shasum": "567b7262bf7533203b3866697cdd91cb3df6d339"
             },
             "require": {
                 "drupal/core": "^8 || ^9"
@@ -10851,8 +10851,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-1.12",
-                    "datestamp": "1655409144",
+                    "version": "8.x-1.13",
+                    "datestamp": "1690401502",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"

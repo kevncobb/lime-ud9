@@ -60,7 +60,7 @@
     "drupal/search_api": "^1.23",
     "drupal/draggableviews": "^2.0",
     "drupal/image_effects": "^3.2",
-    "drupal/minifyhtml": "^1.11",
+    "drupal/minifyhtml": "^1.13",
     "drupal/robotstxt": "^1.4",
     "drupal/simple_sitemap": "4.x-dev@dev",
     "drupal/symfony_mailer": "1.x-dev@dev",
