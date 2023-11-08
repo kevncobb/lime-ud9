@@ -21,7 +21,7 @@ use Drupal\Core\Render\Element\FormElement;
  * Provides an address form element.
  *
  * Use #field_overrides to override the country-specific address format,
- * forcing specific fields to be hidden, optional, or required.
+ * forcing specific properties to be hidden, optional, or required.
  *
  * Usage example:
  * @code
@@ -97,9 +97,9 @@ class Address extends FormElement {
   public static function applyDefaults(array $value) {
     $properties = [
       'given_name', 'additional_name', 'family_name', 'organization',
-      'address_line1', 'address_line2', 'postal_code', 'sorting_code',
-      'dependent_locality', 'locality', 'administrative_area',
-      'country_code', 'langcode',
+      'address_line1', 'address_line2', 'address_line3', 'postal_code',
+      'sorting_code', 'dependent_locality', 'locality',
+      'administrative_area', 'country_code', 'langcode',
     ];
     foreach ($properties as $property) {
       if (!isset($value[$property])) {
@@ -120,6 +120,12 @@ class Address extends FormElement {
     $element['#default_value'] = self::applyDefaults($element['#default_value']);
     if (empty($element['#default_value']['country_code']) && $element['#required']) {
       $element['#default_value']['country_code'] = Country::getDefaultCountry($element['#available_countries']);
+    }
+    // Any input with a NULL or missing country_code is considered invalid.
+    // Even if the element is optional and no country is selected, the
+    // country_code would be an empty string, not NULL.
+    if (is_array($input) && !isset($input['country_code'])) {
+      $input = NULL;
     }
     if (is_array($input)) {
       $input = self::applyDefaults($input);
@@ -252,12 +258,13 @@ class Address extends FormElement {
         $element[$property] = [
           '#type' => 'textfield',
           '#title' => $labels[$field],
-          '#default_value' => isset($value[$property]) ? $value[$property] : '',
+          '#default_value' => $value[$property] ?? '',
           '#required' => in_array($field, $required_fields),
-          '#size' => isset($size_attributes[$field]) ? $size_attributes[$field] : 60,
+          '#size' => $size_attributes[$field] ?? 60,
           '#attributes' => [
             'class' => [$class],
             'autocomplete' => FieldHelper::getAutocompleteAttribute($field),
+            'autocapitalize' => 'words',
           ],
         ];
         if (count($line_fields) > 1) {
@@ -265,13 +272,12 @@ class Address extends FormElement {
         }
       }
     }
-    // Hide the label for the second address line.
+    // Hide the label for the second and third address lines.
     if (isset($element['address_line2'])) {
       $element['address_line2']['#title_display'] = 'invisible';
     }
-    // Allow the postal code pattern to be used for client side validation.
-    if (isset($element['postal_code'])) {
-      $element['postal_code']['#attributes']['pattern'] = $address_format->getPostalCodePattern();
+    if (isset($element['address_line3'])) {
+      $element['address_line3']['#title_display'] = 'invisible';
     }
     // Add predefined options to the created subdivision elements.
     $element = static::processSubdivisionElements($element, $value, $address_format);
@@ -410,9 +416,11 @@ class Address extends FormElement {
     if (isset($keys[$triggering_element_name])) {
       $input = &$form_state->getUserInput();
       foreach ($keys[$triggering_element_name] as $key) {
-        $parents = array_merge($element['#parents'], [$key]);
-        NestedArray::setValue($input, $parents, '');
-        $element[$key]['#value'] = '';
+        if (isset($element[$key])) {
+          $parents = array_merge($element['#parents'], [$key]);
+          NestedArray::setValue($input, $parents, '');
+          $element[$key]['#value'] = '';
+        }
       }
     }
 

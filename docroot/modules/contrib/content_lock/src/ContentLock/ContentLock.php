@@ -106,6 +106,13 @@ class ContentLock extends ServiceProviderBase {
   protected $messenger;
 
   /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected $time;
+
+  /**
    * Constructor.
    *
    * @param \Drupal\Core\Database\Connection $database

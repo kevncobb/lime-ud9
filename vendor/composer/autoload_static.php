@@ -253,6 +253,7 @@ class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
             'Doctrine\\Instantiator\\' => 22,
             'Doctrine\\Deprecations\\' => 22,
             'Doctrine\\Common\\Lexer\\' => 22,
+            'Doctrine\\Common\\Collections\\' => 28,
             'Doctrine\\Common\\Annotations\\' => 28,
             'Doctrine\\Common\\' => 16,
             'Dflydev\\DotAccessData\\' => 22,
@@ -278,6 +279,7 @@ class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
             'Composer\\ClassMapGenerator\\' => 27,
             'Composer\\CaBundle\\' => 18,
             'Composer\\' => 9,
+            'CommerceGuys\\Addressing\\' => 24,
             'ColinODell\\PsrTestLogger\\' => 25,
         ),
         'B' => 
@@ -667,8 +669,8 @@ class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
         ),
         'PHPStan\\' => 
         array (
-            0 => __DIR__ . '/..' . '/phpstan/phpstan-phpunit/src',
-            1 => __DIR__ . '/..' . '/phpstan/phpstan-deprecation-rules/src',
+            0 => __DIR__ . '/..' . '/phpstan/phpstan-deprecation-rules/src',
+            1 => __DIR__ . '/..' . '/phpstan/phpstan-phpunit/src',
         ),
         'PHPCSStandards\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\' => 
         array (
@@ -692,8 +694,8 @@ class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri-interfaces',
-            1 => __DIR__ . '/..' . '/league/uri',
+            0 => __DIR__ . '/..' . '/league/uri',
+            1 => __DIR__ . '/..' . '/league/uri-interfaces',
         ),
         'League\\OAuth2\\Server\\' => 
         array (
@@ -875,6 +877,10 @@ class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
         array (
             0 => __DIR__ . '/..' . '/doctrine/lexer/src',
         ),
+        'Doctrine\\Common\\Collections\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/collections/src',
+        ),
         'Doctrine\\Common\\Annotations\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations',
@@ -964,6 +970,10 @@ class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
         array (
             0 => __DIR__ . '/..' . '/composer/composer/src/Composer',
         ),
+        'CommerceGuys\\Addressing\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/commerceguys/addressing/src',
+        ),
         'ColinODell\\PsrTestLogger\\' => 
         array (
             0 => __DIR__ . '/..' . '/colinodell/psr-testlogger/src',
@@ -982,8 +992,8 @@ class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
         ),
         'Behat\\Mink\\Driver\\' => 
         array (
-            0 => __DIR__ . '/..' . '/behat/mink-selenium2-driver/src',
-            1 => __DIR__ . '/..' . '/behat/mink-browserkit-driver/src',
+            0 => __DIR__ . '/..' . '/behat/mink-browserkit-driver/src',
+            1 => __DIR__ . '/..' . '/behat/mink-selenium2-driver/src',
         ),
         'Behat\\Mink\\' => 
         array (
@@ -1734,6 +1744,45 @@ class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
         'Caxy\\HtmlDiff\\Table\\TableRow' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/Table/TableRow.php',
         'Caxy\\HtmlDiff\\Util\\MbStringUtil' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/Util/MbStringUtil.php',
         'ColinODell\\PsrTestLogger\\TestLogger' => __DIR__ . '/..' . '/colinodell/psr-testlogger/src/TestLogger.php',
+        'CommerceGuys\\Addressing\\AbstractEnum' => __DIR__ . '/..' . '/commerceguys/addressing/src/AbstractEnum.php',
+        'CommerceGuys\\Addressing\\Address' => __DIR__ . '/..' . '/commerceguys/addressing/src/Address.php',
+        'CommerceGuys\\Addressing\\AddressFormat\\AddressField' => __DIR__ . '/..' . '/commerceguys/addressing/src/AddressFormat/AddressField.php',
+        'CommerceGuys\\Addressing\\AddressFormat\\AddressFormat' => __DIR__ . '/..' . '/commerceguys/addressing/src/AddressFormat/AddressFormat.php',
+        'CommerceGuys\\Addressing\\AddressFormat\\AddressFormatHelper' => __DIR__ . '/..' . '/commerceguys/addressing/src/AddressFormat/AddressFormatHelper.php',
+        'CommerceGuys\\Addressing\\AddressFormat\\AddressFormatRepository' => __DIR__ . '/..' . '/commerceguys/addressing/src/AddressFormat/AddressFormatRepository.php',
+        'CommerceGuys\\Addressing\\AddressFormat\\AddressFormatRepositoryInterface' => __DIR__ . '/..' . '/commerceguys/addressing/src/AddressFormat/AddressFormatRepositoryInterface.php',
+        'CommerceGuys\\Addressing\\AddressFormat\\AdministrativeAreaType' => __DIR__ . '/..' . '/commerceguys/addressing/src/AddressFormat/AdministrativeAreaType.php',
+        'CommerceGuys\\Addressing\\AddressFormat\\DependentLocalityType' => __DIR__ . '/..' . '/commerceguys/addressing/src/AddressFormat/DependentLocalityType.php',
+        'CommerceGuys\\Addressing\\AddressFormat\\FieldOverride' => __DIR__ . '/..' . '/commerceguys/addressing/src/AddressFormat/FieldOverride.php',
+        'CommerceGuys\\Addressing\\AddressFormat\\FieldOverrides' => __DIR__ . '/..' . '/commerceguys/addressing/src/AddressFormat/FieldOverrides.php',
+        'CommerceGuys\\Addressing\\AddressFormat\\LocalityType' => __DIR__ . '/..' . '/commerceguys/addressing/src/AddressFormat/LocalityType.php',
+        'CommerceGuys\\Addressing\\AddressFormat\\PostalCodeType' => __DIR__ . '/..' . '/commerceguys/addressing/src/AddressFormat/PostalCodeType.php',
+        'CommerceGuys\\Addressing\\AddressInterface' => __DIR__ . '/..' . '/commerceguys/addressing/src/AddressInterface.php',
+        'CommerceGuys\\Addressing\\Country\\Country' => __DIR__ . '/..' . '/commerceguys/addressing/src/Country/Country.php',
+        'CommerceGuys\\Addressing\\Country\\CountryRepository' => __DIR__ . '/..' . '/commerceguys/addressing/src/Country/CountryRepository.php',
+        'CommerceGuys\\Addressing\\Country\\CountryRepositoryInterface' => __DIR__ . '/..' . '/commerceguys/addressing/src/Country/CountryRepositoryInterface.php',
+        'CommerceGuys\\Addressing\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/commerceguys/addressing/src/Exception/ExceptionInterface.php',
+        'CommerceGuys\\Addressing\\Exception\\UnexpectedTypeException' => __DIR__ . '/..' . '/commerceguys/addressing/src/Exception/UnexpectedTypeException.php',
+        'CommerceGuys\\Addressing\\Exception\\UnknownCountryException' => __DIR__ . '/..' . '/commerceguys/addressing/src/Exception/UnknownCountryException.php',
+        'CommerceGuys\\Addressing\\Exception\\UnknownLocaleException' => __DIR__ . '/..' . '/commerceguys/addressing/src/Exception/UnknownLocaleException.php',
+        'CommerceGuys\\Addressing\\Formatter\\DefaultFormatter' => __DIR__ . '/..' . '/commerceguys/addressing/src/Formatter/DefaultFormatter.php',
+        'CommerceGuys\\Addressing\\Formatter\\FormatterInterface' => __DIR__ . '/..' . '/commerceguys/addressing/src/Formatter/FormatterInterface.php',
+        'CommerceGuys\\Addressing\\Formatter\\PostalLabelFormatter' => __DIR__ . '/..' . '/commerceguys/addressing/src/Formatter/PostalLabelFormatter.php',
+        'CommerceGuys\\Addressing\\Formatter\\PostalLabelFormatterInterface' => __DIR__ . '/..' . '/commerceguys/addressing/src/Formatter/PostalLabelFormatterInterface.php',
+        'CommerceGuys\\Addressing\\ImmutableAddressInterface' => __DIR__ . '/..' . '/commerceguys/addressing/src/ImmutableAddressInterface.php',
+        'CommerceGuys\\Addressing\\Locale' => __DIR__ . '/..' . '/commerceguys/addressing/src/Locale.php',
+        'CommerceGuys\\Addressing\\PostalCodeHelper' => __DIR__ . '/..' . '/commerceguys/addressing/src/PostalCodeHelper.php',
+        'CommerceGuys\\Addressing\\Subdivision\\LazySubdivisionCollection' => __DIR__ . '/..' . '/commerceguys/addressing/src/Subdivision/LazySubdivisionCollection.php',
+        'CommerceGuys\\Addressing\\Subdivision\\Subdivision' => __DIR__ . '/..' . '/commerceguys/addressing/src/Subdivision/Subdivision.php',
+        'CommerceGuys\\Addressing\\Subdivision\\SubdivisionRepository' => __DIR__ . '/..' . '/commerceguys/addressing/src/Subdivision/SubdivisionRepository.php',
+        'CommerceGuys\\Addressing\\Subdivision\\SubdivisionRepositoryInterface' => __DIR__ . '/..' . '/commerceguys/addressing/src/Subdivision/SubdivisionRepositoryInterface.php',
+        'CommerceGuys\\Addressing\\Subdivision\\SubdivisionUpdater' => __DIR__ . '/..' . '/commerceguys/addressing/src/Subdivision/SubdivisionUpdater.php',
+        'CommerceGuys\\Addressing\\Validator\\Constraints\\AddressFormatConstraint' => __DIR__ . '/..' . '/commerceguys/addressing/src/Validator/Constraints/AddressFormatConstraint.php',
+        'CommerceGuys\\Addressing\\Validator\\Constraints\\AddressFormatConstraintValidator' => __DIR__ . '/..' . '/commerceguys/addressing/src/Validator/Constraints/AddressFormatConstraintValidator.php',
+        'CommerceGuys\\Addressing\\Validator\\Constraints\\CountryConstraint' => __DIR__ . '/..' . '/commerceguys/addressing/src/Validator/Constraints/CountryConstraint.php',
+        'CommerceGuys\\Addressing\\Validator\\Constraints\\CountryConstraintValidator' => __DIR__ . '/..' . '/commerceguys/addressing/src/Validator/Constraints/CountryConstraintValidator.php',
+        'CommerceGuys\\Addressing\\Zone\\Zone' => __DIR__ . '/..' . '/commerceguys/addressing/src/Zone/Zone.php',
+        'CommerceGuys\\Addressing\\Zone\\ZoneTerritory' => __DIR__ . '/..' . '/commerceguys/addressing/src/Zone/ZoneTerritory.php',
         'Composer\\Advisory\\Auditor' => __DIR__ . '/..' . '/composer/composer/src/Composer/Advisory/Auditor.php',
         'Composer\\Advisory\\IgnoredSecurityAdvisory' => __DIR__ . '/..' . '/composer/composer/src/Composer/Advisory/IgnoredSecurityAdvisory.php',
         'Composer\\Advisory\\PartialSecurityAdvisory' => __DIR__ . '/..' . '/composer/composer/src/Composer/Advisory/PartialSecurityAdvisory.php',
@@ -2465,6 +2514,19 @@ class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
         'Doctrine\\Common\\Annotations\\SimpleAnnotationReader' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/SimpleAnnotationReader.php',
         'Doctrine\\Common\\Annotations\\TokenParser' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/TokenParser.php',
         'Doctrine\\Common\\ClassLoader' => __DIR__ . '/..' . '/doctrine/common/src/ClassLoader.php',
+        'Doctrine\\Common\\Collections\\AbstractLazyCollection' => __DIR__ . '/..' . '/doctrine/collections/src/AbstractLazyCollection.php',
+        'Doctrine\\Common\\Collections\\ArrayCollection' => __DIR__ . '/..' . '/doctrine/collections/src/ArrayCollection.php',
+        'Doctrine\\Common\\Collections\\Collection' => __DIR__ . '/..' . '/doctrine/collections/src/Collection.php',
+        'Doctrine\\Common\\Collections\\Criteria' => __DIR__ . '/..' . '/doctrine/collections/src/Criteria.php',
+        'Doctrine\\Common\\Collections\\Expr\\ClosureExpressionVisitor' => __DIR__ . '/..' . '/doctrine/collections/src/Expr/ClosureExpressionVisitor.php',
+        'Doctrine\\Common\\Collections\\Expr\\Comparison' => __DIR__ . '/..' . '/doctrine/collections/src/Expr/Comparison.php',
+        'Doctrine\\Common\\Collections\\Expr\\CompositeExpression' => __DIR__ . '/..' . '/doctrine/collections/src/Expr/CompositeExpression.php',
+        'Doctrine\\Common\\Collections\\Expr\\Expression' => __DIR__ . '/..' . '/doctrine/collections/src/Expr/Expression.php',
+        'Doctrine\\Common\\Collections\\Expr\\ExpressionVisitor' => __DIR__ . '/..' . '/doctrine/collections/src/Expr/ExpressionVisitor.php',
+        'Doctrine\\Common\\Collections\\Expr\\Value' => __DIR__ . '/..' . '/doctrine/collections/src/Expr/Value.php',
+        'Doctrine\\Common\\Collections\\ExpressionBuilder' => __DIR__ . '/..' . '/doctrine/collections/src/ExpressionBuilder.php',
+        'Doctrine\\Common\\Collections\\ReadableCollection' => __DIR__ . '/..' . '/doctrine/collections/src/ReadableCollection.php',
+        'Doctrine\\Common\\Collections\\Selectable' => __DIR__ . '/..' . '/doctrine/collections/src/Selectable.php',
         'Doctrine\\Common\\CommonException' => __DIR__ . '/..' . '/doctrine/common/src/CommonException.php',
         'Doctrine\\Common\\Comparable' => __DIR__ . '/..' . '/doctrine/common/src/Comparable.php',
         'Doctrine\\Common\\EventArgs' => __DIR__ . '/..' . '/doctrine/event-manager/src/EventArgs.php',

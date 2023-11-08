@@ -115,7 +115,8 @@
     "drupal/linkit": "^6.0",
     "drupal/image_widget_crop": "^2.4",
     "drupal/masonry": "^4.0",
-    "drupal/masonry_views": "^4.0"
+    "drupal/masonry_views": "^4.0",
+    "drupal/address": "2.0.x-dev@dev"
   },
   "require-dev": {
     "drupal/core-dev": "~10",

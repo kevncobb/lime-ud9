@@ -17,6 +17,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Security\TrustedCallbackInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -30,7 +31,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   },
  * )
  */
-class AddressDefaultFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
+class AddressDefaultFormatter extends FormatterBase implements ContainerFactoryPluginInterface, TrustedCallbackInterface {
 
   /**
    * The address format repository.
@@ -164,7 +165,7 @@ class AddressDefaultFormatter extends FormatterBase implements ContainerFactoryP
         '#type' => 'html_tag',
         '#tag' => 'span',
         '#attributes' => ['class' => [$class]],
-        '#value' => Html::escape($values[$field]),
+        '#value' => !empty($values[$field]) ? Html::escape($values[$field]) : '',
         '#placeholder' => '%' . $field,
       ];
     }
@@ -228,8 +229,8 @@ class AddressDefaultFormatter extends FormatterBase implements ContainerFactoryP
     // Remove noise caused by empty placeholders.
     $lines = explode("\n", $string);
     foreach ($lines as $index => $line) {
-      // Remove leading punctuation, excess whitespace.
-      $line = trim(preg_replace('/^[-,]+/', '', $line, 1));
+      // Remove leading/trailing punctuation, excess whitespace.
+      $line = trim($line, ' -,');
       $line = preg_replace('/\s\s+/', ' ', $line);
       $lines[$index] = $line;
     }
@@ -283,6 +284,13 @@ class AddressDefaultFormatter extends FormatterBase implements ContainerFactoryP
     }
 
     return $values;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['postRender'];
   }
 
 }

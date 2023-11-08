@@ -1,0 +1,9 @@
+services:
+  address.commands.sanitize:
+    class: Drupal\address\Commands\SanitizeAddress
+    arguments:
+      - '@database'
+      - '@entity_field.manager'
+      - '@entity_type.manager'
+    tags:
+      - { name: drush.command }

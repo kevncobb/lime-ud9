@@ -15,7 +15,7 @@ class AddressDefaultFormatterTest extends FormatterTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     ConfigurableLanguage::createFromLangcode('zh-hant')->save();
@@ -96,7 +96,7 @@ class AddressDefaultFormatterTest extends FormatterTestBase {
     $entity->{$this->fieldName} = [
       'langcode' => 'zh-hant',
       'country_code' => 'TW',
-      'administrative_area' => 'Taipei City',
+      'administrative_area' => 'TPE',
       'locality' => "Da'an District",
       'address_line1' => 'Sec. 3 Hsin-yi Rd.',
       'postal_code' => '106',
@@ -118,6 +118,42 @@ class AddressDefaultFormatterTest extends FormatterTestBase {
       'line8' => '</p>',
     ]);
     $this->assertRaw($expected, 'The TW address has been properly formatted.');
+  }
+
+  /**
+   * Tests Uruguay address formatting.
+   */
+  public function testUruguayAddress() {
+    $entity = EntityTest::create([]);
+    $entity->{$this->fieldName} = [
+      'country_code' => 'UY',
+      'administrative_area' => 'CA',
+      'locality' => 'Pando',
+      'postal_code' => '15600',
+      'address_line1' => 'Some Street 12',
+    ];
+    $this->renderEntityFields($entity, $this->display);
+    $expected = implode('', [
+      'line1' => '<p class="address" translate="no">',
+      'line2' => '<span class="address-line1">Some Street 12</span><br>' . "\n",
+      'line3' => '<span class="postal-code">15600</span> - <span class="locality">Pando</span>, <span class="administrative-area">Canelones</span><br>' . "\n",
+      'line4' => '<span class="country">Uruguay</span>',
+      'line5' => '</p>',
+    ]);
+    $this->assertRaw($expected, 'The UY address has been properly formatted.');
+
+    // A formatted address without an administrative area should not have a
+    // trailing comma after the locality.
+    $entity->{$this->fieldName}->administrative_area = '';
+    $this->renderEntityFields($entity, $this->display);
+    $expected = implode('', [
+      'line1' => '<p class="address" translate="no">',
+      'line2' => '<span class="address-line1">Some Street 12</span><br>' . "\n",
+      'line3' => '<span class="postal-code">15600</span> - <span class="locality">Pando</span><br>' . "\n",
+      'line4' => '<span class="country">Uruguay</span>',
+      'line5' => '</p>',
+    ]);
+    $this->assertRaw($expected, 'The UY address has been properly formatted.');
   }
 
   /**

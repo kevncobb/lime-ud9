@@ -15,8 +15,25 @@ use CommerceGuys\Addressing\Validator\Constraints\AddressFormatConstraint as Ext
  */
 class AddressFormatConstraint extends ExternalAddressFormatConstraint {
 
-  public $blankMessage = '@name field must be blank.';
-  public $notBlankMessage = '@name field is required.';
-  public $invalidMessage = '@name field is not in the right format.';
+  /**
+   * Validation message if a field must be blank.
+   *
+   * @var string
+   */
+  public string $blankMessage = '@name field must be blank.';
+
+  /**
+   * Validation message if a field is required.
+   *
+   * @var string
+   */
+  public string $notBlankMessage = '@name field is required.';
+
+  /**
+   * Validation message if a field has an invalid format.
+   *
+   * @var string
+   */
+  public string $invalidMessage = '@name field is not in the right format.';
 
 }

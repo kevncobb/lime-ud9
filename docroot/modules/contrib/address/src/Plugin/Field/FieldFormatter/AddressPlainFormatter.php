@@ -138,6 +138,7 @@ class AddressPlainFormatter extends FormatterBase implements ContainerFactoryPlu
       '#organization' => $values['organization'],
       '#address_line1' => $values['addressLine1'],
       '#address_line2' => $values['addressLine2'],
+      '#address_line3' => $values['addressLine3'],
       '#postal_code' => $values['postalCode'],
       '#sorting_code' => $values['sortingCode'],
       '#administrative_area' => $values['administrativeArea'],
@@ -147,6 +148,8 @@ class AddressPlainFormatter extends FormatterBase implements ContainerFactoryPlu
         'code' => $country_code,
         'name' => $countries[$country_code],
       ],
+      '#address' => $address,
+      '#view_mode' => $this->viewMode,
       '#cache' => [
         'contexts' => [
           'languages:' . LanguageInterface::TYPE_INTERFACE,

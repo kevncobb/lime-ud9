@@ -20,7 +20,7 @@ function address_field_views_data(FieldStorageConfigInterface $field) {
   $field_name = $field->getName();
   if ($field_type == 'address') {
     $columns = [
-      'country_code' => 'country_code',
+      'country_code' => 'country',
       'administrative_area' => 'subdivision',
       'locality' => 'subdivision',
       'dependent_locality' => 'subdivision',
@@ -28,6 +28,7 @@ function address_field_views_data(FieldStorageConfigInterface $field) {
       'sorting_code' => 'standard',
       'address_line1' => 'standard',
       'address_line2' => 'standard',
+      'address_line3' => 'standard',
       'organization' => 'standard',
       'given_name' => 'standard',
       'additional_name' => 'standard',
@@ -41,7 +42,7 @@ function address_field_views_data(FieldStorageConfigInterface $field) {
           'property' => $column,
         ];
       }
-      $data[$table_name][$field_name . '_country_code']['filter']['id'] = 'country_code';
+      $data[$table_name][$field_name . '_country_code']['filter']['id'] = 'country';
       $data[$table_name][$field_name . '_country_code']['sort']['id'] = 'country';
       $data[$table_name][$field_name . '_administrative_area']['filter']['id'] = 'administrative_area';
     }
@@ -49,11 +50,11 @@ function address_field_views_data(FieldStorageConfigInterface $field) {
   elseif ($field_type == 'address_country') {
     foreach ($data as $table_name => $table_data) {
       $data[$table_name][$field_name . '_value']['field'] = [
-        'id' => 'country_code',
+        'id' => 'country',
         'field_name' => $field_name,
         'property' => 'value',
       ];
-      $data[$table_name][$field_name . '_value']['filter']['id'] = 'country_code';
+      $data[$table_name][$field_name . '_value']['filter']['id'] = 'country';
       $data[$table_name][$field_name . '_value']['sort']['id'] = 'country';
     }
   }

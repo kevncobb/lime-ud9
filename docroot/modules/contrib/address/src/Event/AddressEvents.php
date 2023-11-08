@@ -26,15 +26,6 @@ final class AddressEvents {
   const AVAILABLE_COUNTRIES = 'address.available_countries';
 
   /**
-   * Name of the event fired when altering initial values.
-   *
-   * @Event
-   *
-   * @see \Drupal\address\Event\InitialValuesEvent
-   */
-  const INITIAL_VALUES = 'address.widget.initial_values';
-
-  /**
    * Name of the event fired when defining custom subdivisions.
    *
    * @Event

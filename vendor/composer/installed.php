@@ -3,7 +3,7 @@
         'name' => 'vardot/varbase-project',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => 'c94e7ae319b7b8dd1e932dea4f755e5b8a30c510',
+        'reference' => '5695d05d46681d970883790f104cc8a932d2ddf8',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -150,6 +150,15 @@
             'install_path' => __DIR__ . '/../colinodell/psr-testlogger',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'commerceguys/addressing' => array(
+            'pretty_version' => 'v2.1.0',
+            'version' => '2.1.0.0',
+            'reference' => 'e40c4162e9dacc04ba9d0c3c49a9172e5af08ac8',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../commerceguys/addressing',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'composer/ca-bundle' => array(
             'pretty_version' => '1.3.7',
@@ -364,6 +373,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'doctrine/collections' => array(
+            'pretty_version' => '2.1.4',
+            'version' => '2.1.4.0',
+            'reference' => '72328a11443a0de79967104ad36ba7b30bded134',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../doctrine/collections',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'doctrine/common' => array(
             'pretty_version' => '3.4.3',
             'version' => '3.4.3.0',
@@ -434,6 +452,17 @@
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/ace_editor',
             'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'drupal/address' => array(
+            'pretty_version' => 'dev-2.0.x',
+            'version' => 'dev-2.0.x',
+            'reference' => '0d479b187d669f657246a270807daaa10005f853',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/address',
+            'aliases' => array(
+                0 => '2.0.x-dev',
+            ),
             'dev_requirement' => false,
         ),
         'drupal/addtoany' => array(
@@ -4043,8 +4072,8 @@
         'psr/http-factory-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '^1.0',
-                1 => '1.0',
+                0 => '1.0',
+                1 => '^1.0',
             ),
         ),
         'psr/http-message' => array(
@@ -4074,8 +4103,8 @@
         'psr/log-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0|2.0|3.0',
-                1 => '1.0.0 || 2.0.0 || 3.0.0',
+                0 => '1.0.0 || 2.0.0 || 3.0.0',
+                1 => '1.0|2.0|3.0',
             ),
         ),
         'psy/psysh' => array(
@@ -4828,7 +4857,7 @@
         'vardot/varbase-project' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'c94e7ae319b7b8dd1e932dea4f755e5b8a30c510',
+            'reference' => '5695d05d46681d970883790f104cc8a932d2ddf8',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
