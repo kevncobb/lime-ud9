@@ -417,7 +417,7 @@ class VarbaseLayoutBuilderBootstrapLayout extends BootstrapLayout {
       $form['ui']['tab_content']['layout']['remove_gutters']['#options'][$key] = '<span class="input-icon gutter-icon-' . $key . '"></span>' . $value;
     }
 
-    // When number of coloumns for the layout is 2 and more.
+    // When number of columns for the layout is 2 and more.
     // And Removes Gutters was checked.
     // Then show the Gutters between checkbox.
     if (count($this->getPluginDefinition()->getRegionNames()) > 2) {
@@ -427,7 +427,8 @@ class VarbaseLayoutBuilderBootstrapLayout extends BootstrapLayout {
 
       // Gutters between default value.
       $gutters_between_default_value = TRUE;
-      if (!empty($this->configuration['gutters_between'])) {
+      if (isset($this->configuration['gutters_between'])
+        && $this->configuration['gutters_between'] !== NULL) {
         $gutters_between_default_value = $this->configuration['gutters_between'];
       }
       elseif (isset($gutters_between_defaults['default_value'])) {
@@ -458,7 +459,7 @@ class VarbaseLayoutBuilderBootstrapLayout extends BootstrapLayout {
     }
 
     $layout_id = $this->getPluginDefinition()->id();
-    $breakpoints = $this->entityTypeManager->getStorage('blb_breakpoint')->getQuery()->sort('weight', 'ASC')->execute();
+    $breakpoints = $this->entityTypeManager->getStorage('blb_breakpoint')->getQuery()->accessCheck(TRUE)->sort('weight', 'ASC')->execute();
     foreach ($breakpoints as $breakpoint_id) {
       $breakpoint = $this->entityTypeManager->getStorage('blb_breakpoint')->load($breakpoint_id);
       $layout_options = $breakpoint->getLayoutOptions($layout_id);
@@ -637,7 +638,8 @@ class VarbaseLayoutBuilderBootstrapLayout extends BootstrapLayout {
             && count($this->configuration['layout_regions_classes'][$region_name]) > 0) {
 
             foreach ($this->configuration['layout_regions_classes'][$region_name] as $region_key => $region_class) {
-              if ($region_class == "col-xl-"
+              if ($region_class == "col-xxl-"
+                || $region_class == "col-xl-"
                 || $region_class == "col-lg-"
                 || $region_class == "col-md-"
                 || $region_class == "col-sm-"

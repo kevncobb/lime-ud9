@@ -36,23 +36,13 @@ class MailerConfigOverride implements ConfigFactoryOverrideInterface {
   protected $moduleHandler;
 
   /**
-   * The email builder manager.
-   *
-   * @var \Drupal\symfony_mailer\Processor\EmailBuilderManagerInterface
-   */
-  protected $builderManager;
-
-  /**
    * Constructs the MailerConfigOverride object.
    *
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
-   * @param \Drupal\symfony_mailer\Processor\EmailBuilderManagerInterface $email_builder_manager
-   *   The email builder manager.
    */
-  public function __construct(ModuleHandlerInterface $module_handler, EmailBuilderManagerInterface $email_builder_manager) {
+  public function __construct(ModuleHandlerInterface $module_handler) {
     $this->moduleHandler = $module_handler;
-    $this->builderManager = $email_builder_manager;
   }
 
   /**
@@ -94,8 +84,16 @@ class MailerConfigOverride implements ConfigFactoryOverrideInterface {
       // loop by marking the cache as built before starting.
       $this->builtCache = TRUE;
 
-      foreach ($this->builderManager->getDefinitions() as $definition) {
-        $this->configOverrides = array_merge($this->configOverrides, $definition['config_overrides']);
+      // We cannot use dependency injection because that creates a circular
+      // dependency.
+      /** @var \Drupal\symfony_mailer\Processor\EmailBuilderManagerInterface $builderManager */
+      $builderManager = \Drupal::service('plugin.manager.email_builder');
+
+      foreach ($builderManager->getDefinitions() as $definition) {
+        // During upgrade to 1.3.x, this function can get called before the
+        // updated annotation that sets 'config_overrides' to [] has been read.
+        // Add in defaulting here.
+        $this->configOverrides = array_merge($this->configOverrides, $definition['config_overrides'] ?? []);
       }
     }
   }

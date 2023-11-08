@@ -17,7 +17,7 @@ class EntityUpdateUIAccessTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['entity_update', 'entity_update_tests'];
+  protected static $modules = ['entity_update', 'entity_update_tests'];
 
 
   /**
@@ -28,7 +28,7 @@ class EntityUpdateUIAccessTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp() : void {
     parent::setUp();
 
     $permissions = [

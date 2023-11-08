@@ -4,11 +4,11 @@ namespace Drupal\Tests\entity_update\Functional;
 
 error_reporting(0);
 
-use Drupal\entity_update\EntityUpdatePrint;
-use Drupal\Tests\BrowserTestBase;
 use Drupal\entity_update\EntityUpdate;
-use Drupal\entity_update_tests\EntityUpdateTestHelper;
+use Drupal\entity_update\EntityUpdatePrint;
 use Drupal\entity_update_tests\Entity\EntityUpdateTestsContentEntity;
+use Drupal\entity_update_tests\EntityUpdateTestHelper;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Entity Update module, Update entities programmatically test.
@@ -22,7 +22,7 @@ class EntityUpdateProgUpTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['entity_update', 'entity_update_tests'];
+  protected static $modules = ['entity_update', 'entity_update_tests'];
 
   /**
    * {@inheritdoc}
@@ -32,7 +32,7 @@ class EntityUpdateProgUpTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp() : void {
     // Initialisation process.
     parent::setUp();
 
@@ -61,7 +61,7 @@ class EntityUpdateProgUpTest extends BrowserTestBase {
     EntityUpdateTestHelper::fieldEnable('name');
 
     // Entity checking process : Get current entities list.
-    $ids_old = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+    $ids_old = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
 
     // Make Update Using full methode.
     if ($res = EntityUpdate::safeUpdateMain()) {
@@ -70,10 +70,10 @@ class EntityUpdateProgUpTest extends BrowserTestBase {
     else {
       // Your codes if update false.
     }
-    $this->assert($res, 'Entity schema has been updated successfully.');
+    $this->assertTrue($res, 'Entity schema has been updated successfully.');
 
     // Entity checking process : Compare with new list entities list.
-    $ids_new = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+    $ids_new = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
 
     // Compare two lists.
     $result = array_diff($ids_old, $ids_new);
@@ -83,7 +83,7 @@ class EntityUpdateProgUpTest extends BrowserTestBase {
     else {
       // Your codes if update false.
     }
-    $this->assert($res, 'Entity schema has been updated successfully.');
+    $this->assertTrue($res, 'Entity schema has been updated successfully.');
   }
 
   /**
@@ -98,7 +98,7 @@ class EntityUpdateProgUpTest extends BrowserTestBase {
     EntityUpdateTestHelper::fieldDisable('description');
 
     // Entity checking process : Get current entities list.
-    $ids_old = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+    $ids_old = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
 
     // Make Update Using full methode.
     if ($res = EntityUpdate::safeUpdateMain()) {
@@ -107,10 +107,10 @@ class EntityUpdateProgUpTest extends BrowserTestBase {
     else {
       // Your codes if update false.
     }
-    $this->assert($res, 'Entity schema has been updated successfully.');
+    $this->assertTrue($res, 'Entity schema has been updated successfully.');
 
     // Entity checking process : Compare with new list entities list.
-    $ids_new = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+    $ids_new = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
 
     // Compare two lists.
     $result = array_diff($ids_old, $ids_new);
@@ -121,7 +121,7 @@ class EntityUpdateProgUpTest extends BrowserTestBase {
     else {
       // Your codes if update false.
     }
-    $this->assert($res, 'Entity schema has been updated successfully.');
+    $this->assertTrue($res, 'Entity schema has been updated successfully.');
   }
 
 }

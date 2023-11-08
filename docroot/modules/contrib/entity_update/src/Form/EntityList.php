@@ -4,11 +4,11 @@ namespace Drupal\entity_update\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\entity_update\EntityCheck;
 use Drupal\Core\Url;
+use Drupal\entity_update\EntityCheck;
 
 /**
- * Class EntityList.
+ * Displays list of Entities that needs to be updated.
  *
  * @package Drupal\entity_update\Form
  *

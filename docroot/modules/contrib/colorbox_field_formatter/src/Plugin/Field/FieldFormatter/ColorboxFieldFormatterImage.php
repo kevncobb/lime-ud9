@@ -21,7 +21,7 @@ class ColorboxFieldFormatterImage extends ColorboxFieldFormatter {
   /**
    * {@inheritdoc}
    */
-  public static function defaultSettings() {
+  public static function defaultSettings(): array {
     return [
       'image_style' => 'original',
     ] + parent::defaultSettings();
@@ -30,7 +30,7 @@ class ColorboxFieldFormatterImage extends ColorboxFieldFormatter {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, FormStateInterface $form_state) {
+  public function settingsForm(array $form, FormStateInterface $form_state): array {
     $form = parent::settingsForm($form, $form_state);
     $image_styles = image_style_options(FALSE);
     $image_styles['hide'] = $this->t('Hide (do not display image)');
@@ -48,7 +48,7 @@ class ColorboxFieldFormatterImage extends ColorboxFieldFormatter {
   /**
    * {@inheritdoc}
    */
-  public function settingsSummary() {
+  public function settingsSummary(): array {
     $image_style = $this->getSetting('image_style');
     $image_styles = image_style_options(FALSE);
     unset($image_styles['']);
@@ -69,8 +69,12 @@ class ColorboxFieldFormatterImage extends ColorboxFieldFormatter {
   /**
    * {@inheritdoc}
    */
-  protected function viewValue(FieldItemInterface $item) {
-    return $item->view(['settings' => ['image_style' => $this->getSetting('image_style')],]);
+  protected function viewValue(FieldItemInterface $item): array {
+    return $item->view([
+      'settings' => [
+        'image_style' => $this->getSetting('image_style'),
+      ],
+    ]);
   }
 
 }

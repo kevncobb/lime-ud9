@@ -1,0 +1,15 @@
+name: Dashboards comments
+description: 'Comment statistics.'
+package: Dashboards
+
+core_version_requirement: ^9.4 || ^10
+type: module
+
+dependencies:
+- drupal:comment
+- dashboards:dashboards
+
+# Information added by Drupal.org packaging script on 2023-04-17
+version: '2.1.6'
+project: 'dashboards'
+datestamp: 1681725493

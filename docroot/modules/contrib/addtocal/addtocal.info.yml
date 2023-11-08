@@ -1,10 +1,11 @@
 name: 'Add to Cal'
-description: 'A field formatter providing a widget for exporting events to various formats.'
-core: 8.x
-core_version_requirement: ^8 || ^9
+description: 'Drupal field formatter providing Add to Calendar links.'
+core_version_requirement: ^8 || ^9 || ^10
 type: module
+dependencies:
+  - drupal:datetime
 
-# Information added by Drupal.org packaging script on 2020-09-03
-version: '8.x-1.1'
+# Information added by Drupal.org packaging script on 2023-06-26
+version: '3.0.0-beta1'
 project: 'addtocal'
-datestamp: 1599145270
+datestamp: 1687818188

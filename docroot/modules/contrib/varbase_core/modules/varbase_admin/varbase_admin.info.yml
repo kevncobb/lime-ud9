@@ -2,7 +2,7 @@ name: "Varbase Admin"
 description: "Manage administration configurations."
 type: module
 package: Varbase
-core_version_requirement: ~9.5.0 || ~10.1.0
+core_version_requirement: ~10.1.0
 dependencies:
   - varbase_core:varbase_core
   - drupal:shortcut
@@ -22,9 +22,6 @@ install:
   - admin_audit_trail_auth
   - views_bulk_operations
   - views_bulk_edit
-  - admin_toolbar
-  - admin_toolbar_tools
-  - admin_toolbar_links_access_filter
   - masquerade
   - menu_admin_per_menu
   - responsive_preview
@@ -36,3 +33,8 @@ install:
   - taxonomy_access_fix
   - coffee
   - length_indicator
+  - admin_toolbar
+  - admin_toolbar_tools
+  - gin_toolbar
+  - gin_login
+  - gin_moderation_sidebar

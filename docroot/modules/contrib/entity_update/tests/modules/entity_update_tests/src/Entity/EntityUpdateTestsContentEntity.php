@@ -2,9 +2,9 @@
 
 namespace Drupal\entity_update_tests\Entity;
 
-use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\entity_update_tests\EntityUpdateTestHelper;
 
 /**

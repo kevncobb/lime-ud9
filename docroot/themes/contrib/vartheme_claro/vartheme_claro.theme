@@ -7,21 +7,16 @@
  * Have custom alteration over the theme layer.
  */
 
-use Drupal\node\NodeInterface;
-use Drupal\node\Entity\Node;
+use Drupal\Core\Asset\AttachedAssetsInterface;
 
 /**
- * Implements hook_theme_suggestions_HOOK_alter().
+ * Implements hook_preprocess_html().
  */
-function vartheme_claro_theme_suggestions_page_alter(array &$suggestions, array $variables) {
-  if ($node = \Drupal::routeMatch()->getParameter('node')) {
-    if (is_numeric($node)) {
-      $node = Node::load($node);
-    }
-    if ($node instanceof NodeInterface) {
-      array_splice($suggestions, 1, 0, 'page__' . $node->bundle());
-    }
-  }
+function vartheme_claro_preprocess_html(&$variables) {
+
+  // The path for Vartheme Claro theme in variables.
+  $variables['vartheme_claro_path'] = \Drupal::request()->getBaseUrl() . '/' . \Drupal::service('extension.list.theme')->getPath('vartheme_claro');
+
 }
 
 /**
@@ -41,7 +36,7 @@ function vartheme_claro_preprocess_install_page(&$variables) {
   $current_profile_path = \Drupal::service('extension.list.profile')->getPath($profile_name);
   // Profile logo.
   if (file_exists($current_profile_path . '/images/' . $profile_name . '-logo.png')) {
-    $variables['profile_logo'] = base_path() . $current_profile_path . '/images/' . $profile_name . '-logo.png';
+    $variables['profile_logo'] =  \Drupal::request()->getBaseUrl() . '/' . $current_profile_path . '/images/' . $profile_name . '-logo.png';
   }
 
   // Attach install page library.
@@ -49,46 +44,23 @@ function vartheme_claro_preprocess_install_page(&$variables) {
 }
 
 /**
- * Implements hook_library_info_alter().
+ * Implements hook_preprocess_login_with().
  */
-function vartheme_claro_library_info_alter(&$libraries, $extension) {
+function vartheme_claro_preprocess_login_with(&$variables) {
 
-  if ($extension === 'ckeditor' && version_compare(Drupal::VERSION, '10.0.0', '<')) {
+  if (\Drupal::moduleHandler()->moduleExists('social_auth')) {
+    foreach ($variables['social_networks'] as $social_network_index => $social_network) {
+      if (isset($social_network['img_path'])) {
+        $theme_path = Drupal::service('theme_handler')->getTheme('vartheme_claro')->getPath();
 
-    // Extend claro/ckeditor-editor with the ckeditor/drupal.ckeditor library.
-    if (isset($libraries['drupal.ckeditor'])) {
-      $libraries['drupal.ckeditor']['dependencies'][] = 'claro/ckeditor-editor';
-    }
+        $replaced_path_for_icons = str_replace('modules/contrib', 'social_auth', $social_network['img_path']);
+        $social_network_img_path_in_vartheme = $theme_path . '/images/' . $replaced_path_for_icons;
 
-    // Extend ckeditor/drupal.ckeditor.admin with the claro/ckeditor-admin library.
-    if (isset($libraries['drupal.ckeditor.admin'])) {
-      $libraries['drupal.ckeditor.admin']['dependencies'][] = 'claro/ckeditor-admin';
-    }
-
-    // Extend ckeditor/ckeditor with the claro/ckeditor-dialog library.
-    if (isset($libraries['ckeditor'])) {
-      $libraries['ckeditor']['dependencies'][] = 'claro/ckeditor-dialog';
-    }
-  }
-
-  if ($extension === 'core' && version_compare(Drupal::VERSION, '10.0.0', '<')) {
-
-    // Extend core/ckeditor with the claro/ckeditor-dialog library.
-    if (isset($libraries['ckeditor'])) {
-      $libraries['ckeditor']['dependencies'][] = 'claro/ckeditor-dialog';
-    }
-  }
-
-  if ($extension === 'claro') {
-    if (version_compare(Drupal::VERSION, '10.0.0', '<')) {
-      if (isset($libraries['global-styling'])) {
-        $libraries['global-styling']['dependencies'][] = 'vartheme_claro/claro9.layout-node-form';
-      }
-    }
-    else {
-      if (isset($libraries['global-styling'])) {
-        $libraries['global-styling']['dependencies'][] = 'vartheme_claro/claro10.layout-node-form';
+        if (file_exists(DRUPAL_ROOT . '/' . $social_network_img_path_in_vartheme)) {
+          $variables['social_networks'][$social_network_index]['img_path'] = $social_network_img_path_in_vartheme;
+        }
       }
     }
   }
+
 }

@@ -8,11 +8,6 @@ dependencies:
     - media.type.audio
   module:
     - file
-    - layout_builder
-third_party_settings:
-  layout_builder:
-    allow_custom: false
-    enabled: false
 id: media.audio.original
 targetEntityType: media
 bundle: audio
@@ -27,7 +22,7 @@ content:
       autoplay: false
       loop: false
       multiple_file_display_type: tags
-    third_party_settings: {}
+    third_party_settings: {  }
     region: content
 hidden:
   created: true

@@ -155,6 +155,9 @@ class LinkitDialogCKEditor5Test extends WebDriverTestBase {
     // Make sure the autocomplete result container is visible.
     $this->assertTrue($autocomplete_container->isVisible());
 
+    // Make sure the autocomplete result container is excluded from CKEditor5 CSS resets:
+    $assert_session->elementExists('css', '.ck-link-form .linkit-ui-autocomplete.ck-reset_all-excluded');
+
     // Find all the autocomplete results.
     $results = $page->findAll('css', '.linkit-result-line.ui-menu-item');
     $this->assertCount(1, $results);
@@ -167,7 +170,7 @@ class LinkitDialogCKEditor5Test extends WebDriverTestBase {
     $this->assertSame($expected_url, $autocomplete_field->getValue());
     $balloon->pressButton('Save');
     // Assert balloon was closed by pressing its "Save" button.
-    $this->assertFalse($page->find('css', '.ck-balloon-panel')->isVisible());
+    $this->assertTrue($assert_session->waitForElementRemoved('css', '.ck-button-save'));
 
     // Make sure all attributes are populated.
     $linkit_link = $assert_session->waitForElementVisible('css', '.ck-content a');
@@ -209,7 +212,7 @@ class LinkitDialogCKEditor5Test extends WebDriverTestBase {
     $this->assertVisibleBalloon('.ck-link-actions');
     // Assert balloon can be closed by clicking elsewhere in the editor.
     $page->find('css', '.ck-editor__editable')->click();
-    $this->assertFalse($page->find('css', '.ck-balloon-panel')->isVisible());
+    $this->assertTrue($assert_session->waitForElementRemoved('css', '.ck-button-save'));
 
     $changed_link = $assert_session->waitForElementVisible('css', '.ck-content [href="http://example.com"]');
     $this->assertNotNull($changed_link);

@@ -8,12 +8,10 @@ use Drupal\Core\StreamWrapper\StreamWrapperManager;
 use Drupal\Core\Url;
 use Drupal\stage_file_proxy\DownloadManagerInterface;
 use Drupal\stage_file_proxy\EventDispatcher\AlterExcludedPathsEvent;
-use Drupal\stage_file_proxy\FetchManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -122,6 +120,15 @@ class StageFileProxySubscriber implements EventSubscriberInterface {
       return;
     }
 
+    // Quit if the extension is in the list of excluded extensions.
+    $excluded_extensions = $config->get('excluded_extensions') ?
+      array_map('trim', explode(',', $config->get('excluded_extensions'))) : [];
+
+    $extension = pathinfo($request_path)['extension'];
+    if (in_array($extension, $excluded_extensions)) {
+      return;
+    }
+
     $alter_excluded_paths_event = new AlterExcludedPathsEvent([]);
     $this->eventDispatcher->dispatch($alter_excluded_paths_event, 'stage_file_proxy.alter_excluded_paths');
     $excluded_paths = $alter_excluded_paths_event->getExcludedPaths();
@@ -134,8 +141,9 @@ class StageFileProxySubscriber implements EventSubscriberInterface {
     // Note if the origin server files location is different. This
     // must be the exact path for the remote site's public file
     // system path, and defaults to the local public file system path.
-    $remote_file_dir = trim($config->get('origin_dir'));
-    if (!$remote_file_dir) {
+    $origin_dir = $config->get('origin_dir') ?? '';
+    $remote_file_dir = trim($origin_dir);
+    if (!empty($remote_file_dir)) {
       $remote_file_dir = $file_dir;
     }
 
@@ -154,6 +162,13 @@ class StageFileProxySubscriber implements EventSubscriberInterface {
 
     foreach ($paths as $relative_path) {
       $fetch_path = $relative_path;
+
+      // Don't touch CSS and JS aggregation. 'css/' and 'js/' are hard coded to
+      // match route definitions.
+      // @see \Drupal\system\Routing\AssetRoutes
+      if (str_starts_with($relative_path, 'css/') || str_starts_with($relative_path, 'js/')) {
+        return;
+      }
 
       // Is this imagecache? Request the root file and let imagecache resize.
       // We check this first so locally added files have precedence.

@@ -20,7 +20,7 @@ class EntityUpdateUIFunctionsTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['entity_update', 'entity_update_tests'];
+  protected static $modules = ['entity_update', 'entity_update_tests'];
 
 
   /**
@@ -31,7 +31,7 @@ class EntityUpdateUIFunctionsTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp() : void {
     parent::setUp();
 
     $permissions = ['administer software updates'];
@@ -62,7 +62,8 @@ class EntityUpdateUIFunctionsTest extends BrowserTestBase {
     $edit = [];
     $path = 'admin/config/development/entity-update/exec/basic';
     $this->drupalGet($path);
-    $this->drupalPostForm($path, $edit, 'Run Basic Update');
+    $this->drupalGet($path);
+    $this->submitForm($edit, 'Run Basic Update');
     $assert->pageTextContainsOnce('Nothing to update. All entities are up to date.');
 
     // One field to install.
@@ -74,13 +75,15 @@ class EntityUpdateUIFunctionsTest extends BrowserTestBase {
     $edit = [];
     $edit['confirm'] = FALSE;
     $this->drupalGet($path);
-    $this->drupalPostForm($path, $edit, 'Run Basic Update');
+    $this->drupalGet($path);
+    $this->submitForm($edit, 'Run Basic Update');
     $assert->pageTextContainsOnce('If you want to execute, please check the checkbox.');
 
     $edit = [];
     $edit['confirm'] = TRUE;
     $this->drupalGet($path);
-    $this->drupalPostForm($path, $edit, 'Run Basic Update');
+    $this->drupalGet($path);
+    $this->submitForm($edit, 'Run Basic Update');
     $assert->pageTextContainsOnce('Entity update SUCCESS');
 
     // One field to install, one field to uninstall.
@@ -94,7 +97,8 @@ class EntityUpdateUIFunctionsTest extends BrowserTestBase {
     $edit = [];
     $edit['confirm'] = TRUE;
     $this->drupalGet($path);
-    $this->drupalPostForm($path, $edit, 'Run Basic Update');
+    $this->drupalGet($path);
+    $this->submitForm($edit, 'Run Basic Update');
     $assert->pageTextContainsOnce('Entity update SUCCESS');
 
     $this->drupalGet('admin/config/development/entity-update/status');
@@ -133,12 +137,14 @@ class EntityUpdateUIFunctionsTest extends BrowserTestBase {
     $edit['entity_type_id'] = 'entity_update_tests_cnt';
     $this->drupalGet($path);
     $assert->elementTextContains('css', '#edit-entity-type-id option[value=entity_update_tests_cnt]', 'entity_update_tests_cnt');
-    $this->drupalPostForm($path, $edit, 'Run Type Update');
+    $this->drupalGet($path);
+    $this->submitForm($edit, 'Run Type Update');
     $assert->pageTextContainsOnce('If you want to execute, please check the checkbox.');
 
     $edit['confirm'] = TRUE;
     $this->drupalGet($path);
-    $this->drupalPostForm($path, $edit, 'Run Type Update');
+    $this->drupalGet($path);
+    $this->submitForm($edit, 'Run Type Update');
     $assert->pageTextContainsOnce('Entity update SUCCESS');
 
     // One field to install, one field to uninstall (Check error message).
@@ -150,7 +156,8 @@ class EntityUpdateUIFunctionsTest extends BrowserTestBase {
     $assert->pageTextContainsOnce('The Name field needs to be uninstalled.');
 
     $this->drupalGet($path);
-    $this->drupalPostForm($path, $edit, 'Run Type Update');
+    $this->drupalGet($path);
+    $this->submitForm($edit, 'Run Type Update');
     $assert->pageTextContainsOnce('Multiple actions detected, cant update if contains data. Use basic method.');
   }
 
@@ -164,11 +171,13 @@ class EntityUpdateUIFunctionsTest extends BrowserTestBase {
     $edit = [];
     $edit['confirm'] = FALSE;
     $this->drupalGet($path);
-    $this->drupalPostForm($path, $edit, 'Cleanup');
+    $this->drupalGet($path);
+    $this->submitForm($edit, 'Cleanup');
     $assert->pageTextContainsOnce('If you want to execute, please check the checkbox.');
 
     $edit['confirm'] = TRUE;
-    $this->drupalPostForm($path, $edit, 'Cleanup');
+    $this->drupalGet($path);
+    $this->submitForm($edit, 'Cleanup');
     $assert->pageTextContainsOnce('Backups cleanup SUCCESS');
   }
 
@@ -183,11 +192,12 @@ class EntityUpdateUIFunctionsTest extends BrowserTestBase {
     $edit = [];
     $edit['confirm'] = FALSE;
     $this->drupalGet($path);
-    $this->drupalPostForm($path, $edit, 'Run Entity Rescue');
+    $this->submitForm($edit, 'Run Entity Rescue');
     $assert->pageTextContainsOnce('If you want to execute, please check the checkbox.');
 
     $edit['confirm'] = TRUE;
-    $this->drupalPostForm($path, $edit, 'Run Entity Rescue');
+    $this->drupalGet($path);
+    $this->submitForm($edit, 'Run Entity Rescue');
     // Nothing to rescue.
     $assert->pageTextContainsOnce('Entity rescue FAIL');
 
@@ -203,7 +213,7 @@ class EntityUpdateUIFunctionsTest extends BrowserTestBase {
     $this->assertTrue($res, 'Entity schema is updated (Uninstall + data).');
     $edit['confirm'] = TRUE;
     $this->drupalPostForm($path, $edit, 'Run Entity Rescue');
-    // @TODO : Create a correct test.
+    // @todo Create a correct test.
   }
 
 }

@@ -2,7 +2,6 @@
 
 namespace Drupal\stage_file_proxy\EventSubscriber;
 
-use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\StreamWrapper\StreamWrapperManager;
@@ -13,12 +12,16 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Stage file proxy subscriber for controller requests.
  *
- * @deprecated in 2.1, will be removed in 3.0.
+ * @deprecated in stage_file_proxy:2.1.0 and is removed from stage_file_proxy:3.0.0.
+ *   Use StageFileProxySubscriber instead.
+ *
+ * @see https://www.drupal.org/project/stage_file_proxy/issues/3282542
  */
 class ProxySubscriber implements EventSubscriberInterface {
 

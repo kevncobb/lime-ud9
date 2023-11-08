@@ -17,7 +17,7 @@ class InstallUninstallTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['entity_update'];
+  protected static $modules = ['entity_update'];
 
   /**
    * {@inheritdoc}
@@ -27,7 +27,7 @@ class InstallUninstallTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp() : void {
     parent::setUp();
 
     $permissions = [
@@ -49,7 +49,7 @@ class InstallUninstallTest extends BrowserTestBase {
     $this->drupalGet('');
     $this->assertSession()->statusCodeEquals(200);
 
-    /* @var $installer \Drupal\Core\Extension\ModuleInstallerInterface */
+    /** @var \Drupal\Core\Extension\ModuleInstallerInterface $installer */
     $installer = $this->container->get('module_installer');
     $this->assertTrue($installer->uninstall(['entity_update']));
 
@@ -75,9 +75,10 @@ class InstallUninstallTest extends BrowserTestBase {
     // Uninstall the module field_gallery.
     $edit = [];
     $edit['uninstall[entity_update]'] = TRUE;
-    $this->drupalPostForm('admin/modules/uninstall', $edit, 'Uninstall');
+    $this->drupalGet('admin/modules/uninstall');
+    $this->submitForm($edit, 'Uninstall');
     $assert->pageTextContains('Entity Update');
-    $this->drupalPostForm(NULL, NULL, 'Uninstall');
+    $this->submitForm(NULL, 'Uninstall');
     $assert->pageTextContains('The selected modules have been uninstalled.');
 
     // Re test if site opens with no errors.

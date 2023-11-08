@@ -53,7 +53,7 @@ class ViewsBootstrapTable extends Table {
         'striped' => $this->t('Striped'),
         'bordered' => $this->t('Bordered'),
         'hover' => $this->t('Hover'),
-        'condensed' => $this->t('Condensed'),
+        'sm' => $this->t('Condensed'),
       ],
     ];
   }

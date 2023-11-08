@@ -72,7 +72,7 @@ class EntityCheck {
 
     try {
       // Get entities list.
-      $query = \Drupal::entityQuery($type);
+      $query = \Drupal::entityQuery($type)->accessCheck(FALSE);
       if ($length) {
         $query->range($start, $length);
       }
@@ -143,7 +143,7 @@ class EntityCheck {
         if ($flg_has_update || $flg_has_install && $flg_has_uninstall) {
 
           // Check has data.
-          if (empty(\Drupal::entityQuery($item)->execute())) {
+          if (empty(\Drupal::entityQuery($item)->accessCheck(FALSE)->execute())) {
             EntityUpdatePrint::drushLog("$esp$arr" . "Entity type '$item' is updatable.", 'ok');
             EntityUpdatePrint::drushPrint("$esp$arr" . "Use: drush upe --basic");
           }

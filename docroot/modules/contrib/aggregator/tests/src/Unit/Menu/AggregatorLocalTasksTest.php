@@ -15,7 +15,14 @@ class AggregatorLocalTasksTest extends LocalTaskIntegrationTestBase {
    * {@inheritdoc}
    */
   protected function setUp(): void {
-    $this->directoryList = ['aggregator' => 'core/modules/aggregator'];
+    // Find core directory.
+    $core_dir = __DIR__;
+    while (!file_exists($core_dir . '/index.php')) {
+      $core_dir = dirname($core_dir);
+    }
+    $this_dir = dirname(__DIR__, 4);
+    $relative_path_to_module = substr($this_dir, strlen($core_dir));
+    $this->directoryList = ['aggregator' => $relative_path_to_module];
     parent::setUp();
   }
 

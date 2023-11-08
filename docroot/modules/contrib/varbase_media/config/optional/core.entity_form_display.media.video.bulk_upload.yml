@@ -20,24 +20,30 @@ content:
     region: content
     settings:
       display_label: true
-    third_party_settings: {}
+    third_party_settings: {  }
   field_media_video_file:
+    type: file_generic
     weight: 0
+    region: content
     settings:
       progress_indicator: throbber
-    third_party_settings: {}
-    type: file_generic
-    region: content
+    third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 2
     region: content
-    third_party_settings: {}
+    settings:
+      display_label: true
+    third_party_settings: {  }
 hidden:
   created: true
   field_media_cover_image: true
+  langcode: true
   name: true
   path: true
+  publish_on: true
+  publish_state: true
+  scheduler_settings: true
   uid: true
+  unpublish_on: true
+  unpublish_state: true

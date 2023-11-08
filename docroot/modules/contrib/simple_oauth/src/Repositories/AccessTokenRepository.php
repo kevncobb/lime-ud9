@@ -19,21 +19,21 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface {
    *
    * @var string
    */
-  protected static $bundleId = 'access_token';
+  protected static string $bundleId = 'access_token';
 
   /**
    * The OAuth2 entity class name.
    *
    * @var string
    */
-  protected static $entityClass = 'Drupal\simple_oauth\Entities\AccessTokenEntity';
+  protected static string $entityClass = 'Drupal\simple_oauth\Entities\AccessTokenEntity';
 
   /**
    * The OAuth2 entity interface name.
    *
    * @var string
    */
-  protected static $entityInterface = 'League\OAuth2\Server\Entities\AccessTokenEntityInterface';
+  protected static string $entityInterface = 'League\OAuth2\Server\Entities\AccessTokenEntityInterface';
 
   /**
    * {@inheritdoc}

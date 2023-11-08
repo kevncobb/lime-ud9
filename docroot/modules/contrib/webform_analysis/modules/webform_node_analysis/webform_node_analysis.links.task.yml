@@ -3,3 +3,4 @@ entity.node.webform.results_analysis:
   route_name: entity.node.webform.results_analysis
   parent_id: entity.node.webform.results
   weight: 5
+  deriver: 'Drupal\webform_node_analysis\Plugin\Derivative\WebformNodeAnalysisLocalTask'

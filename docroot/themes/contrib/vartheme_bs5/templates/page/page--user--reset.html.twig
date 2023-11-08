@@ -1,0 +1,20 @@
+{#
+/**
+ * @file
+ * Page user reset.
+ */
+#}
+
+{% include 'varbase_components:page-user-reset' with {
+  logged_in_without_blocks: [
+    'vartheme_bs5_local_tasks',
+    'vartheme_bs5_breadcrumbs',
+    'vartheme_bs5_local_actions'
+  ],
+  not_logged_in_without_blocks: [
+    'vartheme_bs5_local_tasks',
+    'vartheme_bs5_breadcrumbs',
+    'vartheme_bs5_local_actions',
+    'vartheme_bs5_page_title'
+  ]
+} %}

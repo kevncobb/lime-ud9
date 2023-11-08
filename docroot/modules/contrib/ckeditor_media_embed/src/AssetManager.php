@@ -15,7 +15,7 @@ class AssetManager {
    *
    * @var string
    */
-  private static $libraryVersion = '4.5.x';
+  private static $libraryVersion = '4.5.11';
   /**
    * Drupal\ckeditor_media_embed\packagePrefix definition.
    *
@@ -225,7 +225,7 @@ class AssetManager {
    */
   // @codingStandardsIgnoreLine
   public static function getCKEditorLibraryPluginPath() {
-    return 'profiles/varbase/libraries/ckeditor/plugins/';
+    return 'libraries/ckeditor/plugins/';
   }
 
   /**
@@ -239,7 +239,7 @@ class AssetManager {
    */
   // @codingStandardsIgnoreLine
   public static function getCKEditorLibraryPluginDirectory() {
-    return \Drupal::root() . '/profiles/varbase/libraries/ckeditor/plugins/';
+    return \Drupal::root() . '/libraries/ckeditor/plugins/';
   }
 
   /**

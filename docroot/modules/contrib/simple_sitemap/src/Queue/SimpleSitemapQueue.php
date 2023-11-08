@@ -2,9 +2,9 @@
 
 namespace Drupal\simple_sitemap\Queue;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Queue\DatabaseQueue;
-use Drupal\Component\Datetime\TimeInterface;
 
 /**
  * Defines a Simple XML Sitemap queue handler.

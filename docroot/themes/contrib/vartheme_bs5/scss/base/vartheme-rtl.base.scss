@@ -1,0 +1,13 @@
+@import "../defaults";   // Global defaults.
+
+// Vartheme BS5 Base RTL Global styling.
+// -----------------------------------------------------------------------------
+
+/* Justify content center. */
+[dir="rtl"] {
+  .justify-content-center {
+    &.nav-pills > li + li {
+      margin-left: inherit;
+    }
+  }
+}

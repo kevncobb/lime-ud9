@@ -1,0 +1,16 @@
+.navbar .form-inline .form-actions {
+  display: none;
+}
+
+.toolbar-oriented .toolbar-bar {
+  z-index: 1200;
+}
+
+[dir="ltr"] .toolbar-horizontal .toolbar-menu.nav {
+  float: left;
+}
+
+[dir="rtl"] .toolbar-horizontal .toolbar-menu.nav {
+  float: right;
+}
+

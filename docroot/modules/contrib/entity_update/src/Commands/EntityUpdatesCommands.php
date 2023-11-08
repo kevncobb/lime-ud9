@@ -53,11 +53,10 @@ class EntityUpdatesCommands extends DrushCommands implements SiteAliasManagerAwa
    *
    * @param string $type
    *   The entity type ID to update.
-   *
    * @param array $options
    *   Array of options.
    *
-   * @command entity-update
+   * @command entity:update
    * @aliases upe
    *
    * @option show Show entities to update
@@ -100,47 +99,63 @@ class EntityUpdatesCommands extends DrushCommands implements SiteAliasManagerAwa
    *
    * @throws \Exception
    */
-  public function entityUpdates($type = NULL, array $options = ['cache-clear' => TRUE]) {
+  public function entityUpdates($type = '', array $options = [
+    'basic' => FALSE,
+    'all' => FALSE,
+    'bkpdel' => FALSE,
+    'show' => FALSE,
+    'clean' => FALSE,
+    'rescue' => FALSE,
+    'cache-clear' => FALSE,
+    'nobackup' => TRUE,
+  ]) {
+    $caution_message = '
+    - If you use this module, you are conscience what you are doing. You are the responsible of your work.
+    - Please backup your database before any action.
+    - Please Read the documentation before any action.
+    - Do not use this module on multi sites.
+    - Before a new update, Remove old backuped data if any (Using : drush upe --clean).
+    ';
+
+    $all = $options['all'];
+    $basic = $options['basic'];
+    $bkpdel = $options['bkpdel'];
 
     // Show entities to update.
-    if (!empty($options['show'])) {
+    if ($options['show']) {
       EntityCheck::showEntityStatusCli();
       return;
     }
 
     // Clean entity backup database.
-    if (!empty($options['clean'])) {
+    elseif ($options['clean']) {
       EntityUpdate::cleanupEntityBackup();
-      $this->say("Entity backup data removed.");
+      $this->io()->success("Entity backup data removed.");
       return;
     }
 
     // Restore all entities from database.
-    if (!empty($options['rescue'])) {
-      if (drush_confirm('Are you sure you want create entities from backup database ? ')) {
+    elseif ($options['rescue']) {
+      if ($this->io()->confirm('Are you sure you want create entities from backup database ? ')) {
         $res = EntityUpdate::entityUpdateDataRestore();
-
-        $this->say('End of entities recreate process : ' . ($res ? 'ok' : 'error'));
+        $message = 'End of entities recreate process : ';
+        $res ? $this->io()->success($message . ' ok') : $this->io()->error($message . ' error');
 
       }
       return;
     }
 
     // Check mandatory options.
-    $options_mandatory = ['basic', 'all', 'bkpdel'];
-    if (!$type && !_drush_entity_update_checkoptions($options_mandatory)) {
-      $this->say('No option specified, please type "drush help upe" for help or refer to the documentation.: ' . ('cancel'));
+    elseif (!$all && !$basic && !$bkpdel && empty($type)) {
+      $this->io()->note('No option specified, please type "drush help upe" for help or refer to the documentation.');
       return;
     }
 
-    $this->say(' - If you use this module, you are conscience what you are doing. You are the responsible of your work');
-    $this->say(' - Please backup your database before any action');
-    $this->say(' - Please Read the documentation before any action');
-    $this->say(' - Do not use this module on multi sites.');
-    $this->say(' - Before a new update, Remove old backuped data if any (Using : drush upe --clean).');
+    // Caution message.
+    $this->io()->caution($caution_message);
 
     // Backup database.
-    if (!!empty($options['nobackup'])) {
+    if (!$options['nobackup']) {
       $db_backup_file = "backup_" . date("ymd-his") . ".sql.gz";
       $this->say("Backup database to : $db_backup_file");
       $this->say("To restore, run : gunzip < $db_backup_file | drush sqlc ");
@@ -149,42 +164,45 @@ class EntityUpdatesCommands extends DrushCommands implements SiteAliasManagerAwa
     }
 
     // Basic entity update.
-    if (!empty($options['basic'])) {
-      if (drush_confirm('Are you sure you want update entities ?')) {
+    elseif ($basic) {
+      if ($this->io()->confirm('Are you sure you want update entities ?')) {
         $res = EntityUpdate::basicUpdate(!empty($options['force']));
-        $this->say('Basic entities update : ' . ($res ? 'ok' : 'error'));
+        $message = 'Basic entities update : ';
+        $res ? $this->io()->success($message . ' ok') : $this->io()->error($message . ' error');
       }
       return;
     }
 
     // Copy and delete entities.
-    if (!empty($options['bkpdel'])) {
-      if (drush_confirm('Are you sure you want copy entities to update in to backup database and delete entities ?')) {
+    elseif ($bkpdel) {
+      if ($this->io()->confirm('Are you sure you want copy entities to update in to backup database and delete entities ?')) {
         $res = EntityUpdate::entityUpdateDataBackupDel(EntityUpdate::getEntityTypesToUpdate($type), $type);
-        $this->say('End of entities copy and delete process : ' . ($res ? 'ok' : 'error'));
+        $message = 'End of entities copy and delete process : ';
+        $res ? $this->io()->success($message . ' ok') : $this->io()->error($message . ' error');
       }
       return;
     }
 
     // Update all entities.
-    if (!empty($options['all'])) {
-      if ($type) {
-        $this->say("The option --all and a type has specified, please remove a one. : " . 'cancel');
+    elseif ($all) {
+      if (!empty($type)) {
+        $this->io()->error("The option --all and a type has specified, please remove a one. : " . 'cancel');
         return;
       }
 
-      if (drush_confirm('Are you sure you want update all entities ?')) {
+      elseif ($this->io()->confirm('Are you sure you want update all entities ?')) {
         $res = EntityUpdate::safeUpdateMain();
-        $this->say('End of entities update process', $res ? 'ok' : 'error');
+        $message = 'End of entities update process';
+        $res ? $this->io()->success($message . ' ok') : $this->io()->error($message . ' error');
       }
 
       // cache-clear.
-      if (!empty($options['cache-clear'])) {
+      if (!$options['cache-clear']) {
         $process = Drush::drush($this->siteAliasManager()
           ->getSelf(), 'cache-rebuild');
         $process->mustrun();
       }
-      $this->logger()->success(dt('Finished performing updates.'));
+      $this->io()->success(dt('Finished performing updates.'));
       return;
     }
     elseif ($type) {
@@ -193,14 +211,15 @@ class EntityUpdatesCommands extends DrushCommands implements SiteAliasManagerAwa
         if ($entity_type = entity_update_get_entity_type($type)) {
           // Update the entity type.
           $res = EntityUpdate::safeUpdateMain($entity_type);
-          $this->say('End of entities update process for : ' . $type . ' : ' . ($res ? 'ok' : 'error'));
+          $message = 'End of entities update process for : ' . $type;
+          $res ? $this->io()->success($message . ' ok') : $this->io()->error($message . ' error');
           return;
         }
       }
       catch (Exception $e) {
-        $this->logger()->error($e->getMessage());
+        $this->io()->error($e->getMessage());
       }
-      $this->logger()->error("Entity type update Error : $type");
+      $this->io()->error("Entity type update Error : $type");
       return;
     }
 
@@ -211,11 +230,10 @@ class EntityUpdatesCommands extends DrushCommands implements SiteAliasManagerAwa
    *
    * @param string $type
    *   The entity type ID to update.
-   *
    * @param array $options
    *   Array of options.
    *
-   * @command entity-check
+   * @command entity:check
    * @aliases upec
    *
    * @option types Show entities to update
@@ -223,7 +241,7 @@ class EntityUpdatesCommands extends DrushCommands implements SiteAliasManagerAwa
    * @option length Number of entities to show
    * @option start Start from
    *
-   * @usage drush upe --show
+   * @usage drush upec --show
    *
    * @usage drush upec node
    *  Show The entity summery.
@@ -242,9 +260,10 @@ class EntityUpdatesCommands extends DrushCommands implements SiteAliasManagerAwa
    *
    * @throws \Exception
    */
-  public function entityCheck($type = NULL, array $options = [
+  public function entityCheck($type = '', array $options = [
     'start' => 0,
     'length' => 0,
+    'show' => FALSE,
   ]) {
     // Options which hasn't need to have entity type.
     if (!empty($options['types'])) {
@@ -254,7 +273,7 @@ class EntityUpdatesCommands extends DrushCommands implements SiteAliasManagerAwa
     }
 
     // Options need to have an entity type.
-    if ($type) {
+    elseif (!empty($type)) {
 
       if (!empty($options['list'])) {
         // Display entity types list.
@@ -264,12 +283,16 @@ class EntityUpdatesCommands extends DrushCommands implements SiteAliasManagerAwa
       }
 
       // Default action. Show the summary of the entity type.
-      EntityUpdatePrint::displaySummery($type);
+      EntityUpdatePrint::displaySummary($type);
       return;
     }
 
-    $this->say('No option specified, please type "drush help upec" for help or refer to the documentation.');
-    $this->say('No option specified, please type "drush help upec" for help or refer to the documentation.');
+    elseif ($options['show']) {
+      EntityCheck::showEntityStatusCli();
+      return;
+    }
+
+    $this->io()->note('No option specified, please type "drush help upec" for help or refer to the documentation.');
 
   }
 

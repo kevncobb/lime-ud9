@@ -18,11 +18,12 @@
     {% if row.image %}
         {{ row.image }}
     {% endif %}
-    {% if row.title %}
-      <div class="card-header">{{ row.title }}</div>
-    {% endif %}
     {% if row.content %}
       <div class="card-body">
+        {% if row.title %}
+        <h5 class="card-title">{{ row.title }}</h5>
+        {% endif %}
+
         {{ row.content }}
       </div>
     {% endif %}

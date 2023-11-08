@@ -12,6 +12,11 @@ use Drupal\webform_analysis\WebformAnalysisChart;
  */
 class WebformAnalysisForm extends EntityForm {
 
+  /**
+   * The analysis variable.
+   *
+   * @var \Drupal\webform_analysis\WebformAnalysis
+   */
   protected $analysis;
 
   /**
@@ -37,7 +42,8 @@ class WebformAnalysisForm extends EntityForm {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
 
-    $this->analysis = new WebformAnalysis($this->entity);
+    $field_name = $this->getRouteMatch()->getParameter('field_name');
+    $this->analysis = new WebformAnalysis($this->entity, $field_name);
 
     $form['#title'] = $this->getTitle();
 
@@ -47,6 +53,7 @@ class WebformAnalysisForm extends EntityForm {
 
     $chart = new WebformAnalysisChart(
       $this->entity,
+      $field_name,
       $this->analysis->getComponents(),
       $this->analysis->getChartType()
     );

@@ -4,8 +4,8 @@ namespace Drupal\symfony_mailer\Plugin\EmailAdjuster;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Security\TrustedCallbackInterface;
-use Drupal\symfony_mailer\Processor\EmailAdjusterBase;
 use Drupal\symfony_mailer\EmailInterface;
+use Drupal\symfony_mailer\Processor\EmailAdjusterBase;
 
 /**
  * Defines the Body Email Adjuster.
@@ -53,13 +53,11 @@ class BodyEmailAdjuster extends EmailAdjusterBase implements TrustedCallbackInte
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
-    $content = $this->configuration['content'];
-
     $form['content'] = [
       '#title' => $this->t('Content'),
       '#type' => 'text_format',
-      '#default_value' => $content['value'],
-      '#format' => $content['format'] ?? filter_default_format(),
+      '#default_value' => $this->configuration['content']['value'] ?? NULL,
+      '#format' => $this->configuration['content']['format'] ?? filter_default_format(),
       '#required' => TRUE,
       '#rows' => 10,
       '#description' => $this->t('Email body. This field may support tokens or Twig template syntax – please check the supplied default policy for possible values.'),

@@ -7,8 +7,8 @@
  * This file provide drupal hooks.
  */
 
-use Drupal\Core\Url;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_help().
@@ -48,9 +48,9 @@ The update can be executed by drush command (recommended), from a web browser or
 
 $doclinks
 
-<h3>Usage Examples : entity-update (Via drush)</h3>
+<h3>Usage Examples : entity:update (Via drush)</h3>
 <p>
-Drush command : <b>entity-update</b><br>
+Drush command : <b>entity:update</b><br>
 Alias : <b>upe</b>
 <br><br>
 1. Show Entities to update<br>
@@ -67,10 +67,10 @@ Alias : <b>upe</b>
 </p>
 
 
-<h3>Usage Examples : entity-update (Via drush)</h3>
+<h3>Usage Examples : entity:check (Via drush)</h3>
 <p>
 This command allow to show entities and entity types via drush.<br>
-Drush command : <b>entity-check</b><br>
+Drush command : <b>entity:check</b><br>
 Alias : <b>upec</b><br>
 <br><br>
 1. Show The summery of an entity type.<br>

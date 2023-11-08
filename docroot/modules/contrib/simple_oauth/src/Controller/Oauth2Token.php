@@ -3,36 +3,58 @@
 namespace Drupal\simple_oauth\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\simple_oauth\Plugin\Oauth2GrantManagerInterface;
-use GuzzleHttp\Psr7\Response;
-use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\Exception\OAuthServerException;
+use Drupal\simple_oauth\Server\AuthorizationServerFactoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Psr7\Response;
+use League\OAuth2\Server\Exception\OAuthServerException;
+use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Class OAuth2 Token Controller.
+ */
 class Oauth2Token extends ControllerBase {
 
   /**
-   * @var \Drupal\simple_oauth\Plugin\Oauth2GrantManagerInterface
+   * The authorization server factory.
+   *
+   * @var \Drupal\simple_oauth\Server\AuthorizationServerFactoryInterface
    */
-  protected $grantManager;
+  protected AuthorizationServerFactoryInterface $authorizationServerFactory;
 
   /**
+   * The message factory.
+   *
+   * @var \Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface
+   */
+  protected HttpMessageFactoryInterface $httpMessageFactory;
+
+  /**
+   * The client repository.
+   *
    * @var \League\OAuth2\Server\Repositories\ClientRepositoryInterface
    */
-  protected $clientRepository;
+  protected ClientRepositoryInterface $clientRepository;
 
   /**
    * Oauth2Token constructor.
    *
-   * @param \Drupal\simple_oauth\Plugin\Oauth2GrantManagerInterface $grant_manager
-   *   The grant manager.
+   * @param \Drupal\simple_oauth\Server\AuthorizationServerFactoryInterface $authorization_server_factory
+   *   The authorization server factory.
+   * @param \Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface $http_message_factory
+   *   The PSR-7 converter.
    * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface $client_repository
    *   The client repository service.
    */
-  public function __construct(Oauth2GrantManagerInterface $grant_manager, ClientRepositoryInterface $client_repository) {
-    $this->grantManager = $grant_manager;
+  public function __construct(
+    AuthorizationServerFactoryInterface $authorization_server_factory,
+    HttpMessageFactoryInterface $http_message_factory,
+    ClientRepositoryInterface $client_repository
+  ) {
+    $this->authorizationServerFactory = $authorization_server_factory;
+    $this->httpMessageFactory = $http_message_factory;
     $this->clientRepository = $client_repository;
   }
 
@@ -41,56 +63,48 @@ class Oauth2Token extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('plugin.manager.oauth2_grant.processor'),
+      $container->get('simple_oauth.server.authorization_server.factory'),
+      $container->get('psr7.http_message_factory'),
       $container->get('simple_oauth.repositories.client')
     );
   }
 
   /**
    * Processes POST requests to /oauth/token.
-   */
-  public function token(ServerRequestInterface $request) {
-    // Extract the grant type from the request body.
-    $body = $request->getParsedBody();
-    $grant_type_id = !empty($body['grant_type']) ? $body['grant_type'] : 'implicit';
-    $consumer_entity = NULL;
-    if (!empty($body['client_id'])) {
-      $client_drupal_entity = $this->clientRepository
-        ->getClientEntity($body['client_id']);
-      if (empty($client_drupal_entity)) {
-        return OAuthServerException::invalidClient($request)->generateHttpResponse(new Response());
-      }
-      $consumer_entity = $client_drupal_entity->getDrupalEntity();
-    }
-    // Get the auth server object from that uses the League library.
-    try {
-      // Respond to the incoming request and fill in the response.
-      $auth_server = $this->grantManager->getAuthorizationServer($grant_type_id, $consumer_entity);
-      $response = $this->handleToken($request, $auth_server);
-    }
-    catch (OAuthServerException $exception) {
-      watchdog_exception('simple_oauth', $exception);
-      $response = $exception->generateHttpResponse(new Response());
-    }
-    return $response;
-  }
-
-  /**
-   * Handles the token processing.
    *
-   * @param \Psr\Http\Message\ServerRequestInterface $psr7_request
-   *   The psr request.
-   * @param \League\OAuth2\Server\AuthorizationServer $auth_server
-   *   The authorization server.
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The request.
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   The response.
    *
-   * @throws \League\OAuth2\Server\Exception\OAuthServerException
+   * @throws \Exception
    */
-  protected function handleToken(ServerRequestInterface $psr7_request, AuthorizationServer $auth_server) {
-    // Instantiate a new PSR-7 response object so the library can fill it.
-    return $auth_server->respondToAccessTokenRequest($psr7_request, new Response());
+  public function token(Request $request): ResponseInterface {
+    $server_request = $this->httpMessageFactory->createRequest($request);
+    $server_response = new Response();
+    $client_id = $request->get('client_id');
+
+    try {
+      if (empty($client_id)) {
+        throw OAuthServerException::invalidRequest('client_id');
+      }
+      $client_entity = $this->clientRepository->getClientEntity($client_id);
+      if (empty($client_entity)) {
+        throw OAuthServerException::invalidClient($server_request);
+      }
+      $client_drupal_entity = $client_entity->getDrupalEntity();
+
+      // Respond to the incoming request and fill in the response.
+      $server = $this->authorizationServerFactory->get($client_drupal_entity);
+      $response = $server->respondToAccessTokenRequest($server_request, $server_response);
+    }
+    catch (OAuthServerException $exception) {
+      watchdog_exception('simple_oauth', $exception);
+      $response = $exception->generateHttpResponse($server_response);
+    }
+
+    return $response;
   }
 
 }

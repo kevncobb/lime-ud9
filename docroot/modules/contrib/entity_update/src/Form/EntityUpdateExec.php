@@ -2,9 +2,9 @@
 
 namespace Drupal\entity_update\Form;
 
-use Drupal\entity_update\EntityUpdate;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\entity_update\EntityUpdate;
 
 /**
  * Class CheckEntityUpdate.

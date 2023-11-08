@@ -1,10 +1,6 @@
 // Varbase Bootstrap Paragraphs Default base styling.
 // -----------------------------------------------------------------------------
-@import "../../node_modules/bootstrap/scss/functions"; // Bootstrap functions.
-@import "../../node_modules/bootstrap/scss/mixins";    // Bootstrap mixins.
-@import "../../node_modules/bootstrap/scss/variables"; // Bootstrap variables.
-@import "../../node_modules/rfs/scss";                 // RFS ~9.0 mixins.
-// -----------------------------------------------------------------------------
+@import "../defaults";   // Global defaults.
 
 .paragraph {
   margin-left: 0;
@@ -12,7 +8,7 @@
 
   > {
     .paragraph__column {
-      @include padding-bottom($jumbotron-padding);
+      @include padding-bottom(4rem);
       
       .paragraph {
         > {
@@ -67,8 +63,12 @@
   .paragraph {
     .bg-edge2edge,
     &.bg-edge2edge {
-      width: 100%;
       position: initial;
+      right: 0 !important;
+      left: 0 !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      width: 100%;
       margin: 0;
     }
 

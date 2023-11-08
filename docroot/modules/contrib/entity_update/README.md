@@ -45,11 +45,11 @@ No need to configure the module, but you can check Entities update status via:
 Permission : Administer software updates
 
 
-## NEW IN VERSION 2.0
+## NEW IN VERSION 3.0
 
-- The version 2 is compatible from drupal 8.7 and drupal 9
+- The version 3 is compatible from drupal 9.4 and drupal 10.
 
-Version 1.2
+### Version 3.0
 
 - Update a selected entity type.
 Use the web browser for:

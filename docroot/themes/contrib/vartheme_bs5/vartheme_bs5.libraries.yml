@@ -1,0 +1,102 @@
+framework:
+  dependencies:
+    - vartheme_bs5/bootstrap-styles
+    - vartheme_bs5/bootstrap-scripts
+    - vartheme_bs5/global-styles
+    - vartheme_bs5/global-scripts
+    - vartheme_bs5/fontawesome
+
+# Bootstrap 5 global styles library.
+bootstrap-styles:
+  css:
+    base:
+      css/base/bootstrap.base.css: {}
+
+# Bootstrap 5 global scripts library.
+bootstrap-scripts:
+  dependencies:
+    - core/drupal
+    - core/jquery
+  js:
+    js/popperjs/popper.js: {}
+    js/bootstrap/bootstrap.min.js: {}
+    #
+    # Plugins can be included individually (using Bootstrap’s individual
+    # js/dist/*.js), or all at once using bootstrap.js or the minified
+    # bootstrap.min.js (don’t include both).
+    # ------------------------------------------------------------------------------
+    # Alerts for dismissing
+    # Buttons for toggling states and checkbox/radio functionality
+    # Carousel for all slide behaviors, controls, and indicators
+    # Collapse for toggling visibility of content
+    # Dropdowns for displaying and positioning (also requires Popper.js)
+    # Modals for displaying, positioning, and scroll behavior
+    # Navbar for extending our Collapse plugin to implement responsive behavior
+    # Tooltips and popovers for displaying and positioning (also requires Popper.js)
+    # Scrollspy for scroll behavior and navigation updates
+    # -------------------------------------------------------------------------------
+    # js/bootstrap/alert.js: {}
+    # js/bootstrap/base-component.js: {}
+    # js/bootstrap/button.js: {}
+    # js/bootstrap/carousel.js: {}
+    # js/bootstrap/collapse.js: {}
+    # js/bootstrap/dropdown.js: {}
+    # js/bootstrap/modal.js: {}
+    # js/bootstrap/offcanvas.js: {}
+    # js/bootstrap/popover.js: {}
+    # js/bootstrap/scrollspy.js: {}
+    # js/bootstrap/tab.js: {}
+    # js/bootstrap/tooltip.js: {}
+
+# Vartheme BS5 global styles library.
+global-styles:
+  css:
+    base:
+      css/base/vartheme.base.css: {}
+    layout:
+      css/layout/edge2edge.layout.css: {}
+      css/layout/equal-height.layout.css: {}
+      css/layout/print.layout.css: { media: print }
+
+# Vartheme BS5 global scripts library.
+global-scripts:
+  js:
+    js/scripts.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupal.ajax
+
+framework-rtl:
+  dependencies:
+    - vartheme_bs5/bootstrap-styles-rtl
+    - vartheme_bs5/bootstrap-scripts
+    - vartheme_bs5/global-styles-rtl
+    - vartheme_bs5/global-scripts
+    - vartheme_bs5/fontawesome
+
+# Bootstrap 5 global RTL styles library.
+bootstrap-styles-rtl:
+  css:
+    base:
+      css/base/bootstrap-rtl.base.css: {}
+
+# Vartheme BS5 global RTL styles library.
+global-styles-rtl:
+  css:
+    base:
+      css/base/vartheme-rtl.base.css: {}
+    theme:
+      fonts/droid/arabic/kufi/css/droidarabickufi.css: {}
+
+# Vartheme BS5 content moderation status theme.
+content_moderation:
+  css:
+    theme:
+      css/theme/content-moderation.theme.css: {}
+
+# Font Awesome free icons.
+fontawesome:
+  css:
+    theme:
+      fonts/fontawesome-free/css/all.min.css: { minified: true }

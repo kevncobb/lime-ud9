@@ -1,0 +1,89 @@
+<?php
+
+/**
+ * @file
+ * Module implementation file.
+ */
+
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Field\FormatterInterface;
+
+const NOMARKUP_DEFAULT_SEPARATOR = '|';
+
+/**
+ * Implements hook_theme().
+ */
+function nomarkup_theme() {
+  return [
+    'field__nomarkup' => [
+      'base hook' => 'field',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_field_formatter_third_party_settings_form().
+ */
+function nomarkup_field_formatter_third_party_settings_form(FormatterInterface $plugin, FieldDefinitionInterface $field_definition, $view_mode, $form, FormStateInterface $form_state) {
+  $settings['nomarkup'] = [];
+
+  $settings['nomarkup']['enabled'] = [
+    '#title' => t('Remove field markup'),
+    '#description' => t('If enabled, the field value will be rendeded without any other HTML markup.'),
+    '#type' => 'checkbox',
+    '#default_value' => $plugin->getThirdPartySetting('nomarkup', 'enabled'),
+  ];
+  $separator = $plugin->getThirdPartySetting('nomarkup', 'separator', NOMARKUP_DEFAULT_SEPARATOR);
+  if ($field_definition->getFieldStorageDefinition()->getCardinality() !== 1) {
+    $settings['nomarkup']['separator'] = [
+      '#title' => t('Multi-value separator'),
+      '#description' => t('This string is used to separate multiple values of the field. Choose something that is unlikely to appear in the field value.'),
+      '#type' => 'textfield',
+      '#default_value' => $separator,
+    ];
+  }
+  else {
+    $settings['nomarkup']['separator'] = [
+      '#type' => 'hidden',
+      '#value' => $separator,
+    ];
+  }
+
+  return $settings['nomarkup'];
+}
+
+/**
+ * Implements hook_field_formatter_settings_summary_alter().
+ */
+function nomarkup_field_formatter_settings_summary_alter(array &$summary, array $context) {
+  if ($context['formatter']->getThirdPartySetting('nomarkup', 'enabled')) {
+    $cardinality = $context['field_definition']->getFieldStorageDefinition()
+      ->getCardinality();
+    $message = $cardinality === 1 ?
+      t('The field will render without markup.') :
+      t('The field will render without markup using "@separator" to separate multiple values.', [
+        '@separator' => $context['formatter']->getThirdPartySetting('nomarkup', 'separator', NOMARKUP_DEFAULT_SEPARATOR),
+      ]);
+    $summary[] = $message;
+  }
+}
+
+/**
+ * Implements hook_preprocess_field().
+ */
+function nomarkup_preprocess_field(&$vars) {
+  $nomarkup_config = $vars['element']['#third_party_settings']['nomarkup'] ?? [];
+  $vars['separator'] = $nomarkup_config['separator'] ?? NOMARKUP_DEFAULT_SEPARATOR;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function nomarkup_theme_suggestions_field_alter(array &$suggestions, array $variables) {
+  $enabled = $variables['element']['#third_party_settings']['nomarkup']['enabled'] ?? FALSE;
+  // If the setting is enabled, suggest our own template.
+  if ($enabled) {
+    $suggestions = ['field__nomarkup'];
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "require": {
+    "spatie/calendar-links": {
+      "version": "v1.7.1",
+      "url": "https://github.com/spatie/calendar-links/archive/1.7.1.zip"
+    }
+  }
+}

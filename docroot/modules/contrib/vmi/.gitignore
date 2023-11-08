@@ -1,13 +1,14 @@
 # Ignore node modules
 node_modules
 /*/node_modules
-yarn.lock
 package-lock.json
 
 # Ignore Variables
 /css/variables.css
 /css/variables.css.map
 /css/mixins/
+css/bootstrap-variables.css
+css/bootstrap-variables.css.map
 
 # Ignore vim swp files and gedit temp files
 *.swp

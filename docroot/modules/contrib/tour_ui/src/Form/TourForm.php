@@ -160,7 +160,7 @@ class TourForm extends EntityForm {
         $this->t('Weight'),
         $this->t('Operations'),
       ],
-      '#caption' => [['#markup' => $this->t('Tips provided by this tour. By clicking on Operations buttons, every changes which are not saved will be lost.')]],
+      '#caption' => [['#markup' => $this->t('Tips provided by this tour. By clicking on the operations buttons, every change that has not been saved will be lost.')]],
       '#tabledrag' => [
         [
           'action' => 'order',
@@ -393,20 +393,21 @@ class TourForm extends EntityForm {
       $form_state->setValue('tips', []);
     }
 
+    $input_values = $form_state->getUserInput();
+
+    if (!empty($input_values) && array_key_exists('new', $input_values)) {
+      $this->messenger->addMessage($this->t('The tour %tour has been updated.', ['%tour' => $form_state->getValue('label')]));
+    }
+    else {
+      $this->messenger->addMessage($this->t('The tour %tour has been created.', ['%tour' => $form_state->getValue('label')]));
+    }
+
     parent::submitForm($form, $form_state);
 
     // Redirect to Entity edition.
     if ($redirect) {
       $form_state->setRedirect('entity.tour.edit_form', ['tour' => $this->entity->id()]);
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function delete(array $form, FormStateInterface $form_state) {
-    $entity = $this->getEntity($form_state);
-    $form_state->setRedirect('entity.tour.delete_form', ['tour' => $entity->id()]);
   }
 
 }

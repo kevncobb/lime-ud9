@@ -21,33 +21,37 @@ content:
     region: content
     settings:
       display_label: true
-    third_party_settings: {}
+    third_party_settings: {  }
   field_media_oembed_video:
     type: oembed_textfield
     weight: 1
     region: content
     settings:
       size: 60
-      placeholder: ""
-    third_party_settings: {}
+      placeholder: ''
+    third_party_settings: {  }
   name:
     type: string_textfield
     weight: 2
     region: content
     settings:
       size: 60
-      placeholder: ""
-    third_party_settings: {}
+      placeholder: ''
+    third_party_settings: {  }
   preview:
     weight: 0
     region: content
-    settings: {}
-    third_party_settings: {}
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   created: true
   field_media_cover_image: true
-  langcode: true
   field_provider: true
+  langcode: true
   path: true
+  publish_on: true
+  publish_state: true
   status: true
   uid: true
+  unpublish_on: true
+  unpublish_state: true

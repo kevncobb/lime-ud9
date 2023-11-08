@@ -150,7 +150,10 @@ class HttpFetcher extends PluginBase implements ClearableInterface, FetcherInter
   protected function get($url, $sink, $cache_key = FALSE) {
     $url = Feed::translateSchemes($url);
 
-    $options = [RequestOptions::SINK => $sink];
+    $options = [
+      RequestOptions::SINK => $sink,
+      'timeout' => $this->configuration['request_timeout'],
+    ];
 
     // Adding User-Agent header from the default guzzle client config for feeds
     // that require that.

@@ -1,5 +1,5 @@
 {
-    "name": "drupal/aggregator-aggregator",
+    "name": "drupal/aggregator",
     "description": "Ingest RSS feeds into your Drupal site",
     "type": "drupal-module",
     "require": {

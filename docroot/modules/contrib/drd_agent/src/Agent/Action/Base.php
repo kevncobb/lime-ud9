@@ -17,7 +17,6 @@ use Drupal\drd_agent\Agent\Auth\BaseInterface as AuthBaseInterface;
 use Drupal\drd_agent\Agent\Auth\Base as AuthBase;
 use Drupal\drd_agent\Crypt\Base as CryptBase;
 use Drupal\drd_agent\Crypt\BaseMethodInterface;
-use Drupal\drd_agent\DrdPiAuthManager;
 use Drupal\user\Entity\User;
 use Exception;
 use Psr\Log\LogLevel;
@@ -31,6 +30,10 @@ class Base implements BaseInterface, ContainerInjectionInterface {
 
   private $debugMode = FALSE;
   private $arguments = array();
+
+  const SEC_AUTH_ACQUIA = 'Acquia';
+  const SEC_AUTH_PANTHEON = 'Pantheon';
+  const SEC_AUTH_PLATFORMSH = 'PlatformSH';
 
   /**
    * Crypt object for this DRD request.
@@ -95,11 +98,6 @@ class Base implements BaseInterface, ContainerInjectionInterface {
   protected $time;
 
   /**
-   * @var \Drupal\drd_agent\DrdPiAuthManager
-   */
-  protected $drdPiAuthManager;
-
-  /**
    * Base constructor.
    *
    * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
@@ -113,9 +111,8 @@ class Base implements BaseInterface, ContainerInjectionInterface {
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    * @param \Drupal\Core\State\StateInterface $state
    * @param \Drupal\Component\Datetime\Time $time
-   * @param \Drupal\drd_agent\DrdPiAuthManager $drd_pi_auth_manager
    */
-  public function __construct(ContainerInterface $container, AccountSwitcherInterface $account_switcher, ConfigFactoryInterface $config_factory, Connection $database, EntityTypeManagerInterface $entity_type_manager, FileSystemInterface $file_system, LoggerChannelFactoryInterface $logger_channel_factory, MessengerInterface $messenger, ModuleHandlerInterface $module_handler, StateInterface $state, Time $time, DrdPiAuthManager $drd_pi_auth_manager) {
+  public function __construct(ContainerInterface $container, AccountSwitcherInterface $account_switcher, ConfigFactoryInterface $config_factory, Connection $database, EntityTypeManagerInterface $entity_type_manager, FileSystemInterface $file_system, LoggerChannelFactoryInterface $logger_channel_factory, MessengerInterface $messenger, ModuleHandlerInterface $module_handler, StateInterface $state, Time $time) {
     $this->accountSwitcher = $account_switcher;
     $this->configFactory = $config_factory;
     $this->container = $container;
@@ -127,7 +124,6 @@ class Base implements BaseInterface, ContainerInjectionInterface {
     $this->moduleHandler = $module_handler;
     $this->state = $state;
     $this->time = $time;
-    $this->drdPiAuthManager = $drd_pi_auth_manager;
   }
 
   /**
@@ -145,8 +141,7 @@ class Base implements BaseInterface, ContainerInjectionInterface {
       $container->get('messenger'),
       $container->get('module_handler'),
       $container->get('state'),
-      $container->get('datetime.time'),
-      $container->get('plugin.manager.drd_pi_auth')
+      $container->get('datetime.time')
     );
   }
 
@@ -340,10 +335,34 @@ class Base implements BaseInterface, ContainerInjectionInterface {
         throw new RuntimeException('Input is incomplete');
       }
 
-      /** @var \Drupal\drd_agent\Plugin\DrdPiAuth\DrdPiAuthInterface $auth */
-      $auth = $this->drdPiAuthManager->createInstance($input['method']);
-      $auth->validate($input);
+      switch ($input['method']) {
+        case self::SEC_AUTH_ACQUIA:
+          $required = array('username', 'password');
+          $local = $this->getDbInfo();
+          break;
 
+        case self::SEC_AUTH_PANTHEON:
+          $required = array('PANTHEON_SITE');
+          $local = $_ENV;
+          break;
+
+        case self::SEC_AUTH_PLATFORMSH:
+          $required = array('PLATFORM_PROJECT');
+          $local = $_ENV;
+          break;
+
+        default:
+          throw new RuntimeException('Unknown method.');
+      }
+
+      foreach ($required as $item) {
+        if (!isset($local[$item])) {
+          throw new RuntimeException('Unsupported method.');
+        }
+        if ($local[$item] !== $input['secrets'][$item]) {
+          throw new RuntimeException('Invalid secret.');
+        }
+      }
       $this->authorize($input['remoteSetupToken']);
     }
     catch (Exception $ex) {

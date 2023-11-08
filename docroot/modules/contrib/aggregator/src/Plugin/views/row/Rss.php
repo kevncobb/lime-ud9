@@ -2,6 +2,8 @@
 
 namespace Drupal\aggregator\Plugin\views\row;
 
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\views\Plugin\views\row\RssPluginBase;
 
 /**
@@ -26,16 +28,18 @@ class Rss extends RssPluginBase {
   public $base_table = 'aggregator_item';
 
   /**
-   * The actual field which is used to identify an aggregator item.
-   *
-   * @var string
+   * {@inheritdoc}
    */
-  public $base_field = 'iid';
+  protected $entityTypeId = 'aggregator_item';
 
   /**
    * {@inheritdoc}
    */
-  protected $entityTypeId = 'aggregator_item';
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityDisplayRepositoryInterface $entity_display_repository) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_display_repository);
+    // The actual field which is used to identify an aggregator item.
+    $this->base_field = 'iid';
+  }
 
   /**
    * {@inheritdoc}
@@ -46,6 +50,11 @@ class Rss extends RssPluginBase {
     $item = new \stdClass();
     foreach ($entity as $name => $field) {
       $item->{$name} = $field->value;
+    }
+
+    // Item descriptions must be render arrays.
+    if (isset($item->description) && !is_array($item->description)) {
+      $item->description = ['#markup' => $item->description];
     }
 
     $item->elements = [

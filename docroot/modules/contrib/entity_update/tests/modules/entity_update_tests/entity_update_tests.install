@@ -16,7 +16,7 @@ use Drupal\entity_update\EntityUpdate;
 function entity_update_tests_update_8001() {
 
   // Entity checking process : Get current entities list.
-  $ids_old = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+  $ids_old = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
 
   // Get entity type.
   $entity_type = \Drupal::entityTypeManager()->getStorage('entity_update_tests_cnt');
@@ -27,7 +27,7 @@ function entity_update_tests_update_8001() {
   }
 
   // Entity checking process : Compare with new list entities list.
-  $ids_new = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+  $ids_new = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
 
   // Compare two lists.
   $result = array_diff($ids_old, $ids_new);
@@ -45,7 +45,7 @@ function entity_update_tests_update_8001() {
 function entity_update_tests_update_8002() {
 
   // Entity checking process : Get current entities list.
-  $ids_old = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+  $ids_old = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
 
   // Make Update Using full methode.
   if (!EntityUpdate::safeUpdateMain()) {
@@ -54,7 +54,7 @@ function entity_update_tests_update_8002() {
   }
 
   // Entity checking process : Compare with new list entities list.
-  $ids_new = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+  $ids_new = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
 
   // Compare two lists.
   $result = array_diff($ids_old, $ids_new);
@@ -72,7 +72,7 @@ function entity_update_tests_update_8002() {
 function entity_update_tests_update_8003() {
 
   // Entity checking process : Get current entities list.
-  $ids_old = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+  $ids_old = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
 
   // Make Update Using full methode.
   if (!EntityUpdate::safeUpdateMain()) {
@@ -81,7 +81,7 @@ function entity_update_tests_update_8003() {
   }
 
   // Entity checking process : Compare with new list entities list.
-  $ids_new = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+  $ids_new = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
 
   // Compare two lists.
   $result = array_diff($ids_old, $ids_new);

@@ -2,6 +2,8 @@
 
 namespace Drupal\entity_update;
 
+use Drush\Drush;
+
 /**
  * EntityCheck CLI Print class.
  */
@@ -9,6 +11,8 @@ class EntityUpdatePrint {
 
   /**
    * Enable / Disable echo.
+   *
+   * @var bool
    */
   protected static $echoPrintEnable = TRUE;
 
@@ -22,13 +26,20 @@ class EntityUpdatePrint {
   /**
    * Print.
    *
-   * @param $text
+   * @param string $text
+   *   Text to print.
+   * @param int $indent
+   *   Indentation.
+   * @param string $handle
+   *   Handle.
+   * @param bool $newline
+   *   Newline.
    */
   public static function echoPrint($text, $indent = 0, $handle = NULL, $newline = TRUE) {
     if (!self::$echoPrintEnable) {
       return;
     }
-    echo "$text";
+    Drush::output()->writeln(dt($text));
     if ($newline) {
       echo "\n";
     }
@@ -46,7 +57,7 @@ class EntityUpdatePrint {
   /**
    * Check is CLI then run drush_log.
    */
-  public static function drushLog($message, $type = LogLevel::NOTICE, $error = NULL, $ui_print = FALSE) {
+  public static function drushLog($message, $type = LogLevel::NOTICE, $error = [], $ui_print = FALSE) {
     if (php_sapi_name() == 'cli') {
       self::echoPrint($message);
     }
@@ -61,11 +72,11 @@ class EntityUpdatePrint {
    * @param string $type
    *   The entity type id.
    */
-  public static function displaySummery($type) {
+  public static function displaySummary($type) {
     try {
       $entity_type = \Drupal::entityTypeManager()->getDefinition($type);
 
-      $query = \Drupal::entityQuery($type);
+      $query = \Drupal::entityQuery($type)->accessCheck(FALSE);
       $ids = $query->execute();
 
       self::echoPrint("Entity type  : " . $type);
@@ -98,7 +109,27 @@ class EntityUpdatePrint {
       return;
     }
 
-    $cols = exec('tput cols');
+    // Find width of terminal window. First try 'tput'
+    exec('tput cols 2>&1', $exec_output, $result_code);
+    if ($result_code === 0) {
+      $cols = $exec_output[0];
+    }
+    else {
+      // tput failed; try 'stty;
+      unset($exec_output);
+      exec('stty size 2>&1', $exec_output, $result_code);
+      if ($result_code === 0) {
+        // Output of 'stty size' is similar to '42 180' (rows then columns))
+        $size = $exec_output[0];
+        $cols = explode(' ', $size, 2)[1];
+      }
+      else {
+        // Neither tput nor stty were able to give the width.
+        // Set a default output screen width.
+        $cols = 80;
+      }
+    }
+
     $line_empty = "|" . str_repeat("-", $cols - 2) . "|";
     self::echoPrint($line_empty);
 

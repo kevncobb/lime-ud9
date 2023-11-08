@@ -1,0 +1,53 @@
+<?php
+/**
+ * Add to Cal install and update hooks.
+ */
+
+/**
+ * Upgrade field display settings for version 2 of the module.
+ */
+function addtocal_update_8200(&$sandbox) {
+  $entity_view_display_storage = \Drupal::entityTypeManager()->getStorage('entity_view_display');
+  $entity_view_displays = $entity_view_display_storage->loadMultiple();
+
+  /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $entity_view_display */
+  foreach ($entity_view_displays as $entity_view_display) {
+    foreach ($entity_view_display->getComponents() as $name => $component) {
+      $type = $component['type'] ?? '';
+      if ($type == 'addtocal_view') {
+        $location = $component['settings']['location'] ?? '';
+        if (!is_string($location)) {
+          // Pull tokenized string, or create one from the field value.
+          if (!empty($location['tokenized'])) {
+            $location = $location['tokenized'];
+          }
+          elseif (!empty($location['value'])) {
+            $location = '[' . $entity_view_display->getTargetEntityTypeId() . ':' . $location['value'] . ']';
+          }
+          else {
+            $location = '';
+          }
+          $component['settings']['location'] = $location;
+        }
+
+        $description = $component['settings']['description'] ?? '';
+        if (!is_string($description)) {
+          // Pull tokenized string, or create one from the field value.
+          if (!empty($description['tokenized'])) {
+            $description = $description['tokenized'];
+          }
+          elseif (!empty($description['value'])) {
+            $description = '[' . $entity_view_display->getTargetEntityTypeId() . ':' . $description['value'] . ']';
+          }
+          else {
+            $description = '';
+          }
+          $component['settings']['description'] = $description;
+        }
+
+        $entity_view_display->setComponent($name, $component);
+        $entity_view_display->save();
+      }
+    }
+  }
+}

@@ -1,40 +1,35 @@
-/**
- * @file addtocal.js
- */
-(function ($) {
-  // Don't need to re-attach this function, so we do it here instead
-  // of in Drupal.behaviors.
-  $(document).ready(function () {
-    var $button = $('.addtocal');
-    var button_id = $button.attr('id');
-    var $menu = $('#' + button_id + '-menu');
+(function ($, Drupal) {
+  Drupal.behaviors.addtocal = {
+    attach: function (context, settings) {
+      // Hide and show the menu on click.
+      once('addtocal','body').forEach($body => {
+        $($body).click(function (event) {
+          var $target = $(event.target);
+          var $menu = null;
+          if ($target.hasClass('addtocal')) {
+            event.preventDefault();
 
-    // When clicking anywhere in the window, hide menu.
-    $(window).click(function () {
-      if ($(window).data('addtocalVisible')) {
-        $menu.hide();
-        $(window).data('addtocalVisible', false);
-      }
-    });
+            var offset = $target.position();
+            $menu = $('#' + $target.attr('id') + '-menu');
 
-    $('.addtocal').on('click',function (e) {
-      e.stopPropagation();
-      e.preventDefault();
+            $menu.css({
+              'top': offset.top + $target.outerHeight(),
+              'left': offset.left
+            });
+            $menu.toggle();
+          }
 
-      // Set position always on click to get the most accurate result.
-      var offset = $button.position();
-      $menu.css({
-        'top': offset.top + $button.outerHeight(),
-        'left': offset.left
-      });
-      $menu.toggle(0, function () {
-        if ($(this).is(":visible")) {
-          $(window).data('addtocalVisible', true);
-        }
-        else {
-          $(window).data('addtocalVisible', false);
-        }
-      });
-    });
+          $('.addtocal-menu').not($menu).hide();
+        })
+      })
+    }
+  };
+
+  // Hide the menu on Esc key.
+  $(document).keyup(function(event) {
+    if (event.keyCode === 27) {
+      $('.addtocal-menu').hide();
+    }
   });
-})(jQuery);
+
+})(jQuery, Drupal);

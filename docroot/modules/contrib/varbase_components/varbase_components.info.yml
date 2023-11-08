@@ -1,0 +1,22 @@
+name: "Varbase Components"
+description: "This is the components handler module for Varbase distribution."
+type: module
+package: Varbase
+core_version_requirement: ~10.1.0
+dependencies:
+  - drupal:sdc
+  - ui_patterns:ui_patterns
+  - ui_patterns:ui_patterns_field_group
+  - ui_patterns:ui_patterns_ds
+  - ui_patterns:ui_patterns_layouts
+  - ui_patterns:ui_patterns_library
+  - ui_patterns:ui_patterns_views
+  - ui_patterns_settings:ui_patterns_settings
+  - ui_patterns_field_formatters:ui_patterns_field_formatters
+install:
+  - cl_components
+
+# Information added by Drupal.org packaging script on 2023-10-12
+version: '2.0.0-alpha28'
+project: 'varbase_components'
+datestamp: 1697139859

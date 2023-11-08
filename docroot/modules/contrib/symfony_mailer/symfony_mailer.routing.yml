@@ -36,6 +36,7 @@ entity.mailer_transport.set_default:
     _controller: '\Drupal\symfony_mailer\Controller\SymfonyMailerController::setAsDefault'
   requirements:
     _permission: 'administer mailer'
+    _csrf_token: 'TRUE'
 
 entity.mailer_policy.collection:
   path: '/admin/config/system/mailer'

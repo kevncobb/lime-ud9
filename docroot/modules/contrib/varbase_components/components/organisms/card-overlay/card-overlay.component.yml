@@ -1,0 +1,76 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/10.1.x/core/modules/sdc/src/metadata.schema.json
+name: Overlay Card 
+status: experimental
+description: Overlay card component for a media and a content over the media with sizes
+group: Cards
+props:
+  type: object
+  properties:
+    style_size:
+      type: string
+      title: Card style size
+      description: Card style size (xsmall|small|medium|large|xlarge).
+      default: ''
+      enum:
+        - ''
+        - xsmall
+        - small
+        - medium
+        - large
+        - xlarge
+    card_border:
+      type: boolean
+      title: Card Boarder
+      default: true
+    equal_height:
+      type: boolean
+      title: Equal height
+      default: true
+    anchor_all:
+      type: boolean
+      title: Anchor All
+      default: false
+    horizontal_alignment:
+      type: string
+      title: Horizontal alignment
+      default: ''
+      enum:
+        - ''
+        - start
+        - center
+        - end
+    vertical_alignment:
+      type: string
+      title: Vertical alignment
+      default: ''
+      enum:
+        - ''
+        - start
+        - center
+        - end
+    utility_classes:
+      type: array
+      title: Utility Classes
+      default: []
+      description: Use to add extra Bootstrap utility classes for the main Card wrapper. E.g. `mb-3 shadow-lg` ( Do not add card) 
+    media_utility_classes:
+      type: array
+      title: Media Utility Classes
+      default: []
+      description: Use to add extra Bootstrap utility classes for the Card Media region wrapper. E.g. `bg-secondary mb-3` ( Do not add card-image)
+    content_utility_classes:
+      type: array
+      title: Content Utility Classes
+      default: []
+      description: Use to add extra Bootstrap utility classes for the Card Content region wrapper. E.g. `w-75 mb-3 overflow-y-hidden`  ( Do not add card-body)
+    card_attributes:
+      type: Drupal\Core\Template\Attribute
+    content_attributes:
+      type: Drupal\Core\Template\Attribute
+slots:
+  media:
+    title: Card Media
+    description: Media for the Card.
+  content:
+    title: Card Content
+    description: Content for the Card.

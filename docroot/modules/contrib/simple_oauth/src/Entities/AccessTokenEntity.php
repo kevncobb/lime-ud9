@@ -10,6 +10,9 @@ use League\OAuth2\Server\Entities\Traits\AccessTokenTrait;
 use League\OAuth2\Server\Entities\Traits\EntityTrait;
 use League\OAuth2\Server\Entities\Traits\TokenEntityTrait;
 
+/**
+ * The entity for the Access token.
+ */
 class AccessTokenEntity implements AccessTokenEntityInterface {
 
   use AccessTokenTrait, TokenEntityTrait, EntityTrait;
@@ -17,6 +20,7 @@ class AccessTokenEntity implements AccessTokenEntityInterface {
   /**
    * {@inheritdoc}
    */
+  // phpcs:ignore
   public function convertToJWT() {
     $private_claims = [];
     \Drupal::moduleHandler()
@@ -30,9 +34,9 @@ class AccessTokenEntity implements AccessTokenEntityInterface {
 
     $id = $this->getIdentifier();
     $now = new \DateTimeImmutable('@' . \Drupal::time()->getCurrentTime());
-    $key_path = $this->privateKey->getKeyPath();
-    $key = InMemory::file($key_path);
+    $key = InMemory::plainText($this->privateKey->getKeyContents());
     $config = Configuration::forSymmetricSigner(new Sha256(), $key);
+    $user_id = $this->getUserIdentifier();
 
     $builder = $config->builder()
       ->permittedFor($this->getClient()->getIdentifier())
@@ -41,8 +45,11 @@ class AccessTokenEntity implements AccessTokenEntityInterface {
       ->issuedAt($now)
       ->canOnlyBeUsedAfter($now)
       ->expiresAt($this->getExpiryDateTime())
-      ->relatedTo($this->getUserIdentifier())
       ->withClaim('scope', $this->getScopes());
+
+    if ($user_id) {
+      $builder->relatedTo($user_id);
+    }
 
     foreach ($private_claims as $claim_name => $value) {
       $builder->withClaim($claim_name, $value);

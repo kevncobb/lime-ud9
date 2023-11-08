@@ -113,20 +113,8 @@ function linkit_form_editor_link_dialog_alter(&$form, FormStateInterface $form_s
     ];
   }
 
-  // Add #validate & #submit callbacks that handles the data-* attributes.
-  array_unshift($form['#validate'], 'linkit_form_editor_link_dialog_validate');
+  // Add #submit callback that handles the data-* attributes.
   array_unshift($form['#submit'], 'linkit_form_editor_link_dialog_submit');
-}
-
-/**
- * Validate the data-* attributes.
- */
-function linkit_form_editor_link_dialog_validate(array &$form, FormStateInterface $form_state) {
-  // Check if the 'href' is empty.
-  $href = $form_state->getValue(['attributes', 'href']);
-  if ($href == '') {
-    $form_state->setError($form['attributes']['href'], t('Invalid URL'));
-  }
 }
 
 /**
@@ -154,7 +142,7 @@ function linkit_form_editor_link_dialog_submit(array &$form, FormStateInterface 
   foreach ($fields as $field_name) {
     $value = $form_state->getValue(['attributes', $field_name]);
     if (empty($value)) {
-      if (!empty($link_element[$field_name])) {
+      if (!empty($link_element)) {
         $form_state->setValue(['attributes', $field_name], '');
       }
       else {

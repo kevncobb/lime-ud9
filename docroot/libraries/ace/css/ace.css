@@ -595,6 +595,14 @@ opacity: 0.5;
 font-style: italic;
 white-space: pre;
 }
+.ace_screenreader-only {
+position:absolute;
+left:-10000px;
+top:auto;
+width:1px;
+height:1px;
+overflow:hidden;
+}
 /*ace-tm*/
 .ace-tm .ace_gutter {
 background: #f0f0f0;
@@ -894,9 +902,10 @@ background: rgba(58, 103, 78, 0.62);
 }
 .ace_completion-meta {
 opacity: 0.5;
-margin: 0 0.9em;
+margin-left: 0.9em;
 }
 .ace_completion-message {
+margin-left: 0.9em;
 color: blue;
 }
 .ace_editor.ace_autocomplete .ace_completion-highlight{
@@ -922,15 +931,48 @@ line-height: 1.4;
 background: #25282c;
 color: #c1c1c1;
 }
-.ace_autocomplete_right .ace_text-layer  {
+.ace_autocomplete .ace_text-layer  {
 width: calc(100% - 8px);
 }
-.ace_autocomplete_right .ace_line {
+.ace_autocomplete .ace_line {
 display: flex;
+align-items: center;
 }
-.ace_autocomplete_right .ace_completion-meta {
+.ace_autocomplete .ace_line > * {
+min-width: 0;
+flex: 0 0 auto;
+}
+.ace_autocomplete .ace_line .ace_ {
+flex: 0 1 auto;
+overflow: hidden;
+white-space: nowrap;
+text-overflow: ellipsis;
+}
+.ace_autocomplete .ace_completion-spacer {
 flex: 1;
-text-align: right;
+}
+.ace_autocomplete.ace_loading:after  {
+content: "";
+position: absolute;
+top: 0px;
+height: 2px;
+width: 8%;
+background: blue;
+z-index: 100;
+animation: ace_progress 3s infinite linear;
+animation-delay: 300ms;
+transform: translateX(-100%) scaleX(1);
+}
+@keyframes ace_progress {
+0% { transform: translateX(-100%) scaleX(1) }
+50% { transform: translateX(625%) scaleX(2) } 
+100% { transform: translateX(1500%) scaleX(3) } 
+}
+@media (prefers-reduced-motion) {
+.ace_autocomplete.ace_loading:after {
+transform: translateX(625%) scaleX(2);
+animation: none;
+}
 }
 /*inlineautocomplete.css*/
 .ace_icon_svg.ace_arrow,

@@ -1,0 +1,33 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/10.1.x/core/modules/sdc/src/metadata.schema.json
+name: Varbase HTML Block
+status: experimental
+description: The HTML block.
+props:
+  type: object
+  properties:
+    id:
+      type: string
+      title: ID
+    bundle:
+      type: string
+      title: Bundle
+    html_tag:
+      type: string
+      title: HTML tag
+    attributes:
+      type: Drupal\Core\Template\Attribute
+    title_attributes:
+      type: Drupal\Core\Template\Attribute
+    title_prefix:
+      type: array
+      title: title prefix
+    title_suffix:
+      type: array
+      title: title suffix
+slots:
+  label:
+    type: string
+    title: Label
+  content:
+    type: string
+    title: Content

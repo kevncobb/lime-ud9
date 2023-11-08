@@ -1,60 +1,60 @@
 .addtocal-container {
   position: relative;
   float: right;
-  margin: -5px;
-  margin-bottom: 5px;
+  margin: -5px 0 5px 0;
 }
 
 .addtocal-container .addtocal {
   padding: 5px;
   background: #efefef;
+  border-width: 1px;
   border-radius: 4px;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
-  border: 1px solid #cdcdcd;
   color: inherit;
   text-decoration: none;
   cursor: pointer;
 }
 
-.addtocal-container .addtocal + div {
+.addtocal-container .addtocal:hover,
+.addtocal-container .addtocal:focus {
+  border-width: 1px;
+  background: #dedede;
+}
+
+.addtocal-container .addtocal-menu {
   background: #efefef;
+  border: 1px solid #cdcdcd;
   border-radius: 4px;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
-  border: 1px solid #cdcdcd;
-  padding: 5px;
-  list-style-type: none;
-  margin-left: 0px !important;
-  margin-bottom: 0px;
   position: absolute;
   display: none;
   min-width: 150px;
   z-index: 50;
 }
 
-.addtocal-container .addtocal + div .form-type-radio,
-.addtocal-container .addtocal + div .js-form-type-radio {
+.addtocal-container .addtocal-menu ul,
+.addtocal-container .addtocal-menu ul li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.addtocal-container .addtocal-link a {
   color: inherit;
   text-decoration: none;
   display: block;
   padding: 5px;
+  border-width: 0;
 }
 
-.addtocal-container .addtocal + div .form-type-radio:hover,
-.addtocal-container .addtocal + div .js-form-type-radio:hover {
+.addtocal-container .addtocal-link a:hover,
+.addtocal-container .addtocal-link a:focus {
   text-decoration: none;
-  background: #cdcdcd;
+  background: #dedede;
+  border-width: 0;
   border-radius: 4px;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
-}
-
-.addtocal-container .addtocal + div .form-type-radio input,
-.addtocal-container .addtocal + div .js-form-type-radio input {
-  display: none;
-}
-
-.addtocal-form .addtocal-submit {
-  display: none;
 }

@@ -25,7 +25,18 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class WebformAnalysisBlock extends BlockBase {
 
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
   protected $entityTypeManager;
+
+  /**
+   * The FormBuilder object.
+   *
+   * @var \Drupal\Core\Form\FormBuilderInterface
+   */
   protected $formBuilder;
 
   /**
@@ -91,7 +102,7 @@ class WebformAnalysisBlock extends BlockBase {
     ];
 
     $entity_id = $this->configuration['entity_id'];
-    if (!$entity_id && count($form['entity_id']['#options'] > 0)) {
+    if (!$entity_id && count($form['entity_id']['#options']) > 0) {
       $entity_id = array_keys($form['entity_id']['#options'])[0];
     }
 
@@ -160,6 +171,7 @@ class WebformAnalysisBlock extends BlockBase {
 
     $chart = new WebformAnalysisChart(
       $entity,
+      null,
       [$this->configuration['component']],
       $this->configuration['chart_type']
     );
@@ -181,7 +193,10 @@ class WebformAnalysisBlock extends BlockBase {
       $entity_id = $entity->id();
       $label = $entity->label();
       if ($label) {
-        $names[$entity_id] = new TranslatableMarkup('@label (@id)', ['@label' => $label, '@id' => $entity_id]);
+        $names[$entity_id] = new TranslatableMarkup('@label (@id)', [
+          '@label' => $label,
+          '@id' => $entity_id,
+        ]);
       }
       else {
         $names[$entity_id] = $entity_id;

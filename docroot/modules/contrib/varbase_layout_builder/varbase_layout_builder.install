@@ -16,7 +16,6 @@ use Vardot\Installer\ModuleInstallerFactory;
 function varbase_layout_builder_install() {
 
   // Processor for install: in varbase_layout_builder.info.yml file.
-  // --------------------------------------------------------------------------.
   ModuleInstallerFactory::installList('varbase_layout_builder');
 
   // Remove BLB layout options to use VLB layout options.
@@ -37,7 +36,6 @@ function varbase_layout_builder_install() {
   // Have the list of layout builder style options configs into active config.
   ModuleInstallerFactory::importConfigsFromScanedDirectory('varbase_layout_builder', '/^layout_builder.style.options.*\\.(yml)$/i');
 
-  // --------------------------------------------------------------------------.
   // Entity updates to clear up any mismatched entity and/or field definitions
   // And Fix changes were detected in the entity type and field definitions.
   \Drupal::classResolver()
@@ -50,6 +48,29 @@ function varbase_layout_builder_install() {
   ];
 
   ModuleInstallerFactory::importConfigsFromList('varbase_layout_builder', $forced_configs, InstallStorage::CONFIG_OPTIONAL_DIRECTORY);
+
+  // Add permissions.
+  ModuleInstallerFactory::addPermissions('varbase_layout_builder');
+
+  // Entity updates to clear up any mismatched entity and/or field definitions
+  // And Fix changes were detected in the entity type and field definitions.
+  \Drupal::classResolver()
+    ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
+    ->applyUpdates();
+
+  // Full flash and clear cash and rebuilding newly created routes.
+  // After install of extra modules by install: in the .info.yml files.
+  // In Varbase profile and all Varbase components.
+  // ---------------------------------------------------------------------------
+  // * Necessary initialization for the entire system.
+  // * Account for changed config by the end install.
+  // * Flush all persistent caches.
+  // * Flush asset file caches.
+  // * Wipe the Twig PHP Storage cache.
+  // * Rebuild module and theme data.
+  // * Clear all plugin caches.
+  // * Rebuild the menu router based on all rebuilt data.
+  drupal_flush_all_caches();
 
 }
 
@@ -141,10 +162,10 @@ function varbase_layout_builder_update_10003() {
   $config_factory = \Drupal::configFactory()->getEditable('bootstrap_styles.settings');
 
   // Only update if the border_left_color current config value is not changed from the old config.
-  $current_border_left_color = $config_factory->get('border_left_color');
+  $crrent_border_left_color = $config_factory->get('border_left_color');
   $old_border_left_color = "border-start border-primary|Primary\r\nborder-start border-secondary|Secondary\r\nborder-start border-success|Success\r\nborder-start border-danger|Danger\r\nborder-start border-warning|Warning\r\nborder-start border-info|Info\r\nborder-start border-light|Light\r\nborder-start border-dark|Dark\r\nborder-start border-white|White";
   $new_border_left_color = "border-start border-start-primary|Primary\r\nborder-start border-start-secondary|Secondary\r\nborder-start border-start-success|Success\r\nborder-start border-start-danger|Danger\r\nborder-start border-start-warning|Warning\r\nborder-start border-start-info|Info\r\nborder-start border-start-light|Light\r\nborder-start border-start-dark|Dark\r\nborder-start border-start-white|White";
-  if ($current_border_left_color === $old_border_left_color) {
+  if ($crrent_border_left_color === $old_border_left_color) {
     $config_factory->set('border_left_color', $new_border_left_color);
     $config_factory->save();
   }
@@ -184,7 +205,7 @@ function varbase_layout_builder_update_10003() {
  */
 function varbase_layout_builder_update_10004() {
   // Set the weight of the module after installation of list of modules.
-  // To make sure that any hook or event subscriber workers after all used modules.
+  // To make sure that any hook or event subscriber works after all used modules.
   ModuleInstallerFactory::setModuleWeightAfterInstallation('varbase_layout_builder');
 }
 
@@ -213,5 +234,35 @@ function varbase_layout_builder_update_10006() {
   if (\Drupal::service('module_handler')->moduleExists('bootstrap_styles')) {
     $bootstrap_styles_settings = \Drupal::service('config.factory')->getEditable('bootstrap_styles.settings');
     $bootstrap_styles_settings->set('box_shadow', "shadow-sm|Small\r\nshadow|Regular\r\nshadow-lg|Large")->save(TRUE);
+  }
+}
+
+/**
+ * Issue #3326408: Switch from Layout Builder Modal module to Layout Builder iFrame Modal module.
+ */
+function varbase_layout_builder_update_10101() {
+
+  if (!\Drupal::moduleHandler()->moduleExists('layout_builder_modal')) {
+    \Drupal::service('module_installer')->uninstall(['layout_builder_modal']);
+  }
+
+  if (!\Drupal::moduleHandler()->moduleExists('layout_builder_iframe_modal')) {
+    \Drupal::service('module_installer')->install(['layout_builder_iframe_modal'], FALSE);
+  }
+}
+
+/**
+ * Issue #3383937: Remove the remaining optional layout_builder_iframe_modal.settings config.
+ */
+function varbase_layout_builder_update_10102() {
+
+  // Install Layout Builder Modal module if it was not enabled.
+  if (!\Drupal::moduleHandler()->moduleExists('layout_builder_modal')) {
+    \Drupal::service('module_installer')->install(['layout_builder_modal'], FALSE);
+  }
+
+  // Remove the leftover optional layout_builder_iframe_modal.settings config if the module was uninstalled.
+  if (!\Drupal::moduleHandler()->moduleExists('layout_builder_iframe_modal')) {
+    \Drupal::configFactory()->getEditable('layout_builder_iframe_modal.settings')->delete();
   }
 }

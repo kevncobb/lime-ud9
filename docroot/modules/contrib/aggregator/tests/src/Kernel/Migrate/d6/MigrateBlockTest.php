@@ -30,14 +30,14 @@ class MigrateBlockTest extends MigrateDrupal6TestBase {
     parent::setUp();
 
     // Install the themes used for this test.
-    $this->container->get('theme_installer')->install(['bartik', 'test_theme']);
+    $this->container->get('theme_installer')->install(['stark', 'test_theme']);
 
     $this->installEntitySchema('block_content');
     $this->installConfig(['block_content']);
 
-    // Set Bartik as the default public theme.
+    // Set Stark as the default public theme.
     $config = $this->config('system.theme');
-    $config->set('default', 'bartik');
+    $config->set('default', 'stark');
     $config->save();
 
     $this->executeMigrations([
@@ -96,13 +96,13 @@ class MigrateBlockTest extends MigrateDrupal6TestBase {
     // Check aggregator block.
     $settings = [
       'id' => 'aggregator_feed_block',
-      'label' => '',
+      'label' => 'Know Your Meme',
       'provider' => 'aggregator',
-      'label_display' => '0',
+      'label_display' => 'visible',
       'block_count' => 7,
       'feed' => '5',
     ];
-    $this->assertEntity('aggregator', [], 'sidebar_second', 'bartik', -2, $settings);
+    $this->assertEntity('aggregator', [], 'content', 'stark', -2, $settings);
   }
 
 }

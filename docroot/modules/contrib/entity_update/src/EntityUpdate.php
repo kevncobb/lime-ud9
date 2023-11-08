@@ -20,20 +20,20 @@ class EntityUpdate {
     try {
       $list = self::getEntityTypesToUpdate();
       foreach ($list as $item => $entity_type_changes) {
-        if (!empty(\Drupal::entityQuery($item)->execute())) {
+        if (!empty(\Drupal::entityQuery($item)->accessCheck(FALSE)->execute())) {
           $flgOK = FALSE;
           EntityUpdatePrint::drushLog("The entity '$item' is not empty", 'warning');
         }
       }
     }
     catch (\Exception $e) {
-      EntityUpdatePrint::drushLog($e->getMessage(), 'error', NULL, TRUE);
+      EntityUpdatePrint::drushLog($e->getMessage(), 'error', [], TRUE);
       $flgOK = FALSE;
     }
 
     // Return if one of the entity has data.
     if (!$flgOK && !$force) {
-      EntityUpdatePrint::drushLog("Cant update as basic, use --all or --force option", 'cancel', NULL, TRUE);
+      EntityUpdatePrint::drushLog("Cant update as basic, use --all or --force option", 'cancel', [], TRUE);
       EntityUpdatePrint::drushPrint("Example : drush upe --basic --force --nobackup");
       return FALSE;
     }
@@ -48,7 +48,7 @@ class EntityUpdate {
       return !\Drupal::entityDefinitionUpdateManager()->needsUpdates();
     }
     catch (\Exception $e) {
-      EntityUpdatePrint::drushLog($e->getMessage(), 'warning', NULL, TRUE);
+      EntityUpdatePrint::drushLog($e->getMessage(), 'warning', [], TRUE);
     }
     return FALSE;
   }
@@ -163,7 +163,7 @@ class EntityUpdate {
       $result = self::entityUpdateDataRestore();
 
       // Message to Flush 'entity_update' via drush command.
-      EntityUpdatePrint::drushLog("Entiti recreate Success / End", $result ? 'ok' : 'warning');
+      EntityUpdatePrint::drushLog("Entity recreate Success / End", $result ? 'ok' : 'warning');
       EntityUpdatePrint::drushLog("CAUTION : Before next operation, Flush 'Entity Data' using : drush upe --clean", 'warning');
     }
 
@@ -221,7 +221,7 @@ class EntityUpdate {
       }
       else {
         // Exclude by config.
-        EntityUpdatePrint::drushLog("Deletation of $entity_type_id is excluded by config.", 'cancel');
+        EntityUpdatePrint::drushLog("Deletion of $entity_type_id is excluded by config.", 'cancel');
       }
     }
     return $flg_has_data;
@@ -334,7 +334,7 @@ class EntityUpdate {
 
           // Process entity types.
           if (!empty($change_list['entity_type'])) {
-            // TODO : Backup and Restore data via SQL.
+            // @todo Backup and Restore data via SQL.
             $update_manager->doEntityUpdate($change_list['entity_type'], $entity_type_id);
           }
           // Process field storage definition changes.
@@ -343,8 +343,8 @@ class EntityUpdate {
             $original_storage_definitions = $update_manager->entityLastInstalledSchemaRepository->getLastInstalledFieldStorageDefinitions($entity_type_id);
 
             foreach ($change_list['field_storage_definitions'] as $field_name => $change) {
-              $storage_definition = isset($storage_definitions[$field_name]) ? $storage_definitions[$field_name] : NULL;
-              $original_storage_definition = isset($original_storage_definitions[$field_name]) ? $original_storage_definitions[$field_name] : NULL;
+              $storage_definition = $storage_definitions[$field_name] ?? NULL;
+              $original_storage_definition = $original_storage_definitions[$field_name] ?? NULL;
               $update_manager->doFieldUpdate($change, $storage_definition, $original_storage_definition);
             }
           }

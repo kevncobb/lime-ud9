@@ -2,13 +2,13 @@
 
 namespace Drupal\simple_oauth\Authentication;
 
-use Drupal\consumers\Entity\ConsumerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\simple_oauth\Entity\Oauth2TokenInterface;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
+use Drupal\consumers\Entity\Consumer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 
 /**
@@ -30,14 +30,14 @@ class TokenAuthUser implements TokenAuthUserInterface {
    *
    * @var \Drupal\simple_oauth\Entity\Oauth2TokenInterface
    */
-  protected $token;
+  protected Oauth2TokenInterface $token;
 
   /**
    * The activated consumer instance.
    *
-   * @var \Drupal\consumers\Entity\ConsumerInterface
+   * @var \Drupal\consumers\Entity\Consumer
    */
-  protected $consumer;
+  protected Consumer $consumer;
 
   /**
    * Constructs a TokenAuthUser object.
@@ -65,50 +65,33 @@ class TokenAuthUser implements TokenAuthUserInterface {
   /**
    * {@inheritdoc}
    */
-  public function getToken() {
+  public function getToken(): Oauth2TokenInterface {
     return $this->token;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getConsumer(): ConsumerInterface {
+  public function getConsumer(): Consumer {
     return $this->consumer;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getRoles($exclude_locked_roles = FALSE) {
-    return array_map(function ($item) {
-      return $item['target_id'];
-    }, $this->token->get('scopes')->getValue());
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function hasPermission($permission) {
-    // User #1 has all privileges.
+    // When the 'auth_user_id' isn't available on the token (which can happen
+    // with the 'client credentials' grant type):
+    // has permission checks are then only performed on the scopes.
+    if ($this->token->get('auth_user_id')->isEmpty()) {
+      return $this->token->hasPermission($permission);
+    }
+    // User #1 has all permissions.
     if ((int) $this->id() === 1) {
       return TRUE;
     }
 
-    return $this->getRoleStorage()->isPermissionInRoles($permission, $this->getRoles());
-  }
-
-  /**
-   * Returns the role storage object.
-   *
-   * @return \Drupal\user\RoleStorageInterface
-   *   The role storage object.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   */
-  protected function getRoleStorage() {
-    /** @var \Drupal\user\RoleStorageInterface $storage */
-    $storage = \Drupal::entityTypeManager()->getStorage('user_role');
-    return $storage;
+    return $this->token->hasPermission($permission) && $this->subject->hasPermission($permission);
   }
 
   /* ---------------------------------------------------------------------------
@@ -134,6 +117,13 @@ class TokenAuthUser implements TokenAuthUserInterface {
    */
   public function isAnonymous() {
     return $this->subject->isAnonymous();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRoles($exclude_locked_roles = FALSE) {
+    return $this->subject->getRoles($exclude_locked_roles);
   }
 
   /**
@@ -309,27 +299,6 @@ class TokenAuthUser implements TokenAuthUserInterface {
    */
   public function label() {
     return $this->subject->label();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function urlInfo($rel = 'canonical', array $options = []) {
-    return $this->subject->toUrl($rel, $options);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function url($rel = 'canonical', $options = []) {
-    return $this->subject->url($rel, $options);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function link($text = NULL, $rel = 'canonical', array $options = []) {
-    return $this->subject->toLink($text, $rel, $options)->toString();
   }
 
   /**

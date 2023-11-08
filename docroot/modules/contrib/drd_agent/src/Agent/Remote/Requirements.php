@@ -187,6 +187,7 @@ class Requirements extends Base {
       /** @noinspection NullPointerExceptionInspection */
       $count_admin = $query
         ->countQuery()
+        ->accessCheck(FALSE)
         ->execute()
         ->fetchField();
     }

@@ -4,11 +4,11 @@ namespace Drupal\Tests\entity_update\Functional;
 
 error_reporting(0);
 
-use Drupal\entity_update\EntityUpdatePrint;
-use Drupal\Tests\BrowserTestBase;
 use Drupal\entity_update\EntityUpdate;
-use Drupal\entity_update_tests\EntityUpdateTestHelper;
+use Drupal\entity_update\EntityUpdatePrint;
 use Drupal\entity_update_tests\Entity\EntityUpdateTestsContentEntity;
+use Drupal\entity_update_tests\EntityUpdateTestHelper;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Test Entity Update functions.
@@ -22,7 +22,7 @@ class EntityUpdateFunctionsTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['entity_update', 'entity_update_tests'];
+  protected static $modules = ['entity_update', 'entity_update_tests'];
 
   /**
    * {@inheritdoc}
@@ -32,7 +32,7 @@ class EntityUpdateFunctionsTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp() : void {
     parent::setUp();
 
     // Detele the entity created by install.
@@ -137,7 +137,7 @@ class EntityUpdateFunctionsTest extends BrowserTestBase {
     // Create an entity.
     $entity = EntityUpdateTestsContentEntity::create(['id' => 1]);
     $entity->save();
-    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
     $this->assertEquals(count($ids), 1, 'Has one entity.');
     // Enable the field.
     EntityUpdateTestHelper::fieldEnable('name');
@@ -172,7 +172,7 @@ class EntityUpdateFunctionsTest extends BrowserTestBase {
     $entity = EntityUpdateTestsContentEntity::create(['id' => 1]);
     $entity->save();
 
-    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
     $this->assertEquals(count($ids), 1, 'Has one entity.');
     // Enable the field.
     EntityUpdateTestHelper::fieldEnable('name');
@@ -208,7 +208,7 @@ class EntityUpdateFunctionsTest extends BrowserTestBase {
     $this->assertEquals(count(EntityUpdate::getEntityTypesToUpdate()), 0, 'Entity type updated.');
 
     // Check entity count.
-    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
     $this->assertEquals(count($ids), 1, 'Has one entity.');
 
     // Check fields list on database.
@@ -226,7 +226,7 @@ class EntityUpdateFunctionsTest extends BrowserTestBase {
     $entity = EntityUpdateTestsContentEntity::create(['id' => 1]);
     $entity->save();
 
-    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
     $this->assertEquals(count($ids), 1, 'Has one entity.');
     // Enable the field.
     EntityUpdateTestHelper::fieldEnable('name');
@@ -263,11 +263,11 @@ class EntityUpdateFunctionsTest extends BrowserTestBase {
     $this->assertEquals(count(EntityUpdate::getEntityTypesToUpdate()), 1, 'Entity type updated.');
 
     // Check entity count.
-    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
     $this->assertEquals(count($ids), 1, 'After updates, Hase one entity.');
 
     // Check entity count.
-    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
     $this->assertEquals(count($ids), 1, 'Has one entity.');
 
     // Check fields list on database.
@@ -292,7 +292,7 @@ class EntityUpdateFunctionsTest extends BrowserTestBase {
     $data = ['id' => 1, 'name' => 'name', 'description' => 'description'];
     $entity = EntityUpdateTestsContentEntity::create($data);
     $entity->save();
-    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
     $this->assertEquals(count($ids), 1, 'Has one entity.');
 
     // Disable field 'name'.
@@ -324,7 +324,7 @@ class EntityUpdateFunctionsTest extends BrowserTestBase {
     $res = EntityUpdate::entityUpdateDataRestore();
     $this->assertTrue($res, 'Entity data Restore.');
     // Count entities.
-    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
     $this->assertEquals(count($ids), 1, 'Has one entity.');
     // Cleanup backup DB.
     $res = EntityUpdate::cleanupEntityBackup();
@@ -338,7 +338,7 @@ class EntityUpdateFunctionsTest extends BrowserTestBase {
     $entity = EntityUpdateTestsContentEntity::create(['id' => 1]);
     $entity->save();
 
-    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
     $this->assertEquals(count($ids), 1, 'Has one entity.');
     // Enable the field.
     EntityUpdateTestHelper::fieldEnable('name');
@@ -361,7 +361,7 @@ class EntityUpdateFunctionsTest extends BrowserTestBase {
     $this->assertTrue($res, 'Table cleanup END.');
 
     // Check entity count.
-    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->execute();
+    $ids = \Drupal::entityQuery('entity_update_tests_cnt')->accessCheck(FALSE)->execute();
     $this->assertEquals(count($ids), 1, 'Has one entity.');
 
     // Check fields list on database.

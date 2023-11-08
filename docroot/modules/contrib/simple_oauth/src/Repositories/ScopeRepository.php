@@ -3,9 +3,10 @@
 namespace Drupal\simple_oauth\Repositories;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\user\RoleInterface;
+use Drupal\simple_oauth\Oauth2ScopeInterface;
+use Drupal\simple_oauth\Oauth2ScopeProviderInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
-use League\OAuth2\Server\Entities\ScopeEntityInterface;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use Drupal\simple_oauth\Entities\ScopeEntity;
 
@@ -19,45 +20,43 @@ class ScopeRepository implements ScopeRepositoryInterface {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
+
+  /**
+   * The scope provider.
+   *
+   * @var \Drupal\simple_oauth\Oauth2ScopeProviderInterface
+   */
+  protected Oauth2ScopeProviderInterface $scopeProvider;
 
   /**
    * ScopeRepository constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\simple_oauth\Oauth2ScopeProviderInterface $scope_provider
+   *   The scope provider.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, Oauth2ScopeProviderInterface $scope_provider) {
     $this->entityTypeManager = $entity_type_manager;
+    $this->scopeProvider = $scope_provider;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getScopeEntityByIdentifier($scope_identifier) {
-    $role = $this->entityTypeManager
-      ->getStorage('user_role')
-      ->load($scope_identifier);
-    if (!$role) {
-      return NULL;
-    }
-
-    return $this->scopeFactory($role);
+  public function getScopeEntityByIdentifier($identifier) {
+    $scope = $this->scopeProvider->loadByName($identifier);
+    return $scope ? $this->scopeFactory($scope) : NULL;
   }
 
   /**
    * {@inheritdoc}
-   *
-   * This will remove any role that is not associated to the identified user and
-   * add all the roles configured in the client.
    */
   public function finalizeScopes(array $scopes, $grant_type, ClientEntityInterface $client_entity, $user_identifier = NULL) {
     $default_user = NULL;
-    try {
+    if (!$client_entity->getDrupalEntity()->get('user_id')->isEmpty()) {
       $default_user = $client_entity->getDrupalEntity()->get('user_id')->entity;
-    }
-    catch (\InvalidArgumentException $e) {
-      // Do nothing.
     }
     /** @var \Drupal\user\UserInterface $user */
     $user = $user_identifier
@@ -67,61 +66,37 @@ class ScopeRepository implements ScopeRepositoryInterface {
       return [];
     }
 
-    $role_ids = $user->getRoles();
-    // Given a user, only allow the roles that the user already has, regardless
-    // of what has been requested.
-    $scopes = array_filter($scopes, function (ScopeEntityInterface $scope) use ($role_ids) {
-      return in_array($scope->getIdentifier(), $role_ids);
-    });
-
-    // Make sure that the Authenticated role is added as well.
-    $scopes = $this->addRoleToScopes($scopes, RoleInterface::AUTHENTICATED_ID);
-    // Make sure that the client roles are added to the scopes as well.
+    $default_scopes = [];
     $client_drupal_entity = $client_entity->getDrupalEntity();
-    $scopes = array_reduce($client_drupal_entity->get('roles')->getValue(), function ($scopes, $role_id) {
-      return $this->addRoleToScopes($scopes, $role_id['target_id']);
-    }, $scopes);
+    if (!$client_drupal_entity->get('scopes')->isEmpty()) {
+      $default_scopes = array_map(function (Oauth2ScopeInterface $scope) {
+        return $this->scopeFactory($scope);
+      }, $client_drupal_entity->get('scopes')->getScopes());
+    }
 
-    return $scopes;
+    $finalized_scopes = !empty($scopes) ? $scopes : $default_scopes;
+
+    // Validate scopes if the associated grant type is enabled.
+    foreach ($finalized_scopes as $finalized_scope) {
+      if ($finalized_scope instanceof ScopeEntity && !$finalized_scope->getScopeObject()->isGrantTypeEnabled($grant_type)) {
+        throw OAuthServerException::invalidScope($finalized_scope->getIdentifier());
+      }
+    }
+
+    return $finalized_scopes;
   }
 
   /**
    * Build a scope entity.
    *
-   * @param \Drupal\user\RoleInterface $role
-   *   The associated role.
+   * @param \Drupal\simple_oauth\Oauth2ScopeInterface $scope
+   *   The associated scope.
    *
    * @return \League\OAuth2\Server\Entities\ScopeEntityInterface
    *   The initialized scope entity.
    */
-  protected function scopeFactory(RoleInterface $role) {
-    return new ScopeEntity($role);
-  }
-
-  /**
-   * Add an additional scope if it's not present.
-   *
-   * @param \League\OAuth2\Server\Entities\ScopeEntityInterface[] $scopes
-   *   The list of scopes.
-   * @param string $additional_role_id
-   *   The role ID to add as a scope.
-   *
-   * @return \League\OAuth2\Server\Entities\ScopeEntityInterface[]
-   *   The modified list of scopes.
-   */
-  protected function addRoleToScopes(array $scopes, $additional_role_id) {
-    $role_storage = $this->entityTypeManager->getStorage('user_role');
-    // Only add the role if it's not already in the list.
-    $found = array_filter($scopes, function (ScopeEntityInterface $scope) use ($additional_role_id) {
-      return $scope->getIdentifier() == $additional_role_id;
-    });
-    if (empty($found)) {
-      // If it's not there, then add the authenticated role.
-      $additional_role = $role_storage->load($additional_role_id);
-      array_push($scopes, $this->scopeFactory($additional_role));
-    }
-
-    return $scopes;
+  protected function scopeFactory(Oauth2ScopeInterface $scope) {
+    return new ScopeEntity($scope);
   }
 
 }

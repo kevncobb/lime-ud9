@@ -20,11 +20,11 @@ use Drupal\user\EntityOwnerTrait;
  *   bundle_label = @Translation("Token type"),
  *   handlers = {
  *     "storage_schema" = "Drupal\simple_oauth\Entity\Oauth2TokenStorageSchema",
- *     "list_builder" = "Drupal\simple_oauth\Oauth2TokenListBuilder",
+ *     "list_builder" = "Drupal\simple_oauth\Entity\Oauth2TokenListBuilder",
  *     "form" = {
  *       "delete" = "Drupal\simple_oauth\Entity\Form\Oauth2TokenDeleteForm",
  *     },
- *     "access" = "Drupal\simple_oauth\AccessTokenAccessControlHandler",
+ *     "access" = "Drupal\simple_oauth\Entity\Access\AccessTokenAccessControlHandler",
  *   },
  *   base_table = "oauth2_token",
  *   admin_permission = "administer simple_oauth entities",
@@ -39,8 +39,8 @@ use Drupal\user\EntityOwnerTrait;
  *   },
  *   bundle_entity_type = "oauth2_token_type",
  *   links = {
- *     "canonical" = "/admin/content/simple_oauth/{oauth2_token}",
- *     "delete-form" = "/admin/content/simple_oauth/{oauth2_token}/delete"
+ *     "canonical" = "/admin/content/simple_oauth/oauth2_token/{oauth2_token}",
+ *     "delete-form" = "/admin/content/simple_oauth/oauth2_token/{oauth2_token}/delete"
  *   },
  *   list_cache_tags = { "oauth2_token" },
  * )
@@ -119,28 +119,20 @@ class Oauth2Token extends ContentEntityBase implements Oauth2TokenInterface {
         'weight' => 2,
       ]);
 
-    $fields['scopes'] = BaseFieldDefinition::create('entity_reference')
+    $fields['scopes'] = BaseFieldDefinition::create('oauth2_scope_reference')
       ->setLabel(t('Scopes'))
-      ->setDescription(t('The scopes for this Access Token. OAuth2 scopes are implemented as Drupal roles.'))
+      ->setDescription(t('The scopes for this Access Token.'))
       ->setRevisionable(TRUE)
-      ->setSetting('target_type', 'user_role')
-      ->setSetting('handler', 'default')
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setTranslatable(FALSE)
       ->setDisplayOptions('view', [
         'label' => 'inline',
-        'type' => 'entity_reference_label',
+        'type' => 'oauth2_scope_reference_label',
         'weight' => 3,
       ])
       ->setDisplayOptions('form', [
-        'type' => 'entity_reference_autocomplete',
+        'type' => 'oauth2_scope_reference',
         'weight' => 3,
-        'settings' => [
-          'match_operator' => 'CONTAINS',
-          'size' => '60',
-          'autocomplete_type' => 'tags',
-          'placeholder' => '',
-        ],
       ]);
 
     $fields['value'] = BaseFieldDefinition::create('string')
@@ -221,8 +213,26 @@ class Oauth2Token extends ContentEntityBase implements Oauth2TokenInterface {
   /**
    * {@inheritdoc}
    */
-  public function isRevoked() {
+  public function isRevoked(): bool {
     return !$this->get('status')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasPermission(string $permission): bool {
+    /** @var \Drupal\simple_oauth\Oauth2ScopeProviderInterface $scope_provider */
+    $scope_provider = \Drupal::service('simple_oauth.oauth2_scope.provider');
+    /** @var \Drupal\simple_oauth\Plugin\Field\FieldType\Oauth2ScopeReferenceItemListInterface $field */
+    $field = $this->get('scopes');
+
+    foreach ($field->getScopes() as $scope) {
+      if (in_array($permission, $scope_provider->getFlattenPermissionTree($scope))) {
+        return TRUE;
+      }
+    }
+
+    return FALSE;
   }
 
   /**

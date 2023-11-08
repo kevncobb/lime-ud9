@@ -4,7 +4,12 @@ namespace Drupal\simple_oauth\Normalizer;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\serialization\Normalizer\NormalizerBase;
+use Drupal\simple_oauth\Entities\ScopeEntity;
+use League\OAuth2\Server\Entities\ScopeEntityInterface;
 
+/**
+ * Normalizes token entity.
+ */
 class TokenEntityNormalizer extends NormalizerBase implements TokenEntityNormalizerInterface {
 
   /**
@@ -15,9 +20,11 @@ class TokenEntityNormalizer extends NormalizerBase implements TokenEntityNormali
   protected $supportedInterfaceOrClass = '\League\OAuth2\Server\Entities\TokenInterface';
 
   /**
+   * The entity type manager.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * {@inheritdoc}
@@ -31,18 +38,18 @@ class TokenEntityNormalizer extends NormalizerBase implements TokenEntityNormali
    */
   public function normalize($token_entity, $format = NULL, array $context = []) {
     /** @var \League\OAuth2\Server\Entities\TokenInterface $token_entity */
-
-    $scopes = array_map(function ($scope_entity) {
-      /** @var \League\OAuth2\Server\Entities\ScopeEntityInterface $scope_entity */
-      return ['target_id' => $scope_entity->getIdentifier()];
+    $scopes = array_map(function (ScopeEntityInterface $scope_entity) {
+      $scope_id = $scope_entity instanceof ScopeEntity ? $scope_entity->getScopeObject()->id() : $scope_entity->getIdentifier();
+      return ['scope_id' => $scope_id];
     }, $token_entity->getScopes());
 
     /** @var \Drupal\simple_oauth\Entities\ClientEntityInterface $client */
     $client = $token_entity->getClient();
     $client_drupal_entity = $client->getDrupalEntity();
+    $auth_user_id = $token_entity->getUserIdentifier() ? ['target_id' => $token_entity->getUserIdentifier()] : NULL;
 
     return [
-      'auth_user_id' => ['target_id' => $token_entity->getUserIdentifier()],
+      'auth_user_id' => $auth_user_id,
       'client' => ['target_id' => $client_drupal_entity->id()],
       'scopes' => $scopes,
       'value' => $token_entity->getIdentifier(),

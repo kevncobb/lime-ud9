@@ -2,15 +2,9 @@
 
 namespace Drupal\stage_file_proxy;
 
-use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileSystemInterface;
-use Drupal\Core\Lock\LockBackendInterface;
-use Drupal\Core\StreamWrapper\PublicStream;
-use Drupal\Core\StreamWrapper\StreamWrapperManager;
-use Drupal\Core\Utility\Error;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -47,19 +41,29 @@ class FetchManager implements FetchManagerInterface {
   protected $configFactory;
 
   /**
-   * @var \Drupal\stage_file_proxy\DownloadManager
+   * The download manager.
+   *
+   * @var \Drupal\stage_file_proxy\DownloadManagerInterface
    */
   protected DownloadManager $downloadManager;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(Client $client, FileSystemInterface $file_system, LoggerInterface $logger, ConfigFactoryInterface $config_factory) {
+  public function __construct(Client $client, FileSystemInterface $file_system, LoggerInterface $logger, ConfigFactoryInterface $config_factory, DownloadManagerInterface $download_manager = NULL) {
     $this->client = $client;
     $this->fileSystem = $file_system;
     $this->logger = $logger;
     $this->configFactory = $config_factory;
-    $this->downloadManager = new DownloadManager($client, $file_system, $logger, $config_factory, \Drupal::lock());
+
+    if (is_null($download_manager)) {
+      @trigger_error('Calling ' . __METHOD__ . ' without the $download_manager argument is deprecated in stage_file_proxy:2.1.0 and will be required in stage_file_proxy:3.0.0. See https://www.drupal.org/project/stage_file_proxy/issues/3375749', E_USER_DEPRECATED);
+      // phpcs:ignore
+      $this->downloadManager = \Drupal::service('stage_file_proxy.download_manager');
+    }
+    else {
+      $this->downloadManager = $download_manager;
+    }
   }
 
   /**
@@ -97,8 +101,11 @@ class FetchManager implements FetchManagerInterface {
    * @param string $data
    *   A string containing the contents of the file.
    *
-   * @deprecated Deprecated in 2.1, will be removed in 3.0. This function is no
-   *   longer used by Stage File Proxy itself.
+   * @deprecated in stage_file_proxy:2.1.0 and is removed from
+   *   stage_file_proxy:3.0.0. This function is no longer used by Stage File
+   *   Proxy itself.
+   *
+   * @see https://www.drupal.org/project/stage_file_proxy/issues/3282542
    *
    * @return bool
    *   True if write was successful. False if write or rename failed.

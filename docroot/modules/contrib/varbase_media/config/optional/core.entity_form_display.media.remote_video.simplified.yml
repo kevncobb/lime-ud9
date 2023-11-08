@@ -18,19 +18,23 @@ content:
   field_media_oembed_video:
     type: oembed_textfield
     weight: 0
+    region: content
     settings:
       size: 60
-      placeholder: ""
-    third_party_settings: {}
-    region: content
+      placeholder: ''
+    third_party_settings: {  }
 hidden:
   created: true
   field_media_cover_image: true
   field_media_in_library: true
-  langcode: true
   field_provider: true
+  langcode: true
   name: true
   path: true
   preview: true
+  publish_on: true
+  publish_state: true
   status: true
   uid: true
+  unpublish_on: true
+  unpublish_state: true

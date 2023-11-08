@@ -2,27 +2,29 @@
 global-admin-styling:
   css:
     theme:
-      css/vartheme-claro.theme.style.css: {}
+      css/theme/vartheme-claro.theme.style.css: { }
 
 # Global admin right to left styling.
 global-admin-styling-rtl:
   css:
     theme:
-      css/vartheme-claro.theme.style-rtl.css: {}
+      fonts/rtl/tajawal/css/tajawal.css: { }
+      css/theme/vartheme-claro.theme.style-rtl.css: { }
 
-# Global admin scripts.
-global-admin-scripts:
+# Custom install styling.
+install-styling:
+  css:
+    theme:
+      css/theme/install-page.css: { }
+
+# Custom install scripts.
+install-scripts:
   js:
-    js/vartheme-claro.script.js: {}
+    js/install-scripts.js: { }
+  dependencies:
+    - gin/gin_accent
 
-# Claro 9 layout node form style for Drupal 9.
-claro9.layout-node-form:
+auth-icons:
   css:
     theme:
-      css/layout-node-form.claro9.theme.css: {}
-
-# Claro 10 layout node form style for Drupal 10.
-claro10.layout-node-form:
-  css:
-    theme:
-      css/layout-node-form.claro10.theme.css: {}
+      css/theme/auth-icons.theme.css: { }

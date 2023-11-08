@@ -67,6 +67,11 @@ class WrapperManager extends DefaultPluginManager implements WrapperManagerInter
   ];
 
   /**
+   * @var \Drupal\Core\Extension\ThemeHandlerInterface
+   */
+  protected $themeHandler;
+
+  /**
    * Constructs a new WrapperManager instance.
    *
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler

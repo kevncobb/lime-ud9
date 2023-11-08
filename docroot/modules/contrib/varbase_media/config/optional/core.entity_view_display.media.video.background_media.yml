@@ -10,11 +10,6 @@ dependencies:
   module:
     - ds
     - file
-    - layout_builder
-third_party_settings:
-  layout_builder:
-    allow_custom: false
-    enabled: false
 id: media.video.background_media
 targetEntityType: media
 bundle: video
@@ -22,22 +17,27 @@ mode: background_media
 content:
   field_media_video_file:
     type: file_video
-    weight: 0
     label: hidden
     settings:
       controls: true
       autoplay: true
       loop: true
       multiple_file_display_type: tags
+      playsinline: true
       muted: true
       width: 1600
       height: 900
     third_party_settings:
       ds:
         ft:
-          id: reset
+          id: default
           settings:
-            lb: ""
+            lb: ''
+            lb-col: false
+            classes: {  }
+      blazy:
+        blazy: false
+    weight: 0
     region: content
 hidden:
   created: true

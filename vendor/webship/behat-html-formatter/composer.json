@@ -1,0 +1,24 @@
+{
+  "name": "webship/behat-html-formatter",
+  "description": "This will create a html formatter for Behat.",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Webshipco",
+      "email": "info@webship.co"
+    }
+  ],
+  "require": {
+    "twig/twig": "~1.0 || ~2.0 || ~3.0",
+    "behat/behat": "~3.0 || ~4.0"
+  },
+  "require-dev": {
+    "symfony/process": "*",
+    "phpunit/phpunit": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "webship\\BehatHTMLFormatter\\": "src/"
+    }
+  }
+}

@@ -17,7 +17,7 @@ class UserIdentityProvider implements IdentityProviderInterface {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * UserIdentityProvider constructor.

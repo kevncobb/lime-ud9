@@ -7,7 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 
 /**
- * Plugin implementation of the 'colorbox_field_formatter' formatter for entityreferences.
+ * Plugin of the 'colorbox_field_formatter' formatter for entityreferences.
  *
  * @FieldFormatter(
  *   id = "colorbox_field_formatter_entityreference",
@@ -22,7 +22,7 @@ class ColorboxFieldFormatterEntityreference extends ColorboxFieldFormatter {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, FormStateInterface $form_state) {
+  public function settingsForm(array $form, FormStateInterface $form_state): array {
     $form = parent::settingsForm($form, $form_state);
     $form['link_type']['#access'] = FALSE;
     $form['link']['#access'] = FALSE;
@@ -32,17 +32,15 @@ class ColorboxFieldFormatterEntityreference extends ColorboxFieldFormatter {
   /**
    * {@inheritdoc}
    */
-  protected function viewValue(FieldItemInterface $item) {
-    /** @noinspection PhpUndefinedFieldInspection */
-    return $item->entity->label();
+  protected function viewValue(FieldItemInterface $item): array|string {
+    return $item->getEntity()->label();
   }
 
   /**
    * {@inheritdoc}
    */
   protected function getUrl(FieldItemInterface $item): Url {
-    /** @noinspection PhpUndefinedFieldInspection */
-    return $item->entity->toUrl();
+    return $item->getEntity()->toUrl();
   }
 
 }

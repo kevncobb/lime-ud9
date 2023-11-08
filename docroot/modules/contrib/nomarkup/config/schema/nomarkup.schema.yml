@@ -1,0 +1,10 @@
+field.formatter.third_party.nomarkup:
+  type: mapping
+  label: 'No markup configuration'
+  mapping:
+    enabled:
+      type: boolean
+      label: 'Enabled'
+    separator:
+      type: string
+      label: 'Multi-value separator'

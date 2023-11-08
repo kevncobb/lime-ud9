@@ -1,0 +1,14 @@
+name: 'Gin Moderation Sidebar'
+type: module
+description: 'Adds Gin admin theme compatibility for Moderation Sidebar'
+core_version_requirement: ^9.3 || ^10
+configure: gin_moderation_sidebar.settings_form
+package: Other
+dependencies:
+  - moderation_sidebar:moderation_sidebar
+  - gin_toolbar:gin_toolbar
+
+# Information added by Drupal.org packaging script on 2023-08-15
+version: '1.0.0'
+project: 'gin_moderation_sidebar'
+datestamp: 1692130274

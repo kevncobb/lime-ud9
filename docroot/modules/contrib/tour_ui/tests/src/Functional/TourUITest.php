@@ -98,25 +98,18 @@ class TourUITest extends BrowserTestBase {
     ];
     $this->drupalGet('admin/config/user-interface/tour/add');
     $this->submitForm($edit, 'Save');
-    // @todo fix a message not being shown.
-    // phpcs:disable
-    // $this->assertSession()->responseContains($this->t('The %tour tour has been created.', ['%tour' => $edit['label']]));.
-    // phpcs:enable
+    $this->assertSession()
+      ->responseContains($this->t('The tour %tour has been created.', ['%tour' => $edit['label']]));
 
     $elements = $this->xpath('//table/tbody/tr');
     $this->assertEquals(1, count($elements));
 
     // Edit and re-save an existing tour.
-    // #todo fix a message not being shown.
-    // phpcs:disable
-    // $this->assertSession()->titleEquals($this->t('Edit tour | @site-name', ['@site-name' => \Drupal::config('system.site')->get('name')]));.
-    // phpcs:enable
+    $this->assertSession()->titleEquals('Edit tour | Drupal');
 
     $this->submitForm([], 'Save');
-    // @todo fix a message not being shown.
-    // phpcs:disable
-    // $this->assertSession()->responseContains($this->t('Updated the %tour tour', ['%tour' => $edit['label']]));.
-    // phpcs:enable
+    $this->assertSession()
+      ->responseContains($this->t('The tour %tour has been updated.', ['%tour' => $edit['label']]));
 
     // Reorder the tour tips.
     $this->drupalGet('admin/config/user-interface/tour/manage/tip_edit');
@@ -140,16 +133,19 @@ class TourUITest extends BrowserTestBase {
 
     // Attempt to create a duplicate tour.
     $this->submitForm($edit, 'Save');
-    $this->assertSession()->responseContains($this->t('The machine-readable name is already in use. It must be unique.'));
+    $this->assertSession()
+      ->responseContains($this->t('The machine-readable name is already in use. It must be unique.'));
 
     // Delete a tour.
     $this->drupalGet('admin/config/user-interface/tour/manage/' . $edit['id']);
     $this->clickLink('Delete');
-    $this->assertSession()->responseContains($this->t('Are you sure you want to delete the tour %tour?', ['%tour' => $edit['label']]));
+    $this->assertSession()
+      ->responseContains($this->t('Are you sure you want to delete the tour %tour?', ['%tour' => $edit['label']]));
     $this->submitForm([], 'Delete');
     $elements = $this->xpath('//table/tbody/tr');
     $this->assertEquals(3, count($elements));
-    $this->assertSession()->responseContains($this->t('The tour %tour has been deleted.', ['%tour' => $edit['label']]));
+    $this->assertSession()
+      ->responseContains($this->t('The tour %tour has been deleted.', ['%tour' => $edit['label']]));
   }
 
   /**
@@ -165,10 +161,10 @@ class TourUITest extends BrowserTestBase {
     ];
     $this->drupalGet('admin/config/user-interface/tour/add');
     $this->submitForm($edit, 'Save');
-    // @todo fix a message not being shown.
-    // phpcs:disable
-    // $this->assertSession()->responseContains($this->t('The %tour tour has been created.', ['%tour' => $edit['label']]));.
-    // phpcs:enable
+
+    $this->assertSession()
+      ->responseContains($this->t('The tour %tour has been created.', ['%tour' => $edit['label']]));
+
     // Add a new tip.
     $tip = [
       'new' => 'text',
@@ -186,25 +182,24 @@ class TourUITest extends BrowserTestBase {
 
     // Edit the tip.
     $tip_id = $tip['id'];
-    unset($tip['id']);
     $tip['label'] = 'a' . $this->randomString();
     $this->drupalGet('admin/config/user-interface/tour/manage/' . $edit['id'] . '/tip/edit/' . $tip_id);
     $this->submitForm($tip, 'Save');
 
     $elements = $this->xpath('//tr[contains(@class, "draggable")]/td[contains(text(), "' . $tip['label'] . '")]');
     $this->assertEquals(1, count($elements), 'Found tip "' . $tip['label'] . '".');
-    $this->drupalGet('admin/config/user-interface/tour/manage/' . $edit['id'] . '/tip/delete/' . $tip_id);
+    $this->drupalGet('admin/config/user-interface/tour/manage/' . $edit['id'] . '/tip/edit/' . $tip_id);
 
-    // @todo delete button doesn't appear.
-    // phpcs:disable
+    $this->assertSession()->titleEquals('Edit tip | Drupal');
+
     // Delete the tip.
-    // $this->submitForm([], 'Delete');
-    // $elements = $this->xpath('//tr[@class=:class and ./td[contains(., :text)]]', [
-    //  ':class' => 'draggable odd',
-    //  ':text' => $tip['label'],
-    // ]);
-    // $this->assertNotEquals(count($elements), 1, 'Did not find tip "' . $tip['label'] . '".');.
-    // phpcs:enable
+    $this->clickLink('Delete');
+    $this->submitForm([], 'Confirm');
+    $elements = $this->xpath('//tr[@class=:class and ./td[contains(., :text)]]', [
+      ':class' => 'draggable odd',
+      ':text' => $tip['label'],
+    ]);
+    $this->assertNotEquals(count($elements), 1, 'Did not find tip "' . $tip['label'] . '".');
   }
 
 }

@@ -1,0 +1,59 @@
+<?php
+
+/**
+ * @file
+ * DrImage update functions.
+ */
+
+/**
+ * Set no cache as default value for proxy_cache_maximum_age.
+ */
+function drimage_update_8006(&$sandbox) {
+  \Drupal::configFactory()->getEditable('drimage.settings')
+    ->set('proxy_cache_maximum_age', 0)
+    ->save();
+}
+
+/**
+ * Set false as default value for "imageapi_optimize_webp".
+ */
+function drimage_update_8007(&$sandbox) {
+  \Drupal::configFactory()->getEditable('drimage.settings')
+    ->set('imageapi_optimize_webp', FALSE)
+    ->save();
+}
+
+/**
+ * Set false as default value for "imageapi_optimize_webp".
+ */
+function drimage_update_8008(&$sandbox) {
+  \Drupal::configFactory()->getEditable('drimage.settings')
+    ->set('automated_crop', NULL)
+    ->save();
+}
+
+/**
+ * Set legacy lazyloading by default for all already installed projects.
+ */
+function drimage_update_8009(&$sandbox) {
+  \Drupal::configFactory()->getEditable('drimage.settings')
+    ->set('legacy_lazyload', TRUE)
+    ->save();
+}
+
+/**
+ * Cast settings properties to their correct types.
+ */
+function drimage_update_8010(): void {
+  $settings = \Drupal::configFactory()->getEditable('drimage.settings');
+
+  if ($settings->get('imageapi_optimize_webp') !== NULL) {
+    $settings->set('imageapi_optimize_webp', (bool) $settings->get('imageapi_optimize_webp'));
+  }
+
+  if ($settings->get('proxy_cache_maximum_age') !== NULL) {
+    $settings->set('proxy_cache_maximum_age', (int) $settings->get('proxy_cache_maximum_age'));
+  }
+
+  $settings->save();
+}

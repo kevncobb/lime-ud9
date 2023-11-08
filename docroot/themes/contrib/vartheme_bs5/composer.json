@@ -1,0 +1,48 @@
+{
+  "name": "drupal/vartheme_bs5",
+  "description": "Starterkit theme for Varbase standard websites. Based on Bootstrap 5 framework using SASS.",
+  "type": "drupal-theme",
+  "homepage": "https://www.drupal.org/project/vartheme_bs5",
+  "license": "GPL-2.0-or-later",
+  "minimum-stability": "dev",
+  "authors": [
+    {
+      "name": "Vardot",
+      "homepage": "https://www.drupal.org/vardot",
+      "role": "Maintainer"
+    }
+  ],
+  "support": {
+    "issues": "http://drupal.org/project/issues/vartheme_bs5",
+    "source": "http://cgit.drupalcode.org/vartheme_bs5"
+  },
+  "repositories": {
+    "drupal": {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    },
+    "assets": {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  },
+  "require": {
+    "composer/installers": "~2.0",
+    "oomphinc/composer-installers-extender": "~2.0",
+    "cweagans/composer-patches": "~1.0",
+    "drupal/core": "~10.1.0",
+    "drupal/varbase_components": "~2.0"
+  },
+  "extra": {
+    "installer-types": [
+      "bower-asset",
+      "npm-asset"
+    ],
+    "enable-patching": true,
+    "composer-exit-on-patch-failure": true,
+    "patchLevel": {
+      "drupal/core": "-p2"
+    },
+    "patches": { }
+  }
+}

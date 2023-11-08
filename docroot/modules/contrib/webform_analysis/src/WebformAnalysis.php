@@ -7,14 +7,31 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\webform\WebformInterface;
 
 /**
- * WebformAnalysis.
+ * Defines the handler for the webform analysis entity type.
  */
 class WebformAnalysis implements WebformAnalysisInterface {
 
   use StringTranslationTrait;
 
+  /**
+   * The webform variable.
+   *
+   * @var \Drupal\webform\WebformInterface
+   */
   protected $webform;
+
+  /**
+   * The entity variable.
+   *
+   * @var \Drupal\Core\Entity\EntityInterface
+   */
   protected $entity;
+
+  /**
+   * The elements variable.
+   *
+   * @var array
+   */
   protected $elements;
 
   /**
@@ -22,15 +39,18 @@ class WebformAnalysis implements WebformAnalysisInterface {
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity of form.
+   * @param string $field_name
+   *   (optional) The webform field name to display. Required if $entity is not
+   *   a Webform.
    */
-  public function __construct(EntityInterface $entity) {
+  public function __construct(EntityInterface $entity, $field_name = NULL) {
     if ($entity instanceof WebformInterface) {
       $this->webform = $entity;
       $this->entity = NULL;
     }
     else {
       $this->entity = $entity;
-      $this->webform = $entity->webform->entity;
+      $this->webform = $entity->{$field_name}->entity;
     }
   }
 
@@ -181,7 +201,11 @@ class WebformAnalysis implements WebformAnalysisInterface {
    * {@inheritdoc}
    */
   public function castNumeric($i = '') {
-    return $this->isInt($i) ? (int) $i : (float) $i;
+    if (empty($i)) {
+      return '';
+    }
+
+    return $this->isInt($i) ? $i : "{$i}";
   }
 
 }

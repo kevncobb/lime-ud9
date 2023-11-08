@@ -33,7 +33,7 @@ function tvi_help($route_name, RouteMatchInterface $route_match) {
  */
 function tvi_entity_extra_field_info() {
   $extra = [];
-  /** @var \Drupal\Core\Entity\EntityInterface $bundle */
+  /** @var EntityInterface $bundle */
   foreach (Vocabulary::loadMultiple() as $bundle) {
     $extra['taxonomy_term'][$bundle->id()]['form']['tvi'] = [
       'label' => t('TVI settings'),
@@ -50,7 +50,7 @@ function tvi_entity_extra_field_info() {
  *
  * @param array $form
  *   Settings form render array.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param FormStateInterface $form_state
  *   Submitted form state.
  */
 function _tvi_settings_form(array &$form, FormStateInterface $form_state) {
@@ -185,7 +185,7 @@ function _tvi_settings_form(array &$form, FormStateInterface $form_state) {
  *
  * @param array $form
  *   Settings form render array.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param FormStateInterface $form_state
  *   Submitted form state.
  */
 function tvi_form_config_validate(array $form, FormStateInterface $form_state) {
@@ -229,7 +229,7 @@ function tvi_form_taxonomy_vocabulary_form_alter(array &$form, FormStateInterfac
  *
  * @param array $form
  *   Settings form render array.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param FormStateInterface $form_state
  *   Submitted form state.
  *
  * @return mixed
@@ -268,7 +268,7 @@ function tvi_get_view_displays(string $view_id) {
  *
  * @param array $form
  *   Settings form render array.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param FormStateInterface $form_state
  *   Submitted form state.
  */
 function tvi_submit_handler(array $form, FormStateInterface $form_state) {

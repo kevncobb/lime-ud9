@@ -2,12 +2,8 @@ name: "Varbase Media"
 description: "Manages type of media contents and entity browsers in the site."
 type: module
 package: Varbase
-core_version_requirement: ~9.5.0 || ~10.1.0
+core_version_requirement: ~10.1.0
 configure: varbase_media.settings
-components:
-  - entity_browser_generic_embed
-  - varbase_media_twitter
-  - varbase_media_instagram
 dependencies:
   - drupal:user
   - drupal:block
@@ -21,9 +17,7 @@ dependencies:
   - drupal:media
   - drupal:media_library
   - drupal:breakpoint
-  - drupal:responsive_image
-  - ds:ds
-  - ds:ds_extras
+  - drimage:drimage
   - better_exposed_filters:better_exposed_filters
   - crop:crop
   - dropzonejs:dropzonejs_eb_widget
@@ -35,6 +29,8 @@ dependencies:
   - entity_embed:entity_embed
   - focal_point:focal_point
 install:
+  - ds
+  - ds_extras
   - media_bulk_upload
   - media_bulk_upload_dropzonejs
   - media_library_edit
@@ -45,3 +41,5 @@ install:
   - blazy
   - slick
   - webp
+  - imageapi_optimize_webp
+  - entity_clone

@@ -1,0 +1,4 @@
+vendor
+composer.lock
+screenshots
+docker-compose.override.yml

@@ -13,7 +13,6 @@ use Vardot\Installer\ModuleInstallerFactory;
 function varbase_search_install() {
 
   // Processor for install: in varbase_search.info.yml file.
-  // ---------------------------------------------------------------------------.
   ModuleInstallerFactory::installList('varbase_search');
 
   // Install optional configs.

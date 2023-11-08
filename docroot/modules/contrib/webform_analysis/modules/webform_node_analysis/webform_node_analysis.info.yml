@@ -2,12 +2,12 @@ type: module
 name: 'Webform Node Analysis'
 description: 'Enables to obtain statistics on the results of form submissions.'
 package: Webform
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^8 || ^9 || ^10
 dependencies:
   - 'webform:webform_node'
   - 'webform_analysis:webform_analysis'
 
-# Information added by Drupal.org packaging script on 2022-01-28
-version: '8.x-1.0-beta8'
+# Information added by Drupal.org packaging script on 2023-10-08
+version: '8.x-1.0-beta10'
 project: 'webform_analysis'
-datestamp: 1643355380
+datestamp: 1696752504

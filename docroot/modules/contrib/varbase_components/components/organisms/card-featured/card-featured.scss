@@ -1,0 +1,104 @@
+@import "../../defaults";   // Global component defaults.
+
+.varbase-featured-card {
+
+  .card-title {
+    margin-top: 0;
+  }
+
+  &.anchor-all {
+    position: relative;
+
+    .card-title {
+      position: static;
+
+      a {
+        position: static;
+
+        &::before {
+          position: absolute;
+          content: '';
+          display: block;
+          overflow: hidden;
+          top: 0;
+          bottom: 0;
+          right: 0;
+          left: 0;        
+          z-index: 1;
+        }
+      }
+    }
+
+    a.card-link,
+    div.card-link > a {
+      position: static;
+
+      &::before {
+        position: absolute;
+        content: '';
+        display: block;
+        overflow: hidden;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;        
+        z-index: 2;
+      }
+    }
+
+    a {
+      z-index: 3;
+      position: relative;
+    }
+  }
+
+  &.border-0 {
+    .featured-card-content {
+      padding: 0;
+    }
+  }
+
+  &.bordered {
+    .featured-card-content {
+      padding-left: 0;
+    }
+
+    .flex-row-reverse {
+      .featured-card-content {
+        padding-left: auto;
+        padding-right: 0;
+      }
+    }
+  }
+
+  &.xlarge {
+    .card-title {
+      @include font-size($card-xlarge-title-font-size);
+    }
+  }
+
+  &.large {
+    .card-title {
+      @include font-size($card-large-title-font-size);
+    }
+  }
+
+  &.medium {
+    .card-title {
+      @include font-size($card-medium-title-font-size);
+    }
+  }
+
+  &.small {
+    .card-title {
+      @include font-size($card-small-title-font-size);
+    }
+  }
+
+  &.xsmall {
+    .card-title {
+      @include font-size($card-xsmall-title-font-size);
+    }
+  }
+
+}

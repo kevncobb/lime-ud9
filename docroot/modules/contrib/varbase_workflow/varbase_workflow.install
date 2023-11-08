@@ -26,6 +26,9 @@ function varbase_workflow_install() {
     ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
     ->applyUpdates();
 
+  // Add permissions.
+  ModuleInstallerFactory::addPermissions('varbase_workflow');
+
 }
 
 /**

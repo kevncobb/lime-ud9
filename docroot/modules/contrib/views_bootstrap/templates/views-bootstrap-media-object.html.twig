@@ -2,11 +2,13 @@
 
 <div{{ attributes.addClass(classes) }} id="{{ id }}">
     {% for key, row in rows -%}
-    <div class="media">
-        {% if row.image %}
-            {{ row.image }}
-        {% endif %}
-        <div class="media-body">
+    <div class="d-flex">
+        <div class="flex-shrink-0">
+            {% if row.image %}
+                {{ row.image }}
+            {% endif %}
+        </div>
+        <div class="flex-grow-1 ms-3">
             {% if row.heading %}
                 {{ row.heading }}
             {% endif %}

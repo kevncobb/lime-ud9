@@ -1,0 +1,60 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/10.1.x/core/modules/sdc/src/metadata.schema.json
+name: Navbar
+status: experimental
+description: Navbar component
+props:
+  type: object
+  properties:
+    container:
+      type: string
+      title: Container
+      description: container type
+      default: ''
+      enum:
+        - ''
+        - no-container
+        - container
+        - container-md
+        - container-lg
+        - container-xl
+        - container-xxl
+        - container-fluid
+    color:
+      type: string
+      title: Color
+      description: Color
+      default: ''
+      enum:
+        - ''
+        - light
+        - dark
+    placement:
+      type: string
+      title: Placement
+      description: Placement
+      default: ''
+      enum:
+        - ''
+        - fixed-top
+        - fixed-bottom
+        - sticky-top
+    navbar_expand:
+      type: string
+      title: Expand
+      description: Expanded navbar
+      default: ''
+      enum:
+        - ''
+        - sm
+        - md
+        - lg
+        - xl
+    attributes:
+      type: Drupal\Core\Template\Attribute
+slots:
+  branding:
+    title: Branding
+    description: Site branding.
+  navigation:
+    title: Content
+    description: site navigation.

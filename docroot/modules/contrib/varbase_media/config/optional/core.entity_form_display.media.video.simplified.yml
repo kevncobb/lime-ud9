@@ -15,12 +15,12 @@ bundle: video
 mode: simplified
 content:
   field_media_video_file:
+    type: file_generic
     weight: 0
+    region: content
     settings:
       progress_indicator: throbber
-    third_party_settings: {}
-    type: file_generic
-    region: content
+    third_party_settings: {  }
 hidden:
   created: true
   field_media_cover_image: true
@@ -28,5 +28,10 @@ hidden:
   langcode: true
   name: true
   path: true
+  publish_on: true
+  publish_state: true
+  scheduler_settings: true
   status: true
   uid: true
+  unpublish_on: true
+  unpublish_state: true

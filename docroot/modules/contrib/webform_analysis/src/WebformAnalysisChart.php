@@ -10,8 +10,32 @@ use Drupal\Core\Entity\EntityInterface;
  */
 class WebformAnalysisChart implements WebformAnalysisChartInterface {
 
+  /**
+   * The entity variable.
+   *
+   * @var \\Drupal\Core\Entity\EntityInterface
+   */
   protected $entity;
+
+  /**
+   * The components variable.
+   *
+   * @var array
+   */
   protected $components;
+
+  /**
+   * The field name variable.
+   *
+   * @var string
+   */
+  protected $fieldName;
+
+  /**
+   * The char type variable.
+   *
+   * @var string
+   */
   protected $chartType;
 
   /**
@@ -19,13 +43,16 @@ class WebformAnalysisChart implements WebformAnalysisChartInterface {
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   Entity.
+   * @param string $field_name
+   *   Webform field name to display.
    * @param array $components
    *   Components.
    * @param string $chart_type
    *   Chart Type.
    */
-  public function __construct(EntityInterface $entity, array $components = [], $chart_type = '') {
+  public function __construct(EntityInterface $entity, $field_name = NULL, array $components = [], $chart_type = '') {
     $this->entity = $entity;
+    $this->fieldName = $field_name;
     $this->components = $components;
     $this->chartType = $chart_type;
   }
@@ -38,7 +65,7 @@ class WebformAnalysisChart implements WebformAnalysisChartInterface {
       return;
     }
 
-    $analysis = new WebformAnalysis($this->entity);
+    $analysis = new WebformAnalysis($this->entity, $this->fieldName);
 
     $build['components_data'] = $this->buildComponentsData();
     $buildComponents = &$build['components_data'];

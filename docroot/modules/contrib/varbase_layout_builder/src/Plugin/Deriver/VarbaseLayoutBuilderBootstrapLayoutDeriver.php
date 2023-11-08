@@ -47,7 +47,7 @@ class VarbaseLayoutBuilderBootstrapLayoutDeriver extends DeriverBase implements 
    * {@inheritdoc}
    */
   public function getDerivativeDefinitions($base_plugin_definition) {
-    $layouts = $this->entityTypeManager->getStorage('blb_layout')->getQuery()->sort('number_of_columns', 'ASC')->execute();
+    $layouts = $this->entityTypeManager->getStorage('blb_layout')->getQuery()->accessCheck(TRUE)->sort('number_of_columns', 'ASC')->execute();
     if ($layouts) {
       foreach ($layouts as $layout_id) {
         $layout = $this->entityTypeManager->getStorage('blb_layout')->load($layout_id);
@@ -67,7 +67,7 @@ class VarbaseLayoutBuilderBootstrapLayoutDeriver extends DeriverBase implements 
   }
 
   /**
-   * Convert intger to number in letters.
+   * Convert integer number to letters.
    *
    * @param int $num
    *   The number that needed to be converted.
@@ -94,7 +94,7 @@ class VarbaseLayoutBuilderBootstrapLayoutDeriver extends DeriverBase implements 
   }
 
   /**
-   * Get the formated array of row regions based on columns count.
+   * Get the formatted array of row regions based on columns count.
    *
    * @param int $columns_count
    *   The count of row columns.

@@ -1,7 +1,7 @@
 name: "Varbase Core"
 description: "Provides core components required by other features."
 type: module
-core_version_requirement: ~9.5.0 || ~10.1.0
+core_version_requirement: ~10.1.0
 package: Varbase
 configure: varbase_core.settings_index
 dependencies:
@@ -27,8 +27,8 @@ dependencies:
   - ctools:ctools_block
   - ctools:ctools_views
   - token:token
-  - ds:ds
   - better_exposed_filters:better_exposed_filters
+  - date_filter:date_filter
   - field_group:field_group
   - smart_trim:smart_trim
   - advanced_text_formatter:advanced_text_formatter
@@ -49,11 +49,8 @@ install:
   - telephone
   - bootstrap_layouts
   - views_bootstrap
+  - ds
   - ds_extras
-  - page_manager
-  - page_manager_ui
-  - panels
-  - panels_ipe
   - menu_block
   - views_infinite_scroll
   - entity_usage
@@ -70,10 +67,8 @@ install:
   - menu_position
   - autocomplete_deluxe
   - link_attributes
+  - link_attributes_menu_link_content
   - rabbit_hole
-  - rh_node
-  - rh_taxonomy
   - login_destination
-  - betterlogin
   - email_registration
   - jquery_ui_accordion

@@ -4,6 +4,9 @@ namespace Drupal\simple_oauth\Normalizer;
 
 use Drupal\serialization\Normalizer\NormalizerBase;
 
+/**
+ * Normalizes refresh token entity.
+ */
 class RefreshTokenEntityNormalizer extends NormalizerBase implements TokenEntityNormalizerInterface {
 
   /**

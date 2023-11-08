@@ -1,5 +1,200 @@
 <?php
 /**
- * @file Addtocal.module
- * General functions and hook implementations.
+ * Add to Cal module.
  */
+
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Template\Attribute;
+
+/**
+ * Implements hook_theme().
+ */
+function addtocal_theme() {
+  return [
+    'addtocal_links' => [
+      'variables' => [
+        'addtocal_link' => NULL,
+        'id' => '',
+        'attributes' => [],
+        'button_text' => t('Add to Calendar'),
+        'button_attributes' => [
+          'aria-label' => t('Open Add to Calendar menu'),
+        ],
+        'menu_attributes' => [],
+        'items' => [],
+      ],
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for addtocal link templates.
+ *
+ * Default template: addtocal-links.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - addtocal_link: A Link object used for generating add to cal links.
+ *   - id: Unique id for the addtocal button and menu.
+ *   - attributes: An associative array of element attributes.
+ *   - button_text: The addtocal button text.
+ *   - button_attributes: An associative array of button attributes.
+ *   - menu_attributes: An associative array of menu attributes.
+ *   - items: List of add to cal links, each containing a title and generator.
+ */
+function template_preprocess_addtocal_links(&$variables) {
+  $link = $variables['addtocal_link'];
+
+  if ($link instanceof \Spatie\CalendarLinks\Link) {
+    foreach ($variables['items'] as $delta => $item) {
+      $generator = $item['generator'] ?? NULL;
+
+      if ($generator instanceof \Spatie\CalendarLinks\Generator) {
+        $variables['items'][$delta]['url'] = $link->formatWith($generator);
+      }
+    }
+  }
+
+  $attributes = new Attribute($variables['attributes']);
+  $attributes->addClass('addtocal-container');
+  $variables['attributes'] = $attributes;
+
+  $button_attributes = new Attribute($variables['button_attributes']);
+  $button_attributes->addClass('addtocal');
+  $button_attributes->setAttribute('id', $variables['id']);
+  $variables['button_attributes'] = $button_attributes;
+
+  $menu_attributes = new Attribute($variables['menu_attributes']);
+  $menu_attributes->addClass('addtocal-menu');
+  $menu_attributes->setAttribute('id', $variables['id'] . '-menu');
+  $variables['menu_attributes'] = $menu_attributes;
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function addtocal_module_implements_alter(&$implementations, $hook) {
+  if ($hook == 'tokens' || $hook == 'token_info' || $hook == 'token_info_alter' || $hook == 'tokens_alter') {
+    // Make sure all token hooks in this module run after token and field modules.
+    if (isset($implementations['addtocal'])) {
+      $addtocal = $implementations['addtocal'];
+      unset($implementations['addtocal']);
+      $implementations['addtocal'] = $addtocal;
+    }
+  }
+}
+
+/**
+ * Implements hook_token_info_alter().
+ */
+function addtocal_token_info_alter(&$data) {
+  // Addtocal url token type.
+  $data['types']['addtocal-url'] = [
+    'name' => 'Add to Cal URL',
+    'description' => 'Add to Calendar url.',
+    'needs-data' => 'addtocal-url',
+  ];
+
+  // Addtocal url default tokens.
+  $data['tokens']['addtocal-url']['google'] = [
+    'name' => t('Google'),
+    'description' => t('Add to Google Calendar url.'),
+  ];
+  $data['tokens']['addtocal-url']['yahoo'] = [
+    'name' => t('Yahoo!'),
+    'description' => t('Add to Yahoo Calendar url.'),
+  ];
+  $data['tokens']['addtocal-url']['web_outlook'] = [
+    'name' => t('Outlook.com'),
+    'description' => t('Add to Outlook.com Calendar url.'),
+  ];
+  $data['tokens']['addtocal-url']['web_office'] = [
+    'name' => t('Office.com'),
+    'description' => t('Add to Office.com Calendar url.'),
+  ];
+  $data['tokens']['addtocal-url']['ics'] = [
+    'name' => t('iCal / MS Outlook'),
+    'description' => t('Add to iCal / MS Outlook url.'),
+  ];
+
+  // Alter the field tokens added by token.module.
+  foreach ($data['tokens'] as $token_name => $token_info) {
+    $date_type = $token_info['date']['type'] ?? $token_info['start_date']['type'] ?? NULL;
+    if ($date_type == 'date') {
+      $data['tokens'][$token_name]['addtocal-url'] = [
+        'name' => 'Add to Cal URL',
+        'description' => 'Add to Calendar url.',
+        'module' => 'addtocal',
+        'type' => 'addtocal-url',
+      ];
+    }
+  }
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function addtocal_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+  $replacements = [];
+
+  foreach ($tokens as $name => $original) {
+    if (preg_match('/^(?:([\d]+):)?addtocal-url(?::([\w-]+))?$/i', $name, $matches)) {
+      $delta = $matches[1] ?: 0;
+      $generator_type = $matches[2] ?: '';
+
+      $token_name = $data['field_name'];
+      $items = $data[$token_name];
+      $token_name_parts = explode('-', $token_name);
+      $field_name = $token_name_parts[1] ?? '';
+
+      if (!($items instanceof FieldItemListInterface)) {
+        return $replacements;
+      }
+
+      $entity = $items->getEntity();
+
+      if (!$entity->hasField($field_name) || $entity->get($field_name)->isEmpty()) {
+        return $replacements;
+      }
+
+      $view_mode_name = $entity->getEntityTypeId() . '.' . $entity->bundle() . '.token';
+      /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $view_display */
+      $view_display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load($view_mode_name);
+      if (empty($view_display) || !$view_display->status()) {
+        $view_mode_name = $entity->getEntityTypeId() . '.' . $entity->bundle() . '.default';
+        $view_display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load($view_mode_name);
+      }
+
+      // Pull addtocal configuration from the field if it exists.
+      $display_options = $view_display->getComponent($field_name);
+      if ($display_options['type'] != 'addtocal_view') {
+        $display_options = [
+          'type' => 'addtocal_view',
+          'label' => 'hidden',
+          'settings' => [
+            'past_events' => TRUE,
+          ],
+        ];
+      }
+
+      $build = $entity->$field_name->view($display_options);
+      $addtocal = $build[$delta]['addtocal'] ?? [];
+      $addtocal_access = !isset($addtocal['#access']) || $addtocal['#access'];
+
+      $addtocal_link = $addtocal['#addtocal_link'] ?? NULL;
+      $addtocal_items = $addtocal['#items'] ?? [];
+      $addtocal_item = $addtocal_items[$generator_type] ?? reset($addtocal_items);
+      $generator = $addtocal_item['generator'] ?? NULL;
+
+      if ($addtocal_access && $addtocal_link && $generator) {
+        $replacements[$original] = $addtocal_link->formatWith($generator);
+      }
+      else {
+        $replacements[$original] = '';
+      }
+    }
+  }
+
+  return $replacements;
+}

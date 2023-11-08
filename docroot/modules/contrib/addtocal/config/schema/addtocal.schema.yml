@@ -1,0 +1,21 @@
+# Schema for the configuration files of the Add to Cal module.
+
+field.formatter.settings.addtocal_view:
+  type: field.formatter.settings.datetime_custom
+  label: 'Add to Cal custom display format settings'
+  mapping:
+    event_title:
+      type: string
+      label: 'Event title'
+    location:
+      type: string
+      label: 'Event location'
+    description:
+      type: string
+      label: 'Event description'
+    past_events:
+      type: boolean
+      label: 'Show Add to Cal widget for past events'
+    separator:
+      type: string
+      label: 'Date separator'

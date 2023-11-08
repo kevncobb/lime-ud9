@@ -10,12 +10,7 @@ dependencies:
     - media.type.remote_video
   module:
     - ds
-    - layout_builder
     - varbase_media
-third_party_settings:
-  layout_builder:
-    allow_custom: false
-    enabled: false
 id: media.remote_video.background_media
 targetEntityType: media
 bundle: remote_video
@@ -23,7 +18,6 @@ mode: background_media
 content:
   field_media_oembed_video:
     type: varbase_oembed
-    weight: 0
     label: hidden
     settings:
       max_width: 1600
@@ -33,10 +27,12 @@ content:
         ft:
           id: reset
           settings:
-            lb: ""
+            lb: ''
+    weight: 0
     region: content
 hidden:
   created: true
+  feeds_item: true
   field_media_cover_image: true
   field_media_in_library: true
   field_provider: true

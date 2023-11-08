@@ -4,14 +4,13 @@ namespace Drupal\colorbox_field_formatter\Plugin\Field\FieldFormatter;
 
 use Drupal\colorbox\ColorboxAttachment;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Entity\Display\EntityDisplayInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Utility\Token;
 use Drupal\field_ui\Form\EntityViewDisplayEditForm;
@@ -29,66 +28,44 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   }
  * )
  */
-class ColorboxFieldFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
+class ColorboxFieldFormatter extends FormatterBase {
 
   /**
+   * The module handler service.
+   *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
+   * The colorbox attachment.
+   *
    * @var \Drupal\colorbox\ColorboxAttachment
    */
-  protected $colorboxAttachment;
+  protected ColorboxAttachment $colorboxAttachment;
 
   /**
+   * The token service.
+   *
    * @var \Drupal\Core\Utility\Token
    */
-  protected $token;
+  protected Token $token;
 
   /**
-   * ColorboxFieldFormatter constructor.
-   *
-   * @param $plugin_id
-   * @param $plugin_definition
-   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
-   * @param array $settings
-   * @param $label
-   * @param $view_mode
-   * @param array $third_party_settings
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   * @param \Drupal\colorbox\ColorboxAttachment $colorbox_attachment
-   * @param \Drupal\Core\Utility\Token $token
+   * {@inheritdoc}
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, ModuleHandlerInterface $module_handler, ColorboxAttachment $colorbox_attachment, Token $token) {
-    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
-    $this->moduleHandler = $module_handler;
-    $this->colorboxAttachment = $colorbox_attachment;
-    $this->token = $token;
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): ColorboxFieldFormatter {
+    /** @var \Drupal\colorbox_field_formatter\Plugin\Field\FieldFormatter\ColorboxFieldFormatter $instance */
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->moduleHandler = $container->get('module_handler');
+    $instance->token = $container->get('token');
+    return $instance;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $plugin_id,
-      $plugin_definition,
-      $configuration['field_definition'],
-      $configuration['settings'],
-      $configuration['label'],
-      $configuration['view_mode'],
-      $configuration['third_party_settings'],
-      $container->get('module_handler'),
-      $container->get('colorbox.attachment'),
-      $container->get('token')
-    );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function defaultSettings() {
+  public static function defaultSettings(): array {
     return [
       'style' => 'default',
       'link_type' => 'content',
@@ -106,7 +83,7 @@ class ColorboxFieldFormatter extends FormatterBase implements ContainerFactoryPl
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, FormStateInterface $form_state) {
+  public function settingsForm(array $form, FormStateInterface $form_state): array {
     $form = parent::settingsForm($form, $form_state);
 
     $form['style'] = [
@@ -148,20 +125,23 @@ class ColorboxFieldFormatter extends FormatterBase implements ContainerFactoryPl
       ($buildInfo = $form_state->getBuildInfo()) &&
       ($callback_object = $buildInfo['callback_object']) &&
       ($callback_object instanceof EntityViewDisplayEditForm)) {
-      $form['token_help_wrapper'] = [
-        '#type' => 'container',
-        '#states' => [
-          'visible' => [
-            'select.colorbox-field-formatter-style' => ['value' => 'default'],
-            'select.colorbox-field-formatter-link-type' => ['value' => 'manual'],
+      $entity = $callback_object->getEntity();
+      if ($entity instanceof EntityDisplayInterface) {
+        $form['token_help_wrapper'] = [
+          '#type' => 'container',
+          '#states' => [
+            'visible' => [
+              'select.colorbox-field-formatter-style' => ['value' => 'default'],
+              'select.colorbox-field-formatter-link-type' => ['value' => 'manual'],
+            ],
           ],
-        ],
-      ];
-      $form['token_help_wrapper']['token_help'] = [
-        '#theme' => 'token_tree_link',
-        '#token_types' => ['entity' => $callback_object->getEntity()->getTargetEntityTypeId()],
-        '#global_types' => TRUE,
-      ];
+        ];
+        $form['token_help_wrapper']['token_help'] = [
+          '#theme' => 'token_tree_link',
+          '#token_types' => ['entity' => $entity->getTargetEntityTypeId()],
+          '#global_types' => TRUE,
+        ];
+      }
     }
 
     $form['inline_selector'] = [
@@ -213,36 +193,58 @@ class ColorboxFieldFormatter extends FormatterBase implements ContainerFactoryPl
   /**
    * {@inheritdoc}
    */
-  public function settingsSummary() {
+  public function settingsSummary(): array {
     $summary = [];
 
     $styles = $this->getStyles();
-    $summary[] = $this->t('Style: @style', ['@style' => $styles[$this->getSetting('style')],]);
+    $summary[] = $this->t('Style: @style', [
+      '@style' => $styles[$this->getSetting('style')],
+    ]);
 
     if ($this->getSetting('style') === 'default') {
       $types = $this->getLinkTypes();
       if ($this->getSetting('link_type') === 'manual') {
-        $summary[] = $this->t('Link to @link', ['@link' => $this->getSetting('link'),]);
+        $summary[] = $this->t('Link to @link', [
+          '@link' => $this->getSetting('link'),
+        ]);
       }
       else {
-        $summary[] = $this->t('Link to @link', ['@link' => $types[$this->getSetting('link_type')],]);
+        $summary[] = $this->t('Link to @link', [
+          '@link' => $types[$this->getSetting('link_type')],
+        ]);
       }
     }
 
     if ($this->getSetting('style') === 'colorbox-inline') {
-      $summary[] = $this->t('Inline selector: @selector', ['@selector' => $this->getSetting('inline_selector'),]);
+      $summary[] = $this->t('Inline selector: @selector', [
+        '@selector' => $this->getSetting('inline_selector'),
+      ]);
     }
-    $summary[] = $this->t('Width: @width', ['@width' => $this->getSetting('width'),]);
-    $summary[] = $this->t('Height: @height', ['@height' => $this->getSetting('height'),]);
-    $summary[] = $this->t('iFrame Mode: @mode', ['@mode' => ($this->getSetting('iframe') ? $this->t('Yes') : $this->t('No')),]);
+    $summary[] = $this->t('Width: @width', [
+      '@width' => $this->getSetting('width'),
+    ]);
+    $summary[] = $this->t('Height: @height', [
+      '@height' => $this->getSetting('height'),
+    ]);
+    $summary[] = $this->t('iFrame Mode: @mode', [
+      '@mode' => ($this->getSetting('iframe') ?
+        $this->t('Yes') :
+        $this->t('No')),
+    ]);
     if (!empty($this->getSetting('anchor'))) {
-      $summary[] = $this->t('Anchor: #@anchor', ['@anchor' => $this->getSetting('anchor'),]);
+      $summary[] = $this->t('Anchor: #@anchor', [
+        '@anchor' => $this->getSetting('anchor'),
+      ]);
     }
     if (!empty($this->getSetting('class'))) {
-      $summary[] = $this->t('Classes: @class', ['@class' => $this->getSetting('class'),]);
+      $summary[] = $this->t('Classes: @class', [
+        '@class' => $this->getSetting('class'),
+      ]);
     }
     if (!empty($this->getSetting('rel'))) {
-      $summary[] = $this->t('Rel: @rel', ['@rel' => $this->getSetting('rel')]);
+      $summary[] = $this->t('Rel: @rel', [
+        '@rel' => $this->getSetting('rel'),
+      ]);
     }
 
     return $summary;
@@ -250,6 +252,7 @@ class ColorboxFieldFormatter extends FormatterBase implements ContainerFactoryPl
 
   /**
    * {@inheritdoc}
+   *
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
@@ -311,18 +314,21 @@ class ColorboxFieldFormatter extends FormatterBase implements ContainerFactoryPl
    * @return string|array
    *   The textual output generated.
    */
-  protected function viewValue(FieldItemInterface $item) {
+  protected function viewValue(FieldItemInterface $item): array|string {
     // The text value has no text format assigned to it, so the user input
     // should equal the output, including newlines.
-    /** @noinspection PhpUndefinedFieldInspection */
-    return nl2br(Html::escape($item->value));
+    return nl2br(Html::escape($item->getValue()));
   }
 
   /**
+   * Helper function to geth the url for a given field item.
+   *
    * @param \Drupal\Core\Field\FieldItemInterface $item
    *   One field item.
    *
    * @return \Drupal\Core\Url
+   *   The url.
+   *
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   protected function getUrl(FieldItemInterface $item): Url {
@@ -339,10 +345,10 @@ class ColorboxFieldFormatter extends FormatterBase implements ContainerFactoryPl
   }
 
   /**
-   * Callback to provide an array for a select field containing all supported
-   * colorbox styles.
+   * Provides an array for a select field with all supported colorbox styles.
    *
    * @return array
+   *   List of all supported colorbox styles.
    */
   private function getStyles(): array {
     $styles = [
@@ -362,6 +368,7 @@ class ColorboxFieldFormatter extends FormatterBase implements ContainerFactoryPl
    * Callback to provide an arry for a select field containing all link types.
    *
    * @return array
+   *   The list of link types.
    */
   private function getLinkTypes(): array {
     return [

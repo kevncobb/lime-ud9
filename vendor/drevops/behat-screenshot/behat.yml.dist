@@ -1,0 +1,11 @@
+default:
+  suites:
+    default:
+      contexts:
+        - FeatureContext
+        - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext
+  extensions:
+    DrevOps\BehatScreenshotExtension:
+      dir: %paths.base%/screenshots
+      fail: true
+      purge: false
