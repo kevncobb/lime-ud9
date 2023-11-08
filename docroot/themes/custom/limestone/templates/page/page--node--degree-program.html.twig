@@ -99,7 +99,7 @@
             <tbody><tr>
               <td>
                 {{ title_prefix }}
-                <h1 class="h1 max-1000 splash-header-title align-center">{{ title }}</h1>
+                <h1 class="h1 max-1000 splash-header-title align-center">{{ drupal_title() }}</h1>
               </td>
             </tr>
             <tr><td>{{ drupal_field('field_program_type_term', 'node', node.id) }}</td></tr>
@@ -135,26 +135,44 @@
             <div class="cell medium-7">
               {{ drupal_block('addtoany_block') }}
               {{ drupal_field('body', 'node', node.id) }}
+              {% if node.field_show_saints_map_under_body.value == '1' %}
+                {% if node.field_hide_saints_map_block.value == '0' %}
+                  <div class="large reveal" id="ModalSaintsMap" tabindex="-1" role="dialog" aria-labelledby="ModalSaintsMap" aria-hidden="true" data-reveal>
+                    {{ drupal_view('saints_maps', 'block_2',  view.id) }}
+                    <button class="close-button" data-close aria-label="Close modal" type="button">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="box vbp_color_02" style="margin: 0;padding: 10px 20px;">
+                    <h2 class="centered-header show-for-sr field-label-above">Explore Experiental Major Map</h2><p class="mb-0"><img alt="saints maps" src="/sites/default/files/2022-08/Saints%20Maps%20Logo%20white%20wordmark2.png">Use this map to help plan and guide your experience at Limestone. Each student’s experience is unique so please keep in mind the activities outlined in this map are suggestions and can be tailored to you! Always consult with your advisors whenever possible for new opportunities and updates.</p>
+                    <p class="text-align-right mb-0"><button class="button success modal-button" data-open="ModalSaintsMap">Open Saints Map</button></p>
+                  </div>
+                {% endif %}
+              {% endif %}
             </div>
             <div class="cell medium-5">
+              {{ drupal_field('field_optional_text_below_relate', 'node',  node.id) }}
               {{ drupal_field('field_fast_facts', 'node',  node.id) }}
-              {% if node.field_hide_saints_map_block.value == '0' %}
-                <div class="large reveal" id="ModalSaintsMap" tabindex="-1" role="dialog" aria-labelledby="ModalSaintsMap" aria-hidden="true" data-reveal>
-                  {{ drupal_view('saints_maps', 'block_2',  view.id) }}
-                  <button class="close-button" data-close aria-label="Close modal" type="button">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="box vbp_color_02" style="margin: 0;padding: 10px 20px;">
-                  <h2 class="centered-header show-for-sr field-label-above">Explore Experiental Major Map</h2><p class="mb-0"><img alt="saints maps" src="/sites/default/files/2022-08/Saints%20Maps%20Logo%20white%20wordmark2.png">Use this map to help plan and guide your experience at Limestone. Each student’s experience is unique so please keep in mind the activities outlined in this map are suggestions and can be tailored to you! Always consult with your advisors whenever possible for new opportunities and updates.</p>
-                  <p class="text-align-right mb-0"><button class="button success modal-button" data-open="ModalSaintsMap">Open Saints Map</button></p>
-                </div>
+              {% if node.field_show_saints_map_under_body.value == '0' %}
+                {% if node.field_hide_saints_map_block.value == '0' %}
+                  <div class="large reveal" id="ModalSaintsMap" tabindex="-1" role="dialog" aria-labelledby="ModalSaintsMap" aria-hidden="true" data-reveal>
+                    {{ drupal_view('saints_maps', 'block_2',  view.id) }}
+                    <button class="close-button" data-close aria-label="Close modal" type="button">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="box vbp_color_02" style="margin: 0;padding: 10px 20px;">
+                    <h2 class="centered-header show-for-sr field-label-above">Explore Experiental Major Map</h2><p class="mb-0"><img alt="saints maps" src="/sites/default/files/2022-08/Saints%20Maps%20Logo%20white%20wordmark2.png">Use this map to help plan and guide your experience at Limestone. Each student’s experience is unique so please keep in mind the activities outlined in this map are suggestions and can be tailored to you! Always consult with your advisors whenever possible for new opportunities and updates.</p>
+                    <p class="text-align-right mb-0"><button class="button success modal-button" data-open="ModalSaintsMap">Open Saints Map</button></p>
+                  </div>
+                {% endif %}
               {% endif %}
+
 
               {% if node.field_display_faculty_horizontal.value == '0' %}
                 {{ drupal_field('field_related_faculty', 'node',  node.id) }}
               {% endif %}
-              {{ drupal_field('field_optional_text_below_relate', 'node',  node.id) }}
+
               {% if node.field_display_related_news_below.value == '1' %}
                 {{ drupal_view('news', 'block_5',  view.id) }}
               {% endif %}
@@ -167,7 +185,11 @@
             </div>
           {% endif %}
         </section>
-
+        {% if node.field_show_components_section.value == '1' %}
+          <section class="degree-components">
+            {{ drupal_field('field_lp_paragraphs', 'node',  node.id) }}
+          </section>
+        {% endif %}
         <section class="spacing-xs padding-sides-sm" style="background-color: #f6f6f6;border-top: thin solid #f2f2f2;">
           <div class="grid-container">
             <div class="grid-x grid-margin-x">
