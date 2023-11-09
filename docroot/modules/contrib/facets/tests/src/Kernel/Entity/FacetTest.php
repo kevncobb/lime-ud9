@@ -28,7 +28,7 @@ class FacetTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'facets',
     'taxonomy',
   ];
@@ -36,7 +36,7 @@ class FacetTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('facets_facet');
   }
@@ -77,6 +77,9 @@ class FacetTest extends KernelTestBase {
         'show_less_label' => 'Show less',
         'show_more_label' => 'Show more',
       ],
+      'show_reset_link' => FALSE,
+      'hide_reset_when_no_selection' => FALSE,
+      'reset_text' => 'Show all',
     ];
     $this->assertEquals(['type' => 'links', 'config' => $config], $entity->getWidget());
     $this->assertInstanceOf(LinksWidget::class, $entity->getWidgetInstance());
@@ -99,7 +102,7 @@ class FacetTest extends KernelTestBase {
     $entity = new Facet([], 'facets_facet');
     $this->assertNull($entity->getWidget());
 
-    $this->setExpectedException(InvalidProcessorException::class);
+    $this->expectException(InvalidProcessorException::class);
     $entity->getWidgetInstance();
   }
 
@@ -151,7 +154,8 @@ class FacetTest extends KernelTestBase {
   public function testGetQueryTypeWithNoFacetSource() {
     $entity = new Facet([], 'facets_facet');
 
-    $this->setExpectedException(Exception::class, 'No facet source defined for facet.');
+    $this->expectException(Exception::class);
+    $this->expectExceptionMessage('No facet source defined for facet.');
     $entity->getQueryType();
   }
 
@@ -376,6 +380,7 @@ class FacetTest extends KernelTestBase {
     $entity->setEnableParentWhenChildGetsDisabled(TRUE);
     $this->assertTrue($entity->getEnableParentWhenChildGetsDisabled());
 
+    $entity->setHierarchy('taxonomy');
     $manager = $entity->getHierarchyManager();
     $this->assertInstanceOf(HierarchyPluginManager::class, $manager);
     $this->assertInstanceOf(Taxonomy::class, $entity->getHierarchyInstance());

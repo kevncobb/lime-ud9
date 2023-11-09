@@ -1,9 +1,9 @@
 name: 'Rest view'
 type: module
 description: 'Provides a Search API + rest dependency to execute tests.'
-package: 'Search'
-# core: 8.x
+package: 'Testing'
 hidden: true
+core_version_requirement: ^9.2 || ^10.0
 dependencies:
   - drupal:rest
   - drupal:views
@@ -11,9 +11,3 @@ dependencies:
   - search_api:search_api
   - search_api:search_api_test_db
   - facets:facets_rest
-
-# Information added by Drupal.org packaging script on 2019-02-27
-version: '8.x-1.3'
-core: '8.x'
-project: 'facets'
-datestamp: 1551270497

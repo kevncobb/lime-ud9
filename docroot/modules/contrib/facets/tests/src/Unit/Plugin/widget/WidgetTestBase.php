@@ -2,20 +2,23 @@
 
 namespace Drupal\Tests\facets\Unit\Plugin\widget;
 
+use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Tests\facets\Unit\Drupal10CompatibilityUnitTestCase;
 use Drupal\facets\Entity\Facet;
 use Drupal\facets\FacetInterface;
 use Drupal\facets\Result\Result;
-use Drupal\Tests\UnitTestCase;
 use Drupal\Core\Field\WidgetPluginManager;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Drupal\facets\FacetSource\FacetSourcePluginManager;
+use Drupal\facets\UrlProcessor\UrlProcessorInterface;
 
 /**
  * Base class for widget unit tests.
  */
-abstract class WidgetTestBase extends UnitTestCase {
+abstract class WidgetTestBase extends Drupal10CompatibilityUnitTestCase {
 
   /**
    * The widget to be tested.
@@ -39,16 +42,9 @@ abstract class WidgetTestBase extends UnitTestCase {
   protected $originalResults;
 
   /**
-   * An array of possible query types.
-   *
-   * @var string[]
-   */
-  protected $queryTypes;
-
-  /**
    * Sets up the container and other variables used in all the tests.
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $facet = new Facet([], 'facets_facet');
@@ -66,23 +62,24 @@ abstract class WidgetTestBase extends UnitTestCase {
     }
     $this->originalResults = $original_results;
 
-    // Creates a mocked container, so we can access string translation.
-    $container = $this->prophesize(ContainerInterface::class);
+    // Create a container, so we can access string translation.
     $string_translation = $this->prophesize(TranslationInterface::class);
     $url_generator = $this->prophesize(UrlGeneratorInterface::class);
     $widget_manager = $this->prophesize(WidgetPluginManager::class);
 
-    $container->get('plugin.manager.facets.widget')->willReturn($widget_manager->reveal());
-    $container->get('string_translation')->willReturn($string_translation->reveal());
-    $container->get('url_generator')->willReturn($url_generator->reveal());
-    \Drupal::setContainer($container->reveal());
+    $url_processor = $this->createMock(UrlProcessorInterface::class);
+    $manager = $this->createMock(FacetSourcePluginManager::class);
+    $manager->method('createInstance')->willReturn($url_processor);
 
-    $this->queryTypes = [
-      'date' => 'date',
-      'string' => 'string',
-      'numeric' => 'numeric',
-      'range' => 'range',
-    ];
+    $em = $this->prophesize(EntityTypeManager::class);
+
+    $container = new ContainerBuilder();
+    $container->set('plugin.manager.facets.widget', $widget_manager->reveal());
+    $container->set('plugin.manager.facets.url_processor', $manager);
+    $container->set('string_translation', $string_translation->reveal());
+    $container->set('url_generator', $url_generator->reveal());
+    $container->set('entity_type.manager', $em->reveal());
+    \Drupal::setContainer($container);
   }
 
   /**
@@ -97,7 +94,7 @@ abstract class WidgetTestBase extends UnitTestCase {
    * Tests get query type.
    */
   public function testGetQueryType() {
-    $result = $this->widget->getQueryType($this->queryTypes);
+    $result = $this->widget->getQueryType();
     $this->assertEquals(NULL, $result);
   }
 

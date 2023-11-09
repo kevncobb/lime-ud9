@@ -2,6 +2,7 @@
 
 namespace Drupal\facets\Widget;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -48,43 +49,27 @@ abstract class WidgetPluginBase extends PluginBase implements WidgetPluginInterf
       if (empty($result->getUrl())) {
         return $this->buildResultItem($result);
       }
-      else {
-        // When the facet is being build in an AJAX request, and the facetsource
-        // is a block, we need to update the url to use the current request url.
-        if ($result->getUrl()->isRouted() && $result->getUrl()->getRouteName() === 'facets.block.ajax') {
-          $request = \Drupal::request();
-          $url_object = \Drupal::service('path.validator')
-            ->getUrlIfValid($request->getPathInfo());
-          if ($url_object) {
-            $url = $result->getUrl();
-            $options = $url->getOptions();
-            $route_params = $url_object->getRouteParameters();
-            $route_name = $url_object->getRouteName();
-            $result->setUrl(new Url($route_name, $route_params, $options));
-          }
-        }
 
-        return $this->buildListItems($facet, $result);
-      }
+      return $this->buildListItems($facet, $result);
     }, $facet->getResults());
 
     $widget = $facet->getWidget();
+
+    $urlProcessorManager = \Drupal::service('plugin.manager.facets.url_processor');
+    /** @var \Drupal\facets\UrlProcessor\UrlProcessorInterface $url_processor */
+    $url_processor = $urlProcessorManager->createInstance($facet->getFacetSourceConfig()->getUrlProcessorName(), ['facet' => $facet]);
 
     return [
       '#theme' => $this->getFacetItemListThemeHook($facet),
       '#facet' => $facet,
       '#items' => $items,
       '#attributes' => [
+        'data-drupal-facet-filter-key' => $url_processor->getFilterKey(),
         'data-drupal-facet-id' => $facet->id(),
         'data-drupal-facet-alias' => $facet->getUrlAlias(),
+        'class' => [$facet->getActiveItems() ? 'facet-active' : 'facet-inactive'],
       ],
-      '#context' => ['list_style' => $widget['type']],
-      '#cache' => [
-        'contexts' => [
-          'url.path',
-          'url.query_args',
-        ],
-      ],
+      '#context' => !empty($widget['type']) ? ['list_style' => $widget['type']] : [],
     ];
   }
 
@@ -103,7 +88,8 @@ abstract class WidgetPluginBase extends PluginBase implements WidgetPluginInterf
    *   A theme hook name with suggestions, suitable for the #theme property.
    */
   protected function getFacetItemListThemeHook(FacetInterface $facet) {
-    return 'facets_item_list__' . $facet->getWidget()['type'] . '__' . $facet->id();
+    $type = $facet->getWidget()['type'] ?? 'std';
+    return 'facets_item_list__' . $type . '__' . $facet->id();
   }
 
   /**
@@ -201,9 +187,20 @@ abstract class WidgetPluginBase extends PluginBase implements WidgetPluginInterf
       $items['#attributes']['class'][] = 'is-active';
     }
 
+    $urlProcessorManager = \Drupal::service('plugin.manager.facets.url_processor');
+    /** @var \Drupal\facets\UrlProcessor\UrlProcessorInterface $url_processor */
+    $url_processor = $urlProcessorManager->createInstance($facet->getFacetSourceConfig()->getUrlProcessorName(), ['facet' => $facet]);
+
     $items['#wrapper_attributes'] = ['class' => $classes];
-    $items['#attributes']['data-drupal-facet-item-id'] = $this->facet->getUrlAlias() . '-' . str_replace(' ', '-', $result->getRawValue());
+    $items['#attributes']['data-drupal-facet-item-id'] = Html::getClass($facet->getUrlAlias() . '-' . strtr($result->getRawValue(), ' \'\"', '---'));
     $items['#attributes']['data-drupal-facet-item-value'] = $result->getRawValue();
+    $items['#attributes']['data-drupal-facet-item-count'] = $result->getCount();
+    $items['#attributes']['data-drupal-facet-filter-value'] = $facet->getUrlAlias() . $url_processor->getSeparator() . $result->getRawValue();
+
+    if ($facet->getShowOnlyOneResult()) {
+      $items['#attributes']['data-drupal-facet-single-selection-group'] = Html::getClass($facet->getUrlAlias());
+    }
+
     return $items;
   }
 

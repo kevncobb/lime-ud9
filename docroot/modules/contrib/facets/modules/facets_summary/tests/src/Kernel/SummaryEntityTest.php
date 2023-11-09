@@ -3,7 +3,7 @@
 namespace Drupal\Tests\facets_summary\Kernel;
 
 use Drupal\facets_summary\Entity\FacetsSummary;
-use Drupal\facets_summary\Plugin\facets_summary\processor\HideWhenNotRenderedProcessor;
+use Drupal\facets_summary\Plugin\facets_summary\processor\ShowCountProcessor;
 use Drupal\facets_summary\Processor\ProcessorInterface;
 use Drupal\KernelTests\KernelTestBase;
 
@@ -20,7 +20,7 @@ class SummaryEntityTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'facets',
     'facets_summary',
   ];
@@ -28,7 +28,7 @@ class SummaryEntityTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('facets_facet');
     $this->installEntitySchema('facets_summary');
@@ -56,6 +56,19 @@ class SummaryEntityTest extends KernelTestBase {
     $this->assertInstanceOf(FacetsSummary::class, $source);
 
     $this->assertEquals('foo', $entity->getFacetSourceId());
+  }
+
+  /**
+   * Tests facet visibility.
+   *
+   * @covers ::setOnlyVisibleWhenFacetSourceIsVisible
+   * @covers ::getOnlyVisibleWhenFacetSourceIsVisible
+   */
+  public function testOnlyVisible() {
+    $entity = new FacetsSummary(['description' => 'Owls', 'name' => 'owl'], 'facets_summary');
+    $this->assertFalse($entity->getOnlyVisibleWhenFacetSourceIsVisible());
+    $entity->setOnlyVisibleWhenFacetSourceIsVisible(TRUE);
+    $this->assertTrue($entity->getOnlyVisibleWhenFacetSourceIsVisible());
   }
 
   /**
@@ -95,7 +108,7 @@ class SummaryEntityTest extends KernelTestBase {
     $this->assertEmpty($entity->getProcessors());
     $this->assertEmpty($entity->getProcessorsByStage(ProcessorInterface::STAGE_BUILD));
 
-    $id = 'hide_when_not_rendered';
+    $id = 'show_count';
     $config = [
       'processor_id' => $id,
       'weights' => [],
@@ -107,7 +120,7 @@ class SummaryEntityTest extends KernelTestBase {
     $this->assertNotEmpty($entity->getProcessorsByStage(ProcessorInterface::STAGE_BUILD));
     $processors = $entity->getProcessors();
     $this->assertArrayHasKey($id, $processors);
-    $this->assertInstanceOf(HideWhenNotRenderedProcessor::class, $processors[$id]);
+    $this->assertInstanceOf(ShowCountProcessor::class, $processors[$id]);
 
     $entity->removeProcessor($id);
     $this->assertEmpty($entity->getProcessorsByStage(ProcessorInterface::STAGE_BUILD));

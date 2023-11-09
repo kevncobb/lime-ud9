@@ -5,7 +5,7 @@ drupal.facets.index-active-formatters:
   dependencies:
     - core/jquery
     - core/drupal
-    - core/jquery.once
+    - core/once
 
 drupal.facets.edit-facet:
   version: VERSION
@@ -21,14 +21,24 @@ drupal.facets.admin_css:
     theme:
       css/facets.admin.css: {}
 
-drupal.facets.checkbox-widget:
+widget:
   version: VERSION
   js:
-    js/checkbox-widget.js: {}
+    js/base-widget.js: {}
   dependencies:
     - core/jquery
     - core/drupal
-    - core/jquery.once
+    - core/once
+
+drupal.facets.checkbox-widget:
+  version: VERSION
+  css:
+    theme:
+      css/checkbox-widget.css: { }
+  js:
+    js/checkbox-widget.js: {}
+  dependencies:
+    - facets/widget
 
 drupal.facets.hierarchical:
   version: VERSION
@@ -47,24 +57,14 @@ drupal.facets.dropdown-widget:
   js:
     js/dropdown-widget.js: {}
   dependencies:
-    - core/jquery
-    - core/drupal
-    - core/jquery.once
+    - facets/widget
+
 soft-limit:
   version: VERSION
   js:
     js/soft-limit.js: {}
   dependencies:
     - core/jquery
-    - core/jquery.once
+    - core/once
     - core/drupal
     - core/drupalSettings
-drupal.facets.views-ajax:
-  js:
-    js/facets-views-ajax.js: {}
-  dependencies:
-    - core/jquery
-    - core/jquery.once
-    - core/drupal
-    - core/drupalSettings
-    - core/drupal.ajax

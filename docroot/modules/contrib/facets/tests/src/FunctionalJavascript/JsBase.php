@@ -14,7 +14,7 @@ abstract class JsBase extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'views',
     'search_api',
     'facets',
@@ -25,7 +25,12 @@ abstract class JsBase extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setUp(): void {
     parent::setUp();
 
     // Create the users used for the tests.
@@ -90,6 +95,7 @@ abstract class JsBase extends WebDriverTestBase {
 
     $inserted_entities = \Drupal::entityQuery('entity_test_mulrev_changed')
       ->count()
+      ->accessCheck()
       ->execute();
     $this->assertEquals(5, $inserted_entities, "5 items inserted.");
 
@@ -134,8 +140,19 @@ abstract class JsBase extends WebDriverTestBase {
    *   The id of the facet.
    * @param string $field
    *   The field name.
+   * @param string $widget_type
+   *   The type of the facet widget. links by default.
+   * @param array $widget_settings
+   *   The widget config.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  protected function createFacet($id, $field = 'type') {
+  protected function createFacet($id, $field = 'type', $widget_type = 'links', array $widget_settings = [
+    'show_numbers' => TRUE,
+    'soft_limit' => 0,
+  ]) {
     $facet_storage = \Drupal::entityTypeManager()->getStorage('facets_facet');
     // Create and save a facet with a checkbox widget.
     $facet_storage->create([
@@ -147,11 +164,8 @@ abstract class JsBase extends WebDriverTestBase {
       'empty_behavior' => ['behavior' => 'none'],
       'weight' => 1,
       'widget' => [
-        'type' => 'links',
-        'config' => [
-          'show_numbers' => TRUE,
-          'soft_limit' => 0,
-        ],
+        'type' => $widget_type,
+        'config' => $widget_settings,
       ],
       'processor_configs' => [
         'url_processor_handler' => [
@@ -161,6 +175,8 @@ abstract class JsBase extends WebDriverTestBase {
         ],
       ],
       'query_operator' => 'AND',
+      'use_hierarchy' => FALSE,
+      'hierarchy' => ['type' => 'taxonomy', 'config' => []],
     ])->save();
     $this->createBlock($id);
   }

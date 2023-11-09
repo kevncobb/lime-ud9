@@ -1,0 +1,46 @@
+<?php
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\search_api\Entity\Index;
+
+/**
+ * Implements hook_views_data_alter().
+ */
+function facets_exposed_filters_views_data_alter(array &$data) {
+  /** @var \Drupal\search_api\IndexInterface $index */
+  foreach (Index::loadMultiple() as $index) {
+    $data['search_api_index_' . $index->id()]['facets'] = [
+      'title' => t('Facets'),
+      'help' => t('Displays facets in a filter or area.'),
+      'filter' => [
+        'id' => 'facets_filter',
+      ],
+      'area' => [
+        'id' => 'facets_area',
+      ],
+    ];
+  }
+}
+
+function facets_exposed_filters_form_facets_facet_edit_form_alter(&$form, FormStateInterface $form_state) {
+  $facet = \Drupal::routeMatch()->getParameter('facets_facet');
+  $facetsource_config = $facet->getFacetSourceConfig();
+
+  // Only alter form when views_exposed_filters url processor is active.
+  if (substr($facetsource_config->getUrlProcessorName(), 0, 21) === 'views_exposed_filters') {
+    // Hide processors who do not apply when using views_exposed_filters.
+    $form['widget'] = ['#type' => 'hidden', '#value' => 'views_exposed_filter'];
+
+    $form["facet_settings"]["only_visible_when_facet_source_is_visible"]['#access'] = FALSE;
+    $form["facet_settings"]["only_visible_when_facet_source_is_visible"]['#value'] = FALSE;
+
+    $form["facet_settings"]["url_alias"]['#access'] = FALSE;
+    $form["facet_settings"]["show_title"]['#access'] = FALSE;
+    $form["facet_settings"]["show_only_one_result"]['#access'] = FALSE;
+    $form["facet_settings"]["show_only_one_result"]['#value'] = FALSE;
+
+    $form["facet_settings"]["empty_behavior"]['#access'] = FALSE;
+    unset($form["facet_settings"]["show_only_one_result"]);
+  }
+}
+

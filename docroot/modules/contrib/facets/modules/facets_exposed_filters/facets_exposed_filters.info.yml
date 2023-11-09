@@ -1,0 +1,11 @@
+name: 'Facets exposed filters (Experimental)'
+type: module
+description: 'Render facets in exposed filters.'
+core_version_requirement: ^9.2 || ^10.1
+package: Search
+configure: entity.facets_facet.collection
+dependencies:
+  - search_api:search_api
+  - facets:facets
+  - drupal:views
+  - better_exposed_filters:better_exposed_filters

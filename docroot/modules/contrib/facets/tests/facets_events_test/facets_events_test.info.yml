@@ -1,0 +1,6 @@
+name: 'Facets events test'
+type: module
+description: 'Facets events test'
+package: 'Testing'
+hidden: true
+core_version_requirement: ^9.2 || ^10.0

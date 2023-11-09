@@ -3,9 +3,10 @@
 namespace Drupal\Tests\facets\Functional;
 
 use Drupal\facets\Entity\Facet;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class FacetsUrlGeneratorTest.
+ * Provides the Facets Url Generator test.
  *
  * @group facets
  */
@@ -14,7 +15,7 @@ class FacetsUrlGeneratorTest extends FacetsTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'facets',
     'facets_search_api_dependency',
     'facets_query_processor',
@@ -37,7 +38,7 @@ class FacetsUrlGeneratorTest extends FacetsTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $this->urlGenerator = \Drupal::service('facets.utility.url_generator');
 
@@ -63,7 +64,20 @@ class FacetsUrlGeneratorTest extends FacetsTestBase {
 
     $url = $this->urlGenerator->getUrl(['test_facet' => ['fuzzy']]);
 
-    $this->assertEquals('route:view.search_api_test_view.page_1;arg_0&arg_1&arg_2?f%5B0%5D=owl%3Afuzzy', $url->toUriString());
+    $this->assertEquals('route:view.search_api_test_view.page_1;arg_0&arg_1&arg_2&view_id=search_api_test_view&display_id=page_1?f%5B0%5D=owl%3Afuzzy', $url->toUriString());
+
+    // Setup search page URL with contextual parameters as current request and
+    // path.
+    $path = '/search-api-test-fulltext/entity:entity_test_mulrev_changed/entity_test_mulrev_changed';
+    $request = Request::create($path);
+    $result = \Drupal::service('router.no_access_checks')->matchRequest($request);
+    $request->attributes->add($result);
+    \Drupal::requestStack()->push($request);
+    \Drupal::service('path.current')->setPath($path);
+    $url = $this->urlGenerator->getUrl(['test_facet' => ['fuzzy']]);
+
+    $this->assertEquals('route:view.search_api_test_view.page_1;arg_0=entity%3Aentity_test_mulrev_changed&arg_1=entity_test_mulrev_changed&arg_2&view_id=search_api_test_view&display_id=page_1?f%5B0%5D=owl%3Afuzzy', $url->toUriString());
+    \Drupal::requestStack()->pop();
   }
 
   /**
@@ -79,7 +93,7 @@ class FacetsUrlGeneratorTest extends FacetsTestBase {
     $facet->save();
 
     $url = $this->urlGenerator->getUrl(['owl' => ['foo']]);
-    $this->assertEquals('route:view.search_api_test_view.page_1;arg_0&arg_1&arg_2?f%5B0%5D=donkey%3Afoo', $url->toUriString());
+    $this->assertEquals('route:view.search_api_test_view.page_1;arg_0&arg_1&arg_2&view_id=search_api_test_view&display_id=page_1?f%5B0%5D=donkey%3Afoo', $url->toUriString());
 
     // This won't work without it being in the request, so we need to do this
     // from a block. We first click the link, check that the "orange" facet is

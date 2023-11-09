@@ -2,9 +2,11 @@
 
 namespace Drupal\facets\Plugin\facets\processor;
 
+use Drupal\Core\Cache\UnchangingCacheableDependencyTrait;
 use Drupal\Core\TypedData\ComplexDataDefinitionInterface;
 use Drupal\facets\FacetInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\facets\FacetSource\SearchApiFacetSourceInterface;
 use Drupal\facets\Processor\BuildProcessorInterface;
 use Drupal\facets\Processor\ProcessorPluginBase;
 
@@ -21,6 +23,8 @@ use Drupal\facets\Processor\ProcessorPluginBase;
  * )
  */
 class BooleanItemProcessor extends ProcessorPluginBase implements BuildProcessorInterface {
+
+  use UnchangingCacheableDependencyTrait;
 
   /**
    * {@inheritdoc}
@@ -58,7 +62,7 @@ class BooleanItemProcessor extends ProcessorPluginBase implements BuildProcessor
       '#title' => $this->t('On value'),
       '#type' => 'textfield',
       '#default_value' => $config['on_value'],
-      '#description' => $this->t('Use this label instead of <em>0</em> for the <em>On</em> or <em>True</em> value. Leave empty to hide this item.'),
+      '#description' => $this->t('Use this label instead of <em>1</em> for the <em>On</em> or <em>True</em> value. Leave empty to hide this item.'),
       '#states' => [
         'required' => ['input[name="facet_settings[boolean_item][settings][off_value]"' => ['empty' => TRUE]],
       ],
@@ -68,7 +72,7 @@ class BooleanItemProcessor extends ProcessorPluginBase implements BuildProcessor
       '#title' => $this->t('Off value'),
       '#type' => 'textfield',
       '#default_value' => $config['off_value'],
-      '#description' => $this->t('Use this label instead of <em>1</em> for the <em>Off</em> or <em>False</em> value. Leave empty to hide this item.'),
+      '#description' => $this->t('Use this label instead of <em>0</em> for the <em>Off</em> or <em>False</em> value. Leave empty to hide this item.'),
       '#states' => [
         'required' => ['input[name="facet_settings[boolean_item][settings][on_value]"' => ['empty' => TRUE]],
       ],
@@ -96,6 +100,15 @@ class BooleanItemProcessor extends ProcessorPluginBase implements BuildProcessor
    * {@inheritdoc}
    */
   public function supportsFacet(FacetInterface $facet) {
+    $field_identifier = $facet->getFieldIdentifier();
+    $facet_source = $facet->getFacetSource();
+    if ($facet_source instanceof SearchApiFacetSourceInterface) {
+      $field = $facet_source->getIndex()->getField($field_identifier);
+      if ($field->getType() == "boolean") {
+        return TRUE;
+      }
+    }
+
     $data_definition = $facet->getDataDefinition();
     if ($data_definition->getDataType() == "boolean") {
       return TRUE;

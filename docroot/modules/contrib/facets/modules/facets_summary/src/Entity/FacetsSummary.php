@@ -3,6 +3,7 @@
 namespace Drupal\facets_summary\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\facets\Entity\Facet;
 use Drupal\facets_summary\FacetsSummaryInterface;
 
 /**
@@ -34,6 +35,7 @@ use Drupal\facets_summary\FacetsSummaryInterface;
  *     "name",
  *     "facets",
  *     "facet_source_id",
+ *     "only_visible_when_facet_source_is_visible",
  *     "processor_configs",
  *   },
  *   links = {
@@ -108,6 +110,16 @@ class FacetsSummary extends ConfigEntityBase implements FacetsSummaryInterface {
   protected $weight;
 
   /**
+   * Is the facet only visible when the facet source is only visible.
+   *
+   * A boolean that defines if the facet summary is only visible when the facet
+   * source is visible.
+   *
+   * @var bool
+   */
+  protected $only_visible_when_facet_source_is_visible = FALSE;
+
+  /**
    * {@inheritdoc}
    */
   public function getName() {
@@ -137,7 +149,7 @@ class FacetsSummary extends ConfigEntityBase implements FacetsSummaryInterface {
    */
   public function getFacetSource() {
     if (!$this->facet_source_instance && $this->facet_source_id) {
-      /* @var $facet_source_plugin_manager \Drupal\facets\FacetSource\FacetSourcePluginManager */
+      /** @var \Drupal\facets\FacetSource\FacetSourcePluginManager $facet_source_plugin_manager */
       $facet_source_plugin_manager = \Drupal::service('plugin.manager.facets.facet_source');
       $this->facet_source_instance = $facet_source_plugin_manager->createInstance($this->facet_source_id, ['facets_summary' => $this]);
     }
@@ -178,7 +190,7 @@ class FacetsSummary extends ConfigEntityBase implements FacetsSummaryInterface {
       return $this->processors;
     }
 
-    /* @var $processor_plugin_manager \Drupal\facets\Processor\ProcessorPluginManager */
+    /** @var \Drupal\facets\Processor\ProcessorPluginManager $processor_plugin_manager */
     $processor_plugin_manager = \Drupal::service('plugin.manager.facets_summary.processor');
     $processor_settings = $this->getProcessorConfigs();
 
@@ -188,7 +200,7 @@ class FacetsSummary extends ConfigEntityBase implements FacetsSummaryInterface {
         $settings = empty($processor_settings[$name]['settings']) ? [] : $processor_settings[$name]['settings'];
         $settings['facets_summary'] = $this;
 
-        /* @var $processor \Drupal\facets_summary\Processor\ProcessorInterface */
+        /** @var \Drupal\facets_summary\Processor\ProcessorInterface $processor */
         $processor = $processor_plugin_manager->createInstance($name, $settings);
         $this->processors[$name] = $processor;
       }
@@ -259,6 +271,20 @@ class FacetsSummary extends ConfigEntityBase implements FacetsSummaryInterface {
   /**
    * {@inheritdoc}
    */
+  public function setOnlyVisibleWhenFacetSourceIsVisible($only_visible_when_facet_source_is_visible) {
+    $this->only_visible_when_facet_source_is_visible = $only_visible_when_facet_source_is_visible;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOnlyVisibleWhenFacetSourceIsVisible() {
+    return $this->only_visible_when_facet_source_is_visible;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function addProcessor(array $processor) {
     $this->processor_configs[$processor['processor_id']] = [
       'processor_id' => $processor['processor_id'],
@@ -289,6 +315,11 @@ class FacetsSummary extends ConfigEntityBase implements FacetsSummaryInterface {
     $facet_source_dependencies = $this->getFacetSource()->calculateDependencies();
     if (!empty($facet_source_dependencies)) {
       $this->addDependencies($facet_source_dependencies);
+    }
+
+    foreach (array_keys($this->getFacets() ?? []) as $facet_id) {
+      $facet = Facet::load($facet_id);
+      $this->addDependency('config', $facet->getConfigDependencyName());
     }
 
     return $this;

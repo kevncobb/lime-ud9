@@ -2,6 +2,7 @@
 
 namespace Drupal\facets_summary\FacetsSummaryManager;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Link;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\facets\Exception\InvalidProcessorException;
@@ -46,6 +47,13 @@ class DefaultFacetsSummaryManager {
   protected $facetManager;
 
   /**
+   * The facets.
+   *
+   * @var \Drupal\facets\FacetInterface[]
+   */
+  protected $facets = [];
+
+  /**
    * Constructs a new instance of the DefaultFacetManager.
    *
    * @param \Drupal\facets\FacetSource\FacetSourcePluginManager $facet_source_manager
@@ -82,24 +90,30 @@ class DefaultFacetsSummaryManager {
    *   Throws an exception when an invalid processor is linked to the facet.
    */
   public function build(FacetsSummaryInterface $facets_summary) {
+    if ($facets_summary->getOnlyVisibleWhenFacetSourceIsVisible()) {
+      // Block rendering and processing should be stopped when the facet source
+      // is not available on the page. Returning an empty array here is enough
+      // to halt all further processing.
+      $facet_source = $facets_summary->getFacetSource();
+      if (is_null($facet_source) || !$facet_source->isRenderedInCurrentRequest()) {
+        $build = [];
+        $cacheableMetadata = new CacheableMetadata();
+        $cacheableMetadata->addCacheableDependency($facet_source);
+        $cacheableMetadata->applyTo($build);
+        return $build;
+      }
+    }
+
     // Let the facet_manager build the facets.
+    $facets = $this->getFacets($facets_summary);
+    $facets_config = $facets_summary->getFacets();
     $facetsource_id = $facets_summary->getFacetSourceId();
 
-    /** @var \Drupal\facets\Entity\Facet[] $facets */
-    $facets = $this->facetManager->getFacetsByFacetSourceId($facetsource_id);
     // Get the current results from the facets and let all processors that
     // trigger on the build step do their build processing.
     // @see \Drupal\facets\Processor\BuildProcessorInterface.
     // @see \Drupal\facets\Processor\SortProcessorInterface.
     $this->facetManager->updateResults($facetsource_id);
-
-    $facets_config = $facets_summary->getFacets();
-    // Exclude facets which were not selected for this summary.
-    $facets = array_filter($facets,
-      function ($item) use ($facets_config) {
-        return (isset($facets_config[$item->id()]));
-      }
-    );
 
     foreach ($facets as $facet) {
       // Do not build the facet in summary if facet is not rendered.
@@ -115,6 +129,7 @@ class DefaultFacetsSummaryManager {
 
     $build = [
       '#theme' => 'facets_summary_item_list',
+      '#facet_summary_id' => $facets_summary->id(),
       '#attributes' => [
         'data-drupal-facets-summary-id' => $facets_summary->id(),
       ],
@@ -176,6 +191,35 @@ class DefaultFacetsSummaryManager {
       }
     }
     return $items;
+  }
+
+  /**
+   * Get facet entities.
+   *
+   * @param \Drupal\facets_summary\FacetsSummaryInterface $facets_summary
+   *   The facet we should build.
+   *
+   * @return \Drupal\facets\FacetInterface[]
+   *   The facet entities.
+   *
+   * @throws \Drupal\facets\Exception\InvalidProcessorException
+   */
+  public function getFacets(FacetsSummaryInterface $facets_summary): array {
+    $facetsource_id = $facets_summary->getFacetSourceId();
+
+    if (!isset($this->facets[$facetsource_id])) {
+      $this->facets[$facetsource_id] = $this->facetManager->getFacetsByFacetSourceId($facetsource_id);
+
+      $facets_config = $facets_summary->getFacets();
+      // Exclude facets which were not selected for this summary.
+      $this->facets[$facetsource_id] = array_filter($this->facets[$facetsource_id],
+        function ($item) use ($facets_config) {
+          return (isset($facets_config[$item->id()]));
+        }
+      );
+    }
+
+    return $this->facets[$facetsource_id];
   }
 
 }

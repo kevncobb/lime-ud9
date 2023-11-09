@@ -50,6 +50,38 @@ interface ResultInterface {
   public function setCount($count);
 
   /**
+   * Set if this result represents the "missing" facet item.
+   *
+   * @return bool
+   *   True if this result represents the missing facet item.
+   */
+  public function isMissing(): bool;
+
+  /**
+   * Returns true if this result represents the "missing" facet item.
+   *
+   * @param bool $missing
+   *   True if this result represents the missing facet item.
+   */
+  public function setMissing(bool $missing);
+
+  /**
+   * Get the filter values of the non-missing values to be inverted.
+   *
+   * @return array
+   *   The filter values of the non-missing values to be inverted.
+   */
+  public function getMissingFilters(): array;
+
+  /**
+   * Set the filter values of the non-missing values to be inverted.
+   *
+   * @param array $filters
+   *   The filter values of the non-missing values to be inverted.
+   */
+  public function setMissingFilters(array $filters);
+
+  /**
    * Returns the url.
    *
    * @return \Drupal\Core\Url
@@ -112,5 +144,53 @@ interface ResultInterface {
    *   The children results.
    */
   public function getChildren();
+
+  /**
+   * Returns the entire set of arbitrary data.
+   *
+   * @return array
+   *   The entire set of arbitrary data storage for this result.
+   */
+  public function getStorage();
+
+  /**
+   * Sets the entire set of arbitrary data.
+   *
+   * @param array $storage
+   *   The entire set of arbitrary data to store for this result.
+   *
+   * @return $this
+   */
+  public function setStorage(array $storage);
+
+  /**
+   * Gets any arbitrary property.
+   *
+   * @param string|array $property
+   *   Properties are often stored as multi-dimensional associative arrays. If
+   *   $property is a string, it will return $storage[$property]. If $property
+   *   is an array, each element of the array will be used as a nested key. If
+   *   $property = ['foo', 'bar'] it will return $storage['foo']['bar'].
+   *
+   * @return mixed
+   *   The property, or the default if the property does not exist.
+   */
+  public function get($property);
+
+  /**
+   * Sets a value to an arbitrary property.
+   *
+   * @param string|array $property
+   *   Properties are often stored as multi-dimensional associative arrays. If
+   *   $property is a string, it will use $storage[$property] = $value. If
+   *   $property is an array, each element of the array will be used as a nested
+   *   key. If $property = ['foo', 'bar'] it will use
+   *   $storage['foo']['bar'] = $value.
+   * @param mixed $value
+   *   The value to set.
+   *
+   * @return $this
+   */
+  public function set($property, $value);
 
 }

@@ -2,6 +2,7 @@
 
 namespace Drupal\facets\Result;
 
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Url;
 use Drupal\facets\FacetInterface;
 
@@ -9,6 +10,13 @@ use Drupal\facets\FacetInterface;
  * The default implementation of the result interfaces.
  */
 class Result implements ResultInterface {
+
+  /**
+   * The facet transliterate display value.
+   *
+   * @var string
+   */
+  public $transliterateDisplayValue;
 
   /**
    * The facet related to the result.
@@ -39,6 +47,20 @@ class Result implements ResultInterface {
   protected $count = 0;
 
   /**
+   * Indicates if this is the additional result item for "missing".
+   *
+   * @var bool
+   */
+  protected $missing = FALSE;
+
+  /**
+   * Other filters that might become active if result item isn't "missing".
+   *
+   * @var array
+   */
+  protected $missingFilters = [];
+
+  /**
    * The Url object.
    *
    * @var \Drupal\Core\Url
@@ -58,6 +80,13 @@ class Result implements ResultInterface {
    * @var \Drupal\facets\Result\ResultInterface[]
    */
   protected $children = [];
+
+  /**
+   * Storage for implementation-specific data.
+   *
+   * @var array
+   */
+  protected $storage = [];
 
   /**
    * Constructs a new result value object.
@@ -104,6 +133,36 @@ class Result implements ResultInterface {
    */
   public function setCount($count) {
     $this->count = (int) $count;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isMissing(): bool {
+    return $this->missing;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setMissing(bool $missing) {
+    $this->missing = $missing;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMissingFilters(): array {
+    return $this->missingFilters;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setMissingFilters(array $filters) {
+    $this->missingFilters = array_filter($filters, static function ($filter) {
+      return $filter !== '!';
+    });
   }
 
   /**
@@ -175,6 +234,36 @@ class Result implements ResultInterface {
    */
   public function getFacet() {
     return $this->facet;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getStorage() {
+    return $this->storage;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setStorage(array $storage) {
+    $this->storage = $storage;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function get($property) {
+    return NestedArray::getValue($this->storage, (array) $property);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function set($property, $value) {
+    NestedArray::setValue($this->storage, (array) $property, $value, TRUE);
+    return $this;
   }
 
 }

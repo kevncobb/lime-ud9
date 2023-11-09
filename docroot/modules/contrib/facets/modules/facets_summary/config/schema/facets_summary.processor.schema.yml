@@ -4,9 +4,6 @@ plugin.plugin_configuration.facets_summary_processor.show_summary:
 plugin.plugin_configuration.facets_summary_processor.show_count:
   type: config_object
 
-plugin.plugin_configuration.facets_summary_processor.hide_when_not_rendered:
-  type: config_object
-
 plugin.plugin_configuration.facets_summary_processor.show_text_when_empty:
   type: mapping
   label: 'No results behavior'
@@ -22,3 +19,6 @@ plugin.plugin_configuration.facets_summary_processor.reset_facets:
     link_text:
       type: label
       label: 'The text to show for the reset link.'
+    position:
+      type: string
+      label: 'Position of the reset link.'

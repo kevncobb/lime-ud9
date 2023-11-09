@@ -1,0 +1,11 @@
+name: 'Facets Searchbox Widget'
+type: module
+description: 'Provides a input to search and filter facet items.'
+core_version_requirement: ^9.2 || ^10.0
+package: Search
+dependencies:
+  - facets:facets
+test_dependencies:
+  - search_api:search_api
+  - facets:facets
+  - drupal:views

@@ -3,7 +3,7 @@
         'name' => 'vardot/varbase-project',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => 'a91e8ff90f954fcafeac07258b62626752509ceb',
+        'reference' => '12597164a84869769b667a825584224430e1c57e',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -1512,6 +1512,17 @@
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/extlink',
             'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'drupal/facets' => array(
+            'pretty_version' => 'dev-3.0.x',
+            'version' => 'dev-3.0.x',
+            'reference' => 'a903026303868cd0a901c776b9ee66d3fb179234',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/facets',
+            'aliases' => array(
+                0 => '3.0.x-dev',
+            ),
             'dev_requirement' => false,
         ),
         'drupal/fast_404' => array(
@@ -4976,7 +4987,7 @@
         'vardot/varbase-project' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'a91e8ff90f954fcafeac07258b62626752509ceb',
+            'reference' => '12597164a84869769b667a825584224430e1c57e',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

@@ -2,6 +2,7 @@
 
 namespace Drupal\facets\Plugin\facets\processor;
 
+use Drupal\Core\Cache\UnchangingCacheableDependencyTrait;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\facets\FacetInterface;
 use Drupal\facets\Processor\BuildProcessorInterface;
@@ -20,6 +21,8 @@ use Drupal\facets\Processor\ProcessorPluginBase;
  * )
  */
 class GranularItemProcessor extends ProcessorPluginBase implements BuildProcessorInterface {
+
+  use UnchangingCacheableDependencyTrait;
 
   /**
    * {@inheritdoc}
@@ -47,7 +50,7 @@ class GranularItemProcessor extends ProcessorPluginBase implements BuildProcesso
       'include_lower' => TRUE,
       'include_upper' => FALSE,
       'include_edges' => TRUE,
-      ] + parent::defaultConfiguration();
+    ] + parent::defaultConfiguration();
   }
 
   /**
