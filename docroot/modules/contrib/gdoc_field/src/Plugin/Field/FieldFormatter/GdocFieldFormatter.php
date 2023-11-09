@@ -1,16 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\gdoc_field\Plugin\Field\FieldFormatter\GdocFieldFormatter.
- */
-
 namespace Drupal\gdoc_field\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\Plugin\Field\FieldFormatter\FileFormatterBase;
-use Drupal\Core\File;
+use Drupal\Core\StreamWrapper\StreamWrapperManager;
 
 /**
  * Plugin implementation of the 'gdoc_field' formatter.
@@ -24,22 +19,23 @@ use Drupal\Core\File;
  * )
  */
 class GdocFieldFormatter extends FileFormatterBase {
+
   /**
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return array(
+    return [
       // Implement default settings.
-    ) + parent::defaultSettings();
+    ] + parent::defaultSettings();
   }
 
   /**
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
-    return array(
+    return [
       // Implement settings form.
-    ) + parent::settingsForm($form, $form_state);
+    ] + parent::settingsForm($form, $form_state);
   }
 
   /**
@@ -55,7 +51,7 @@ class GdocFieldFormatter extends FileFormatterBase {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $elements = array();
+    $elements = [];
 
     foreach ($this->getEntitiesToView($items, $langcode) as $delta => $file) {
       $entity = $this->fieldDefinition->getTargetEntityTypeId();
@@ -64,11 +60,11 @@ class GdocFieldFormatter extends FileFormatterBase {
       $field_type = $this->fieldDefinition->getType();
       $file_uri = $file->getFileUri();
       $filename = $file->getFileName();
-      $uri_scheme = \Drupal::service("file_system")->uriScheme($file_uri);
+      $uri_scheme = StreamWrapperManager::getScheme($file_uri);
 
       if ($uri_scheme == 'public') {
-        $url = file_create_url($file->getFileUri());
-        $elements[$delta] = array(
+        $url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
+        $elements[$delta] = [
           '#theme' => 'gdoc_field',
           '#url' => $url,
           '#filename' => $filename,
@@ -77,20 +73,19 @@ class GdocFieldFormatter extends FileFormatterBase {
           '#bundle' => $bundle,
           '#field_name' => $field_name,
           '#field_type' => $field_type,
-          '#attached' => array(
-            'library' => array(
+          '#attached' => [
+            'library' => [
               'gdoc_field/gdoc-field',
-            ),
-          ),
-        );
+            ],
+          ],
+        ];
 
       }
       else {
-        drupal_set_message(
+        $this->messenger()->addError(
           t('The file (%file) is not publicly accessible. It must be publicly available in order for the Google Docs viewer to be able to access it.',
-          array('%file' => $filename)
+          ['%file' => $filename]
           ),
-          'error',
           FALSE
         );
       }

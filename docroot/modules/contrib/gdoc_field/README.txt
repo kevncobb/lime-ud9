@@ -2,7 +2,7 @@ Drupal Embedded Google Docs Viewer module:
 ------------------------------------------
 Maintainer:
   Jeff Markel (https://www.drupal.org/u/jmarkel)
-Requires - Drupal 8.0
+Requires - Drupal 8.8 (or later) or 9 (or later).
 License - GPL (see LICENSE)
 
 The Embedded Google Docs Viewer is a module which

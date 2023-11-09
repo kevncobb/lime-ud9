@@ -127,7 +127,8 @@
     "drupal/facets": "3.0.x-dev@dev",
     "drupal/filebrowser": "^3.1@RC",
     "drupal/fontawesome": "^2.26",
-    "drupal/fontyourface": "^4.0"
+    "drupal/fontyourface": "^4.0",
+    "drupal/gdoc_field": "^1.4"
   },
   "require-dev": {
     "drupal/core-dev": "~10",

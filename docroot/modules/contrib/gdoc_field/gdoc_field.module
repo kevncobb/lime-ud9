@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * A field formatter for the File field.
@@ -37,9 +38,9 @@ function gdoc_field_help($route_name, RouteMatchInterface $route_match) {
  * Implements hook_theme().
  */
 function gdoc_field_theme() {
-  return array(
-    'gdoc_field' => array(
-      'variables' => array(
+  return [
+    'gdoc_field' => [
+      'variables' => [
         'url' => NULL,
         'filename' => NULL,
         'delta' => NULL,
@@ -47,9 +48,9 @@ function gdoc_field_theme() {
         'bundle' => NULL,
         'field_name' => NULL,
         'field_type' => NULL,
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 }
 
 /**
