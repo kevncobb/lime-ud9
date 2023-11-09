@@ -1,14 +1,25 @@
 {
-  "name": "drupal/libraries_ui",
-  "type": "drupal-module",
-  "description": "This module will display all libraries information in your website",
-  "keywords": ["Drupal"],
-  "license": "GPL-2.0+",
-  "homepage": "https://www.drupal.org/project/libraries_ui",
-  "minimum-stability": "dev",
-  "support": {
-    "issues": "http://drupal.org/project/issues/libraries_ui",
-    "source": "http://cgit.drupalcode.org/libraries_ui"
-  },
-  "require": { }
+    "name": "drupal/libraries_ui",
+    "type": "drupal-module",
+    "description": "This module will display all libraries information in your website",
+    "keywords": [
+        "Drupal"
+    ],
+    "license": "GPL-2.0+",
+    "authors": [
+        {
+            "name": "George Anderson (geoanders)",
+            "homepage": "https://www.drupal.org/u/geoanders",
+            "role": "Maintainer"
+        }
+    ],
+    "homepage": "https://www.drupal.org/project/libraries_ui",
+    "minimum-stability": "dev",
+    "support": {
+        "issues": "https://drupal.org/project/issues/libraries_ui",
+        "source": "https://git.drupalcode.org/project/libraries_ui"
+    },
+    "require": {
+        "drupal/core": "^8.8 || ^9 || ^10"
+    }
 }

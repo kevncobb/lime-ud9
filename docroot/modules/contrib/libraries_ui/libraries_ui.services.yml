@@ -1,5 +1,5 @@
 services:
-  libraries_ui.default:
+  libraries_ui:
     class: 'Drupal\libraries_ui\LibrariesUiService'
-    arguments: []
+    arguments: [ '@module_handler', '@theme_handler', '@library.discovery' ]
 

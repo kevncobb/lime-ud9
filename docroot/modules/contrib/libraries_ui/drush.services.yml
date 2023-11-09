@@ -1,0 +1,6 @@
+services:
+  libraries_ui.commands:
+    class: \Drupal\libraries_ui\Commands\LibrariesUiCommands
+    arguments: [ '@libraries_ui' ]
+    tags:
+      - { name: drush.command }

@@ -1,0 +1,4 @@
+access libraries_ui:
+  title: 'Access data of libraries_ui module.'
+  description: 'Access system data via libraries_ui module.'
+  restrict access: TRUE
