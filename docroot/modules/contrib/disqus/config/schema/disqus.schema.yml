@@ -1,15 +1,15 @@
 # Schema for the configuration files of the disqus module.
 
 disqus.settings:
-  type: mapping
+  type: config_object
   label: 'Disqus Settings'
   mapping:
     disqus_domain:
-      type: string
+      type: text
       label: 'Shortname'
     behavior:
       type: mapping
-      label: "Behavior"
+      label: 'Behavior'
       mapping:
         disqus_localization:
           type: boolean
@@ -17,24 +17,24 @@ disqus.settings:
         disqus_inherit_login:
           type: boolean
           label: 'Inherit User Credentials'
-        disqus_disable_mobile:
-          type: boolean
-          label: 'Disable mobile optimized version'
         disqus_track_newcomment_ga:
           type: boolean
           label: 'Track new comments in Google Analytics'
+        disqus_notify_newcomment:
+          type: boolean
+          label: 'Notify of new comments by email'
     advanced:
       type: mapping
       label: 'Advanced'
       mapping:
         disqus_useraccesstoken:
-          type: string
+          type: text
           label: 'User Access Token'
         disqus_publickey:
-          type: string
+          type: text
           label: 'Public Key'
         disqus_secretkey:
-          type: string
+          type: text
           label: 'Secret Key'
         api:
           type: mapping
@@ -59,3 +59,14 @@ disqus.settings:
             disqus_logo:
               type: uri
               label: 'Custom Logo'
+
+field.value.disqus_comment:
+  type: mapping
+  label: 'Disqus field values'
+  mapping:
+    status:
+      type: boolean
+      label: 'Disqus comments should be shown'
+    identifier:
+      type: string
+      label: 'Identifier of the Disqus discussion'

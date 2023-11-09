@@ -8,7 +8,8 @@ use Drupal\migrate_drupal\Plugin\migrate\source\DrupalSqlBase;
  * Disqus enabled content types migration source.
  *
  * @MigrateSource(
- *   id = "disqus_enabled_content_types"
+ *   id = "disqus_enabled_content_types",
+ *   source_module = "disqus"
  * )
  */
 class DisqusEnabledNodeTypes extends DrupalSqlBase {
@@ -36,6 +37,12 @@ class DisqusEnabledNodeTypes extends DrupalSqlBase {
       $defaults = unserialize($result['disqus_nodetypes_default']);
       $defaults = array_filter($defaults);
       foreach ($enabled_types as $type) {
+        if (
+          isset($this->configuration['node_type']) &&
+          $this->configuration['node_type'] !== $type
+        ) {
+          continue;
+        }
         $values[] = [
           'type' => $type,
           'default' => !empty($defaults[$type]),
@@ -48,7 +55,7 @@ class DisqusEnabledNodeTypes extends DrupalSqlBase {
   /**
    * {@inheritdoc}
    */
-  public function count() {
+  public function count($refresh = FALSE) {
     return count($this->values());
   }
 

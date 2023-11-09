@@ -20,7 +20,7 @@
  *   - url: Link to the user's site profile page.
  *   - avatar: URI of the user's picture.
  */
-function hook_disqus_user_data_alter(&$data) {
+function hook_disqus_user_data_alter(array &$data) {
   global $user;
 
   // Integrate with the Real Name module.

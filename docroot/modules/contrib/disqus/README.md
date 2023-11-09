@@ -21,6 +21,9 @@ Installation
    configure the disqus comment field for any entity sub-type.
 6. Visit the permissions, and set which users you would like to have the ability
    to view Disqus threads (recommended for role).
+7. You can also set additional configurations related to localization, inherit
+   login, comment tracking in GA and sending notification to entity author
+   through the module settings.
 
 Additional Requirements
 --------
@@ -106,7 +109,8 @@ https://github.com/disqus/disqus-php/blob/master/README.rst
         \Drupal::logger('disqus')->error('Error updating thread details for
         entity : !identifier. Check your user access token.',
         array(
-         '!identifier' => "{$entity->getEntityTypeId()}/{$entity->id()}"
+         '!identifier' => "{$entity->get($field_name)->identifier}" ?:
+         "{$entity->getEntityTypeId()}/{$entity->id()}"
         ));
       }
     }

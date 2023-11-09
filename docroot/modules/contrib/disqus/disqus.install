@@ -6,29 +6,6 @@
  */
 
 /**
- * Updates from Drupal 6 to 7.
- */
-function disqus_update_7000() {
-  // Nothing.
-}
-
-/**
- * Updates Disqus with support for toggling comments per node.
- */
-function disqus_update_7001() {
-  if (!db_table_exists('disqus')) {
-    drupal_install_schema('disqus');
-  }
-}
-
-/**
- * Remove deprecated variable.
- */
-function disqus_update_7002() {
-  variable_del('disqus_userapikey');
-}
-
-/**
  * Add identifier to field storage definition.
  */
 function disqus_update_8001() {
@@ -72,5 +49,17 @@ function disqus_update_8001() {
       ->setLastInstalledFieldStorageDefinition($field);
     \Drupal::keyValue('entity.storage_schema.sql')
       ->set($target_entity_type->id() . '.field_schema_data.' . $field->getName(), $stored_schema);
+  }
+}
+
+/**
+ * Set the default value of a new configuration property.
+ */
+function disqus_update_8101() {
+  $config = \Drupal::configFactory()->getEditable('disqus.settings');
+  if (!($config->isNew())) {
+    $config
+      ->set('behavior.disqus_notify_newcomment', FALSE)
+      ->save(TRUE);
   }
 }

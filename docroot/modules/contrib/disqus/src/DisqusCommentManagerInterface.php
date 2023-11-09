@@ -43,4 +43,19 @@ interface DisqusCommentManagerInterface {
    */
   public function ssoSettings();
 
+  /**
+   * API No action on entity delete.
+   */
+  const DISQUS_API_NO_ACTION = 0;
+
+  /**
+   * API Close on entity delete.
+   */
+  const DISQUS_API_CLOSE = 1;
+
+  /**
+   * API Remove on entity delete.
+   */
+  const DISQUS_API_REMOVE = 2;
+
 }

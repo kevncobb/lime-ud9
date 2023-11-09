@@ -12,3 +12,12 @@ disqus.close_window:
     _controller: '\Drupal\disqus\Controller\DisqusController::closeWindow'
   requirements:
     _permission: 'access content'
+
+disqus.new_comment:
+  path: '/disqus/new-comment/{comment_id}'
+  defaults:
+    _controller: '\Drupal\disqus\Controller\NewCommentController::receiver'
+    _title: 'New comment'
+  requirements:
+    # This route is anonymously accessible.
+    _access: 'TRUE'

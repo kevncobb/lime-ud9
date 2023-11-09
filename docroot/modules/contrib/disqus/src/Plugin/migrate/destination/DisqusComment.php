@@ -3,10 +3,11 @@
 namespace Drupal\disqus\Plugin\migrate\destination;
 
 use Drupal\migrate\Plugin\migrate\destination\DestinationBase;
-use Drupal\migrate\Entity\MigrationInterface;
+use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\Row;
-use Psr\Log\LoggerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -16,8 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   id = "disqus_destination"
  * )
  */
-class DisqusComment extends DestinationBase {
-
+class DisqusComment extends DestinationBase implements ContainerFactoryPluginInterface {
   /**
    * A logger instance.
    *
@@ -41,7 +41,7 @@ class DisqusComment extends DestinationBase {
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implemetation definition.
-   * @param \Drupal\migrate\Entity\MigrationInterface $migration
+   * @param \Drupal\migrate\Plugin\MigrationInterface $migration
    *   The migration.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
@@ -72,7 +72,8 @@ class DisqusComment extends DestinationBase {
    * {@inheritdoc}
    */
   public function fields(MigrationInterface $migration = NULL) {
-    return array(
+    return [
+      'disqus_id' => $this->t('The disqus ID'),
       'message' => $this->t('The comment body.'),
       'parent' => $this->t('Parent comment ID. If set to null, this comment is not a reply to an existing comment.'),
       'identifier' => $this->t('The disqus identifier to look up the correct thread.'),
@@ -82,50 +83,50 @@ class DisqusComment extends DestinationBase {
       'author_url' => $this->t("The comments author's url."),
       'date' => $this->t('The time that the comment was posted as a Unix timestamp.'),
       'ip_address' => $this->t("The IP address that the comment was posted from."),
-    );
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
   public function getIds() {
-    $ids['message']['type'] = 'string';
+    $ids['disqus_id']['type'] = 'string';
     return $ids;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function import(Row $row, array $old_destination_id_values = array()) {
+  public function import(Row $row, array $old_destination_id_values = []) {
     $identifier = $row->getDestinationProperty('identifier');
     $disqus = disqus_api();
     if ($disqus) {
       try {
         $thread = $disqus->threads->details(
-          array(
+          [
             'forum' => $this->config->get('disqus_domain'),
             'thread:ident' => $identifier,
             'thread' => '1',
-          )
+          ]
         );
       }
       catch (\Exception $exception) {
-        $this->logger->error('Error loading thread details for entity : @identifier. Check your API keys.', array('@identifier' => $identifier));
+        $this->logger->error('Error loading thread details for entity : @identifier. Check your API keys.', ['@identifier' => $identifier]);
         $thread = NULL;
       }
       if (!isset($thread->id)) {
         try {
           $thread = $disqus->threads->create(
-            array(
+            [
               'forum' => $this->config->get('disqus_domain'),
               'access_token' => $this->config->get('advanced.disqus_useraccesstoken'),
               'title' => $row->getDestinationProperty('title'),
               'identifier' => $identifier,
-            )
+            ]
           );
         }
         catch (\Exception $exception) {
-          $this->logger->error('Error creating thread for entity : @identifier. Check your user access token.', array('@identifier' => $identifier));
+          $this->logger->error('Error creating thread for entity : @identifier. Check your user access token.', ['@identifier' => $identifier]);
         }
       }
       try {
@@ -133,35 +134,79 @@ class DisqusComment extends DestinationBase {
         $author_name = $row->getDestinationProperty('author_name');
         $author_email = $row->getDestinationProperty('author_email');
         $author_url = $row->getDestinationProperty('author_url');
-        $date = $row->getDestinationProperty('author_url');
+        $date = $row->getDestinationProperty('date');
         $ip_address = $row->getDestinationProperty('ip_address');
+        $ids = FALSE;
         if (empty($author_name) || empty($author_email)) {
           // Post comment as created by site's moderator.
-          $disqus->posts->create(array(
-            'message' => $message,
-            'thread' => $thread->id,
-            'access_token' => $this->config->get('advanced.disqus_useraccesstoken'),
-            'date' => $date,
-            'ip_address' => $ip_address,
-          ));
+          $ids = [
+            'disqus_id' => $disqus->posts->create([
+              'message' => $message,
+              'thread' => $thread->id,
+              'access_token' => $this->config->get('advanced.disqus_useraccesstoken'),
+              'date' => $date,
+              'ip_address' => $ip_address,
+            ])->id,
+          ];
         }
         else {
           // Cannot create comment as anonymous user, needs 'api_key'
           // (api_key is not the public key).
-          $disqus->posts->create(array(
-            'thread' => $thread,
-            'message' => $message,
-            'author_name' => $author_name,
-            'author_email' => $author_email,
-            'author_url' => $author_url,
-            'date' => $date,
-            'ip_address' => $ip_address,
-          ));
+          $ids = [
+            'disqus_id' => $disqus->posts->create([
+              'thread' => $thread->id,
+              'message' => $message,
+              'author_name' => $author_name,
+              'author_email' => $author_email,
+              'author_url' => $author_url,
+              'api_key' => $this->config->get('advanced.disqus_publickey'),
+            ]),
+          ];
         }
-        return TRUE;
+        return $ids;
       }
       catch (\Exception $exception) {
-        $this->logger->error('Error creating post on thread @thread.', array('@thread' => $thread->id));
+        $this->logger->error('Error creating post on thread @thread, error: @error', [
+          '@thread' => $thread->id,
+          '@error' => $exception->getMessage(),
+        ]);
+      }
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function rollback(array $destination_identifier) {
+    $disqus = disqus_api();
+    if ($disqus) {
+      try {
+        $post = $disqus->posts->details([
+          'post' => $destination_identifier['disqus_id'],
+        ]);
+      }
+      catch (\Exception $exception) {
+        $this->logger->error('Error loading thread details for entity : @identifier. Check your API keys.', ['@identifier' => $destination_identifier['disqus_id']]);
+        $post = NULL;
+      }
+      if (!isset($post->id)) {
+        $this->logger->notice(
+            'Unable to find post: @identifier when trying to delete it. Maybe it was already deleted?',
+            ['@identifier' => $destination_identifier['disqus_id']]
+          );
+        return;
+      }
+      try {
+        $disqus->posts->remove([
+          'access_token' => $this->config->get('advanced.disqus_useraccesstoken'),
+          'post' => $destination_identifier['disqus_id'],
+        ]
+        );
+      }
+      catch (\Exception $exception) {
+        $this->logger->error('Error deleting post @identifier.',
+          ['@identifier' => $destination_identifier['disqus_id']]);
       }
       return FALSE;
     }

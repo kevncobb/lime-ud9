@@ -17,21 +17,15 @@ class DisqusController extends ControllerBase {
    *   overlay window.
    */
   public function closeWindow() {
-    return [
-       // Note: We are using '@' on purpose to not have bad protocol filtering.
-      '#markup' => $this->t(
-         'Thank you for logging in. Please close this window, or <a href="@clickhere">click here</a> to continue.',
-         ['@clickhere' => 'javascript:window.close();']
-      ),
-      '#attached' => [
-        'js' => [
-           [
-             'type' => 'inline',
-             'data' => 'window.close();',
-           ],
-        ],
-      ],
+    $build = [];
+    $build['#markup'] = $this->t('Thank you for logging in. Please close this window, or <a href="@clickhere">click here</a> to continue.',
+      ['@clickhere' => 'javascript:window.close();']);
+    $build['#attached']['html_head'][] = [[
+      '#tag' => 'script',
+      '#value' => 'window.close();',
+    ], 'disqus_js',
     ];
+    return $build;
   }
 
 }

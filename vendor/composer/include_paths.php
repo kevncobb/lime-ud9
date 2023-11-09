@@ -10,4 +10,5 @@ return array(
     $vendorDir . '/pear/console_getopt',
     $vendorDir . '/pear/pear-core-minimal/src',
     $vendorDir . '/pear/pear_exception',
+    $vendorDir . '/disqus/disqus-php',
 );

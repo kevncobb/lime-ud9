@@ -3,7 +3,7 @@
         'name' => 'vardot/varbase-project',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '53c93d429bc98b62ac2ed858be5faa3f9da08ffc',
+        'reference' => '80dc41170eb741549bd962fc28cb6929e1f63c8f',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -364,6 +364,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'disqus/disqus-php' => array(
+            'pretty_version' => '1.0.2',
+            'version' => '1.0.2.0',
+            'reference' => '68bf75139c0bc0c40dd5a2fbf28fe9e326a32001',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../disqus/disqus-php',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'doctrine/annotations' => array(
             'pretty_version' => '1.14.3',
             'version' => '1.14.3.0',
@@ -444,6 +453,12 @@
             'install_path' => __DIR__ . '/../drevops/behat-screenshot',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'drexarj/disqus-php' => array(
+            'dev_requirement' => false,
+            'replaced' => array(
+                0 => '*',
+            ),
         ),
         'drupal/ace_editor' => array(
             'pretty_version' => '2.0.0-beta2',
@@ -1197,6 +1212,15 @@
             'reference' => '8.x-1.1',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/diff',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'drupal/disqus' => array(
+            'pretty_version' => '2.0.1-alpha6',
+            'version' => '2.0.1.0-alpha6',
+            'reference' => '2.0.1-alpha6',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/disqus',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
@@ -3330,6 +3354,18 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'jakubzapletal/disqus-php' => array(
+            'dev_requirement' => false,
+            'replaced' => array(
+                0 => '*',
+            ),
+        ),
+        'jasonrgd/disqus-php' => array(
+            'dev_requirement' => false,
+            'replaced' => array(
+                0 => '*',
+            ),
+        ),
         'justinrainbow/json-schema' => array(
             'pretty_version' => 'v5.2.13',
             'version' => '5.2.13.0',
@@ -4893,7 +4929,7 @@
         'vardot/varbase-project' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '53c93d429bc98b62ac2ed858be5faa3f9da08ffc',
+            'reference' => '80dc41170eb741549bd962fc28cb6929e1f63c8f',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

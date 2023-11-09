@@ -2,6 +2,8 @@
 
 namespace Drupal\disqus;
 
+use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -42,6 +44,13 @@ class DisqusCommentManager implements DisqusCommentManagerInterface {
   protected $moduleHandler;
 
   /**
+   * Configuration Factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected $configFactory;
+
+  /**
    * Constructs the DisqusCommentManager object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -52,12 +61,15 @@ class DisqusCommentManager implements DisqusCommentManagerInterface {
    *   The current user.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   A module handler.
+   * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   A module handler.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, AccountInterface $current_user, ModuleHandlerInterface $module_handler) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, AccountInterface $current_user, ModuleHandlerInterface $module_handler, ConfigFactory $config_factory) {
     $this->entityTypeManager = $entity_type_manager;
     $this->entityFieldManager = $entity_field_manager;
     $this->currentUser = $current_user;
     $this->moduleHandler = $module_handler;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -65,7 +77,7 @@ class DisqusCommentManager implements DisqusCommentManagerInterface {
    */
   public function getFields($entity_type_id) {
     $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
-    if (!$entity_type->isSubclassOf('\Drupal\Core\Entity\ContentEntityInterface')) {
+    if (!$entity_type->entityClassImplements('\Drupal\Core\Entity\ContentEntityInterface')) {
       return [];
     }
 
@@ -96,22 +108,38 @@ class DisqusCommentManager implements DisqusCommentManagerInterface {
   public function ssoSettings() {
 
     $disqus['sso'] = [
-      'name' => \Drupal::config('system.site')->get('name'),
+      'name' => $this->configFactory->get('system.site')->get('name'),
       // The login window must be closed once the user logs in.
-      'url' => Url::fromRoute('user.login', [], ['query' => ['destination' => 'disqus/closewindow'], 'absolute' => TRUE])->toString(),
+      'url' => Url::fromRoute('user.login', [], [
+        'query' => [
+          'destination' => Url::fromRoute('disqus.close_window')->toString(),
+        ],
+        'absolute' => TRUE,
+      ]
+      )->toString(),
       // The logout link must redirect back to the original page.
-      'logout' => Url::fromRoute('user.logout', [], ['query' => ['destination' => Url::fromRoute('<current>')->toString()], 'absolute' => TRUE])->toString(),
+      'logout' => Url::fromRoute('user.logout', [], [
+        'query' => [
+          'destination' => Url::fromRoute('<current>')->toString(),
+        ],
+        'absolute' => TRUE,
+      ]
+      )->toString(),
       'width' => 800,
       'height' => 600,
     ];
 
-    $managed_logo = \Drupal::config('disqus.settings')->get('advanced.sso.disqus_logo');
-    $use_site_logo = \Drupal::config('disqus.settings')->get('advanced.sso.disqus_use_site_logo');
+    $managed_logo = $this->configFactory->get('disqus.settings')->get('advanced.sso.disqus_logo');
+    $use_site_logo = $this->configFactory->get('disqus.settings')->get('advanced.sso.disqus_use_site_logo');
     if (!$use_site_logo && !empty($managed_logo)) {
-      $disqus['sso']['button'] = file_load($managed_logo)->url();
+      $disqus['sso']['button'] = $this->entityTypeManager->getStorage('file')->load($managed_logo)->createFileUrl();
     }
     elseif ($logo = theme_get_setting('logo')) {
-      $disqus['sso']['button'] = $logo['url'];
+      $url = $logo['url'];
+      if (!UrlHelper::isExternal($url)) {
+        $url = Url::fromUri('internal:' . $url, ['absolute' => TRUE])->toString();
+      }
+      $disqus['sso']['button'] = $url;
     }
     else {
       $disqus['sso']['button'] = Url::fromUri('base://core/misc/druplicon.png', ['absolute' => TRUE])->toString();
@@ -121,7 +149,7 @@ class DisqusCommentManager implements DisqusCommentManagerInterface {
     }
 
     // Stick the authentication requirements and data in the settings.
-    $disqus['api_key'] = \Drupal::config('disqus.settings')->get('advanced.disqus_publickey');
+    $disqus['api_key'] = $this->configFactory->get('disqus.settings')->get('advanced.disqus_publickey');
     $disqus['remote_auth_s3'] = $this->ssoKeyEncode($this->ssoUserData());
 
     return $disqus;
@@ -131,16 +159,16 @@ class DisqusCommentManager implements DisqusCommentManagerInterface {
    * Assembles the full private key for use in SSO authentication.
    *
    * @param array $data
-   *    An array contating data.
+   *   An array contating data.
    *
    * @return string
-   *    The String containing message, timestamp.
+   *   The String containing message, timestamp.
    */
-  protected function ssoKeyEncode($data) {
+  protected function ssoKeyEncode(array $data) {
     // Encode the data to be sent off to Disqus.
     $message = base64_encode(json_encode($data));
     $timestamp = time();
-    $hmac = hash_hmac('sha1', "$message $timestamp", \Drupal::config('disqus.settings')->get('advanced.disqus_secretkey'));
+    $hmac = hash_hmac('sha1', "$message $timestamp", $this->configFactory->get('disqus.settings')->get('advanced.disqus_secretkey'));
 
     return "$message $hmac $timestamp";
   }
@@ -149,7 +177,7 @@ class DisqusCommentManager implements DisqusCommentManagerInterface {
    * Assembles user-specific data used by Disqus SSO.
    *
    * @return array
-   *    An array containing sso user data.
+   *   An array containing sso user data.
    */
   protected function ssoUserData() {
     $account = $this->currentUser;
@@ -161,19 +189,19 @@ class DisqusCommentManager implements DisqusCommentManagerInterface {
       $data['url'] = Url::fromRoute('entity.user.canonical', ['user' => $account->id()], ['absolute' => TRUE])->toString();
 
       // Load the user's avatar.
-      $user_picture_default = \Drupal::config('field.instance.user.user.user_picture')->get('settings.default_image');
+      $user_picture_default = $this->configFactory->get('field.instance.user.user.user_picture')->get('settings.default_image');
 
-      $user = user_load($account->id());
-      if (isset($user->user_picture->target_id) && !empty($user->user_picture->target_id) && $file = file_load($user->user_picture->target_id)) {
+      $user = $this->entityTypeManager->getStorage('user')->load($account->id());
+      if (isset($user->user_picture->target_id) && !empty($user->user_picture->isEmpty()) && $file = $this->entityTypeManager->getStorage('file')->load($user->user_picture->entity->getFileUri())) {
         $file_uri = $file->getFileUri();
         $data['avatar'] = !empty($file_uri) ? $file_uri : NULL;
       }
-      elseif (!empty($user_picture_default['fid']) && $file = file_load($user_picture_default['fid'])) {
+      elseif (!empty($user_picture_default['fid']) && $file = $this->entityTypeManager->getStorage('file')->load($user_picture_default['fid'])) {
         $file_uri = $file->getFileUri();
         $data['avatar'] = !empty($file_uri) ? $file_uri : NULL;
       }
       if (isset($data['avatar'])) {
-        $data['avatar'] = file_create_url($data['avatar']);
+        $data['avatar'] = \Drupal::service('file_url_generator')->generateAbsoluteString($data['avatar']);
       }
     }
     $this->moduleHandler->alter('disqus_user_data', $data);

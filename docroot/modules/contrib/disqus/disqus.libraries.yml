@@ -14,3 +14,9 @@ ga:
     js/disqus_ga.js: {}
   dependencies:
     - disqus/disqus
+notification:
+  version: 1.x
+  js:
+    js/disqus_notification.js: {}
+  dependencies:
+    - disqus/disqus

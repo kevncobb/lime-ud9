@@ -92,23 +92,23 @@ class DisqusCommentCount extends FieldPluginBase {
     }
     if ($entity->get(key($field))->status && $this->currentUser->hasPermission('view disqus comments')) {
       // Build a renderable array for the link.
-      $links['disqus_comments_num'] = array(
-        'title' => t('Comments'),
-        'url' => $entity->urlInfo(),
+      $links['disqus_comments_num'] = [
+        'title' => $this->t('Comments'),
+        'url' => $entity->toUrl(),
         'fragment' => 'disqus_thread',
-        'attributes' => array(
+        'attributes' => [
           // Identify the node for Disqus with the unique identifier:
           // http://docs.disqus.com/developers/universal/#comment-count
-          'data-disqus-identifier' => "{$entity->getEntityTypeId()}/{$entity->id()}",
-        ),
-      );
-      $content = array(
+          'data-disqus-identifier' => $entity->get(key($field))->identifier ?: "{$entity->getEntityTypeId()}/{$entity->id()}",
+        ],
+      ];
+      $content = [
         '#theme' => 'links',
         '#links' => $links,
-        '#attributes' => array(
-          'class' => array('links', 'inline'),
-        ),
-      );
+        '#attributes' => [
+          'class' => ['links', 'inline'],
+        ],
+      ];
       // This attaches disqus.js specified in the disqus.libraries.yml file,
       // which will look for the DOM variable disqusComments which is set below.
       // When found, the disqus javascript api replaces the html element with

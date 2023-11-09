@@ -120,7 +120,8 @@
     "drupal/bg_image_formatter": "^1.17",
     "drupal/computed_field": "^4.0@alpha",
     "drupal/custom_search": "^1.0@beta",
-    "drupal/dbal": "^2.0"
+    "drupal/dbal": "^2.0",
+    "drupal/disqus": "^2.0@alpha"
   },
   "require-dev": {
     "drupal/core-dev": "~10",

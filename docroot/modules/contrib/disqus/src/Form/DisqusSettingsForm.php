@@ -2,13 +2,14 @@
 
 namespace Drupal\disqus\Form;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Form\ConfigFormBase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\disqus\DisqusCommentManagerInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides Disqus settings form.
@@ -89,14 +90,13 @@ class DisqusSettingsForm extends ConfigFormBase {
 
     $form['disqus_domain'] = [
       '#type' => 'textfield',
-      '#title' => t('Shortname'),
+      '#title' => $this->t('Shortname'),
       '#description' => $this->t('The website shortname that you registered Disqus with. If you registered http://example.disqus.com, you would enter "example" here.'),
       '#default_value' => $disqus_config->get('disqus_domain'),
     ];
 
     $form['settings'] = [
       '#type' => 'vertical_tabs',
-      '#attached' => ['library' => ['disqus/disqus.settings']],
       '#weight' => 50,
     ];
 
@@ -118,15 +118,6 @@ class DisqusSettingsForm extends ConfigFormBase {
       '#description' => $this->t("When enabled and a user is logged in, the Disqus 'Post as Guest' login form will be pre-filled with the user's name and email address."),
       '#default_value' => $disqus_config->get('behavior.disqus_inherit_login'),
     ];
-    $form['behavior']['disqus_disable_mobile'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Disable mobile optimized version'),
-      '#description' => $this->t(
-        'When enabled, uses the <a href=":url">disqus_disable_mobile</a> flag to tell Disqus service to never use the mobile optimized version of Disqus.',
-        [':url' => 'http://docs.disqus.com/help/2/']
-      ),
-      '#default_value' => $disqus_config->get('behavior.disqus_disable_mobile'),
-    ];
     $form['behavior']['disqus_track_newcomment_ga'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Track new comments in Google Analytics'),
@@ -135,6 +126,18 @@ class DisqusSettingsForm extends ConfigFormBase {
         [':url' => 'https://www.drupal.org/project/google_analytics']
       ),
       '#default_value' => $disqus_config->get('behavior.disqus_track_newcomment_ga'),
+    ];
+    $form['behavior']['disqus_notify_newcomment'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Notify authors of new comments'),
+      '#description' => $this->t('When enabled, a notification email will be sent to the author of a post when a new comment is added. This will work only if you have a secret key set in the advanced section.'),
+      '#default_value' => $disqus_config->get('behavior.disqus_notify_newcomment'),
+      '#states' => [
+        'visible' => [
+          'input[name="disqus_publickey"]' => ['empty' => FALSE],
+          'input[name="disqus_secretkey"]' => ['empty' => FALSE],
+        ],
+      ],
     ];
 
     // Advanced settings.
@@ -197,9 +200,9 @@ class DisqusSettingsForm extends ConfigFormBase {
         '#description' => $this->t('Action to take when deleting a node. (Requires your user access token.)'),
         '#default_value' => $disqus_config->get('advanced.api.disqus_api_delete'),
         '#options' => [
-          DISQUS_API_NO_ACTION => $this->t('No Action'),
-          DISQUS_API_CLOSE => $this->t('Close Thread'),
-          DISQUS_API_REMOVE => $this->t('Remove Thread'),
+          DisqusCommentManagerInterface::DISQUS_API_NO_ACTION => $this->t('No Action'),
+          DisqusCommentManagerInterface::DISQUS_API_CLOSE => $this->t('Close Thread'),
+          DisqusCommentManagerInterface::DISQUS_API_REMOVE => $this->t('Remove Thread'),
         ],
         '#states' => [
           'enabled' => [
@@ -278,8 +281,8 @@ class DisqusSettingsForm extends ConfigFormBase {
       ->set('disqus_domain', $form_state->getValue('disqus_domain'))
       ->set('behavior.disqus_localization', $form_state->getValue('disqus_localization'))
       ->set('behavior.disqus_inherit_login', $form_state->getValue('disqus_inherit_login'))
-      ->set('behavior.disqus_disable_mobile', $form_state->getValue('disqus_disable_mobile'))
       ->set('behavior.disqus_track_newcomment_ga', $form_state->getValue('disqus_track_newcomment_ga'))
+      ->set('behavior.disqus_notify_newcomment', $form_state->getValue('disqus_notify_newcomment'))
       ->set('advanced.disqus_useraccesstoken', $form_state->getValue('disqus_useraccesstoken'))
       ->set('advanced.disqus_publickey', $form_state->getValue('disqus_publickey'))
       ->set('advanced.disqus_secretkey', $form_state->getValue('disqus_secretkey'))
@@ -296,7 +299,10 @@ class DisqusSettingsForm extends ConfigFormBase {
     }
 
     $old_logo = $config->get('advanced.sso.disqus_logo');
-    $new_logo = (!$form_state->isValueEmpty('disqus_logo')) ? $form_state->getValue(array('disqus_logo', 0)) : '';
+    $new_logo = (!$form_state->isValueEmpty('disqus_logo')) ? $form_state->getValue([
+      'disqus_logo',
+      0,
+    ]) : '';
 
     // Ignore if the file hasn't changed.
     if ($new_logo != $old_logo) {

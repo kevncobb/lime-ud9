@@ -2,14 +2,14 @@
 
 namespace Drupal\disqus\Plugin\migrate\process;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\migrate\MigrateSkipRowException;
 use Drupal\migrate\MigrateExecutableInterface;
+use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\ProcessPluginBase;
 use Drupal\migrate\Row;
-use Drupal\migrate\Entity\MigrationInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\migrate\MigrateSkipRowException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Gives the entity_type from the disqus identifier.
@@ -23,7 +23,7 @@ class DisqusEntityType extends ProcessPluginBase implements ContainerFactoryPlug
   /**
    * The entity type manager service.
    *
-   * @var \Drupal\Core\Entity\EntityManager
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 

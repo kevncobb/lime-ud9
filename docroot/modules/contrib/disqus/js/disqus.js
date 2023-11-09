@@ -8,7 +8,6 @@ var disqus_shortname = '';
 var disqus_url = '';
 var disqus_title = '';
 var disqus_identifier = '';
-var disqus_disable_mobile = 0;
 var disqus_def_name = '';
 var disqus_def_email = '';
 var disqus_config;
@@ -35,7 +34,6 @@ Drupal.behaviors.disqus = {
         disqus_url = settings.disqus.url;
         disqus_title = settings.disqus.title;
         disqus_identifier = settings.disqus.identifier;
-        disqus_disable_mobile = settings.disqus.disable_mobile || 0;
         disqus_def_name = settings.disqus.name || '';
         disqus_def_email = settings.disqus.email || '';
 
