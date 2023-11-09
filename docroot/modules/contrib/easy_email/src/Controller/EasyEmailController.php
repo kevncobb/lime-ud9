@@ -7,6 +7,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\easy_email\Entity\EasyEmailInterface;
 use Drupal\easy_email\Entity\EasyEmailTypeInterface;
@@ -112,28 +113,54 @@ class EasyEmailController extends ControllerBase implements ContainerInjectionIn
 
   public function preview(EasyEmailInterface $easy_email) {
     $message = \Drupal::service('easy_email.handler')->preview($easy_email);
-    $body = trim($message['body']);
+    $body = $message['body'];
     // If email is plain text, HTML body is empty.
-    if (!empty($message['headers']['Content-Type']) && strstr($message['headers']['Content-Type'], 'text/plain')) {
+    $content_type = $this->getContentType($message);
+    if ($content_type === 'text/plain') {
       $body = '';
     }
-    $response = new Response();
-    $response->setContent($body);
-    $response->headers->set('Content-Type', 'text/html; charset=utf-8');
-    return $response;
+    return $this->sendNormalizedResponse($body, 'text/html; charset=utf-8');
   }
 
   public function previewPlain(EasyEmailInterface $easy_email) {
     $message = \Drupal::service('easy_email.handler')->preview($easy_email);
-    $body = !empty($message['plain']) ? trim($message['plain']) : '';
-    // If email is plain text, plain text body is the main body
-    if (!empty($message['headers']['Content-Type']) && strstr($message['headers']['Content-Type'], 'text/plain')) {
-      $body = trim($message['body']);
+    $body = !empty($message['plain']) ? $message['plain'] : '';
+    // If email is plain text, plain text body is the main body.
+    $content_type = $this->getContentType($message);
+    if ($content_type === 'text/plain') {
+      $body = $message['body'];
     }
+    return $this->sendNormalizedResponse($body, 'text/plain; charset=utf-8');
+  }
+
+  protected function sendNormalizedResponse($body, $content_type) {
+    if (is_array($body)) {
+      $body = \Drupal::service('renderer')->render($body);
+    }
+    $body = trim($body);
     $response = new Response();
     $response->setContent($body);
-    $response->headers->set('Content-Type', 'text/plain; charset=utf-8');
+    $response->headers->set('Content-Type', $content_type);
     return $response;
+  }
+
+  /**
+   * Get content type from message array.
+   *
+   * @param array $message
+   *
+   * @return string
+   */
+  protected function getContentType($message) {
+    $content_type_header = NULL;
+    // Headers end up under params with Symfony Mailer.
+    if (!empty($message['headers']['Content-Type'])) {
+      $content_type_header = $message['headers']['Content-Type'];
+    }
+    if (str_contains($content_type_header, 'text/html')) {
+      return 'text/html';
+    }
+    return 'text/plain';
   }
 
   /**
@@ -146,8 +173,8 @@ class EasyEmailController extends ControllerBase implements ContainerInjectionIn
    *   An array suitable for drupal_render().
    */
   public function revisionShow($easy_email_revision) {
-    $easy_email = $this->entityManager()->getStorage('easy_email')->loadRevision($easy_email_revision);
-    $view_builder = $this->entityManager()->getViewBuilder('easy_email');
+    $easy_email = $this->entityTypeManager()->getStorage('easy_email')->loadRevision($easy_email_revision);
+    $view_builder = $this->entityTypeManager()->getViewBuilder('easy_email');
 
     return $view_builder->view($easy_email);
   }
@@ -162,8 +189,8 @@ class EasyEmailController extends ControllerBase implements ContainerInjectionIn
    *   The page title.
    */
   public function revisionPageTitle($easy_email_revision) {
-    $easy_email = $this->entityManager()->getStorage('easy_email')->loadRevision($easy_email_revision);
-    return $this->t('Revision of %title from %date', ['%title' => $easy_email->label(), '%date' => format_date($easy_email->getRevisionCreationTime())]);
+    $easy_email = $this->entityTypeManager()->getStorage('easy_email')->loadRevision($easy_email_revision);
+    return $this->t('Revision of %title from %date', ['%title' => $easy_email->label(), '%date' => \Drupal::service('date.formatter')->format($easy_email->getRevisionCreationTime())]);
   }
 
   /**
@@ -181,7 +208,7 @@ class EasyEmailController extends ControllerBase implements ContainerInjectionIn
     $langname = $easy_email->language()->getName();
     $languages = $easy_email->getTranslationLanguages();
     $has_translations = (count($languages) > 1);
-    $easy_email_storage = $this->entityManager()->getStorage('easy_email');
+    $easy_email_storage = $this->entityTypeManager()->getStorage('easy_email');
 
     $build['#title'] = $has_translations ? $this->t('@langname revisions for %title', ['@langname' => $langname, '%title' => $easy_email->label()]) : $this->t('Revisions for %title', ['%title' => $easy_email->label()]);
     $header = [$this->t('Revision'), $this->t('Operations')];
@@ -209,10 +236,10 @@ class EasyEmailController extends ControllerBase implements ContainerInjectionIn
         // Use revision link to link to revisions that are not active.
         $date = \Drupal::service('date.formatter')->format($revision->getRevisionCreationTime(), 'short');
         if ($vid != $easy_email->getRevisionId()) {
-          $link = $this->l($date, new Url('entity.easy_email.revision', ['easy_email' => $easy_email->id(), 'easy_email_revision' => $vid]));
+          $link = Link::fromTextAndUrl($date, Url::fromRoute('entity.easy_email.revision', ['easy_email' => $easy_email->id(), 'easy_email_revision' => $vid]));
         }
         else {
-          $link = $easy_email->link($date);
+          $link = $easy_email->tolink($date)->toString();
         }
 
         $row = [];

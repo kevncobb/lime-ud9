@@ -18,6 +18,7 @@ class EasyEmailListBuilder extends EntityListBuilder {
    */
   protected function getEntityIds() {
     $query = $this->getStorage()->getQuery()
+      ->accessCheck(TRUE)
       ->sort($this->entityType->getKey('id'), 'DESC');
 
     // Only add the pager if a limit is specified.

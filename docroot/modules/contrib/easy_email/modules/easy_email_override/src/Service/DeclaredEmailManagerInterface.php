@@ -7,6 +7,6 @@ use Drupal\Component\Plugin\PluginManagerInterface;
 /**
  * Defines the interface for email plugin managers.
  */
-interface EmailManagerInterface extends PluginManagerInterface {
+interface DeclaredEmailManagerInterface extends PluginManagerInterface {
 
 }

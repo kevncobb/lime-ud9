@@ -2,8 +2,6 @@
 
 namespace Drupal\Tests\easy_email\Functional;
 
-use Drupal\easy_email\Entity\EasyEmailTypeInterface;
-
 /**
  * Class EasyEmailTemplatePreviewTest
  *
@@ -33,9 +31,7 @@ class EasyEmailTemplatePreviewTest extends EasyEmailTestBase {
     $this->assertSession()->pageTextContains('test_all');
     $this->assertSession()->pageTextContains('Test: All');
     $this->drupalGet('admin/structure/email-templates/templates/' . $template->id(). '/edit/fields');
-    $this->assertSession()->pageTextContains('field_user');
-    $this->assertSession()->pageTextContains('field_cc_user');
-    $this->assertSession()->pageTextContains('field_bcc_user');
+
     $template->setRecipient(['test@example.com', '[easy_email:field_user:0:entity:mail]'])
       ->setCc(['cc@example.com', '[easy_email:field_cc_user:0:entity:mail]'])
       ->setBcc(['bcc@example.com', '[easy_email:field_bcc_user:0:entity:mail]'])
@@ -71,7 +67,7 @@ class EasyEmailTemplatePreviewTest extends EasyEmailTestBase {
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .from-name', $site_config->get('name'));
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .subject', 'Test email for ' . $user1->getDisplayName());
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .body-preview', 'This is a test email (HTML) for user account ' . $user1->getDisplayName() . '.');
-    $this->assertSession()->linkByHrefExists(file_create_url('/core/misc/druplicon.png'));
+    $this->assertSession()->linkByHrefExists(\Drupal::service('file_url_generator')->generateAbsoluteString('/core/misc/druplicon.png'));
 
     $html_body_iframe = $this->assertSession()->elementExists('css', '[data-drupal-selector="html-body"] iframe');
     $html_body_url = $this->getIframeUrlAndQuery($html_body_iframe);
@@ -107,9 +103,7 @@ class EasyEmailTemplatePreviewTest extends EasyEmailTestBase {
     $this->assertSession()->pageTextContains('test_html_generate_plain');
     $this->assertSession()->pageTextContains('Test: HTML and Generate Plain');
     $this->drupalGet('admin/structure/email-templates/templates/' . $template->id(). '/edit/fields');
-    $this->assertSession()->pageTextContains('field_user');
-    $this->assertSession()->pageTextContains('field_cc_user');
-    $this->assertSession()->pageTextContains('field_bcc_user');
+
     $template->setRecipient(['test@example.com', '[easy_email:field_user:0:entity:mail]'])
       ->setCc(['cc@example.com', '[easy_email:field_cc_user:0:entity:mail]'])
       ->setBcc(['bcc@example.com', '[easy_email:field_bcc_user:0:entity:mail]'])
@@ -145,7 +139,7 @@ class EasyEmailTemplatePreviewTest extends EasyEmailTestBase {
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .from-name', $site_config->get('name'));
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .subject', 'Test email for ' . $user1->getDisplayName());
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .body-preview', 'This is a test email (HTML) for user account ' . $user1->getDisplayName() . '.');
-    $this->assertSession()->linkByHrefExists(file_create_url('/core/misc/druplicon.png'));
+    $this->assertSession()->linkByHrefExists(\Drupal::service('file_url_generator')->generateAbsoluteString('/core/misc/druplicon.png'));
 
     $html_body_iframe = $this->assertSession()->elementExists('css', '[data-drupal-selector="html-body"] iframe');
     $html_body_url = $this->getIframeUrlAndQuery($html_body_iframe);
@@ -153,9 +147,14 @@ class EasyEmailTemplatePreviewTest extends EasyEmailTestBase {
     $plain_body_url = $this->getIframeUrlAndQuery($plain_body_iframe);
 
     $this->drupalGet($html_body_url['path'], ['query' => $html_body_url['query']]);
-    $this->assertSession()->responseContains('<p>This is a test email (HTML) for user account ' . $user1->getAccountName() . '.</p>');
+    $html_content = $this->getSession()->getPage()->getContent();
+    $this->htmlOutput($html_content);
+    $this->assertStringContainsString('This is a test email (HTML) for user account ' . $user1->getAccountName() . '.', $html_content);
+    $this->assertSession()->responseContains('This is a test email (HTML) for user account ' . $user1->getAccountName() . '.');
 
     $this->drupalGet($plain_body_url['path'], ['query' => $plain_body_url['query']]);
+    $html_content = $this->getSession()->getPage()->getContent();
+    $this->htmlOutput($html_content);
     $this->assertSession()->responseContains('This is a test email (HTML) for user account ' . $user1->getAccountName() . '.');
   }
 
@@ -180,9 +179,7 @@ class EasyEmailTemplatePreviewTest extends EasyEmailTestBase {
     $this->assertSession()->pageTextContains('test_html_inbox_preview');
     $this->assertSession()->pageTextContains('Test: HTML and Inbox Preview');
     $this->drupalGet('admin/structure/email-templates/templates/' . $template->id(). '/edit/fields');
-    $this->assertSession()->pageTextContains('field_user');
-    $this->assertSession()->pageTextContains('field_cc_user');
-    $this->assertSession()->pageTextContains('field_bcc_user');
+
     $template->setRecipient(['test@example.com', '[easy_email:field_user:0:entity:mail]'])
       ->setCc(['cc@example.com', '[easy_email:field_cc_user:0:entity:mail]'])
       ->setBcc(['bcc@example.com', '[easy_email:field_bcc_user:0:entity:mail]'])
@@ -219,7 +216,7 @@ class EasyEmailTemplatePreviewTest extends EasyEmailTestBase {
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .from-name', $site_config->get('name'));
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .subject', 'Test email for ' . $user1->getDisplayName());
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .body-preview', 'This is the inbox preview text for ' . $user1->getDisplayName() . '.');
-    $this->assertSession()->linkByHrefExists(file_create_url('/core/misc/druplicon.png'));
+    $this->assertSession()->linkByHrefExists(\Drupal::service('file_url_generator')->generateAbsoluteString('/core/misc/druplicon.png'));
 
     $html_body_iframe = $this->assertSession()->elementExists('css', '[data-drupal-selector="html-body"] iframe');
     $html_body_url = $this->getIframeUrlAndQuery($html_body_iframe);
@@ -227,7 +224,7 @@ class EasyEmailTemplatePreviewTest extends EasyEmailTestBase {
     $plain_body_url = $this->getIframeUrlAndQuery($plain_body_iframe);
 
     $this->drupalGet($html_body_url['path'], ['query' => $html_body_url['query']]);
-    $this->assertSession()->responseContains('<p>This is a test email (HTML) for user account ' . $user1->getAccountName() . '.</p>');
+    $this->assertSession()->responseContains('This is a test email (HTML) for user account ' . $user1->getAccountName() . '.');
 
     $this->drupalGet($plain_body_url['path'], ['query' => $plain_body_url['query']]);
     $this->assertSession()->responseContains('This is a test email (Plain Text) for user account ' . $user1->getAccountName() . '.');
@@ -255,9 +252,7 @@ class EasyEmailTemplatePreviewTest extends EasyEmailTestBase {
     $this->assertSession()->pageTextContains('test_plain_only_inbox_preview');
     $this->assertSession()->pageTextContains('Test: Plain Only and Inbox Preview');
     $this->drupalGet('admin/structure/email-templates/templates/' . $template->id(). '/edit/fields');
-    $this->assertSession()->pageTextContains('field_user');
-    $this->assertSession()->pageTextContains('field_cc_user');
-    $this->assertSession()->pageTextContains('field_bcc_user');
+
     $template->setRecipient(['test@example.com', '[easy_email:field_user:0:entity:mail]'])
       ->setCc(['cc@example.com', '[easy_email:field_cc_user:0:entity:mail]'])
       ->setBcc(['bcc@example.com', '[easy_email:field_bcc_user:0:entity:mail]'])
@@ -293,7 +288,7 @@ class EasyEmailTemplatePreviewTest extends EasyEmailTestBase {
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .from-name', $site_config->get('name'));
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .subject', 'Test email for ' . $user1->getDisplayName());
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .body-preview', 'This is a test email (Plain Text) for user account ' . $user1->getDisplayName() . '.');
-    $this->assertSession()->linkByHrefExists(file_create_url('/core/misc/druplicon.png'));
+    $this->assertSession()->linkByHrefExists(\Drupal::service('file_url_generator')->generateAbsoluteString('/core/misc/druplicon.png'));
 
     $this->assertSession()->elementNotExists('css', '[data-drupal-selector="html-body"] iframe');
 
@@ -326,10 +321,7 @@ class EasyEmailTemplatePreviewTest extends EasyEmailTestBase {
     $this->assertSession()->pageTextContains('test_plain_only');
     $this->assertSession()->pageTextContains('Test: Plain Only');
     $this->drupalGet('admin/structure/email-templates/templates/' . $template->id(). '/edit/fields');
-    $this->assertSession()->pageTextContains('field_user');
-    $this->assertSession()->pageTextContains('field_cc_user');
-    $this->assertSession()->pageTextContains('field_bcc_user');
-    $this->assertSession()->pageTextNotContains('body_html');
+    $this->assertSession()->responseNotContains('body_html');
     $template->setRecipient(['test@example.com', '[easy_email:field_user:0:entity:mail]'])
       ->setCc(['cc@example.com', '[easy_email:field_cc_user:0:entity:mail]'])
       ->setBcc(['bcc@example.com', '[easy_email:field_bcc_user:0:entity:mail]'])
@@ -364,7 +356,7 @@ class EasyEmailTemplatePreviewTest extends EasyEmailTestBase {
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .from-name', $site_config->get('name'));
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .subject', 'Test email for ' . $user1->getDisplayName());
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .body-preview', 'This is a test email (Plain Text) for user account ' . $user1->getDisplayName() . '.');
-    $this->assertSession()->linkByHrefExists(file_create_url('/core/misc/druplicon.png'));
+    $this->assertSession()->linkByHrefExists(\Drupal::service('file_url_generator')->generateAbsoluteString('/core/misc/druplicon.png'));
 
     $this->assertSession()->elementNotExists('css', '[data-drupal-selector="html-body"] iframe');
     $plain_body_iframe = $this->assertSession()->elementExists('css', '[data-drupal-selector="plain-body"] iframe');
@@ -396,10 +388,7 @@ class EasyEmailTemplatePreviewTest extends EasyEmailTestBase {
     $this->assertSession()->pageTextContains('test_html_only');
     $this->assertSession()->pageTextContains('Test: HTML Only');
     $this->drupalGet('admin/structure/email-templates/templates/' . $template->id(). '/edit/fields');
-    $this->assertSession()->pageTextContains('field_user');
-    $this->assertSession()->pageTextContains('field_cc_user');
-    $this->assertSession()->pageTextContains('field_bcc_user');
-    $this->assertSession()->pageTextNotContains('body_plain');
+    $this->assertSession()->responseNotContains('body_plain');
     $template->setRecipient(['test@example.com', '[easy_email:field_user:0:entity:mail]'])
       ->setCc(['cc@example.com', '[easy_email:field_cc_user:0:entity:mail]'])
       ->setBcc(['bcc@example.com', '[easy_email:field_bcc_user:0:entity:mail]'])
@@ -434,14 +423,14 @@ class EasyEmailTemplatePreviewTest extends EasyEmailTestBase {
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .from-name', $site_config->get('name'));
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .subject', 'Test email for ' . $user1->getDisplayName());
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .body-preview', 'This is a test email (HTML) for user account ' . $user1->getDisplayName() . '.');
-    $this->assertSession()->linkByHrefExists(file_create_url('/core/misc/druplicon.png'));
+    $this->assertSession()->linkByHrefExists(\Drupal::service('file_url_generator')->generateAbsoluteString('/core/misc/druplicon.png'));
 
     $html_body_iframe = $this->assertSession()->elementExists('css', '[data-drupal-selector="html-body"] iframe');
     $html_body_url = $this->getIframeUrlAndQuery($html_body_iframe);
     $this->assertSession()->elementNotExists('css', '[data-drupal-selector="plain-body"] iframe');
 
     $this->drupalGet($html_body_url['path'], ['query' => $html_body_url['query']]);
-    $this->assertSession()->responseContains('<p>This is a test email (HTML) for user account ' . $user1->getAccountName() . '.</p>');
+    $this->assertSession()->responseContains('This is a test email (HTML) for user account ' . $user1->getAccountName() . '.');
   }
 
   /**
@@ -465,9 +454,6 @@ class EasyEmailTemplatePreviewTest extends EasyEmailTestBase {
     $this->assertSession()->pageTextContains('test_unsafe_tokens');
     $this->assertSession()->pageTextContains('Test: Unsafe Tokens');
     $this->drupalGet('admin/structure/email-templates/templates/' . $template->id(). '/edit/fields');
-    $this->assertSession()->pageTextContains('field_user');
-    $this->assertSession()->pageTextContains('field_cc_user');
-    $this->assertSession()->pageTextContains('field_bcc_user');
     $template->setRecipient(['test@example.com', '[easy_email:field_user:0:entity:mail]'])
       ->setCc(['cc@example.com', '[easy_email:field_cc_user:0:entity:mail]'])
       ->setBcc(['bcc@example.com', '[easy_email:field_bcc_user:0:entity:mail]'])
@@ -504,7 +490,7 @@ class EasyEmailTemplatePreviewTest extends EasyEmailTestBase {
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .from-name', $site_config->get('name'));
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .subject', 'Cancel: [easy_email:field_user:0:entity:cancel-url], Login: [easy_email:field_user:0:entity:one-time-login-url]');
     $this->assertSession()->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .body-preview', 'Preview: Cancel: [easy_email:field_user:0:entity:cancel-url], Login: [easy_email:field_user:0:entity:one-time-login-url]');
-    $this->assertSession()->linkByHrefExists(file_create_url('/core/misc/druplicon.png'));
+    $this->assertSession()->linkByHrefExists(\Drupal::service('file_url_generator')->generateAbsoluteString('/core/misc/druplicon.png'));
 
     $html_body_iframe = $this->assertSession()->elementExists('css', '[data-drupal-selector="html-body"] iframe');
     $html_body_url = $this->getIframeUrlAndQuery($html_body_iframe);

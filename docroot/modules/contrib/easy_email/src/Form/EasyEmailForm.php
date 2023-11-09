@@ -406,7 +406,7 @@ class EasyEmailForm extends ContentEntityForm {
       $entity->setNewRevision();
 
       // If a new revision is created, save the current user as revision author.
-      $entity->setRevisionCreationTime(REQUEST_TIME);
+      $entity->setRevisionCreationTime(\Drupal::time()->getRequestTime());
       $entity->setRevisionUserId(\Drupal::currentUser()->id());
     }
     else {
@@ -438,10 +438,10 @@ class EasyEmailForm extends ContentEntityForm {
    * @param string $string
    * @param string $delimiter
    *
-   * @return array|null
+   * @return array
    */
   protected function explodeAndTrim($string, $delimiter = ',') {
-    $return = NULL;
+    $return = [];
     if (!empty($string)) {
       $return = explode($delimiter, $string);
       $return = array_filter(array_map('trim', $return));

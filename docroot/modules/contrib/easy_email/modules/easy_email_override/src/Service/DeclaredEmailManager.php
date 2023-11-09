@@ -17,7 +17,7 @@ use Drupal\easy_email_override\Plugin\Email\Email;
  * @see \Drupal\easy_email_override\Plugin\Email\EmailInterface
  * @see plugin_api
  */
-class EmailManager extends DefaultPluginManager implements EmailManagerInterface {
+class DeclaredEmailManager extends DefaultPluginManager implements DeclaredEmailManagerInterface {
 
 
   /**
@@ -34,7 +34,7 @@ class EmailManager extends DefaultPluginManager implements EmailManagerInterface
   ];
 
   /**
-   * Constructs a new EmailManager object.
+   * Constructs a new EmailOverrideManager object.
    *
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.

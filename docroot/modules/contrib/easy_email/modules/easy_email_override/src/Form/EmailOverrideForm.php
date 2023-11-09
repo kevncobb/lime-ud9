@@ -2,10 +2,11 @@
 
 namespace Drupal\easy_email_override\Form;
 
+use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\easy_email_override\Service\EmailManagerInterface;
+use Drupal\easy_email_override\Service\DeclaredEmailManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -14,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class EmailOverrideForm extends EntityForm {
 
   /**
-   * @var \Drupal\easy_email_override\Service\EmailManagerInterface
+   * @var \Drupal\easy_email_override\Service\DeclaredEmailManagerInterface
    */
   protected $emailManager;
 
@@ -29,14 +30,21 @@ class EmailOverrideForm extends EntityForm {
   protected $entityTypeManager;
 
   /**
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+   */
+  protected $entityFieldManager;
+
+  /**
    * EmailOverrideForm constructor.
    *
-   * @param \Drupal\easy_email_override\Service\EmailManagerInterface $emailManager
+   * @param \Drupal\easy_email_override\Service\DeclaredEmailManagerInterface $emailManager
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   * @param EntityFieldManagerInterface $entityFieldManager
    */
-  public function __construct(EmailManagerInterface $emailManager, EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(DeclaredEmailManagerInterface $emailManager, EntityTypeManagerInterface $entityTypeManager, EntityFieldManagerInterface $entityFieldManager) {
     $this->emailManager = $emailManager;
     $this->entityTypeManager = $entityTypeManager;
+    $this->entityFieldManager = $entityFieldManager;
     $this->easyEmailTypeStorage = $entityTypeManager->getStorage('easy_email_type');
   }
 
@@ -44,7 +52,8 @@ class EmailOverrideForm extends EntityForm {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('plugin.manager.easy_email_override'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('entity_field.manager')
     );
   }
 
@@ -93,7 +102,7 @@ class EmailOverrideForm extends EntityForm {
     $possible_mappings = [];
 
     $easy_email_fields = [];
-    $field_definitions = \Drupal::entityManager()->getFieldDefinitions('easy_email', $easy_email_type);
+    $field_definitions = $this->entityFieldManager->getFieldDefinitions('easy_email', $easy_email_type);
     foreach ($field_definitions as $field_name => $definition) {
       $field_info = [
         'label' => $definition->getLabel(),

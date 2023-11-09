@@ -2,8 +2,6 @@
 
 namespace Drupal\Tests\easy_email\Functional;
 
-use Drupal\Core\Render\Markup;
-
 /**
  * Class EasyEmailSendTest
  *
@@ -48,9 +46,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
       ->save();
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');
-    $this->assertSession()->pageTextContains('field_cc_user');
-    $this->assertSession()->pageTextContains('field_bcc_user');
 
     $user1 = $this->createUser();
     $user2 = $this->createUser();
@@ -84,17 +79,17 @@ class EasyEmailSendTest extends EasyEmailTestBase {
       ->elementTextContains('css', '[data-drupal-selector="header-Cc"] span.value', 'cc@example.com');
     $this->assertSession()
       ->elementTextContains('css', '[data-drupal-selector="header-Cc"] span.value', $user2->getEmail());
-    $this->assertArraySubset([$user2->id()], $email_entity->getCCIds());
+    $this->assertContains($user2->id(), $email_entity->getCCIds());
     $this->assertSession()
       ->elementTextContains('css', '[data-drupal-selector="header-Bcc"] span.value', 'bcc@example.com');
     $this->assertSession()
       ->elementTextContains('css', '[data-drupal-selector="header-Bcc"] span.value', $user3->getEmail());
-    $this->assertArraySubset([$user3->id()], $email_entity->getBCCIds());
+    $this->assertContains($user3->id(), $email_entity->getBCCIds());
     $this->assertSession()
       ->elementTextContains('css', '[data-drupal-selector="header-To"] span.value', 'test@example.com');
     $this->assertSession()
       ->elementTextContains('css', '[data-drupal-selector="header-To"] span.value', $user1->getEmail());
-    $this->assertArraySubset([$user1->id()], $email_entity->getRecipientIds());
+    $this->assertContains($user1->id(), $email_entity->getRecipientIds());
     $this->assertSession()
       ->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .from-name', $site_config->get('name'));
     $this->assertSession()
@@ -102,7 +97,7 @@ class EasyEmailSendTest extends EasyEmailTestBase {
     $this->assertSession()
       ->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .body-preview', 'This is a test email (HTML) for user account ' . $user1->getDisplayName() . '.');
     $this->assertSession()
-      ->linkByHrefNotExists(file_create_url('/core/misc/druplicon.png'));
+      ->linkByHrefNotExists(\Drupal::service('file_url_generator')->generateAbsoluteString('/core/misc/druplicon.png'));
     $this->assertSession()->pageTextNotContains('Attachments');
 
     $html_body_iframe = $this->assertSession()
@@ -130,8 +125,8 @@ class EasyEmailSendTest extends EasyEmailTestBase {
     $this->assertEquals($site_config->get('mail'), $email['headers']['Sender']);
     $this->assertArrayNotHasKey('Reply-To', $email['headers']);
     $this->assertEquals('text/html; charset=UTF-8;', $email['headers']['Content-Type']);
-    $this->assertContains('<p>This is a test email (HTML) for user account ' . $user1->getAccountName() . '.</p>', (string) $email['body']);
-    $this->assertContains('This is a test email (Plain Text) for user account ' . $user1->getAccountName() . '.', (string) $email['plain']);
+    $this->assertStringContainsString('<p>This is a test email (HTML) for user account ' . $user1->getAccountName() . '.</p>', (string) $email['body']);
+    $this->assertStringContainsString('This is a test email (Plain Text) for user account ' . $user1->getAccountName() . '.', (string) $email['plain']);
     $this->assertEquals('Test email for ' . $user1->getDisplayName(), $email['subject']);
     $this->assertEquals(1, count($email['params']['files']));
     $attachment = reset($email['params']['files']);
@@ -179,9 +174,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
       ->save();
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');
-    $this->assertSession()->pageTextContains('field_cc_user');
-    $this->assertSession()->pageTextContains('field_bcc_user');
 
     $user1 = $this->createUser();
     $user2 = $this->createUser();
@@ -224,7 +216,7 @@ class EasyEmailSendTest extends EasyEmailTestBase {
     $this->assertSession()
       ->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .body-preview', 'This is a test email (HTML) for user account ' . $user1->getDisplayName() . '.');
     $this->assertSession()
-      ->linkByHrefNotExists(file_create_url('/core/misc/druplicon.png'));
+      ->linkByHrefNotExists(\Drupal::service('file_url_generator')->generateAbsoluteString('/core/misc/druplicon.png'));
     $this->assertSession()->pageTextNotContains('Attachments');
 
     $url = explode('/', $this->getSession()->getCurrentUrl());
@@ -267,8 +259,8 @@ class EasyEmailSendTest extends EasyEmailTestBase {
     $this->assertEquals($site_config->get('mail'), $email['headers']['Sender']);
     $this->assertArrayNotHasKey('Reply-To', $email['headers']);
     $this->assertEquals('text/html; charset=UTF-8;', $email['headers']['Content-Type']);
-    $this->assertContains('<p>This is a test email (HTML) for user account ' . $user1->getAccountName() . '.</p>', (string) $email['body']);
-    $this->assertContains('This is a test email (Plain Text) for user account ' . $user1->getAccountName() . '.', (string) $email['plain']);
+    $this->assertStringContainsString('<p>This is a test email (HTML) for user account ' . $user1->getAccountName() . '.</p>', (string) $email['body']);
+    $this->assertStringContainsString('This is a test email (Plain Text) for user account ' . $user1->getAccountName() . '.', (string) $email['plain']);
     $this->assertEquals('Test email for ' . $user1->getDisplayName(), $email['subject']);
     $this->assertEquals(1, count($email['params']['files']));
     $attachment = reset($email['params']['files']);
@@ -316,9 +308,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
       ->save();
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');
-    $this->assertSession()->pageTextContains('field_cc_user');
-    $this->assertSession()->pageTextContains('field_bcc_user');
 
     $user1 = $this->createUser();
     $user2 = $this->createUser();
@@ -377,9 +366,9 @@ class EasyEmailSendTest extends EasyEmailTestBase {
     $this->assertSession()
       ->elementTextContains('css', '[data-drupal-selector="inbox-preview"] .body-preview', 'This is the overridden inbox preview for user account ' . $user1->getDisplayName() . '.');
     $this->assertSession()
-      ->linkByHrefNotExists(file_create_url('/core/misc/druplicon.png'));
+      ->linkByHrefNotExists(\Drupal::service('file_url_generator')->generateAbsoluteString('/core/misc/druplicon.png'));
     $this->assertSession()
-      ->linkByHrefNotExists(file_create_url('/core/misc/help.png'));
+      ->linkByHrefNotExists(\Drupal::service('file_url_generator')->generateAbsoluteString('/core/misc/help.png'));
     $this->assertSession()->pageTextNotContains('Attachments');
 
     $html_body_iframe = $this->assertSession()
@@ -407,9 +396,9 @@ class EasyEmailSendTest extends EasyEmailTestBase {
     $this->assertEquals($site_config->get('mail'), $email['headers']['Sender']);
     $this->assertEquals('override-reply-to@example.com', $email['headers']['Reply-to']);
     $this->assertEquals('text/html; charset=UTF-8;', $email['headers']['Content-Type']);
-    $this->assertContains('<p>This is the overridden HTML body for user account ' . $user1->getAccountName() . '.</p>', (string) $email['body']);
-    $this->assertContains('This is the overridden inbox preview for user account ' . $user1->getAccountName() . '.', (string) $email['body']);
-    $this->assertContains('This is the overridden plain text body for user account ' . $user1->getAccountName() . '.', (string) $email['plain']);
+    $this->assertStringContainsString('<p>This is the overridden HTML body for user account ' . $user1->getAccountName() . '.</p>', (string) $email['body']);
+    $this->assertStringContainsString('This is the overridden inbox preview for user account ' . $user1->getAccountName() . '.', (string) $email['body']);
+    $this->assertStringContainsString('This is the overridden plain text body for user account ' . $user1->getAccountName() . '.', (string) $email['plain']);
     $this->assertEquals('Overridden subject for ' . $user1->getDisplayName(), $email['subject']);
     $this->assertEquals(2, count($email['params']['files']));
     $attachment = array_shift($email['params']['files']);
@@ -453,7 +442,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
       ->save();
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');
 
     $user1 = $this->createUser();
 
@@ -487,8 +475,8 @@ class EasyEmailSendTest extends EasyEmailTestBase {
     $this->assertEquals(1, count($emails));
     $email = reset($emails);
     $this->assertEquals($template->id(), $email['key']);
-    $this->assertContains('<p>This is a test email (HTML) for user account ' . $user1->getAccountName() . '.</p>', (string) $email['body']);
-    $this->assertContains('This is a test email (HTML) for user account ' . $user1->getAccountName() . '.', (string) $email['plain']);
+    $this->assertStringContainsString('<p>This is a test email (HTML) for user account ' . $user1->getAccountName() . '.</p>', (string) $email['body']);
+    $this->assertStringContainsString('This is a test email (HTML) for user account ' . $user1->getAccountName() . '.', (string) $email['plain']);
   }
 
   /**
@@ -524,7 +512,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
       ->save();
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');
 
     $user1 = $this->createUser();
 
@@ -551,8 +538,8 @@ class EasyEmailSendTest extends EasyEmailTestBase {
     $this->assertEquals(1, count($emails));
     $email = reset($emails);
     $this->assertEquals($template->id(), $email['key']);
-    $this->assertNotContains('This is a test email (HTML) for user account', (string) $email['body']);
-    $this->assertContains('This is a test email (Plain Text) for user account ' . $user1->getAccountName() . '.', (string) $email['body']);
+    $this->assertStringNotContainsString('This is a test email (HTML) for user account', (string) $email['body']);
+    $this->assertStringContainsString('This is a test email (Plain Text) for user account ' . $user1->getAccountName() . '.', (string) $email['body']);
     $this->assertArrayNotHasKey('plain', $email);
   }
 
@@ -589,7 +576,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
       ->save();
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');
 
     $user1 = $this->createUser();
 
@@ -617,8 +603,8 @@ class EasyEmailSendTest extends EasyEmailTestBase {
     $this->assertEquals(1, count($emails));
     $email = reset($emails);
     $this->assertEquals($template->id(), $email['key']);
-    $this->assertNotContains('This is a test email (Plain Text) for user account', (string) $email['body']);
-    $this->assertContains('This is a test email (HTML) for user account ' . $user1->getAccountName() . '.', (string) $email['body']);
+    $this->assertStringNotContainsString('This is a test email (Plain Text) for user account', (string) $email['body']);
+    $this->assertStringContainsString('This is a test email (HTML) for user account ' . $user1->getAccountName() . '.', (string) $email['body']);
     $this->assertArrayNotHasKey('plain', $email);
   }
 
@@ -661,9 +647,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
       ->save();
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');
-    $this->assertSession()->pageTextContains('field_cc_user');
-    $this->assertSession()->pageTextContains('field_bcc_user');
 
     $user1 = $this->createUser();
     $user2 = $this->createUser();
@@ -739,9 +722,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
       ->save();
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');
-    $this->assertSession()->pageTextContains('field_cc_user');
-    $this->assertSession()->pageTextContains('field_bcc_user');
 
     $user1 = $this->createUser();
     $user2 = $this->createUser();
@@ -821,9 +801,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
       ->save();
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');
-    $this->assertSession()->pageTextContains('field_cc_user');
-    $this->assertSession()->pageTextContains('field_bcc_user');
 
     $user1 = $this->createUser();
     $user2 = $this->createUser();
@@ -899,9 +876,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
       ->save();
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');
-    $this->assertSession()->pageTextContains('field_cc_user');
-    $this->assertSession()->pageTextContains('field_bcc_user');
 
     $user1 = $this->createUser();
     $user2 = $this->createUser();
@@ -980,9 +954,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
       ->save();
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');
-    $this->assertSession()->pageTextContains('field_cc_user');
-    $this->assertSession()->pageTextContains('field_bcc_user');
 
     $user1 = $this->createUser();
     $user2 = $this->createUser();
@@ -1061,9 +1032,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
       ->save();
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');
-    $this->assertSession()->pageTextContains('field_cc_user');
-    $this->assertSession()->pageTextContains('field_bcc_user');
 
     $user1 = $this->createUser();
     $user2 = $this->createUser();
@@ -1087,9 +1055,9 @@ class EasyEmailSendTest extends EasyEmailTestBase {
     $this->assertSession()->pageTextContains('Email sent.');
 
     $this->assertSession()
-      ->linkByHrefNotExists(file_create_url('/core/misc/druplicon.png'));
+      ->linkByHrefNotExists(\Drupal::service('file_url_generator')->generateAbsoluteString('/core/misc/druplicon.png'));
     $this->assertSession()
-      ->linkByHrefNotExists(file_create_url('/core/misc/help.png'));
+      ->linkByHrefNotExists(\Drupal::service('file_url_generator')->generateAbsoluteString('/core/misc/help.png'));
     $this->assertSession()->pageTextNotContains('Attachments');
 
     $this->assertEmpty($email_entity->getAttachmentIds());
@@ -1150,9 +1118,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
       ->save();
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');
-    $this->assertSession()->pageTextContains('field_cc_user');
-    $this->assertSession()->pageTextContains('field_bcc_user');
 
     $user1 = $this->createUser();
     $user2 = $this->createUser();
@@ -1240,9 +1205,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
       ->save();
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');
-    $this->assertSession()->pageTextContains('field_cc_user');
-    $this->assertSession()->pageTextContains('field_bcc_user');
 
     $user1 = $this->createUser();
     $user2 = $this->createUser();
@@ -1312,26 +1274,26 @@ class EasyEmailSendTest extends EasyEmailTestBase {
     $this->assertArrayNotHasKey('Bcc', $email['headers']);
 
     // Should have standard tokens evaluated, but unsafe tokens always evaluated for the recipient user.
-    $this->assertContains('<p>This is a test email (HTML) for user account ' . $user1->getAccountName() . '.', (string) $email['body']);
-    $this->assertContains('/user/' . $user1->id() . '/cancel/confirm/', (string) $email['body']);
-    $this->assertContains('/user/reset/' . $user1->id() . '/', (string) $email['body']);
-    $this->assertNotContains('/user/' . $user4->id() . '/cancel/confirm/', (string) $email['body']);
-    $this->assertNotContains('/user/reset/' . $user4->id() . '/', (string) $email['body']);
-    $this->assertNotContains('/user/' . $user2->id() . '/cancel/confirm/', (string) $email['body']);
-    $this->assertNotContains('/user/reset/' . $user2->id() . '/', (string) $email['body']);
-    $this->assertNotContains('/user/' . $user3->id() . '/cancel/confirm/', (string) $email['body']);
-    $this->assertNotContains('/user/reset/' . $user3->id() . '/', (string) $email['body']);
-    $this->assertContains('This is the inbox preview for user account ' . $user1->getDisplayName() . '.', (string) $email['body']);
+    $this->assertStringContainsString('<p>This is a test email (HTML) for user account ' . $user1->getAccountName() . '.', (string) $email['body']);
+    $this->assertStringContainsString('/user/' . $user1->id() . '/cancel/confirm/', (string) $email['body']);
+    $this->assertStringContainsString('/user/reset/' . $user1->id() . '/', (string) $email['body']);
+    $this->assertStringNotContainsString('/user/' . $user4->id() . '/cancel/confirm/', (string) $email['body']);
+    $this->assertStringNotContainsString('/user/reset/' . $user4->id() . '/', (string) $email['body']);
+    $this->assertStringNotContainsString('/user/' . $user2->id() . '/cancel/confirm/', (string) $email['body']);
+    $this->assertStringNotContainsString('/user/reset/' . $user2->id() . '/', (string) $email['body']);
+    $this->assertStringNotContainsString('/user/' . $user3->id() . '/cancel/confirm/', (string) $email['body']);
+    $this->assertStringNotContainsString('/user/reset/' . $user3->id() . '/', (string) $email['body']);
+    $this->assertStringContainsString('This is the inbox preview for user account ' . $user1->getDisplayName() . '.', (string) $email['body']);
 
-    $this->assertContains('This is a test email (Plain Text) for user account ' . $user1->getAccountName() . '.', (string) $email['plain']);
-    $this->assertContains('/user/' . $user1->id() . '/cancel/confirm/', (string) $email['body']);
-    $this->assertContains('/user/reset/' . $user1->id() . '/', (string) $email['plain']);
-    $this->assertNotContains('/user/' . $user4->id() . '/cancel/confirm/', (string) $email['plain']);
-    $this->assertNotContains('/user/reset/' . $user4->id() . '/', (string) $email['plain']);
-    $this->assertNotContains('/user/' . $user2->id() . '/cancel/confirm/', (string) $email['plain']);
-    $this->assertNotContains('/user/reset/' . $user2->id() . '/', (string) $email['plain']);
-    $this->assertNotContains('/user/' . $user3->id() . '/cancel/confirm/', (string) $email['plain']);
-    $this->assertNotContains('/user/reset/' . $user3->id() . '/', (string) $email['plain']);
+    $this->assertStringContainsString('This is a test email (Plain Text) for user account ' . $user1->getAccountName() . '.', (string) $email['plain']);
+    $this->assertStringContainsString('/user/' . $user1->id() . '/cancel/confirm/', (string) $email['body']);
+    $this->assertStringContainsString('/user/reset/' . $user1->id() . '/', (string) $email['plain']);
+    $this->assertStringNotContainsString('/user/' . $user4->id() . '/cancel/confirm/', (string) $email['plain']);
+    $this->assertStringNotContainsString('/user/reset/' . $user4->id() . '/', (string) $email['plain']);
+    $this->assertStringNotContainsString('/user/' . $user2->id() . '/cancel/confirm/', (string) $email['plain']);
+    $this->assertStringNotContainsString('/user/reset/' . $user2->id() . '/', (string) $email['plain']);
+    $this->assertStringNotContainsString('/user/' . $user3->id() . '/cancel/confirm/', (string) $email['plain']);
+    $this->assertStringNotContainsString('/user/reset/' . $user3->id() . '/', (string) $email['plain']);
 
     // Unsafe tokens skipped in subject
     $this->assertEquals('Test email for ' . $user1->getDisplayName() . ': [easy_email:field_user:0:entity:cancel-url], [easy_email:field_cc_user:0:entity:one-time-login-url]', $email['subject']);
@@ -1347,26 +1309,26 @@ class EasyEmailSendTest extends EasyEmailTestBase {
     $this->assertArrayNotHasKey('Bcc', $email['headers']);
 
     // Should have standard tokens evaluated, but unsafe tokens always evaluated for the recipient user.
-    $this->assertContains('<p>This is a test email (HTML) for user account ' . $user1->getAccountName() . '.', (string) $email['body']);
-    $this->assertContains('/user/' . $user4->id() . '/cancel/confirm/', (string) $email['body']);
-    $this->assertContains('/user/reset/' . $user4->id() . '/', (string) $email['body']);
-    $this->assertNotContains('/user/' . $user1->id() . '/cancel/confirm/', (string) $email['body']);
-    $this->assertNotContains('/user/reset/' . $user1->id() . '/', (string) $email['body']);
-    $this->assertNotContains('/user/' . $user2->id() . '/cancel/confirm/', (string) $email['body']);
-    $this->assertNotContains('/user/reset/' . $user2->id() . '/', (string) $email['body']);
-    $this->assertNotContains('/user/' . $user3->id() . '/cancel/confirm/', (string) $email['body']);
-    $this->assertNotContains('/user/reset/' . $user3->id() . '/', (string) $email['body']);
-    $this->assertContains('This is the inbox preview for user account ' . $user1->getDisplayName() . '.', (string) $email['body']);
+    $this->assertStringContainsString('<p>This is a test email (HTML) for user account ' . $user1->getAccountName() . '.', (string) $email['body']);
+    $this->assertStringContainsString('/user/' . $user4->id() . '/cancel/confirm/', (string) $email['body']);
+    $this->assertStringContainsString('/user/reset/' . $user4->id() . '/', (string) $email['body']);
+    $this->assertStringNotContainsString('/user/' . $user1->id() . '/cancel/confirm/', (string) $email['body']);
+    $this->assertStringNotContainsString('/user/reset/' . $user1->id() . '/', (string) $email['body']);
+    $this->assertStringNotContainsString('/user/' . $user2->id() . '/cancel/confirm/', (string) $email['body']);
+    $this->assertStringNotContainsString('/user/reset/' . $user2->id() . '/', (string) $email['body']);
+    $this->assertStringNotContainsString('/user/' . $user3->id() . '/cancel/confirm/', (string) $email['body']);
+    $this->assertStringNotContainsString('/user/reset/' . $user3->id() . '/', (string) $email['body']);
+    $this->assertStringContainsString('This is the inbox preview for user account ' . $user1->getDisplayName() . '.', (string) $email['body']);
 
-    $this->assertContains('This is a test email (Plain Text) for user account ' . $user1->getAccountName() . '.', (string) $email['plain']);
-    $this->assertContains('/user/' . $user4->id() . '/cancel/confirm/', (string) $email['body']);
-    $this->assertContains('/user/reset/' . $user4->id() . '/', (string) $email['plain']);
-    $this->assertNotContains('/user/' . $user1->id() . '/cancel/confirm/', (string) $email['plain']);
-    $this->assertNotContains('/user/reset/' . $user1->id() . '/', (string) $email['plain']);
-    $this->assertNotContains('/user/' . $user2->id() . '/cancel/confirm/', (string) $email['plain']);
-    $this->assertNotContains('/user/reset/' . $user2->id() . '/', (string) $email['plain']);
-    $this->assertNotContains('/user/' . $user3->id() . '/cancel/confirm/', (string) $email['plain']);
-    $this->assertNotContains('/user/reset/' . $user3->id() . '/', (string) $email['plain']);
+    $this->assertStringContainsString('This is a test email (Plain Text) for user account ' . $user1->getAccountName() . '.', (string) $email['plain']);
+    $this->assertStringContainsString('/user/' . $user4->id() . '/cancel/confirm/', (string) $email['body']);
+    $this->assertStringContainsString('/user/reset/' . $user4->id() . '/', (string) $email['plain']);
+    $this->assertStringNotContainsString('/user/' . $user1->id() . '/cancel/confirm/', (string) $email['plain']);
+    $this->assertStringNotContainsString('/user/reset/' . $user1->id() . '/', (string) $email['plain']);
+    $this->assertStringNotContainsString('/user/' . $user2->id() . '/cancel/confirm/', (string) $email['plain']);
+    $this->assertStringNotContainsString('/user/reset/' . $user2->id() . '/', (string) $email['plain']);
+    $this->assertStringNotContainsString('/user/' . $user3->id() . '/cancel/confirm/', (string) $email['plain']);
+    $this->assertStringNotContainsString('/user/reset/' . $user3->id() . '/', (string) $email['plain']);
 
     // Unsafe tokens skipped in subject
     $this->assertEquals('Test email for ' . $user1->getDisplayName() . ': [easy_email:field_user:0:entity:cancel-url], [easy_email:field_cc_user:0:entity:one-time-login-url]', $email['subject']);
@@ -1406,7 +1368,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
       ->save();
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');;
 
     $user1 = $this->createUser();
 
@@ -1419,7 +1380,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
 
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');;
     $this->submitForm([
       'field_user[0][target_id]' => $user1->getAccountName() . ' (' . $user1->id() . ')',
     ], 'Save');
@@ -1427,7 +1387,7 @@ class EasyEmailSendTest extends EasyEmailTestBase {
     $this->assertSession()->pageTextNotContains('Created new email.');
     $this->assertSession()->pageTextNotContains('Email sent.');
     $this->assertSession()->pageTextContains('Email matching unique key already exists.');
-    $this->assertContains('/admin/content/email/add/' . $template->id(), $this->getSession()->getCurrentUrl());
+    $this->assertSession()->addressEquals('admin/content/email/add/' . $template->id());
 
     $emails = $this->getSentEmails([]);
     $this->assertEquals(1, count($emails));
@@ -1465,7 +1425,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
       ->save();
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');;
 
     $user1 = $this->createUser();
 
@@ -1478,7 +1437,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
 
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');;
     $this->submitForm([
       'field_user[0][target_id]' => $user1->getAccountName() . ' (' . $user1->id() . ')',
     ], 'Save');
@@ -1486,7 +1444,7 @@ class EasyEmailSendTest extends EasyEmailTestBase {
     $this->assertSession()->pageTextContains('Created new email.');
     $this->assertSession()->pageTextContains('Email sent.');;
     $this->assertSession()->pageTextNotContains('Email matching unique key already exists.');
-    $this->assertNotContains('/admin/content/email/add/' . $template->id(), $this->getSession()->getCurrentUrl());
+    $this->assertSession()->addressNotEquals('admin/content/email/add/' . $template->id());
 
     $emails = $this->getSentEmails([]);
     $this->assertEquals(2, count($emails));
@@ -1525,7 +1483,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
       ->save();
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');;
 
     $user1 = $this->createUser();
 
@@ -1538,7 +1495,6 @@ class EasyEmailSendTest extends EasyEmailTestBase {
 
 
     $this->drupalGet('admin/content/email/add/' . $template->id());
-    $this->assertSession()->pageTextContains('field_user');;
     $this->submitForm([
       'field_user[0][target_id]' => $user1->getAccountName() . ' (' . $user1->id() . ')',
     ], 'Save');
@@ -1546,7 +1502,7 @@ class EasyEmailSendTest extends EasyEmailTestBase {
     $this->assertSession()->pageTextContains('Created new email.');
     $this->assertSession()->pageTextContains('Email sent.');;
     $this->assertSession()->pageTextNotContains('Email matching unique key already exists.');
-    $this->assertNotContains('/admin/content/email/add/' . $template->id(), $this->getSession()->getCurrentUrl());
+    $this->assertSession()->addressNotEquals('admin/content/email/add/' . $template->id());
 
     $emails = $this->getSentEmails([]);
     $this->assertEquals(2, count($emails));

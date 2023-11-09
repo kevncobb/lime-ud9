@@ -2,6 +2,7 @@
 
 namespace Drupal\easy_email\Form;
 
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StreamWrapper\StreamWrapperInterface;
@@ -24,7 +25,7 @@ class EasyEmailTypeForm extends EntityForm {
    *
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    */
-  public function __construct(\Drupal\Core\Messenger\MessengerInterface $messenger) {
+  public function __construct(MessengerInterface $messenger) {
     $this->messenger = $messenger;
   }
 
@@ -323,10 +324,10 @@ class EasyEmailTypeForm extends EntityForm {
    * @param string $string
    * @param string $delimiter
    *
-   * @return array|null
+   * @return array
    */
   protected function explodeAndTrim($string, $delimiter = ',') {
-    $return = NULL;
+    $return = [];
     if (!empty($string)) {
       $return = explode($delimiter, $string);
       $return = array_filter(array_map('trim', $return));

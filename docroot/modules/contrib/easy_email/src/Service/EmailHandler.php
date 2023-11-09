@@ -10,7 +10,10 @@ use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Render\RenderContext;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\easy_email\Entity\EasyEmailInterface;
+use Drupal\easy_email\Event\EasyEmailEvent;
+use Drupal\easy_email\Event\EasyEmailEvents;
 use Html2Text\Html2Text;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class EmailHandler implements EmailHandlerInterface {
 
@@ -81,12 +84,18 @@ class EmailHandler implements EmailHandlerInterface {
   protected $renderedPreviews;
 
   /**
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   */
+  protected $eventDispatcher;
+
+  /**
    * EmailHandler constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    * @param \Drupal\Core\Mail\MailManagerInterface $mailManager
    * @param \Drupal\Core\Language\LanguageManagerInterface $languageManager
    * @param \Drupal\Core\Render\RendererInterface $renderer
+   * @param \Drupal\Component\Datetime\TimeInterface $time
    * @param \Drupal\easy_email\Service\EmailTokenEvaluatorInterface $tokenEvaluator
    * @param \Drupal\easy_email\Service\EmailUserEvaluatorInterface $userEvaluator
    * @param \Drupal\easy_email\Service\EmailAttachmentEvaluatorInterface $attachmentEvaluator
@@ -94,7 +103,7 @@ class EmailHandler implements EmailHandlerInterface {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager, MailManagerInterface $mailManager, LanguageManagerInterface $languageManager, RendererInterface $renderer, TimeInterface $time, EmailTokenEvaluatorInterface $tokenEvaluator, EmailUserEvaluatorInterface $userEvaluator, EmailAttachmentEvaluatorInterface $attachmentEvaluator) {
+  public function __construct(EntityTypeManagerInterface $entityTypeManager, MailManagerInterface $mailManager, LanguageManagerInterface $languageManager, RendererInterface $renderer, TimeInterface $time, EmailTokenEvaluatorInterface $tokenEvaluator, EmailUserEvaluatorInterface $userEvaluator, EmailAttachmentEvaluatorInterface $attachmentEvaluator, EventDispatcherInterface $eventDispatcher) {
     $this->languageManager = $languageManager;
     $this->mailManager = $mailManager;
     $this->renderer = $renderer;
@@ -107,6 +116,7 @@ class EmailHandler implements EmailHandlerInterface {
     $this->userEvaluator = $userEvaluator;
     $this->attachmentEvaluator = $attachmentEvaluator;
     $this->renderedPreviews = [];
+    $this->eventDispatcher = $eventDispatcher;
   }
 
   /**
@@ -125,6 +135,7 @@ class EmailHandler implements EmailHandlerInterface {
       $this->userEvaluator->evaluateUsers($email);
       $key = $this->tokenEvaluator->replaceTokens($email, $key);
       $result = $this->emailStorage->getQuery()
+        ->accessCheck(FALSE)
         ->condition('key', $key)
         ->exists('sent')
         ->range(0, 1)
@@ -148,7 +159,11 @@ class EmailHandler implements EmailHandlerInterface {
       return FALSE;
     }
 
-    $this->tokenEvaluator->evaluateTokens($email);
+    $this->renderer->executeInRenderContext(new RenderContext(), function () use ($email) {
+      // Don't clear tokens here because we need to check for unsafe tokens later.
+      return $this->tokenEvaluator->evaluateTokens($email, FALSE);
+    });
+
     $this->userEvaluator->evaluateUsers($email);
 
     $params = $this->generateEmailParams($email, $params);
@@ -161,7 +176,7 @@ class EmailHandler implements EmailHandlerInterface {
     }
 
     $this->attachmentEvaluator->evaluateAttachments($email, $save_attachments_to);
-    $params['files'] = $email->getEvaluatedAttachments();
+    $params['attachments'] = $email->getEvaluatedAttachments();
 
     $reply = $email->getReplyToAddress();
 
@@ -183,12 +198,19 @@ class EmailHandler implements EmailHandlerInterface {
       ];
     }
 
+    // Now, let's evaluate tokens more time and clear any that are left unreplaced.
+    $this->tokenEvaluator->evaluateTokens($email, TRUE);
+
     foreach ($emails_to_send as $email_info) {
       if (!empty($email_info['to'])) {
+        $this->eventDispatcher->dispatch(new EasyEmailEvent($email), EasyEmailEvents::EMAIL_PRESEND);
         $message = $this->mailManager->mail('easy_email', $email_info['email']->bundle(), $email_info['to'], $default_langcode, $email_info['params'], $reply, TRUE);
       }
-      $email_info['email']->setSentTime(\Drupal::time()->getCurrentTime())
-        ->save();
+      if (!empty($message['result'])) {
+        $this->eventDispatcher->dispatch(new EasyEmailEvent($email), EasyEmailEvents::EMAIL_SENT);
+        $email_info['email']->setSentTime($this->time->getCurrentTime())
+          ->save();
+      }
     }
 
     return !empty($message['result']) ? $message['result'] : FALSE;
@@ -253,19 +275,29 @@ class EmailHandler implements EmailHandlerInterface {
       $message = $this->renderedPreviews[$email->id()];
     }
     if (empty($message)) {
-      $this->tokenEvaluator->evaluateTokens($email);
+      $this->tokenEvaluator->evaluateTokens($email, FALSE);
 
       $params = $this->generateEmailParams($email, $params);
+      $params['easy_email_preview'] = TRUE;
 
       $reply = $email->getReplyToAddress();
 
-      $recipient_emails = $email->getRecipientAddresses();
+      $recipient_emails = $email->getRecipientAddresses() ?? [];
       $default_langcode = $this->languageManager->getDefaultLanguage()->getId();
       $to = implode(', ', $recipient_emails);
 
       $message = $this->mailManager->mail('easy_email', $email->bundle(), $to, $default_langcode, $params, $reply, FALSE);
       if (!$email->isNew()) {
         $this->renderedPreviews[$email->id()] = $message;
+      }
+    }
+
+    // Copy anything within the 'params' key up to the main array.
+    if (!empty($message['params']) && is_array($message['params'])) {
+      foreach ($message['params'] as $key => $value) {
+        if (!isset($message[$key])) {
+          $message[$key] = $value;
+        }
       }
     }
 
@@ -301,22 +333,19 @@ class EmailHandler implements EmailHandlerInterface {
       if ($this->shouldGeneratePlainBody($email)) {
         // We have HTML and need generate plain body text.
         $body = $this->buildHtmlBody($email);
-        //$body_without_inbox = $body['body'];
-        $params['body'] = $body; //$this->renderInNewContext($body);
+        $params['body'] = $body;
         $params['convert'] = TRUE;
-        //$converter = new Html2Text($this->renderInNewContext($body_without_inbox));
-        //$params['plain'] = trim($converter->getText());
       }
       else {
         // We have HTML and plain body text.
-        $params['body'] = $this->buildHtmlBody($email); //$this->renderInNewContext();
-        $params['plain'] = $this->buildPlainBody($email); //$this->renderInNewContext(, TRUE);
+        $params['body'] = $this->buildHtmlBody($email);
+        $params['plain'] = $this->buildPlainBody($email);
       }
     }
     elseif ($email->hasField('body_html')) {
       // We have only HTML body text
       $headers['Content-Type'] = 'text/html; charset=UTF-8;';
-      $params['body'] = $this->buildHtmlBody($email); //$this->renderInNewContext();
+      $params['body'] = $this->buildHtmlBody($email);
     }
     elseif ($email->hasField('body_plain')) {
       // We have only plain body text
@@ -344,6 +373,8 @@ class EmailHandler implements EmailHandlerInterface {
       'headers' => $headers,
       'subject' => $email->getSubject(),
     ];
+
+    $params['easy_email'] = TRUE;
 
     return $params;
   }

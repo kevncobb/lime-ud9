@@ -45,12 +45,13 @@ class EmailUserEvaluator implements EmailUserEvaluatorInterface {
    * @inheritDoc
    */
   public function evaluateUsers(EasyEmailInterface $email) {
-    $this->eventDispatcher->dispatch(EasyEmailEvents::EMAIL_PREUSEREVAL, new EasyEmailEvent($email));
+    $this->eventDispatcher->dispatch(new EasyEmailEvent($email), EasyEmailEvents::EMAIL_PREUSEREVAL);
 
     if ($email->hasField('recipient_uid')) {
       $recipients = $email->getRecipientAddresses();
       if (!empty($recipients)) {
         $results = $this->userStorage->getQuery()
+          ->accessCheck(FALSE)
           ->condition('mail', $recipients, 'IN')
           ->execute();
         if (!empty($results)) {
@@ -63,6 +64,7 @@ class EmailUserEvaluator implements EmailUserEvaluatorInterface {
       $cc = $email->getCCAddresses();
       if (!empty($cc)) {
         $results = $this->userStorage->getQuery()
+          ->accessCheck(FALSE)
           ->condition('mail', $cc, 'IN')
           ->execute();
         if (!empty($results)) {
@@ -75,6 +77,7 @@ class EmailUserEvaluator implements EmailUserEvaluatorInterface {
       $bcc = $email->getBCCAddresses();
       if (!empty($bcc)) {
         $results = $this->userStorage->getQuery()
+          ->accessCheck(FALSE)
           ->condition('mail', $bcc, 'IN')
           ->execute();
         if (!empty($results)) {
@@ -83,7 +86,7 @@ class EmailUserEvaluator implements EmailUserEvaluatorInterface {
       }
     }
 
-    $this->eventDispatcher->dispatch(EasyEmailEvents::EMAIL_USEREVAL, new EasyEmailEvent($email));
+    $this->eventDispatcher->dispatch(new EasyEmailEvent($email), EasyEmailEvents::EMAIL_USEREVAL);
   }
 
 

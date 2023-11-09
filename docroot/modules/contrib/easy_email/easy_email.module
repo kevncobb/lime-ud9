@@ -1,5 +1,16 @@
 <?php
 
+use Drupal\Component\Utility\Xss;
+use Drupal\Core\Render\RenderContext;
+use Drupal\Core\Url;
+use Drupal\Core\Link;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\easy_email\Entity\EasyEmailTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Entity\EntityStorageException;
+use Drupal\Core\StreamWrapper\StreamWrapperInterface;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\Entity\FieldConfig;
 /**
  * @file
  * Contains easy_email.module.
@@ -115,6 +126,10 @@ function easy_email_theme_suggestions_easy_email_body_inbox_preview(array $varia
  * Implements hook_mail().
  */
 function easy_email_mail($key, &$message, $params) {
+  if (!empty($params['easy_email_preview'])) {
+    $message['send'] = FALSE;
+  }
+
   /** @var \Drupal\Core\Render\RendererInterface $renderer */
   $renderer = \Drupal::service('renderer');
   if (isset($params['headers'])) {
@@ -150,7 +165,7 @@ function template_preprocess_easy_email_body_plain(array &$variables) {
   $plain_body = $email->getPlainBody();
   if (!empty($plain_body)) {
     $variables['body'] = [
-      '#markup' => \Drupal\Component\Utility\Xss::filter($plain_body, [])
+      '#markup' => Xss::filter($plain_body, [])
     ];
   }
 }
@@ -160,7 +175,7 @@ function template_preprocess_easy_email_body_inbox_preview(array &$variables) {
   $email = $variables['easy_email'];
   $inbox_preview = $email->getInboxPreview();
   $variables['body'] = [
-    '#markup' => \Drupal\Component\Utility\Xss::filter($inbox_preview, [])
+    '#markup' => Xss::filter($inbox_preview, [])
   ];
 }
 
@@ -178,7 +193,7 @@ function template_preprocess_easy_email_inbox_preview_view(array &$variables) {
         '#format' => $html_body['format'],
       ];
       $renderer = \Drupal::service('renderer');
-      $inbox_preview = $renderer->executeInRenderContext(new \Drupal\Core\Render\RenderContext(), function () use ($renderer, $body) {
+      $inbox_preview = $renderer->executeInRenderContext(new RenderContext(), function () use ($renderer, $body) {
         return $renderer->render($body);
       });
     }
@@ -189,7 +204,7 @@ function template_preprocess_easy_email_inbox_preview_view(array &$variables) {
           '#plain_text' => $plain_body,
         ];
         $renderer = \Drupal::service('renderer');
-        $inbox_preview = $renderer->executeInRenderContext(new \Drupal\Core\Render\RenderContext(), function () use ($renderer, $body) {
+        $inbox_preview = $renderer->executeInRenderContext(new RenderContext(), function () use ($renderer, $body) {
           return $renderer->render($body);
         });
       }
@@ -225,7 +240,7 @@ function template_preprocess_easy_email_type_preview(array &$variables) {
   $easy_email = $variables['easy_email'];
 
   if ($easy_email->hasField('body_html') && !empty($easy_email->getHtmlBody())) {
-    $variables['preview_html_url'] = \Drupal\Core\Url::fromRoute('entity.easy_email_type.preview_html',
+    $variables['preview_html_url'] = Url::fromRoute('entity.easy_email_type.preview_html',
       [
         'easy_email_type' => $easy_email->bundle(),
       ],
@@ -240,7 +255,7 @@ function template_preprocess_easy_email_type_preview(array &$variables) {
   $easy_email_type = \Drupal::entityTypeManager()->getStorage('easy_email_type')->load($easy_email->bundle());
 
   if ($easy_email->hasField('body_plain') && (!empty($easy_email_type->getGenerateBodyPlain()) || !empty($easy_email->getPlainBody()))) {
-    $variables['preview_plain_url'] = \Drupal\Core\Url::fromRoute('entity.easy_email_type.preview_plain',
+    $variables['preview_plain_url'] = Url::fromRoute('entity.easy_email_type.preview_plain',
       [
         'easy_email_type' => $easy_email->bundle(),
       ],
@@ -266,9 +281,13 @@ function template_preprocess_easy_email_type_preview(array &$variables) {
       ];
     }
   }
+  $recipients = $easy_email->getRecipientAddresses() ?? [];
+  if (!is_array($recipients)) {
+    $recipients = [$recipients];
+  }
   $variables['headers'][] = [
     'name' => 'To',
-    'value' => implode(', ', $easy_email->getRecipientAddresses()),
+    'value' => implode(', ', $recipients),
   ];
   $variables['headers'][] = [
     'name' => 'Subject',
@@ -286,7 +305,14 @@ function template_preprocess_easy_email_type_preview(array &$variables) {
   $attachment_evalutator = \Drupal::service('easy_email.attachment_evaluator');
   $attachment_evalutator->evaluateAttachments($easy_email, FALSE);
   foreach ($easy_email->getEvaluatedAttachments() as $file) {
-    $attachments[] = \Drupal\Core\Link::fromTextAndUrl($file->filename, \Drupal\Core\Url::fromUri(file_create_url($file->uri), ['attributes' => ['target' => '_blank']]));
+    if (is_object($file)) {
+      $file = (array) $file;
+    }
+    if (empty($file) || (empty($file['uri']) && empty($file['filepath']))) {
+      continue;
+    }
+    $uri = !empty($file['uri']) ? $file['uri'] : $file['filepath'];
+    $attachments[] = Link::fromTextAndUrl($file['filename'], Url::fromUri(\Drupal::service('file_url_generator')->generateAbsoluteString($uri), ['attributes' => ['target' => '_blank']]));
   }
 
   if (!empty($attachments)) {
@@ -297,8 +323,8 @@ function template_preprocess_easy_email_type_preview(array &$variables) {
   }
 }
 
-function easy_email_entity_insert(Drupal\Core\Entity\EntityInterface $entity) {
-  if ($entity->getEntityTypeId() == 'easy_email_type') {
+function easy_email_entity_insert(EntityInterface $entity) {
+  if ($entity->getEntityTypeId() == 'easy_email_type' && !\Drupal::isConfigSyncing()) {
     /** @var \Drupal\easy_email\Entity\EasyEmailTypeInterface $entity */
     easy_email_field_add_key_field($entity);
     easy_email_field_add_recipient_uid_field($entity);
@@ -318,9 +344,9 @@ function easy_email_entity_insert(Drupal\Core\Entity\EntityInterface $entity) {
   }
 }
 
-function easy_email_field_add_key_field(\Drupal\easy_email\Entity\EasyEmailTypeInterface $easy_email_type) {
+function easy_email_field_add_key_field(EasyEmailTypeInterface $easy_email_type) {
 
-  $field_definition = \Drupal\Core\Field\BaseFieldDefinition::create('string')
+  $field_definition = BaseFieldDefinition::create('string')
     ->setTargetEntityTypeId('easy_email')
     ->setTargetBundle($easy_email_type->id())
     ->setName('key')
@@ -350,19 +376,19 @@ function easy_email_field_add_key_field(\Drupal\easy_email\Entity\EasyEmailTypeI
   catch (\RuntimeException $e) {
     // In this case, field already exists from installation
   }
-  catch (\Drupal\Core\Entity\EntityStorageException $e) {
+  catch (EntityStorageException $e) {
     // In this case, field already exists from installation
   }
 }
 
-function easy_email_field_add_recipient_uid_field(\Drupal\easy_email\Entity\EasyEmailTypeInterface $easy_email_type) {
-  $field_definition = \Drupal\Core\Field\BaseFieldDefinition::create('entity_reference')
+function easy_email_field_add_recipient_uid_field(EasyEmailTypeInterface $easy_email_type) {
+  $field_definition = BaseFieldDefinition::create('entity_reference')
     ->setTargetEntityTypeId('easy_email')
     ->setTargetBundle($easy_email_type->id())
     ->setName('recipient_uid')
     ->setLabel(t('Recipients'))
     ->setRevisionable(TRUE)
-    ->setCardinality(\Drupal\Core\Field\BaseFieldDefinition::CARDINALITY_UNLIMITED)
+    ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
     ->setRequired(FALSE)
     ->setSetting('target_type', 'user')
     ->setSetting('handler', 'default')
@@ -391,19 +417,19 @@ function easy_email_field_add_recipient_uid_field(\Drupal\easy_email\Entity\Easy
   catch (\RuntimeException $e) {
     // In this case, field already exists from installation
   }
-  catch (\Drupal\Core\Entity\EntityStorageException $e) {
+  catch (EntityStorageException $e) {
     // In this case, field already exists from installation
   }
 }
 
-function easy_email_field_add_cc_uid_field(\Drupal\easy_email\Entity\EasyEmailTypeInterface $easy_email_type) {
-  $field_definition = \Drupal\Core\Field\BaseFieldDefinition::create('entity_reference')
+function easy_email_field_add_cc_uid_field(EasyEmailTypeInterface $easy_email_type) {
+  $field_definition = BaseFieldDefinition::create('entity_reference')
     ->setTargetEntityTypeId('easy_email')
     ->setTargetBundle($easy_email_type->id())
     ->setName('cc_uid')
     ->setLabel(t('CC'))
     ->setRevisionable(TRUE)
-    ->setCardinality(\Drupal\Core\Field\BaseFieldDefinition::CARDINALITY_UNLIMITED)
+    ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
     ->setRequired(FALSE)
     ->setSetting('target_type', 'user')
     ->setSetting('handler', 'default')
@@ -432,19 +458,19 @@ function easy_email_field_add_cc_uid_field(\Drupal\easy_email\Entity\EasyEmailTy
   catch (\RuntimeException $e) {
     // In this case, field already exists from installation
   }
-  catch (\Drupal\Core\Entity\EntityStorageException $e) {
+  catch (EntityStorageException $e) {
     // In this case, field already exists from installation
   }
 }
 
-function easy_email_field_add_cc_address_field(\Drupal\easy_email\Entity\EasyEmailTypeInterface $easy_email_type) {
-  $field_definition =  \Drupal\Core\Field\BaseFieldDefinition::create('string')
+function easy_email_field_add_cc_address_field(EasyEmailTypeInterface $easy_email_type) {
+  $field_definition =  BaseFieldDefinition::create('string')
     ->setTargetEntityTypeId('easy_email')
     ->setTargetBundle($easy_email_type->id())
     ->setName('cc_address')
     ->setLabel(t('CC Addresses'))
     ->setDescription(t('The CC email addresses of the Email entity.'))
-    ->setCardinality(\Drupal\Core\Field\BaseFieldDefinition::CARDINALITY_UNLIMITED)
+    ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
     ->setRevisionable(TRUE)
     ->setSettings([
       'max_length' => 255,
@@ -469,19 +495,19 @@ function easy_email_field_add_cc_address_field(\Drupal\easy_email\Entity\EasyEma
   catch (\RuntimeException $e) {
     // In this case, field already exists from installation
   }
-  catch (\Drupal\Core\Entity\EntityStorageException $e) {
+  catch (EntityStorageException $e) {
     // In this case, field already exists from installation
   }
 }
 
-function easy_email_field_add_bcc_uid_field(\Drupal\easy_email\Entity\EasyEmailTypeInterface $easy_email_type) {
-  $field_definition = \Drupal\Core\Field\BaseFieldDefinition::create('entity_reference')
+function easy_email_field_add_bcc_uid_field(EasyEmailTypeInterface $easy_email_type) {
+  $field_definition = BaseFieldDefinition::create('entity_reference')
     ->setTargetEntityTypeId('easy_email')
     ->setTargetBundle($easy_email_type->id())
     ->setName('bcc_uid')
     ->setLabel(t('BCC'))
     ->setRevisionable(TRUE)
-    ->setCardinality(\Drupal\Core\Field\BaseFieldDefinition::CARDINALITY_UNLIMITED)
+    ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
     ->setRequired(FALSE)
     ->setSetting('target_type', 'user')
     ->setSetting('handler', 'default')
@@ -510,19 +536,19 @@ function easy_email_field_add_bcc_uid_field(\Drupal\easy_email\Entity\EasyEmailT
   catch (\RuntimeException $e) {
     // In this case, field already exists from installation
   }
-  catch (\Drupal\Core\Entity\EntityStorageException $e) {
+  catch (EntityStorageException $e) {
     // In this case, field already exists from installation
   }
 }
 
-function easy_email_field_add_bcc_address_field(\Drupal\easy_email\Entity\EasyEmailTypeInterface $easy_email_type) {
-  $field_definition =  \Drupal\Core\Field\BaseFieldDefinition::create('string')
+function easy_email_field_add_bcc_address_field(EasyEmailTypeInterface $easy_email_type) {
+  $field_definition =  BaseFieldDefinition::create('string')
     ->setTargetEntityTypeId('easy_email')
     ->setTargetBundle($easy_email_type->id())
     ->setName('bcc_address')
     ->setLabel(t('BCC Addresses'))
     ->setDescription(t('The BCC email addresses of the Email entity.'))
-    ->setCardinality(\Drupal\Core\Field\BaseFieldDefinition::CARDINALITY_UNLIMITED)
+    ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
     ->setRevisionable(TRUE)
     ->setSettings([
       'max_length' => 255,
@@ -547,20 +573,20 @@ function easy_email_field_add_bcc_address_field(\Drupal\easy_email\Entity\EasyEm
   catch (\RuntimeException $e) {
     // In this case, field already exists from installation
   }
-  catch (\Drupal\Core\Entity\EntityStorageException $e) {
+  catch (EntityStorageException $e) {
     // In this case, field already exists from installation
   }
 }
 
-function easy_email_field_add_attachment_field(\Drupal\easy_email\Entity\EasyEmailTypeInterface $easy_email_type) {
+function easy_email_field_add_attachment_field(EasyEmailTypeInterface $easy_email_type) {
 
-  $field_definition = \Drupal\Core\Field\BaseFieldDefinition::create('file')
+  $field_definition = BaseFieldDefinition::create('file')
     ->setTargetEntityTypeId('easy_email')
     ->setTargetBundle($easy_email_type->id())
     ->setName('attachment')
     ->setLabel(t('Attachments'))
     ->setRevisionable(TRUE)
-    ->setCardinality(\Drupal\Core\Field\BaseFieldDefinition::CARDINALITY_UNLIMITED)
+    ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
     ->setRequired(FALSE)
     ->setSetting('file_directory', 'attachments')
     ->setSetting('file_extensions', 'txt pdf doc docx xls xlsx ppt pptx rtf png jpg jpeg gif')
@@ -583,7 +609,7 @@ function easy_email_field_add_attachment_field(\Drupal\easy_email\Entity\EasyEma
 
   /** @var \Drupal\Core\StreamWrapper\StreamWrapperManagerInterface $stream_wrapper_manager */
   $stream_wrapper_manager = \Drupal::service('stream_wrapper_manager');
-  $scheme_options = $stream_wrapper_manager->getNames(\Drupal\Core\StreamWrapper\StreamWrapperInterface::WRITE_VISIBLE);
+  $scheme_options = $stream_wrapper_manager->getNames(StreamWrapperInterface::WRITE_VISIBLE);
   if (!empty($scheme_options['private'])) {
     $field_definition->setSetting('uri_scheme', 'private');
   }
@@ -597,14 +623,14 @@ function easy_email_field_add_attachment_field(\Drupal\easy_email\Entity\EasyEma
   catch (\RuntimeException $e) {
     // In this case, field already exists from installation
   }
-  catch (\Drupal\Core\Entity\EntityStorageException $e) {
+  catch (EntityStorageException $e) {
     // In this case, field already exists from installation
   }
 }
 
-function easy_email_field_add_html_body_field(\Drupal\easy_email\Entity\EasyEmailTypeInterface $easy_email_type) {
+function easy_email_field_add_html_body_field(EasyEmailTypeInterface $easy_email_type) {
 
-  $field_definition = \Drupal\Core\Field\BaseFieldDefinition::create('text_long')
+  $field_definition = BaseFieldDefinition::create('text_long')
     ->setTargetEntityTypeId('easy_email')
     ->setTargetBundle($easy_email_type->id())
     ->setName('body_html')
@@ -629,14 +655,14 @@ function easy_email_field_add_html_body_field(\Drupal\easy_email\Entity\EasyEmai
   catch (\RuntimeException $e) {
     // In this case, field already exists from installation
   }
-  catch (\Drupal\Core\Entity\EntityStorageException $e) {
+  catch (EntityStorageException $e) {
     // In this case, field already exists from installation
   }
 }
 
-function easy_email_field_add_plain_body_field(\Drupal\easy_email\Entity\EasyEmailTypeInterface $easy_email_type) {
+function easy_email_field_add_plain_body_field(EasyEmailTypeInterface $easy_email_type) {
 
-  $field_definition = \Drupal\Core\Field\BaseFieldDefinition::create('string_long')
+  $field_definition = BaseFieldDefinition::create('string_long')
     ->setTargetEntityTypeId('easy_email')
     ->setTargetBundle($easy_email_type->id())
     ->setName('body_plain')
@@ -661,14 +687,14 @@ function easy_email_field_add_plain_body_field(\Drupal\easy_email\Entity\EasyEma
   catch (\RuntimeException $e) {
     // In this case, field already exists from installation
   }
-  catch (\Drupal\Core\Entity\EntityStorageException $e) {
+  catch (EntityStorageException $e) {
     // In this case, field already exists from installation
   }
 }
 
-function easy_email_field_add_inbox_preview_field(\Drupal\easy_email\Entity\EasyEmailTypeInterface $easy_email_type) {
+function easy_email_field_add_inbox_preview_field(EasyEmailTypeInterface $easy_email_type) {
 
-  $field_definition = \Drupal\Core\Field\BaseFieldDefinition::create('string_long')
+  $field_definition = BaseFieldDefinition::create('string_long')
     ->setTargetEntityTypeId('easy_email')
     ->setTargetBundle($easy_email_type->id())
     ->setName('inbox_preview')
@@ -693,19 +719,19 @@ function easy_email_field_add_inbox_preview_field(\Drupal\easy_email\Entity\Easy
   catch (\RuntimeException $e) {
     // In this case, field already exists from installation
   }
-  catch (\Drupal\Core\Entity\EntityStorageException $e) {
+  catch (EntityStorageException $e) {
     // In this case, field already exists from installation
   }
 }
 
-function easy_email_field_add_attachment_path_field(\Drupal\easy_email\Entity\EasyEmailTypeInterface $easy_email_type) {
-  $field_definition = \Drupal\Core\Field\BaseFieldDefinition::create('string')
+function easy_email_field_add_attachment_path_field(EasyEmailTypeInterface $easy_email_type) {
+  $field_definition = BaseFieldDefinition::create('string')
     ->setTargetEntityTypeId('easy_email')
     ->setTargetBundle($easy_email_type->id())
     ->setName('attachment_path')
     ->setLabel(t('Attachment Paths'))
     ->setRevisionable(TRUE)
-    ->setCardinality(\Drupal\Core\Field\BaseFieldDefinition::CARDINALITY_UNLIMITED)
+    ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
     ->setRequired(FALSE)
     ->setSettings([
       'max_length' => 255,
@@ -730,13 +756,13 @@ function easy_email_field_add_attachment_path_field(\Drupal\easy_email\Entity\Ea
   catch (\RuntimeException $e) {
     // In this case, field already exists from installation
   }
-  catch (\Drupal\Core\Entity\EntityStorageException $e) {
+  catch (EntityStorageException $e) {
     // In this case, field already exists from installation
   }
 }
 
-function easy_email_field_add_from_name_field(\Drupal\easy_email\Entity\EasyEmailTypeInterface $easy_email_type) {
-  $field_definition =  \Drupal\Core\Field\BaseFieldDefinition::create('string')
+function easy_email_field_add_from_name_field(EasyEmailTypeInterface $easy_email_type) {
+  $field_definition =  BaseFieldDefinition::create('string')
     ->setTargetEntityTypeId('easy_email')
     ->setTargetBundle($easy_email_type->id())
     ->setName('from_name')
@@ -766,13 +792,13 @@ function easy_email_field_add_from_name_field(\Drupal\easy_email\Entity\EasyEmai
   catch (\RuntimeException $e) {
     // In this case, field already exists from installation
   }
-  catch (\Drupal\Core\Entity\EntityStorageException $e) {
+  catch (EntityStorageException $e) {
     // In this case, field already exists from installation
   }
 }
 
-function easy_email_field_add_from_address_field(\Drupal\easy_email\Entity\EasyEmailTypeInterface $easy_email_type) {
-  $field_definition =  \Drupal\Core\Field\BaseFieldDefinition::create('string')
+function easy_email_field_add_from_address_field(EasyEmailTypeInterface $easy_email_type) {
+  $field_definition =  BaseFieldDefinition::create('string')
     ->setTargetEntityTypeId('easy_email')
     ->setTargetBundle($easy_email_type->id())
     ->setName('from_address')
@@ -802,13 +828,13 @@ function easy_email_field_add_from_address_field(\Drupal\easy_email\Entity\EasyE
   catch (\RuntimeException $e) {
     // In this case, field already exists from installation
   }
-  catch (\Drupal\Core\Entity\EntityStorageException $e) {
+  catch (EntityStorageException $e) {
     // In this case, field already exists from installation
   }
 }
 
-function easy_email_field_add_reply_to_field(\Drupal\easy_email\Entity\EasyEmailTypeInterface $easy_email_type) {
-  $field_definition =  \Drupal\Core\Field\BaseFieldDefinition::create('string')
+function easy_email_field_add_reply_to_field(EasyEmailTypeInterface $easy_email_type) {
+  $field_definition =  BaseFieldDefinition::create('string')
     ->setTargetEntityTypeId('easy_email')
     ->setTargetBundle($easy_email_type->id())
     ->setName('reply_to')
@@ -838,7 +864,7 @@ function easy_email_field_add_reply_to_field(\Drupal\easy_email\Entity\EasyEmail
   catch (\RuntimeException $e) {
     // In this case, field already exists from installation
   }
-  catch (\Drupal\Core\Entity\EntityStorageException $e) {
+  catch (EntityStorageException $e) {
     // In this case, field already exists from installation
   }
 }
@@ -859,7 +885,7 @@ function easy_email_field_add_reply_to_field(\Drupal\easy_email\Entity\EasyEmail
  * @throws \RuntimeException
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function easy_email_create_field(\Drupal\Core\Field\BaseFieldDefinition $field_definition, $lock = TRUE) {
+function easy_email_create_field(BaseFieldDefinition $field_definition, $lock = TRUE) {
   $field_name = $field_definition->getName();
   $entity_type_id = $field_definition->getTargetEntityTypeId();
   $bundle = $field_definition->getTargetBundle();
@@ -868,8 +894,8 @@ function easy_email_create_field(\Drupal\Core\Field\BaseFieldDefinition $field_d
   }
   // loadByName() is an API that doesn't exist on the storage classes for
   // the two entity types, so we're using the entity classes directly.
-  $field_storage = \Drupal\field\Entity\FieldStorageConfig::loadByName($entity_type_id, $field_name);
-  $field = \Drupal\field\Entity\FieldConfig::loadByName($entity_type_id, $bundle, $field_name);
+  $field_storage = FieldStorageConfig::loadByName($entity_type_id, $field_name);
+  $field = FieldConfig::loadByName($entity_type_id, $bundle, $field_name);
   if (!empty($field)) {
     throw new \RuntimeException(sprintf('The field "%s" already exists on bundle "%s" of entity type "%s".', $field_name, $bundle, $entity_type_id));
   }
@@ -877,7 +903,7 @@ function easy_email_create_field(\Drupal\Core\Field\BaseFieldDefinition $field_d
   // The field storage might already exist if the field was created earlier
   // on a different bundle of the same entity type.
   if (empty($field_storage)) {
-    $field_storage = \Drupal\field\Entity\FieldStorageConfig::create([
+    $field_storage = FieldStorageConfig::create([
       'field_name' => $field_name,
       'entity_type' => $entity_type_id,
       'type' => $field_definition->getType(),
@@ -889,7 +915,7 @@ function easy_email_create_field(\Drupal\Core\Field\BaseFieldDefinition $field_d
     $field_storage->save();
   }
 
-  $field = \Drupal\field\Entity\FieldConfig::create([
+  $field = FieldConfig::create([
     'field_storage' => $field_storage,
     'bundle' => $bundle,
     'label' => $field_definition->getLabel(),

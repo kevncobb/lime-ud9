@@ -2,11 +2,12 @@
 
 namespace Drupal\Tests\easy_email\Functional;
 
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Entity\EntityStorageException;
 use Behat\Mink\Element\NodeElement;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\easy_email\Entity\EasyEmailTypeInterface;
-use Drupal\field\Entity\FieldConfig;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\Tests\BrowserTestBase;
 
@@ -27,16 +28,15 @@ abstract class EasyEmailTestBase extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'field',
     'field_ui',
     'text',
-    'entity_reference',
     'file',
     'options',
     'token',
     'mailsystem',
-    'swiftmailer',
+    'symfony_mailer_lite',
     'easy_email',
   ];
 
@@ -45,20 +45,17 @@ abstract class EasyEmailTestBase extends BrowserTestBase {
    */
   protected $htmlFormat;
 
-  protected function setUp() {
-    parent::setUp();
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
 
-    // Redirect all emails to the test_mail_collector.
-    // This is normally done in testing automatically, but we have MailSystem
-    // installed.
-    $this->config('mailsystem.settings')->set('defaults', [
-      'sender' => 'test_mail_collector',
-      'formatter' => 'swiftmailer',
-    ])->save();
-    $this->config('mailsystem.settings')->set('modules', [])->save();
+  protected function setUp(): void{
+    parent::setUp();
 
     $this->adminUser = $this->drupalCreateUser($this->getAdministratorPermissions());
     $this->drupalLogin($this->adminUser);
+    $this->drupalGet('admin/modules');
     $this->createHtmlTextFormat();
     $this->drupalLogout();
     $this->adminUser = $this->drupalCreateUser($this->getAdministratorPermissions());
@@ -71,7 +68,8 @@ abstract class EasyEmailTestBase extends BrowserTestBase {
       'format' => 'html',
       'name' => 'HTML',
     ];
-    $this->drupalPostForm('admin/config/content/formats/add', $edit, t('Save configuration'));
+    $this->drupalGet('admin/config/content/formats/add');
+    $this->submitForm($edit, t('Save configuration'));
     filter_formats_reset();
     $this->htmlFormat = FilterFormat::load($edit['format']);
   }
@@ -84,6 +82,7 @@ abstract class EasyEmailTestBase extends BrowserTestBase {
       'edit email entities',
       'view all email entities',
       'administer filters',
+      'administer modules',
     ];
     if (!empty($this->htmlFormat)) {
       $permissions[] = $this->htmlFormat->getPermissionName();
@@ -155,13 +154,13 @@ abstract class EasyEmailTestBase extends BrowserTestBase {
    * @param string $label
    */
   protected function addUserField(EasyEmailTypeInterface $easy_email_type, $field_name = 'field_user', $label = 'User') {
-    $field_definition = \Drupal\Core\Field\BaseFieldDefinition::create('entity_reference')
+    $field_definition = BaseFieldDefinition::create('entity_reference')
       ->setTargetEntityTypeId('easy_email')
       ->setTargetBundle($easy_email_type->id())
       ->setName($field_name)
       ->setLabel($label)
       ->setRevisionable(TRUE)
-      ->setCardinality(\Drupal\Core\Field\BaseFieldDefinition::CARDINALITY_UNLIMITED)
+      ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
       ->setRequired(FALSE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
@@ -190,7 +189,7 @@ abstract class EasyEmailTestBase extends BrowserTestBase {
     catch (\RuntimeException $e) {
       // In this case, field already exists from installation
     }
-    catch (\Drupal\Core\Entity\EntityStorageException $e) {
+    catch (EntityStorageException $e) {
       // In this case, field already exists from installation
     }
   }

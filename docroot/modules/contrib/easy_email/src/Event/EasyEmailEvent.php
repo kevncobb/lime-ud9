@@ -2,7 +2,8 @@
 
 namespace Drupal\easy_email\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Drupal\easy_email\Entity\EasyEmailInterface;
+use Drupal\Component\EventDispatcher\Event;
 
 /**
  * Defines the Entity Email event.
@@ -22,7 +23,7 @@ class EasyEmailEvent extends Event {
    * @param \Drupal\easy_email\Entity\EasyEmailInterface $email
    *   The entity email
    */
-  public function __construct(\Drupal\easy_email\Entity\EasyEmailInterface $email) {
+  public function __construct(EasyEmailInterface $email) {
     $this->email = $email;
   }
 
@@ -32,7 +33,7 @@ class EasyEmailEvent extends Event {
    * @return \Drupal\easy_email\Entity\EasyEmailInterface
    *   The entity email
    */
-  public function getEmail(): \Drupal\easy_email\Entity\EasyEmailInterface {
+  public function getEmail(): EasyEmailInterface {
     return $this->email;
   }
 

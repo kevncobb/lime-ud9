@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\Core\Url;
+use Drupal\Core\Link;
 /**
  * @file
  * Contains easy_email.page.inc.
@@ -29,7 +31,7 @@ function template_preprocess_easy_email(array &$variables) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
   if ($easy_email->hasField('body_html') && !empty($easy_email->getHtmlBody())) {
-    $variables['preview_html_url'] = \Drupal\Core\Url::fromRoute('entity.easy_email.preview', [
+    $variables['preview_html_url'] = Url::fromRoute('entity.easy_email.preview', [
       'easy_email' => $easy_email->id(),
     ]);
   }
@@ -38,7 +40,7 @@ function template_preprocess_easy_email(array &$variables) {
   $easy_email_type = \Drupal::entityTypeManager()->getStorage('easy_email_type')->load($easy_email->bundle());
 
   if ($easy_email->hasField('body_plain') && (!empty($easy_email_type->getGenerateBodyPlain()) || !empty($easy_email->getPlainBody()))) {
-    $variables['preview_plain_url'] = \Drupal\Core\Url::fromRoute('entity.easy_email.preview_plain', [
+    $variables['preview_plain_url'] = Url::fromRoute('entity.easy_email.preview_plain', [
       'easy_email' => $easy_email->id(),
     ]);
   }
@@ -59,7 +61,7 @@ function template_preprocess_easy_email(array &$variables) {
   }
   $variables['headers'][] = [
     'name' => 'To',
-    'value' => implode(', ', $easy_email->getRecipientAddresses()),
+    'value' => implode(', ', $easy_email->getRecipientAddresses() ?? []),
   ];
   $variables['headers'][] = [
     'name' => 'Subject',
@@ -76,7 +78,7 @@ function template_preprocess_easy_email(array &$variables) {
 
   if ($attachments = $easy_email->getAttachments()) {
     foreach ($attachments as $i => $attachment) {
-      $attachments[$i] = \Drupal\Core\Link::fromTextAndUrl($attachment->getFilename(),  \Drupal\Core\Url::fromUri(file_create_url($attachment->getFileUri()), ['attributes' => ['target' => '_blank']]));
+      $attachments[$i] = Link::fromTextAndUrl($attachment->getFilename(),  Url::fromUri(\Drupal::service('file_url_generator')->generateAbsoluteString($attachment->getFileUri()), ['attributes' => ['target' => '_blank']]));
     }
   }
 

@@ -46,7 +46,7 @@ class EmailAttachmentEvaluator implements EmailAttachmentEvaluatorInterface {
    * @inheritDoc
    */
   public function evaluateAttachments(EasyEmailInterface $email, $save_attachments_to = FALSE) {
-    $this->eventDispatcher->dispatch(EasyEmailEvents::EMAIL_PREATTACHMENTEVAL, new EasyEmailEvent($email));
+    $this->eventDispatcher->dispatch(new EasyEmailEvent($email), EasyEmailEvents::EMAIL_PREATTACHMENTEVAL);
     $files = $email->getEvaluatedAttachments();
 
     // If save attachments has been enabled, check for any programmatically added files and save them.
@@ -62,11 +62,12 @@ class EmailAttachmentEvaluator implements EmailAttachmentEvaluatorInterface {
       $attachments = $email->getAttachments();
       if (!empty($attachments)) {
         foreach ($attachments as $attachment) {
-          $file = new \stdClass();
-          $file->uri = $attachment->getFileUri();
-          $file->filename = $attachment->getFilename();
-          $file->filemime = $attachment->getMimeType();
-          $files[] = $file;
+          $file = [
+            'filepath' => $path,
+            'filename' => $this->fileSystem->basename($path),
+            'filemime' => $this->mimeTypeGuesser->guessMimeType($path),
+          ];
+         $files[] = $file;
         }
       }
     }
@@ -89,10 +90,11 @@ class EmailAttachmentEvaluator implements EmailAttachmentEvaluatorInterface {
             $this->saveAttachment($email, $realpath, $save_attachments_to);
           }
 
-          $file = new \stdClass();
-          $file->uri = $path;
-          $file->filename = $this->fileSystem->basename($path);
-          $file->filemime = $this->mimeTypeGuesser->guess($path);
+          $file = [
+            'filepath' => $path,
+            'filename' => $this->fileSystem->basename($path),
+            'filemime' => $this->mimeTypeGuesser->guessMimeType($path),
+          ];
           $files[] = $file;
         }
       }
@@ -100,7 +102,7 @@ class EmailAttachmentEvaluator implements EmailAttachmentEvaluatorInterface {
 
     $email->setEvaluatedAttachments($files);
 
-    $this->eventDispatcher->dispatch(EasyEmailEvents::EMAIL_ATTACHMENTEVAL, new EasyEmailEvent($email));
+    $this->eventDispatcher->dispatch(new EasyEmailEvent($email), EasyEmailEvents::EMAIL_ATTACHMENTEVAL);
   }
 
   /**
@@ -108,8 +110,8 @@ class EmailAttachmentEvaluator implements EmailAttachmentEvaluatorInterface {
    * @param \Drupal\file\FileInterface $file
    */
   protected function saveAttachment(EasyEmailInterface $email, $source, $dest_directory) {
-    file_prepare_directory($dest_directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
-    $file_entity = file_save_data(file_get_contents($source), $dest_directory . '/' . $this->fileSystem->basename($source));
+    \Drupal::service('file_system')->prepareDirectory($dest_directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+    $file_entity = \Drupal::service('file.repository')->writeData(file_get_contents($source), $dest_directory . '/' . $this->fileSystem->basename($source));
     $email->addAttachment($file_entity->id());
   }
 

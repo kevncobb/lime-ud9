@@ -55,9 +55,9 @@ class EasyEmailRevisionDeleteForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    $entity_manager = $container->get('entity.manager');
+    $entity_type_manager = $container->get('entity_type.manager');
     return new static(
-      $entity_manager->getStorage('easy_email'),
+      $entity_type_manager->getStorage('easy_email'),
       $container->get('database')
     );
   }
@@ -73,7 +73,7 @@ class EasyEmailRevisionDeleteForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return t('Are you sure you want to delete the revision from %revision-date?', ['%revision-date' => format_date($this->revision->getRevisionCreationTime())]);
+    return t('Are you sure you want to delete the revision from %revision-date?', ['%revision-date' => \Drupal::service('date.formatter')->format($this->revision->getRevisionCreationTime())]);
   }
 
   /**
@@ -107,7 +107,7 @@ class EasyEmailRevisionDeleteForm extends ConfirmFormBase {
     $this->EasyEmailStorage->deleteRevision($this->revision->getRevisionId());
 
     $this->logger('content')->notice('Email: deleted %title revision %revision.', ['%title' => $this->revision->label(), '%revision' => $this->revision->getRevisionId()]);
-    \Drupal::messenger()->addStatus(t('Revision from %revision-date of Email %title has been deleted.', ['%revision-date' => format_date($this->revision->getRevisionCreationTime()), '%title' => $this->revision->label()]));
+    \Drupal::messenger()->addStatus(t('Revision from %revision-date of Email %title has been deleted.', ['%revision-date' => \Drupal::service('date.formatter')->format($this->revision->getRevisionCreationTime()), '%title' => $this->revision->label()]));
     $form_state->setRedirect(
       'entity.easy_email.canonical',
        ['easy_email' => $this->revision->id()]
