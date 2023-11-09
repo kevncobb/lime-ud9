@@ -7,7 +7,8 @@ use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\group\Entity\GroupTypeInterface;
-use Drupal\user\PrivateTempStoreFactory;
+use Drupal\Core\TempStore\PrivateTempStoreFactory;
+use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -18,7 +19,7 @@ class GroupController extends ControllerBase {
   /**
    * The private store factory.
    *
-   * @var \Drupal\user\PrivateTempStoreFactory
+   * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
   protected $privateTempStoreFactory;
 
@@ -46,7 +47,7 @@ class GroupController extends ControllerBase {
   /**
    * Constructs a new GroupController.
    *
-   * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
+   * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $temp_store_factory
    *   The private store factory.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
@@ -67,7 +68,7 @@ class GroupController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('user.private_tempstore'),
+      $container->get('tempstore.private'),
       $container->get('entity_type.manager'),
       $container->get('entity.form_builder'),
       $container->get('renderer')
@@ -112,16 +113,35 @@ class GroupController extends ControllerBase {
     }
     // Wizard step 2: Group membership form.
     else {
+      $relationship_type_storage = $this->entityTypeManager()->getStorage('group_relationship_type');
+      assert($relationship_type_storage instanceof GroupRelationshipTypeStorageInterface);
+
       // Create an empty group membership that does not yet have a group set.
       $values = [
-        'type' => $group_type->getContentPlugin('group_membership')->getContentTypeConfigId(),
+        'type' => $relationship_type_storage->getRelationshipTypeId($group_type->id(), 'group_membership'),
         'entity_id' => $this->currentUser()->id(),
+        'group_roles' => $group_type->getCreatorRoleIds(),
       ];
-      $entity = $this->entityTypeManager()->getStorage('group_content')->create($values);
+      $entity = $this->entityTypeManager()->getStorage('group_relationship')->create($values);
     }
 
     // Return the entity form with the configuration gathered above.
     return $this->entityFormBuilder()->getForm($entity, 'add', $extra);
+  }
+
+  /**
+   * The _title_callback for the group.add route.
+   *
+   * @param \Drupal\group\Entity\GroupTypeInterface $group_type
+   *   The type of group to create.
+   *
+   * @return string
+   *   The page title.
+   */
+  public function addFormTitle(GroupTypeInterface $group_type) {
+    return $this->t('Add @group_type_label', [
+      '@group_type_label' => $group_type->label(),
+    ]);
   }
 
 }

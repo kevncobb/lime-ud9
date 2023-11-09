@@ -8,7 +8,9 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Entity\GroupTypeInterface;
-use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 
 /**
  * Provides the available permissions based on yml files.
@@ -71,9 +73,9 @@ class GroupPermissionHandler implements GroupPermissionHandlerInterface {
   protected $controllerResolver;
 
   /**
-   * The group content enabler plugin manager.
+   * The group relation type manager.
    *
-   * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
+   * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface
    */
   protected $pluginManager;
 
@@ -86,10 +88,10 @@ class GroupPermissionHandler implements GroupPermissionHandlerInterface {
    *   The string translation.
    * @param \Drupal\Core\Controller\ControllerResolverInterface $controller_resolver
    *   The controller resolver.
-   * @param \Drupal\group\Plugin\GroupContentEnablerManagerInterface $plugin_manager
-   *   The group content enabler plugin manager.
+   * @param \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface $plugin_manager
+   *   The group relation type manager.
    */
-  public function __construct(ModuleHandlerInterface $module_handler, TranslationInterface $string_translation, ControllerResolverInterface $controller_resolver, GroupContentEnablerManagerInterface $plugin_manager) {
+  public function __construct(ModuleHandlerInterface $module_handler, TranslationInterface $string_translation, ControllerResolverInterface $controller_resolver, GroupRelationTypeManagerInterface $plugin_manager) {
     $this->moduleHandler = $module_handler;
     $this->stringTranslation = $string_translation;
     $this->controllerResolver = $controller_resolver;
@@ -113,43 +115,50 @@ class GroupPermissionHandler implements GroupPermissionHandlerInterface {
    * {@inheritdoc}
    */
   public function getPermissions($include_plugins = FALSE) {
-    $all_permissions = $this->buildPermissionsYaml();
-
     // Add the plugin defined permissions to the whole. We query all defined
     // plugins to avoid scenarios where modules want to ship with default
     // configuration but can't because their plugins may not be installed along
     // with the module itself (i.e.: non-enforced plugins).
-    if ($include_plugins) {
-      /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
-      foreach ($this->pluginManager->getAll() as $plugin) {
-        $provider = $plugin->getProvider();
-        $section = $plugin->getLabel()->__toString();
-
-        foreach ($plugin->getPermissions() as $permission_name => $permission) {
-          $permission += ['provider' => $provider, 'section' => $section];
-          $all_permissions[$permission_name] = $this->completePermission($permission);
-        }
-      }
-    }
-
-    return $this->sortPermissions($all_permissions);
+    $plugins = $include_plugins ? $this->pluginManager->getDefinitions() : [];
+    return $this->getPermissionsIncludingPlugins($plugins);
   }
 
   /**
    * {@inheritdoc}
    */
   public function getPermissionsByGroupType(GroupTypeInterface $group_type) {
+    $group_relation_types = [];
+    foreach ($group_type->getInstalledPlugins() as $plugin) {
+      assert($plugin instanceof GroupRelationInterface);
+      $group_relation_types[$plugin->getRelationTypeId()] = $plugin->getRelationType();
+    }
+    return $this->getPermissionsIncludingPlugins($group_relation_types);
+  }
+
+  /**
+   * Gets all defined group permissions along with those from certain plugins.
+   *
+   * @param \Drupal\group\Plugin\Group\Relation\GroupRelationTypeInterface[] $group_relation_types
+   *   The plugin definitions to get permissions from, keyed by plugin ID.
+   *
+   * @return array
+   *   The permission list, structured as specified by ::getPermissions().
+   */
+  protected function getPermissionsIncludingPlugins(array $group_relation_types) {
     $all_permissions = $this->buildPermissionsYaml();
 
-    // Add the plugin defined permissions to the whole.
-    foreach ($group_type->getInstalledContentPlugins() as $plugin) {
-      $provider = $plugin->getProvider();
-      $section = $plugin->getLabel()->__toString();
+    foreach ($group_relation_types as $group_relation_type_id => $group_relation_type) {
+      assert($group_relation_type instanceof GroupRelationTypeInterface);
+      $extras = [
+        'provider' => $group_relation_type->getProvider(),
+        'section' => $group_relation_type->getLabel()->getUntranslatedString(),
+        'section_args' => $group_relation_type->getLabel()->getArguments(),
+        'section_id' => $group_relation_type_id,
+      ];
 
-      /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
-      foreach ($plugin->getPermissions() as $permission_name => $permission) {
-        $permission += ['provider' => $provider, 'section' => $section];
-        $all_permissions[$permission_name] = $this->completePermission($permission);
+      $permissions = $this->pluginManager->getPermissionProvider($group_relation_type_id)->buildPermissions();
+      foreach ($permissions as $permission_name => $permission) {
+        $all_permissions[$permission_name] = $this->completePermission($permission + $extras);
       }
     }
 
@@ -173,11 +182,17 @@ class GroupPermissionHandler implements GroupPermissionHandlerInterface {
       'restrict access' => FALSE,
       'warning' => !empty($permission['restrict access']) ? 'Warning: Give to trusted roles only; this permission has security implications.' : '',
       'warning_args' => [],
+      'section' => 'General',
+      'section_args' => [],
+      'section_id' => 'general',
       'allowed for' => ['anonymous', 'outsider', 'member'],
     ];
 
-    // Translate the title and optionally the description and warning.
+    // Translate the title and section.
     $permission['title'] = $this->t($permission['title'], $permission['title_args']);
+    $permission['section'] = $this->t($permission['section'], $permission['section_args']);
+
+    // Optionally translate the description and warning.
     if (!empty($permission['description'])) {
       $permission['description'] = $this->t($permission['description'], $permission['description_args']);
     }
@@ -197,39 +212,26 @@ class GroupPermissionHandler implements GroupPermissionHandlerInterface {
    * @see \Drupal\group\Access\PermissionHandlerInterface::getPermissions()
    */
   protected function buildPermissionsYaml() {
-    $all_permissions = [];
-    $all_callback_permissions = [];
+    $full_permissions = [];
 
     foreach ($this->getYamlDiscovery()->findAll() as $provider => $permissions) {
+      $permission_sets = [];
+
       // The top-level 'permissions_callback' is a list of methods in controller
       // syntax, see \Drupal\Core\Controller\ControllerResolver. These methods
       // should return an array of permissions in the same structure.
       if (isset($permissions['permission_callbacks'])) {
         foreach ($permissions['permission_callbacks'] as $permission_callback) {
           $callback = $this->controllerResolver->getControllerFromDefinition($permission_callback);
-          if ($callback_permissions = call_user_func($callback)) {
-            // Add any callback permissions to the array of permissions. In case
-            // of any conflict, the YAML ones will take precedence.
-            foreach ($callback_permissions as $name => $callback_permission) {
-              if (!is_array($callback_permission)) {
-                $callback_permission = ['title' => $callback_permission];
-              }
-
-              // Set the provider if none was specified.
-              $callback_permission += ['provider' => $provider];
-
-              // Set the section if none was specified.
-              $callback_permission += ['section' => 'General'];
-
-              $all_callback_permissions[$name] = $callback_permission;
-            }
-          }
+          $callback_permissions = call_user_func($callback);
+          assert(is_array($callback_permissions));
+          $permission_sets[] = $callback_permissions;
         }
-
         unset($permissions['permission_callbacks']);
       }
+      $permission_sets[] = $permissions;
 
-      foreach ($permissions as $permission_name => $permission) {
+      foreach (array_merge(...$permission_sets) as $permission_name => $permission) {
         if (!is_array($permission)) {
           $permission = ['title' => $permission];
         }
@@ -237,19 +239,9 @@ class GroupPermissionHandler implements GroupPermissionHandlerInterface {
         // Set the provider if none was specified.
         $permission += ['provider' => $provider];
 
-        // Set the section if none was specified.
-        $permission += ['section' => 'General'];
-
-        $permissions[$permission_name] = $permission;
+        // Set the rest of the defaults.
+        $full_permissions[$permission_name] = $this->completePermission($permission);
       }
-
-      $all_permissions += $permissions;
-    }
-
-    // Combine all defined permissions and set the rest of the defaults.
-    $full_permissions = $all_permissions + $all_callback_permissions;
-    foreach ($full_permissions as $permission_name => $permission) {
-      $full_permissions[$permission_name] = $this->completePermission($permission);
     }
 
     return $full_permissions;
@@ -277,14 +269,14 @@ class GroupPermissionHandler implements GroupPermissionHandlerInterface {
           // the titles are \Drupal\Core\StringTranslation\TranslatableMarkup.
           $title_a = $permission_a['title']->__toString();
           $title_b = $permission_b['title']->__toString();
-          return strip_tags($title_a) > strip_tags($title_b);
+          return strip_tags($title_a) <=> strip_tags($title_b);
         }
         else {
-          return $permission_a['section'] > $permission_b['section'];
+          return $permission_a['section'] <=> $permission_b['section'];
         }
       }
       else {
-        return $modules[$permission_a['provider']] > $modules[$permission_b['provider']];
+        return $modules[$permission_a['provider']] <=> $modules[$permission_b['provider']];
       }
     });
 

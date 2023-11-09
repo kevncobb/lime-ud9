@@ -21,6 +21,9 @@ group.type.*:
     description:
       type: 'text'
       label: 'Description'
+    new_revision:
+      type: 'boolean'
+      label: 'Whether a new revision should be created by default'
     creator_membership:
       type: 'boolean'
       label: 'The group creator receives a membership'
@@ -34,15 +37,15 @@ group.type.*:
         type: 'string'
         label: 'Group role ID'
 
-group_content_enabler.config.group_cardinality:
+group_relation.config.group_cardinality:
   type: 'integer'
   label: 'Group cardinality'
 
-group_content_enabler.config.entity_cardinality:
+group_relation.config.entity_cardinality:
   type: 'integer'
   label: 'Entity cardinality'
 
-group_content_enabler.config.use_creation_wizard:
+group_relation.config.use_creation_wizard:
   type: 'boolean'
   label: 'Use creation wizard'
 
@@ -60,18 +63,18 @@ group.role.*:
     weight:
       type: 'integer'
       label: 'Weight'
-    internal:
+    admin:
       type: 'boolean'
-      label: 'Group role is used internally'
-    audience:
+      label: 'Group role is an admin role'
+    scope:
       type: 'string'
-      label: 'Audience'
+      label: 'The scope of the group role'
+    global_role:
+      type: 'string'
+      label: 'The global role the group role synchronizes with. Only applies if scope is outsider or insider'
     group_type:
       type: 'string'
       label: 'Group type ID'
-    permissions_ui:
-      type: 'boolean'
-      label: 'Show this role in the default permissions UI'
     permissions:
       type: 'sequence'
       label: 'Permissions'
@@ -79,9 +82,9 @@ group.role.*:
         type: 'string'
         label: 'Group permission'
 
-group_content_type:
+group_relationship_type:
   type: 'config_entity'
-  label: 'Group content type'
+  label: 'Group relationship type'
   mapping:
     id:
       type: 'string'
@@ -93,22 +96,22 @@ group_content_type:
       type: 'text'
       label: 'Description'
     group_type:
-      type: 'text'
+      type: 'string'
       label: 'Group type ID'
     content_plugin:
-      type: 'text'
-      label: 'Group content plugin ID'
+      type: 'string'
+      label: 'Group relation plugin ID'
     plugin_config:
       type: 'sequence'
       label: 'Plugin configuration'
       sequence:
-        type: 'group_content_enabler.config.[%key]'
+        type: 'group_relation.config.[%key]'
 
-# Follows the pattern group.content_type.GROUP_TYPE_ID-PLUGIN_ID.
-# Follows the pattern group.content_type.GROUP_TYPE_ID-PLUGIN_ID-DERIVATIVE_ID.
-group.content_type.*:
-  type: 'group_content_type'
-  label: 'Group content type'
+# Follows the pattern group.relationship_type.GROUP_TYPE_ID-PLUGIN_ID.
+# Follows the pattern group.relationship_type.GROUP_TYPE_ID-PLUGIN_ID-DERIVATIVE_ID.
+group.relationship_type.*:
+  type: 'group_relationship_type'
+  label: 'Group relationship type'
 
 entity_reference_selection.group_type:group_role:
   type: 'entity_reference_selection'

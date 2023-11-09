@@ -10,7 +10,9 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Provides a list controller for group entities.
@@ -41,6 +43,13 @@ class GroupListBuilder extends EntityListBuilder {
   protected $moduleHandler;
 
   /**
+   * The router.
+   *
+   * @var \Symfony\Component\Routing\RouterInterface
+   */
+  protected $router;
+
+  /**
    * Constructs a new GroupListBuilder object.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
@@ -53,12 +62,15 @@ class GroupListBuilder extends EntityListBuilder {
    *   The current user.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Symfony\Component\Routing\RouterInterface $router
+   *   The router.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, RedirectDestinationInterface $redirect_destination, AccountInterface $current_user, ModuleHandlerInterface $module_handler) {
+  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, RedirectDestinationInterface $redirect_destination, AccountInterface $current_user, ModuleHandlerInterface $module_handler, RouterInterface $router) {
     parent::__construct($entity_type, $storage);
     $this->redirectDestination = $redirect_destination;
     $this->currentUser = $current_user;
     $this->moduleHandler = $module_handler;
+    $this->router = $router;
   }
 
   /**
@@ -70,7 +82,8 @@ class GroupListBuilder extends EntityListBuilder {
       $container->get('entity_type.manager')->getStorage($entity_type->id()),
       $container->get('redirect.destination'),
       $container->get('current_user'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('router.no_access_checks')
     );
   }
 
@@ -94,6 +107,11 @@ class GroupListBuilder extends EntityListBuilder {
         'specifier' =>'type',
         'field' => 'type',
       ],
+      'status' => [
+        'data' => $this->t('Status'),
+        'specifier' =>'status',
+        'field' => 'status',
+      ],
       'uid' => [
         'data' => $this->t('Owner'),
       ],
@@ -105,13 +123,14 @@ class GroupListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /** @var \Drupal\group\Entity\GroupInterface $entity */
+    assert($entity instanceof GroupInterface);
     $row['id'] = $entity->id();
     // EntityListBuilder sets the table rows using the #rows property, so we
     // need to add the render array using the 'data' key.
     $row['name']['data'] = $entity->toLink()->toRenderable();
     $row['type'] = $entity->getGroupType()->label();
-    $row['uid'] = $entity->uid->entity->label();
+    $row['status'] = $entity->isPublished() ? $this->t('Published') : $this->t('Unpublished');
+    $row['uid'] = $entity->getOwner()->label();
     return $row + parent::buildRow($entity);
   }
 
@@ -139,21 +158,31 @@ class GroupListBuilder extends EntityListBuilder {
       $query->pager($this->limit);
     }
 
-    return $query->execute();
+    return $query->accessCheck()->execute();
   }
 
   /**
    * {@inheritdoc}
    */
   protected function getDefaultOperations(EntityInterface $entity) {
+    assert($entity instanceof GroupInterface);
     $operations = parent::getDefaultOperations($entity);
 
-    /** @var \Drupal\group\Entity\GroupInterface $entity */
     if ($this->moduleHandler->moduleExists('views') && $entity->hasPermission('administer members', $this->currentUser)) {
-      $operations['members'] = [
-        'title' => $this->t('Members'),
-        'weight' => 15,
-        'url' => Url::fromRoute('view.group_members.page_1', ['group' => $entity->id()]),
+      if ($this->router->getRouteCollection()->get('view.group_members.page_1') !== NULL) {
+        $operations['members'] = [
+          'title' => $this->t('Members'),
+          'weight' => 15,
+          'url' => Url::fromRoute('view.group_members.page_1', ['group' => $entity->id()]),
+        ];
+      }
+    }
+
+    if ($entity->getGroupType()->shouldCreateNewRevision() && $entity->hasPermission('view group revisions', $this->currentUser)) {
+      $operations['revisions'] = [
+        'title' => $this->t('Revisions'),
+        'weight' => 20,
+        'url' => $entity->toUrl('version-history'),
       ];
     }
 

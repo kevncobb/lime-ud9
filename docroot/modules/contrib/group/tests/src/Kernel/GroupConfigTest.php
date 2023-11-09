@@ -16,7 +16,15 @@ class GroupConfigTest extends EntityKernelTestBase {
    *
    * @var array
    */
-  public static $modules = ['group', 'block', 'views'];
+  protected static $modules = [
+    'block',
+    'entity',
+    'flexible_permissions',
+    'group',
+    'options',
+    'variationcache',
+    'views',
+  ];
 
   /**
    * Tests that the module's config installs properly.
@@ -25,8 +33,8 @@ class GroupConfigTest extends EntityKernelTestBase {
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_type');
     $this->installEntitySchema('group_role');
-    $this->installEntitySchema('group_content');
-    $this->installEntitySchema('group_content_type');
+    $this->installEntitySchema('group_relationship');
+    $this->installEntitySchema('group_relationship_type');
     $this->installConfig(['group']);
   }
 

@@ -3,10 +3,8 @@
 namespace Drupal\group\Entity\Controller;
 
 use Drupal\group\Entity\GroupTypeInterface;
-use Drupal\group\Entity\GroupContentType;
-use Drupal\group\Plugin\GroupContentEnablerInterface;
-use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
-use Drupal\Core\Url;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -25,9 +23,9 @@ class GroupTypeController extends ControllerBase {
   protected $groupType;
 
   /**
-   * The group content plugin manager.
+   * The group relation type manager.
    *
-   * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
+   * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface
    */
   protected $pluginManager;
 
@@ -52,10 +50,10 @@ class GroupTypeController extends ControllerBase {
    *   The module handler.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\group\Plugin\GroupContentEnablerManagerInterface $plugin_manager
-   *   The group content plugin manager.
+   * @param \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface $plugin_manager
+   *   The group relation type manager.
    */
-  public function __construct(ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager, GroupContentEnablerManagerInterface $plugin_manager) {
+  public function __construct(ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager, GroupRelationTypeManagerInterface $plugin_manager) {
     $this->moduleHandler = $module_handler;
     $this->entityTypeManager = $entity_type_manager;
     $this->pluginManager = $plugin_manager;
@@ -68,12 +66,12 @@ class GroupTypeController extends ControllerBase {
     return new static(
       $container->get('module_handler'),
       $container->get('entity_type.manager'),
-      $container->get('plugin.manager.group_content_enabler')
+      $container->get('group_relation_type.manager')
     );
   }
 
   /**
-   * Builds an admin interface to manage the group type's group content plugins.
+   * Builds an admin interface to manage the group type's group relations.
    *
    * @param \Drupal\group\Entity\GroupTypeInterface $group_type
    *   The group type to build an interface for.
@@ -84,7 +82,33 @@ class GroupTypeController extends ControllerBase {
   public function content(GroupTypeInterface $group_type) {
     $this->groupType = $group_type;
 
-    // Render the table of available content enablers.
+    $rows['installed'] = $rows['available'] = [];
+    $installed_ids = $this->pluginManager->getInstalledIds($group_type);
+
+    foreach ($this->pluginManager->getDefinitions() as $plugin_id => $group_relation_type) {
+      assert($group_relation_type instanceof GroupRelationTypeInterface);
+      $is_installed = in_array($plugin_id, $installed_ids, TRUE);
+      $status = $is_installed ? 'installed' : 'available';
+      $rows[$status][$plugin_id] = $this->buildRow($plugin_id, $group_relation_type, $is_installed);
+    }
+
+    $page['information'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Information about content plugins'),
+    ];
+
+    $page['information']['intro']['#markup'] = $this->t('<p>In order to be able to relate entities to groups of this group type, a so-called relation plugin needs to be installed. This plugin informs the Group module on how the entity type can be added to a group, what rules apply and whether it should control access over said entity type. When a plugin is installed, you should check out its configuration form to see what options are available to further customize the plugin behavior.</p>');
+    $page['information']['fields']['#markup'] = $this->t('<p>Should you choose to show the relationship entities that track which entity belongs to which group or should the module that provided the module enforce this, you can control which fields are available on that relation entity and how they are presented in the front-end.</p>');
+    $page['information']['install_types'] = [
+      '#theme' => 'item_list',
+      '#items' => [
+        $this->t('<strong>Manual</strong> content plugins can be (un)installed freely by the user'),
+        $this->t('<strong>Code-only</strong> content plugins can only be (un)installed through code, this is often done when certain conditions are met in the module that provided the plugin'),
+        $this->t('<strong>Enforced</strong> content plugins are always enabled and cannot be uninstalled'),
+      ],
+      '#prefix' => $this->t('<p>The following installation types are available:</p>'),
+    ];
+
     $page['system_compact_link'] = [
       '#id' => FALSE,
       '#type' => 'system_compact_link',
@@ -97,48 +121,38 @@ class GroupTypeController extends ControllerBase {
         'provider' => $this->t('Provided by'),
         'entity_type_id' => $this->t('Applies to'),
         'status' => $this->t('Status'),
+        'install_type' => $this->t('Installation type'),
         'operations' => $this->t('Operations'),
       ],
-      '#suffix' =>  $this->t('<em>* These plugins are set to be always on by their providing module.</em>'),
     ];
-
-    $installed = $this->pluginManager->getInstalledIds($group_type);
-    foreach ($this->pluginManager->getAll() as $plugin_id => $plugin) {
-      // If the plugin is installed on the group type, use that one instead of
-      // an 'empty' version so that we may use methods on it which expect to
-      // have a group type configured.
-      if (in_array($plugin_id, $installed)) {
-        $plugin = $this->groupType->getContentPlugin($plugin_id);
-      }
-      $page['content'][$plugin_id] = $this->buildRow($plugin);
-    }
+    $page['content'] += $rows['installed'];
+    $page['content'] += $rows['available'];
 
     return $page;
   }
 
   /**
-   * Builds a row for a content enabler plugin.
+   * Builds a row for a group relation type.
    *
-   * @param \Drupal\group\Plugin\GroupContentEnablerInterface $plugin
-   *   The content enabler plugin to build operation links for.
+   * @param string $plugin_id
+   *   The relation plugin ID.
+   * @param \Drupal\group\Plugin\Group\Relation\GroupRelationTypeInterface $group_relation_type
+   *   The group relation type.
+   * @param bool $is_installed
+   *   Whether the group relation type is installed.
    *
    * @return array
    *   A render array to use as a table row.
    */
-  public function buildRow(GroupContentEnablerInterface $plugin) {
-    $installed = $this->pluginManager->getInstalledIds($this->groupType);
+  public function buildRow($plugin_id, GroupRelationTypeInterface $group_relation_type, $is_installed) {
+    $status = $is_installed ? $this->t('Installed') : $this->t('Available');
 
-    // Get the plugin status.
-    if (in_array($plugin->getPluginId(), $installed)) {
-      $status = $this->t('Installed');
-
-      // Mark enforced plugins with an asterisk.
-      if ($plugin->isEnforced()) {
-        $status .= '*';
-      }
+    $install_type = $this->t('Manual');
+    if ($group_relation_type->isEnforced()) {
+      $install_type = $this->t('Enforced');
     }
-    else {
-      $status = $this->t('Not installed');
+    elseif ($group_relation_type->isCodeOnly()) {
+      $install_type = $this->t('Code-only');
     }
 
     $row = [
@@ -146,111 +160,43 @@ class GroupTypeController extends ControllerBase {
         '#type' => 'inline_template',
         '#template' => '<div class="description"><span class="label">{{ label }}</span>{% if description %}<br/>{{ description }}{% endif %}</div>',
         '#context' => [
-          'label' => $plugin->getLabel(),
+          'label' => $group_relation_type->getLabel(),
         ],
       ],
       'provider' => [
-        '#markup' => $this->moduleHandler->getName($plugin->getProvider())
+        '#markup' => $this->moduleHandler->getName($group_relation_type->getProvider())
       ],
       'entity_type_id' => [
-        '#markup' => $this->entityTypeManager->getDefinition($plugin->getEntityTypeId())->getLabel()
+        '#markup' => $this->entityTypeManager->getDefinition($group_relation_type->getEntityTypeId())->getLabel()
       ],
       'status' => ['#markup' => $status],
-      'operations' => $this->buildOperations($plugin),
+      'install_type' => ['#markup' => $install_type],
+      'operations' => $this->buildOperations($plugin_id),
     ];
 
-    // Show the content enabler description if toggled on.
+    // Show the group relation description if toggled on.
     if (!system_admin_compact_mode()) {
-      $row['info']['#context']['description'] = $plugin->getDescription();
+      $row['info']['#context']['description'] = $group_relation_type->getDescription();
     }
 
     return $row;
   }
 
   /**
-   * Provides an array of information to build a list of operation links.
+   * Builds operation links for the group type's relation plugins.
    *
-   * @param \Drupal\group\Plugin\GroupContentEnablerInterface $plugin
-   *   The content enabler plugin to build operation links for.
-   *
-   * @return array
-   *   An associative array of operation links for the group type's content
-   *   plugin, keyed by operation name, containing the following key-value pairs:
-   *   - title: The localized title of the operation.
-   *   - url: An instance of \Drupal\Core\Url for the operation URL.
-   *   - weight: The weight of this operation.
-   */
-  public function getOperations($plugin) {
-    return $plugin->getOperations() + $this->getDefaultOperations($plugin);
-  }
-
-  /**
-   * Gets the group type's content plugin's default operation links.
-   *
-   * @param \Drupal\group\Plugin\GroupContentEnablerInterface $plugin
-   *   The content enabler plugin to build operation links for.
-   *
-   * @return array
-   *   The array structure is identical to the return value of
-   *   self::getOperations().
-   */
-  protected function getDefaultOperations($plugin) {
-    $operations = [];
-
-    $plugin_id = $plugin->getPluginId();
-    $installed = $this->pluginManager->getInstalledIds($this->groupType);
-
-    if (in_array($plugin_id, $installed)) {
-      /** @var \Drupal\group\Entity\GroupContentTypeInterface $group_content_type */
-      $group_content_type_id = $plugin->getContentTypeConfigId();
-      $group_content_type = GroupContentType::load($group_content_type_id);
-
-      $route_params = [
-        'group_content_type' => $group_content_type_id,
-      ];
-
-      $operations['configure'] = [
-        'title' => $this->t('Configure'),
-        'url' => new Url('entity.group_content_type.edit_form', $route_params),
-      ];
-
-      if (!$plugin->isEnforced()) {
-        $operations['uninstall'] = [
-          'title' => $this->t('Uninstall'),
-          'weight' => 99,
-          'url' => new Url('entity.group_content_type.delete_form', $route_params),
-        ];
-      }
-
-      if ($this->moduleHandler->moduleExists('field_ui')) {
-        $operations += field_ui_entity_operation($group_content_type);
-      }
-    }
-    elseif (!$plugin->isEnforced()) {
-      $operations['install'] = [
-        'title' => $this->t('Install'),
-        'url' => new Url('entity.group_content_type.add_form', ['group_type' => $this->groupType->id(), 'plugin_id' => $plugin_id]),
-      ];
-    }
-
-    return $operations;
-  }
-
-  /**
-   * Builds operation links for the group type's content plugins.
-   *
-   * @param \Drupal\group\Plugin\GroupContentEnablerInterface $plugin
-   *   The content enabler plugin to build operation links for.
+   * @param string $plugin_id
+   *   The relation plugin ID.
    *
    * @return array
    *   A render array of operation links.
    */
-  public function buildOperations($plugin) {
+  public function buildOperations($plugin_id) {
     $build = [
       '#type' => 'operations',
-      '#links' => $this->getOperations($plugin),
+      '#links' => $this->pluginManager->getOperationProvider($plugin_id)->getOperations($this->groupType),
     ];
-
+    uasort($build['#links'], '\Drupal\Component\Utility\SortArray::sortByWeightElement');
     return $build;
   }
 

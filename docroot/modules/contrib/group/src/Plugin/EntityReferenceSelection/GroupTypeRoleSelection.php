@@ -3,6 +3,7 @@
 namespace Drupal\group\Plugin\EntityReferenceSelection;
 
 use Drupal\Core\Entity\Plugin\EntityReferenceSelection\DefaultSelection;
+use Drupal\group\PermissionScopeInterface;
 
 /**
  * Only shows the group roles which are available for a group type.
@@ -24,11 +25,11 @@ class GroupTypeRoleSelection extends DefaultSelection {
    * {@inheritdoc}
    */
   protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS') {
-    $group_type_id = $this->configuration['handler_settings']['group_type_id'];
+    $group_type_id = $this->configuration['group_type_id'];
 
     $query = parent::buildEntityQuery($match, $match_operator);
     $query->condition('group_type', $group_type_id, '=');
-    $query->condition('internal', 0, '=');
+    $query->condition('scope', PermissionScopeInterface::INDIVIDUAL_ID, '=');
 
     return $query;
   }

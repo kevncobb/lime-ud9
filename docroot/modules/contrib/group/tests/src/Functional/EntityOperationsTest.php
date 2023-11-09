@@ -2,6 +2,9 @@
 
 namespace Drupal\Tests\group\Functional;
 
+use Drupal\group\PermissionScopeInterface;
+use Drupal\user\RoleInterface;
+
 /**
  * Tests that entity operations (do not) show up on the group overview.
  *
@@ -10,6 +13,14 @@ namespace Drupal\Tests\group\Functional;
  * @group group
  */
 class EntityOperationsTest extends GroupBrowserTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->setUpAccount();
+  }
 
   /**
    * Checks for entity operations under given circumstances.
@@ -26,12 +37,15 @@ class EntityOperationsTest extends GroupBrowserTestBase {
    * @dataProvider provideEntityOperationScenarios
    */
   public function testEntityOperations($visible, $invisible, $permissions = [], $modules = []) {
-    $group = $this->createGroup();
+    $group = $this->createGroup(['type' => $this->createGroupType()->id()]);
 
     if (!empty($permissions)) {
-      $role = $group->getGroupType()->getMemberRole();
-      $role->grantPermissions($permissions);
-      $role->save();
+      $this->createGroupRole([
+        'group_type' => $group->bundle(),
+        'scope' => PermissionScopeInterface::INSIDER_ID,
+        'global_role' => RoleInterface::AUTHENTICATED_ID,
+        'permissions' => $permissions,
+      ]);
     }
 
     if (!empty($modules)) {
@@ -61,6 +75,7 @@ class EntityOperationsTest extends GroupBrowserTestBase {
         'group/1/edit' => 'Edit',
         'group/1/members' => 'Members',
         'group/1/delete' => 'Delete',
+        'group/1/revisions' => 'Revisions',
       ],
     ];
 
@@ -68,11 +83,18 @@ class EntityOperationsTest extends GroupBrowserTestBase {
       [
         'group/1/edit' => 'Edit',
         'group/1/delete' => 'Delete',
+        'group/1/revisions' => 'Revisions',
       ],
       [
         'group/1/members' => 'Members',
       ],
-      ['edit group', 'delete group', 'administer members'],
+      [
+        'view group',
+        'edit group',
+        'delete group',
+        'administer members',
+        'view group revisions',
+      ],
     ];
 
     $scenarios['withAccessAndViews'] = [
@@ -80,9 +102,16 @@ class EntityOperationsTest extends GroupBrowserTestBase {
         'group/1/edit' => 'Edit',
         'group/1/members' => 'Members',
         'group/1/delete' => 'Delete',
+        'group/1/revisions' => 'Revisions',
       ],
       [],
-      ['edit group', 'delete group', 'administer members'],
+      [
+        'view group',
+        'edit group',
+        'delete group',
+        'administer members',
+        'view group revisions',
+      ],
       ['views'],
     ];
 

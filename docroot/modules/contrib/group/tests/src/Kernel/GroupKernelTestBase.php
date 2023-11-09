@@ -12,52 +12,32 @@ abstract class GroupKernelTestBase extends EntityKernelTestBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo Refactor tests to not automatically use group_test_config unless they
-   *       have a good reason to.
    */
-  public static $modules = ['group', 'group_test_config'];
+  protected static $modules = ['entity', 'flexible_permissions', 'group', 'options', 'variationcache'];
 
   /**
-   * The entity type manager service.
+   * The group relation type manager.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
-   * The content enabler plugin manager.
-   *
-   * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
+   * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface
    */
   protected $pluginManager;
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
-    $this->entityTypeManager = $this->container->get('entity_type.manager');
-    $this->pluginManager = $this->container->get('plugin.manager.group_content_enabler');
+    $this->pluginManager = $this->container->get('group_relation_type.manager');
 
     $this->installEntitySchema('group');
-    $this->installEntitySchema('group_type');
-    $this->installEntitySchema('group_content');
-    $this->installEntitySchema('group_content_type');
-    $this->installConfig(['group', 'group_test_config']);
+    $this->installEntitySchema('group_relationship');
+    $this->installEntitySchema('group_config_wrapper');
+    $this->installConfig(['group']);
 
+    // Make sure we do not use user 1.
+    $this->createUser();
     $this->setCurrentUser($this->createUser());
-  }
-
-  /**
-   * Sets the current user so group creation can rely on it.
-   *
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   The account to set as the current user.
-   */
-  protected function setCurrentUser(AccountInterface $account) {
-    $this->container->get('current_user')->setAccount($account);
   }
 
   /**
@@ -82,7 +62,6 @@ abstract class GroupKernelTestBase extends EntityKernelTestBase {
   protected function createGroup(array $values = []) {
     $storage = $this->entityTypeManager->getStorage('group');
     $group = $storage->create($values + [
-      'type' => 'default',
       'label' => $this->randomString(),
     ]);
     $group->enforceIsNew();
@@ -104,9 +83,29 @@ abstract class GroupKernelTestBase extends EntityKernelTestBase {
     $group_type = $storage->create($values + [
       'id' => $this->randomMachineName(),
       'label' => $this->randomString(),
+      'creator_wizard' => FALSE,
     ]);
     $storage->save($group_type);
     return $group_type;
+  }
+
+  /**
+   * Creates a group role.
+   *
+   * @param array $values
+   *   (optional) The values used to create the entity.
+   *
+   * @return \Drupal\group\Entity\GroupRole
+   *   The created group role entity.
+   */
+  protected function createGroupRole(array $values = []) {
+    $storage = $this->entityTypeManager->getStorage('group_role');
+    $group_role = $storage->create($values + [
+      'id' => $this->randomMachineName(),
+      'label' => $this->randomString(),
+    ]);
+    $storage->save($group_role);
+    return $group_role;
   }
 
 }

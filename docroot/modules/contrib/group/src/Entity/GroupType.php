@@ -5,6 +5,7 @@ namespace Drupal\group\Entity;
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 use Drupal\Core\Config\Entity\Exception\ConfigEntityIdLengthException;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\group\PermissionScopeInterface;
 
 /**
  * Defines the Group type configuration entity.
@@ -14,6 +15,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *   label = @Translation("Group type"),
  *   label_singular = @Translation("group type"),
  *   label_plural = @Translation("group types"),
+ *   label_collection = @Translation("Group types"),
  *   label_count = @PluralTranslation(
  *     singular = "@count group type",
  *     plural = "@count group types"
@@ -26,7 +28,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *       "delete" = "Drupal\group\Entity\Form\GroupTypeDeleteForm"
  *     },
  *     "route_provider" = {
- *       "html" = "Drupal\group\Entity\Routing\GroupTypeRouteProvider",
+ *       "html" = "Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider",
  *     },
  *     "list_builder" = "Drupal\group\Entity\Controller\GroupTypeListBuilder",
  *   },
@@ -50,6 +52,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *     "id",
  *     "label",
  *     "description",
+ *     "new_revision",
  *     "creator_membership",
  *     "creator_wizard",
  *     "creator_roles",
@@ -78,6 +81,13 @@ class GroupType extends ConfigEntityBundleBase implements GroupTypeInterface {
    * @var string
    */
   protected $description;
+
+  /**
+   * Whether a new revision should be created by default.
+   *
+   * @var bool
+   */
+  protected $new_revision = TRUE;
 
   /**
    * The group creator automatically receives a membership.
@@ -125,12 +135,12 @@ class GroupType extends ConfigEntityBundleBase implements GroupTypeInterface {
   /**
    * {@inheritdoc}
    */
-  public function getRoles($include_internal = TRUE) {
+  public function getRoles($include_synchronized = TRUE) {
     $properties = ['group_type' => $this->id()];
 
-    // Exclude internal roles if told to.
-    if ($include_internal === FALSE) {
-      $properties['internal'] = FALSE;
+    // Exclude synchronized roles if told to.
+    if ($include_synchronized === FALSE) {
+      $properties['scope'] = PermissionScopeInterface::INDIVIDUAL_ID;
     }
 
     return $this->entityTypeManager()
@@ -141,66 +151,32 @@ class GroupType extends ConfigEntityBundleBase implements GroupTypeInterface {
   /**
    * {@inheritdoc}
    */
-  public function getRoleIds($include_internal = TRUE) {
+  public function getRoleIds($include_synchronized = TRUE) {
     $query = $this->entityTypeManager()
       ->getStorage('group_role')
       ->getQuery()
       ->condition('group_type', $this->id());
 
-    // Exclude internal roles if told to.
-    if ($include_internal === FALSE) {
-      $query->condition('internal', FALSE);
+    // Exclude synchronized roles if told to.
+    if ($include_synchronized === FALSE) {
+      $query->condition('scope', PermissionScopeInterface::INDIVIDUAL_ID);
     }
 
-    return $query->execute();
+    return $query->accessCheck(FALSE)->execute();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getAnonymousRole() {
-    return $this->entityTypeManager()
-      ->getStorage('group_role')
-      ->load($this->getAnonymousRoleId());
+  public function shouldCreateNewRevision() {
+    return $this->new_revision;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getAnonymousRoleId() {
-    return $this->id() . '-anonymous';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getOutsiderRole() {
-    return $this->entityTypeManager()
-      ->getStorage('group_role')
-      ->load($this->getOutsiderRoleId());
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getOutsiderRoleId() {
-    return $this->id() . '-outsider';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getMemberRole() {
-    return $this->entityTypeManager()
-      ->getStorage('group_role')
-      ->load($this->getMemberRoleId());
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getMemberRoleId() {
-    return $this->id() . '-member';
+  public function setNewRevision($new_revision) {
+    $this->new_revision = $new_revision;
   }
 
   /**
@@ -249,97 +225,51 @@ class GroupType extends ConfigEntityBundleBase implements GroupTypeInterface {
       // @todo Remove this line when https://www.drupal.org/node/2645202 lands.
       $this->setOriginalId($group_type_id);
 
-      // The code below will create the default group roles, synchronized group
-      // roles and the group content types for enforced plugins. It is extremely
-      // important that we only run this code when we're not dealing with config
-      // synchronization.
+      // The code below will create relationship types for enforced plugins. It
+      // is extremely important that we only run this code when we're not
+      // dealing with config synchronization.
       //
       // Any of the config entities created here could still be queued up for
       // import in a combined config import. Therefore, we only create them in
       // \Drupal\group\EventSubscriber\ConfigSubscriber after the entire import
       // has finished.
       if (!$this->isSyncing()) {
-        /** @var \Drupal\group\Entity\Storage\GroupRoleStorageInterface $group_role_storage */
-        $group_role_storage = $this->entityTypeManager()->getStorage('group_role');
-
-        // Enable enforced content plugins for the new group type.
-        $this->getContentEnablerManager()->installEnforced($this);
-
-        // Create internal and synchronized group roles for the new group type.
-        $group_role_storage->createInternal([$group_type_id]);
-        $group_role_storage->createSynchronized([$group_type_id]);
+        // Enable enforced relation plugins for the new group type.
+        $this->getGroupRelationTypeManager()->installEnforced($this);
       }
     }
   }
 
   /**
-   * Returns the group role synchronizer service.
+   * Returns the group relation type manager.
    *
-   * @return \Drupal\group\GroupRoleSynchronizerInterface
-   *   The group role synchronizer service.
+   * @return \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface
+   *   The group relation type manager.
    */
-  protected function getGroupRoleSynchronizer() {
-    return \Drupal::service('group_role.synchronizer');
-  }
-
-  /**
-   * Returns the content enabler plugin manager.
-   *
-   * @return \Drupal\group\Plugin\GroupContentEnablerManagerInterface
-   *   The group content plugin manager.
-   */
-  protected function getContentEnablerManager() {
-    return \Drupal::service('plugin.manager.group_content_enabler');
+  protected function getGroupRelationTypeManager() {
+    return \Drupal::service('group_relation_type.manager');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getInstalledContentPlugins() {
-    return $this->getContentEnablerManager()->getInstalled($this);
+  public function getInstalledPlugins() {
+    return $this->getGroupRelationTypeManager()->getInstalled($this);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function hasContentPlugin($plugin_id) {
-    $installed = $this->getContentEnablerManager()->getInstalledIds($this);
+  public function hasPlugin($plugin_id) {
+    $installed = $this->getGroupRelationTypeManager()->getInstalledIds($this);
     return in_array($plugin_id, $installed);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getContentPlugin($plugin_id) {
-    return $this->getInstalledContentPlugins()->get($plugin_id);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function installContentPlugin($plugin_id, array $configuration = []) {
-    /** @var \Drupal\group\Entity\Storage\GroupContentTypeStorageInterface $storage */
-    $storage = $this->entityTypeManager()->getStorage('group_content_type');
-    $storage->createFromPlugin($this, $plugin_id, $configuration)->save();
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function updateContentPlugin($plugin_id, array $configuration) {
-    $plugin = $this->getContentPlugin($plugin_id);
-    GroupContentType::load($plugin->getContentTypeConfigId())->updateContentPlugin($configuration);
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function uninstallContentPlugin($plugin_id) {
-    $plugin = $this->getContentPlugin($plugin_id);
-    GroupContentType::load($plugin->getContentTypeConfigId())->delete();
-    return $this;
+  public function getPlugin($plugin_id) {
+    return $this->getInstalledPlugins()->get($plugin_id);
   }
 
 }
