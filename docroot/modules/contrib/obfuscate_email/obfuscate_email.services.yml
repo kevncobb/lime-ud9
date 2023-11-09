@@ -1,0 +1,6 @@
+services:
+  obfuscate_email.rot13.twig:
+    arguments: ['@renderer']
+    class: Drupal\obfuscate_email\Twig\Rot13Extension
+    tags:
+      - { name: twig.extension }

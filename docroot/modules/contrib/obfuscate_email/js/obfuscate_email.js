@@ -3,6 +3,7 @@
 
   function init(context) {
     var elements = context.querySelectorAll('[data-mail-to]');
+    var clickable = context.querySelectorAll('[data-mail-click-link]');
 
     if (!elements) {
       return;
@@ -34,12 +35,10 @@
       string = string.replace(/\/dot\//g, '.');
       string = string.replace(/\/at\//g, '@');
 
-      return string;
+      return Drupal.checkPlain(string);
     }
 
-    NodeList.prototype.forEach = Array.prototype.forEach;
-
-    elements.forEach(function (element) {
+    function setMailAddress(element) {
       var mailTo = normalizeEncryptEmail(element.getAttribute('data-mail-to'));
       var replaceInner = element.getAttribute('data-replace-inner');
 
@@ -62,6 +61,26 @@
       if (replaceInner) {
         element.innerHTML = element.innerHTML.replace(replaceInner, mailTo);
       }
+    }
+
+    if (clickable.length) {
+        Array.prototype.slice.call(elements).forEach( function(element) {
+          element.addEventListener('click', function (event) {
+          if (element.className.split(/\s+/).indexOf('link-processed') === -1) {
+            event.preventDefault();
+            setMailAddress(element);
+            element.classList.add('link-processed');
+          }
+        });
+      });
+
+      return;
+    }
+
+    NodeList.prototype.forEach = Array.prototype.forEach;
+
+    elements.forEach(function (element) {
+      setMailAddress(element);
     });
   }
 

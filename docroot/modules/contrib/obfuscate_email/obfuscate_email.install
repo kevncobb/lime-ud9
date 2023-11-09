@@ -1,0 +1,13 @@
+<?PHP
+
+/**
+ * @file
+ * Installation file for the obfuscate email module.
+ */
+
+/**
+ * Uninstalls deprecated Rot13 submodule.
+ */
+function obfuscate_email_update_9201(&$sandbox) {
+  \Drupal::service('module_installer')->uninstall(['rot13']);
+}
