@@ -1,13 +1,12 @@
 name: 'Node Form Overrides'
 type: module
 description: 'Overrides node create, update, and delete form titles and button labels'
-core: 8.x
-package: 'ILG'
+core_version_requirement: ^8 || ^9 || ^10
 dependencies:
-  - 'drupal:node'
-  - 'drupal:token'
+  - drupal:node
+  - drupal:token
 
-# Information added by Drupal.org packaging script on 2020-12-02
-version: '1.0.x-dev'
+# Information added by Drupal.org packaging script on 2023-09-24
+version: '1.0.0'
 project: 'node_form_overrides'
-datestamp: 1606902047
+datestamp: 1695587890

@@ -36,49 +36,49 @@ function node_form_overrides_form_node_type_form_alter(&$form, FormStateInterfac
   /** @var \Drupal\node\NodeTypeInterface $type */
   $type = $form_state->getFormObject()->getEntity();
 
-  $form['node_form_overrides'] = array(
+  $form['node_form_overrides'] = [
     '#type' => 'details',
     '#description' => t('Control the page titles and submit button labels on node edit and delete forms. Leaving any of these fields empty will use the core default values.'),
     '#title' => t('Label Overrides'),
     '#weight' => 1,
     '#group' => 'additional_settings',
     '#tree' => TRUE,
-  );
-  $form['node_form_overrides']['insert_button'] = array(
+  ];
+  $form['node_form_overrides']['insert_button'] = [
     '#title' => t('Create Node Submit Button'),
     '#type' => 'textfield',
     '#default_value' => $type->getThirdPartySetting('node_form_overrides', 'insert_button', 'Save'),
-  );
-  $form['node_form_overrides']['update_button'] = array(
+  ];
+  $form['node_form_overrides']['update_button'] = [
     '#title' => t('Update Node Submit Button'),
     '#type' => 'textfield',
     '#default_value' => $type->getThirdPartySetting('node_form_overrides', 'update_button', 'Update'),
-  );
-  $form['node_form_overrides']['insert_title'] = array(
+  ];
+  $form['node_form_overrides']['insert_title'] = [
     '#title' => t('Create Node Title'),
     '#type' => 'textfield',
     '#default_value' => $type->getThirdPartySetting('node_form_overrides', 'insert_title', 'Add new [node:content-type:name]'),
     '#description' => t('The page title when creating a new node of this type. This field supports tokens.'),
-  );
-  $form['node_form_overrides']['update_title'] = array(
+  ];
+  $form['node_form_overrides']['update_title'] = [
     '#title' => t('Update Node Title'),
     '#type' => 'textfield',
     '#default_value' => $type->getThirdPartySetting('node_form_overrides', 'update_title', 'Edit this [node:content-type:name]'),
     '#description' => t('The page title when updating a node of this type. This field supports tokens.'),
-  );
+  ];
 
-  $form['node_form_overrides']['delete_form_title'] = array(
+  $form['node_form_overrides']['delete_form_title'] = [
     '#title' => t('Delete Form Title'),
     '#type' => 'textfield',
     '#default_value' => $type->getThirdPartySetting('node_form_overrides', 'delete_form_title', 'Are you sure you want to delete this [node:content-type:name]?'),
     '#description' => t('The page title for the delete node confirmation form. This field supports tokens.'),
-  );
-  $form['node_form_overrides']['delete_form_description'] = array(
+  ];
+  $form['node_form_overrides']['delete_form_description'] = [
     '#title' => t('Delete Form Description'),
     '#type' => 'textarea',
     '#default_value' => $type->getThirdPartySetting('node_form_overrides', 'delete_form_description', 'This action cannot be undone.'),
     '#description' => t('The description text for the delete node confirmation form. This field supports tokens.'),
-  );
+  ];
 
   $form['node_form_overrides']['token_tree_link'] = [
     '#theme' => 'token_tree_link',
@@ -126,7 +126,7 @@ function node_form_overrides_form_node_confirm_form_alter(&$form, FormStateInter
 /**
  * Implements hook_form_node_form_alter()
  *
- * Override the button lables and form titles of node forms.
+ * Override the button labels and form titles of node forms.
  */
 function node_form_overrides_form_node_form_alter(&$form, &$form_state, $form_id) {
   $node = $form_state->getFormObject()->getEntity();
@@ -138,23 +138,24 @@ function node_form_overrides_form_node_form_alter(&$form, &$form_state, $form_id
   ];
 
   // token support for group module
-  if(\Drupal::service('module_handler')->moduleExists('group') && $group = \Drupal::routeMatch()->getParameter('group')){
+  if (\Drupal::service('module_handler')->moduleExists('group') && $group = \Drupal::routeMatch()->getParameter('group')) {
     $token_args['group'] = $group;
   }
 
   if ($node->isNew()) {
 
     if (isset($form['actions']['submit']) && $button_label = $type->getThirdPartySetting('node_form_overrides', 'insert_button')) {
-      $form['actions']['submit']['#value'] = t($button_label);
+      $form['actions']['submit']['#value'] = $button_label;
     }
 
     if ($title = $type->getThirdPartySetting('node_form_overrides', 'insert_title')) {
       $form['#title'] = $token_service->replace($title, $token_args);
     }
 
-  } else {
+  }
+  else {
     if (isset($form['actions']['submit']) && $button_label = $type->getThirdPartySetting('node_form_overrides', 'update_button')) {
-      $form['actions']['submit']['#value'] = t($button_label);
+      $form['actions']['submit']['#value'] = $button_label;
     }
     if ($title = $type->getThirdPartySetting('node_form_overrides', 'update_title')) {
       $form['#title'] = $token_service->replace($title, $token_args);
