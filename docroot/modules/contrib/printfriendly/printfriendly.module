@@ -138,10 +138,13 @@ function printfriendly_page_attachments(array &$page) {
  */
 function printfriendly_node_view(array &$build, NodeInterface $node, EntityViewDisplayInterface $display, $view_mode) {
   $config = \Drupal::config('printfriendly.settings');
+  $config_display = $config->get('printfriendly_display', array('full'));
+  if (!is_array($config_display)) {
+    $config_display = [];
+  }
+  if (in_array($node->getType(), array_filter($config_display)) && \Drupal::currentUser()->hasPermission('access printfriendly')) {
 
-  if (in_array($node->getType(), array_filter($config->get('printfriendly_display'))) && \Drupal::currentUser()->hasPermission('access printfriendly')) {
-
-    if ($view_mode == 'teaser' && in_array($view_mode, array_filter($config->get('printfriendly_display', ['teaser'])))) {
+    if ($view_mode == 'teaser' && in_array($view_mode, array_filter($config_display))) {
       $block = printfriendly_create_button('/node/' . $node->id(), FALSE);
       $build['printfriendly'] = [
         '#markup' => $block['#markup'],
