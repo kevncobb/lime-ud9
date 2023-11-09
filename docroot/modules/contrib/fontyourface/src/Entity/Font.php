@@ -72,7 +72,7 @@ class Font extends ContentEntityBase implements FontInterface {
    * {@inheritdoc}
    */
   public function getMetadata() {
-    return unserialize($this->get('metadata')->value);
+    return unserialize($this->get('metadata')->value, ['allowed_classes' => FALSE]);
   }
 
   /**
@@ -179,7 +179,7 @@ class Font extends ContentEntityBase implements FontInterface {
    * {@inheritdoc}
    */
   public static function loadByUrl($font_url) {
-    $fonts = \Drupal::entityManager()->getStorage('font')->loadByProperties(['url' => $font_url]);
+    $fonts = \Drupal::entityTypeManager()->getStorage('font')->loadByProperties(['url' => $font_url]);
     return reset($fonts);
   }
 
