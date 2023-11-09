@@ -2,6 +2,7 @@
 
 namespace Drupal\menu_condition\Plugin\Condition;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Condition\ConditionInterface;
 use Drupal\Core\Condition\ConditionPluginBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -83,13 +84,23 @@ class MenuPosition extends ConditionPluginBase implements ConditionInterface, Co
    * {@inheritdoc}
    */
   public function evaluate() {
+    if (empty($this->configuration['menu_parent'])) {
+      return TRUE;
+    }
+
     list($menu_name, $link_plugin_id) = explode(':', $this->configuration['menu_parent'], 2);
 
     $active_trail_ids = $this->menuActiveTrail->getActiveTrailIds($menu_name);
 
     // The condition evaluates to TRUE if the given menu link is in the active
     // trail.
-    return isset($active_trail_ids[$link_plugin_id]);
+    if ($link_plugin_id) {
+      return isset($active_trail_ids[$link_plugin_id]);
+    }
+    else {
+      // Condition for when a whole menu was selected.
+      return (bool) array_filter($active_trail_ids);
+    }
   }
 
   /**
@@ -97,22 +108,45 @@ class MenuPosition extends ConditionPluginBase implements ConditionInterface, Co
    */
   public function summary() {
     list($menu_name, $link_plugin_id) = explode(':', $this->configuration['menu_parent'], 2);
-    $menu_link = $this->pluginManagerMenuLink->createInstance($link_plugin_id);
-    return $this->t(
-      'The menu item @link-title is either active or is in the active trail.', [
-        '@link-title' => $menu_link->getTitle(),
-      ]
-    );
+    if ($link_plugin_id) {
+      $menu_link = $this->pluginManagerMenuLink->createInstance($link_plugin_id);
+      return $this->t(
+        'The menu item @link-title is either active or is in the active trail.', [
+          '@link-title' => $menu_link->getTitle(),
+        ]
+      );
+    }
+    else {
+      // Summary for when a whole menu was selected.
+      return $this->t(
+        'The active menu item is in the @menu-name menu.', [
+          '@menu-name' => $menu_name,
+        ]
+      );
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $form['menu_parent'] = $this->menuParentFormSelector->parentSelectElement($this->configuration['menu_parent']);
-    $form['menu_parent']['#options'] = ['' => t("- None -")] + $form['menu_parent']['#options'];
-    $form['menu_parent']['#title'] = t("Menu parent");
-    $form['menu_parent']['#description'] = t("Show the block on this menu item and all its children.");
+
+    // If we have existing selector element in configuration, use it.
+    // Otherwise create a new element which will be set to the configuration
+    // in submit.
+    if (!empty($this->configuration['menu_parent'])) {
+      $form['menu_parent'] = $this->menuParentFormSelector->parentSelectElement($this->configuration['menu_parent']);
+    }
+    else {
+      $form['menu_parent'] = [
+        '#type' => 'select',
+        '#options' => $this->menuParentFormSelector->getParentSelectOptions(),
+      ];
+    }
+
+    $form['menu_parent']['#options'] = ['' => $this->t("- None -")] + $form['menu_parent']['#options'];
+    $form['menu_parent']['#title'] = $this->t("Menu parent");
+    $form['menu_parent']['#description'] = $this->t("Show the block on this menu item and all its children.");
 
     return $form;
   }
@@ -130,6 +164,34 @@ class MenuPosition extends ConditionPluginBase implements ConditionInterface, Co
    */
   public function defaultConfiguration() {
     return ['menu_parent' => ''] + parent::defaultConfiguration();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheContexts() {
+    $cache_contexts = parent::getCacheContexts();
+    if ($this->configuration['menu_parent']) {
+      list($menu_name, $link_plugin_id) = explode(':', $this->configuration['menu_parent'], 2);
+      if ($menu_name) {
+        $cache_contexts = Cache::mergeContexts($cache_contexts, ['route.menu_active_trails:' . $menu_name]);
+      }
+    }
+    return $cache_contexts;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheTags() {
+    $tags = parent::getCacheTags();
+    if ($this->configuration['menu_parent']) {
+      list($menu_name, $link_plugin_id) = explode(':', $this->configuration['menu_parent'], 2);
+      if ($menu_name) {
+        $tags = Cache::mergeTags($tags, ['config:system.menu.' . $menu_name]);
+      }
+    }
+    return $tags;
   }
 
 }

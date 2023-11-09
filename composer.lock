@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "009dd76107226b6bc1d1a925db71629c",
+    "content-hash": "e24ca069b8d5108fc7559653e9bfa10c",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -12318,6 +12318,58 @@
             "homepage": "https://www.drupal.org/project/menu_block",
             "support": {
                 "source": "https://git.drupalcode.org/project/menu_block"
+            }
+        },
+        {
+            "name": "drupal/menu_condition",
+            "version": "1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/menu_condition.git",
+                "reference": "8.x-1.4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/menu_condition-8.x-1.4.zip",
+                "reference": "8.x-1.4",
+                "shasum": "6fdd29640020c35055286365c9efec671ee7861b"
+            },
+            "require": {
+                "drupal/core": "^8 || ^9 || ^10"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-1.4",
+                    "datestamp": "1655741627",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "joachim",
+                    "homepage": "https://www.drupal.org/user/107701"
+                },
+                {
+                    "name": "Neslee Canil Pinto",
+                    "homepage": "https://www.drupal.org/user/3580850"
+                },
+                {
+                    "name": "rupertj",
+                    "homepage": "https://www.drupal.org/user/549944"
+                }
+            ],
+            "description": "Provides a condition based on the active menu trail.",
+            "homepage": "https://www.drupal.org/project/menu_condition",
+            "support": {
+                "source": "https://git.drupalcode.org/project/menu_condition"
             }
         },
         {
