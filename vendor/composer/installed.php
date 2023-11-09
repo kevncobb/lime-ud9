@@ -3,7 +3,7 @@
         'name' => 'vardot/varbase-project',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => 'e55c101bc37588bd74064db3fcb4902dcb62c12c',
+        'reference' => '50febe1fea43d57646ef28bd7a768496a83a3e31',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -798,6 +798,15 @@
             'aliases' => array(
                 0 => '2.1.x-dev',
             ),
+            'dev_requirement' => false,
+        ),
+        'drupal/computed_field' => array(
+            'pretty_version' => '4.0.0-alpha6',
+            'version' => '4.0.0.0-alpha6',
+            'reference' => '4.0.0-alpha6',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/computed_field',
+            'aliases' => array(),
             'dev_requirement' => false,
         ),
         'drupal/config_ignore' => array(
@@ -4866,7 +4875,7 @@
         'vardot/varbase-project' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'e55c101bc37588bd74064db3fcb4902dcb62c12c',
+            'reference' => '50febe1fea43d57646ef28bd7a768496a83a3e31',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

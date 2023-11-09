@@ -117,7 +117,8 @@
     "drupal/masonry": "^4.0",
     "drupal/masonry_views": "^4.0",
     "drupal/address": "2.0.x-dev@dev",
-    "drupal/bg_image_formatter": "^1.17"
+    "drupal/bg_image_formatter": "^1.17",
+    "drupal/computed_field": "^4.0@alpha"
   },
   "require-dev": {
     "drupal/core-dev": "~10",
