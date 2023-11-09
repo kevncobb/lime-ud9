@@ -1,7 +1,6 @@
 name: 'Menu Block Title'
 type: module
 description: 'Alter the title of menu blocks'
-package: 'Developement'
 core_version_requirement: ^8 || ^9 || ^10
 
 
