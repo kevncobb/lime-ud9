@@ -125,7 +125,8 @@
     "drupal/easy_email": "^2.1@beta",
     "drupal/events_log_track": "^3.1",
     "drupal/facets": "3.0.x-dev@dev",
-    "drupal/filebrowser": "^3.1@RC"
+    "drupal/filebrowser": "^3.1@RC",
+    "drupal/fontawesome": "^2.26"
   },
   "require-dev": {
     "drupal/core-dev": "~10",
