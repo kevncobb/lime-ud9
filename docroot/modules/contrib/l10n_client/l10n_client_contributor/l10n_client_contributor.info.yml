@@ -2,14 +2,14 @@ name: 'Localization Client Contributor'
 description: 'Contribute directly to the community from the convenience of your site.'
 type: module
 core: 8.x
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^8 || ^9 || ^10
 configure: locale.settings
 dependencies:
   - xmlrpc:xmlrpc
   - drupal:locale
 package: Multilingual
 
-# Information added by Drupal.org packaging script on 2020-09-16
-version: '8.x-1.0-alpha2'
+# Information added by Drupal.org packaging script on 2023-10-11
+version: '3.0.0-alpha2'
 project: 'l10n_client'
-datestamp: 1600272138
+datestamp: 1697056657

@@ -28,29 +28,32 @@ function l10n_client_contributor_help($route_name, RouteMatchInterface $route_ma
       $output .= '<p>' . t('Users need the <em>Contribute translations to localization server</em> permission to contribute to the community server as well as their personal API key configured on their user profile.') . '</p>';
       $output .= '<p>' . t('To contribute to a community server, permissions are required on the server side as well. <a href=":server">To contribute to :server, see the <em>How to contribute</em> section there.</a>', array(':server' => 'https://localize.drupal.org/')) . '</p>';
       return $output;
+  }
+}
 
-    case 'locale.translate_page':
-      /** @var \Drupal\user\UserInterface $account */
-      $config = \Drupal::config('l10n_client_contributor.settings');
-      if (!$config->get('use_server')) {
-        return;
-      }
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function l10n_client_contributor_form_locale_translate_filter_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  /** @var \Drupal\user\UserInterface $account */
+  $config = \Drupal::config('l10n_client_contributor.settings');
+  if (!$config->get('use_server')) {
+    return;
+  }
 
-      $account = User::load(\Drupal::currentUser()->id());
-      if ($account->hasPermission('contribute translations to localization server')) {
-        if ($account->hasField('l10n_client_contributor_key')) {
-          if ($account->get('l10n_client_contributor_key')->isEmpty()) {
-            \Drupal::messenger()->addWarning(t('<a href=":edit">Set your personal API key</a> to contribute translations automatically to :server. Thanks for contributing!', array(':edit' => Url::fromRoute('entity.user.edit_form', array('user' => $account->id()))->toString(), ':server' => $config->get('server'))));
-          }
-          else {
-            return '<p><strong>' . t('All changes made will be automatically submitted to :server too. Thanks for contributing!', array(':server' => $config->get('server'))) . '</strong></p>';
-          }
-        }
-        else {
-          \Drupal::messenger()->addWarning(t('The Localization Client Contributor module was not properly installed. The contributor API key field is missing from user accounts. Translation submissions will not be saved remotely.'));
-        }
+  $account = User::load(\Drupal::currentUser()->id());
+  if ($account->hasPermission('contribute translations to localization server')) {
+    if ($account->hasField('l10n_client_contributor_key')) {
+      if ($account->get('l10n_client_contributor_key')->isEmpty()) {
+        \Drupal::messenger()->addWarning(t('<a href=":edit">Set your personal API key</a> to contribute translations automatically to :server. Thanks for contributing!', array(':edit' => Url::fromRoute('entity.user.edit_form', array('user' => $account->id()))->toString(), ':server' => $config->get('server'))));
       }
-      break;
+      else {
+        \Drupal::messenger()->addMessage(t('All changes made will be automatically submitted to :server too. Thanks for contributing!', array(':server' => $config->get('server'))));
+      }
+    }
+    else {
+      \Drupal::messenger()->addWarning(t('The Localization Client Contributor module was not properly installed. The contributor API key field is missing from user accounts. Translation submissions will not be saved remotely.'));
+    }
   }
 }
 
@@ -246,7 +249,7 @@ function l10n_client_contributor_save_translation($langcode, array $lids, array 
     \Drupal::messenger()->addMessage(\Drupal::translation()->formatPlural($contributed, 'Just contributed a translation to the community. Great job!', 'Contributed @count translations to the community, rock!'));
   }
   if ($refused) {
-    \Drupal::messenger()->addError(t('Errors while contributing translations:') . '<ul><li>' . implode('</li><li>', $refused) . '</li></ul>');
+    \Drupal::messenger()->addError(t('There was an error while contributing translations, please see the log for details.'));
   }
 
   return $message;

@@ -129,7 +129,8 @@
     "drupal/fontawesome": "^2.26",
     "drupal/fontyourface": "^4.0",
     "drupal/gdoc_field": "^1.4",
-    "drupal/group": "^3.2"
+    "drupal/group": "^3.2",
+    "drupal/l10n_client": "^3.0@alpha"
   },
   "require-dev": {
     "drupal/core-dev": "~10",

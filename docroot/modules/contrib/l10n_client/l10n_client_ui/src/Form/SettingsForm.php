@@ -5,7 +5,6 @@ namespace Drupal\l10n_client_ui\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-
 /**
  * Settings form for the localization client user interface module.
  */
@@ -14,29 +13,29 @@ class SettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'l10n_client_ui_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['l10n_client_ui.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('l10n_client_ui.settings');
 
-    $form['disabled_paths'] = array(
+    $form['disabled_paths'] = [
       '#title'         => t('Disable on-page translation on the following system paths'),
       '#type'          => 'textarea',
       '#description'   => t('One per line. Wildcard-enabled. Examples: system/ajax, admin*'),
       '#default_value' => $config->get('disabled_paths'),
-    );
+    ];
     return parent::buildForm($form, $form_state);
   }
 
@@ -50,4 +49,5 @@ class SettingsForm extends ConfigFormBase {
 
     parent::submitForm($form, $form_state);
   }
+
 }

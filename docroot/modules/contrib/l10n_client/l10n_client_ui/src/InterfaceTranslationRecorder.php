@@ -7,17 +7,17 @@ use Drupal\Core\StringTranslation\Translator\TranslatorInterface;
 /**
  * String translation listener to collect data.
  */
-class InterfaceTranslationRecorder implements TranslatorInterface  {
+class InterfaceTranslationRecorder implements TranslatorInterface {
 
   /**
    * String that were attempted to be looked up in this request.
    *
    * @var array
    */
-  protected $strings = array();
+  protected $strings = [];
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function getStringTranslation($langcode, $string, $context) {
     if ($langcode != 'en' || locale_is_translatable('en')) {
@@ -27,19 +27,20 @@ class InterfaceTranslationRecorder implements TranslatorInterface  {
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function reset() {
-    $this->strings = array();
+    $this->strings = [];
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    *
    * @return array
    *   Array of strings keyed by language code and context.
    */
-  public function getRecordedData() {
+  public function getRecordedData(): array {
     return $this->strings;
   }
+
 }

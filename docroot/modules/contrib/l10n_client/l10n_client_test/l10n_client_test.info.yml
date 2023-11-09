@@ -8,7 +8,7 @@ dependencies:
 package: Multilingual
 hidden: true
 
-# Information added by Drupal.org packaging script on 2020-09-16
-version: '8.x-1.0-alpha2'
+# Information added by Drupal.org packaging script on 2023-10-11
+version: '3.0.0-alpha2'
 project: 'l10n_client'
-datestamp: 1600272138
+datestamp: 1697056657
