@@ -2,6 +2,7 @@
 
 namespace Drupal\filebrowser\Form;
 
+use Drupal;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -9,6 +10,7 @@ use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Ajax\AfterCommand;
 use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\views\Plugin\views\field\Boolean;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Ajax\AlertCommand;
 use Drupal\Core\Ajax\RemoveCommand;
@@ -53,12 +55,34 @@ class DeleteForm extends ConfirmFormBase {
   protected $itemsToDelete;
 
   /**
+   * The file system.
+   *
+   * @var \Drupal\Core\File\FileSystemInterface
+   */
+  protected $fileSystem;
+
+  /**
+   * @var boolean
+   * True is folder is selected to be deleted
+   */
+  protected $folderSelected;
+
+  /**
+   * @var boolean
+   * True if folder deletion is confirmed
+   */
+  protected $folderDeleteConfirmed;
+
+  /**
    * ConfirmForm constructor.
    */
   public function __construct() {
-    $this->validator = \Drupal::service('filebrowser.validator');
-    $this->common = \Drupal::service('filebrowser.common');
+    $this->validator = Drupal::service('filebrowser.validator');
+    $this->common = Drupal::service('filebrowser.common');
+    $this->fileSystem = Drupal::service('file_system');
     $this->itemsToDelete = null;
+    $this->folderSelected = false;
+    $this->folderDeleteConfirmed = false;
   }
 
   public function getFormId() {
@@ -70,11 +94,6 @@ class DeleteForm extends ConfirmFormBase {
     $this->queryFid = $query_fid;
     $this->filebrowser = $this->node->filebrowser;
     $fids = explode(',', $fids_str);
-
-    // $this->error = false;
-
-    // This flag indicates that a folder has been selected for deletion.
-    $folder_selected = false;
     $files = $this->common->nodeContentLoadMultiple($fids);
     foreach ($files as $fid => $file) {
       // Additional data.
@@ -91,6 +110,7 @@ class DeleteForm extends ConfirmFormBase {
     foreach ($this->itemsToDelete as $item) {
       $list .= '<li>';
       if ($item['type'] == 'dir') {
+        $this->folderSelected = true;
         $folder_selected = true;
         $list .= '<b>' . $item['display_name'] . '</b>';
       }
@@ -117,7 +137,7 @@ class DeleteForm extends ConfirmFormBase {
     ];
 
     // If at least a folder has been selected, add a confirmation checkbox.
-    if ($folder_selected) {
+    if ($this->folderSelected) {
       $form['confirmation'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Confirm deletion of selected <b>folders</b> and all of their content.'),
@@ -145,7 +165,7 @@ class DeleteForm extends ConfirmFormBase {
   }
 
   public function getCancelUrl() {
-    return $this->node->urlInfo();
+    return $this->node->toUrl();
   }
 
   public function getDescription() {
@@ -162,7 +182,7 @@ class DeleteForm extends ConfirmFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
 
-    if ($this->error) {
+    if ($this->folderSelected && !$this->folderDeleteConfirmed) {
        // Create an AjaxResponse.
       $response = new AjaxResponse();
       // Remove old events
@@ -177,13 +197,13 @@ class DeleteForm extends ConfirmFormBase {
     else {
       foreach ($this->itemsToDelete as $item) {
         $data = unserialize($item['file_data']);
-        $success = file_unmanaged_delete_recursive($data->uri);
+        $success = $this->fileSystem->deleteRecursive($data->uri);
         if ($success) {
           // invalidate the cache for this node
           Cache::invalidateTags(['filebrowser:node:' . $this->node->id()]);
         }
         else {
-          \Drupal::messenger()->addWarning($this->t('Unable to delete @file', ['@file' => $data->uri]));
+          Drupal::messenger()->addWarning($this->t('Unable to delete @file', ['@file' => $data->uri]));
         }
       }
       $route = $this->common->redirectRoute($this->queryFid, $this->node->id());
@@ -200,13 +220,11 @@ class DeleteForm extends ConfirmFormBase {
   }
 
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    // Check if the confirmation checkbox has been checked.
-    if (empty($form_state->getValue('confirmation'))) {
-      // commented out original code below
-      // https://www.drupal.org/project/filebrowser/issues/2955654
-      //  $this->common->debugToConsole('validate');
-      //  $form_state->setErrorByName('confirmation', $this->t('You must confirm deletion of selected folders.'));
-      $this->error = true;
+    // Check if the confirmation checkbox has been checked when folder deletion.
+    if ($this->folderSelected) {
+      if (!empty($form_state->getValue('confirmation'))) {
+        $this->folderDeleteConfirmed = TRUE;
+      }
     }
     // Check if the confirmation checkbox has been checked.
     parent::validateForm($form, $form_state);

@@ -7,7 +7,6 @@
 namespace Drupal\filebrowser;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Extension\ModuleUninstallValidatorInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -17,29 +16,33 @@ class FilebrowserUninstallValidator implements ModuleUninstallValidatorInterface
   use StringTranslationTrait;
 
   /**
-   * The entity query for node.
-   * @var \Drupal\Core\Entity\Query\QueryInterface
-   */
-  protected $entityQuery;
-
-  /**
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
+   * @var \Drupal\Core\Entity\Query\QueryInterface
+   */
+  protected $entityQuery;
+
+  /**
+   * @var \Drupal\Core\StringTranslation\TranslationInterface
+   */
+  protected $stringTranslation;
+
+  /**
    * Constructs a new FilebrowserUninstallValidator.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface EntityTypeManager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity query factory.
-   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $stringTranslation
    *   The string translation service.
    */
 
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, QueryFactory $query_factory, TranslationInterface $string_translation) {
-    $this->entityQuery = $query_factory->get('node');
-    $this->stringTranslation = $string_translation;
-    $this->entityTypeManager = $entity_type_manager;
+  public function __construct(EntityTypeManagerInterface $entityTypeManager, TranslationInterface $stringTranslation) {
+    $this->entityTypeManager = $entityTypeManager;
+    $this->entityQuery = $entityTypeManager->getStorage('node')->getQuery();
+    $this->stringTranslation = $stringTranslation;
   }
 
   /**

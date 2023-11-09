@@ -2,6 +2,8 @@
 
 namespace Drupal\filebrowser;
 
+use Drupal;
+use Drupal\Core\Site\Settings;
 use Drupal\filebrowser\Services\Common;
 use Drupal\node\NodeInterface;
 
@@ -38,7 +40,7 @@ class ServerFileList {
    */
   public function __construct(NodeInterface $node, $relative_path) {
     $this->serverFileList = $this->createServerFileList($node, $relative_path);
-    $this->common = \Drupal::service('filebrowser.common');
+    $this->common = Drupal::service('filebrowser.common');
     $this->filebrowser = $node->filebrowser;
   }
 
@@ -67,19 +69,35 @@ class ServerFileList {
     /** @var Filebrowser $folder_path */
     $folder_path = $node->filebrowser->folderPath;
     $directory = $folder_path . $relative_path;
-    $files = file_scan_directory($directory, '/.*/', ['recurse' => false]);
-    $validator = \Drupal::service('filebrowser.validator');
-
+    $files = Drupal::service('file_system')->scanDirectory($directory, '/.*/', ['recurse' => false]);
+    $validator = Drupal::service('filebrowser.validator');
+    $guesser = Drupal::service('file.mime_type.guesser');
+    // fixme: this is for compatibility with D9
+    $drupal10_guesser = $guesser instanceof \Symfony\Component\Mime\MimeTypeGuesserInterface;
     foreach ($files as $key => $file) {
-
-      $file->url = file_create_url($file->uri);
+      $file->url = Drupal::service('file_url_generator')
+        ->generateAbsoluteString($file->uri);
       // Complete the required file data
-
-      $file->mimetype = \Drupal::service('file.mime_type.guesser')->guess($file->filename);
-
-      $file->size = filesize($file->uri);
-      $file->type = filetype($file->uri);
-      $file->timestamp = filectime($file->uri);
+      $file->mimetype = $drupal10_guesser ? $guesser->guessMimeType($file->filename) : $guesser->guess($file->filename);
+      $symlink = FALSE;
+      if (stripos($directory, 'private:') >= 0 ) {
+        $private_path = Settings::get('file_private_path');
+        $file_full_path = str_replace('private://', '', $file->uri);
+        $file_full_path = $private_path . '/' . $file_full_path;
+        if (is_link($file_full_path)) {
+          $symlink = TRUE;
+        }
+      }
+      if ($symlink) {
+        $file->size = 0;
+        $file->type = "dir";
+        $file->timestamp = time();
+      }
+      else {
+        $file->size = filesize($file->uri);
+        $file->type = filetype($file->uri);
+        $file->timestamp = filectime($file->uri);
+      }
 
       if (
         // filter whitelist and blacklist

@@ -2,7 +2,7 @@
 
 namespace Drupal\filebrowser\Events;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class MetadataInfo extends Event {
 
@@ -26,7 +26,7 @@ class MetadataInfo extends Event {
   }
 
   /**
-   * @return mixed
+   * @return array
    */
   public function getMetaDataInfo() {
     return $this->metaDataInfo;

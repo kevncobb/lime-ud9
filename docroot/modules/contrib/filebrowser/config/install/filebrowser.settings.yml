@@ -14,6 +14,7 @@ filebrowser:
     allow_overwrite: 0
     accepted: 'jpg jpeg png gif svg txt doc docx pdf mp3'
   presentation:
+    overwrite_breadcrumb: 1
     default_view: 'list-view'
     encoding: 'UTF-8'
     hide_extension: 0
@@ -22,7 +23,9 @@ filebrowser:
       icon:  'icon'
       created: 'created'
       size: 'size'
-      mimetype: 0
+      mimetype: '0'
     default_sort: 'name'
     default_sort_order: 'asc'
     langcode: 'en'
+  adhocsetting:
+    external_host: ''

@@ -124,7 +124,8 @@
     "drupal/disqus": "^2.0@alpha",
     "drupal/easy_email": "^2.1@beta",
     "drupal/events_log_track": "^3.1",
-    "drupal/facets": "3.0.x-dev@dev"
+    "drupal/facets": "3.0.x-dev@dev",
+    "drupal/filebrowser": "^3.1@RC"
   },
   "require-dev": {
     "drupal/core-dev": "~10",

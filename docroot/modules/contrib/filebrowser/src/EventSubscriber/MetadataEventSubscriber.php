@@ -2,6 +2,7 @@
 
 namespace Drupal\filebrowser\EventSubscriber;
 
+use Drupal;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Url;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -17,7 +18,7 @@ class MetadataEventSubscriber implements EventSubscriberInterface {
   protected $nid;
 
   public function __construct() {
-    $this->storage = \Drupal::entityTypeManager()->getStorage('filebrowser_metadata_entity');
+    $this->storage = Drupal::entityTypeManager()->getStorage('filebrowser_metadata_entity');
   }
 
   /**
@@ -29,7 +30,6 @@ class MetadataEventSubscriber implements EventSubscriberInterface {
   }
 
   public function setMetadata(MetadataEvent $event) {
-    /** @var FilebrowserMetadataEntity $metadata */
     $this->nid = $event->nid;
     $fid = $event->getFid();
     $file = $event->file;
@@ -40,13 +40,15 @@ class MetadataEventSubscriber implements EventSubscriberInterface {
       // only the selected columns
       if ($columns[$name]) {
         $data = $this->createData($name, $fid, $file, $subdir_fid);
-        $query = \Drupal::entityQuery('filebrowser_metadata_entity')
+        $query = Drupal::entityQuery('filebrowser_metadata_entity')
+          ->accessCheck(FALSE)
           ->condition('fid', $fid)
           ->condition('module', 'filebrowser')
           ->condition('name', $name);
         $entity_id = $query->execute();
         if ($entity_id) {
           // entity exists, so we just update the contents
+          /** @var FilebrowserMetadataEntity $metadata */
           $metadata = $this->storage->load(reset($entity_id));
           $metadata->setTheme($data['theme']);
           $metadata->setContent(serialize($data['content']));
@@ -62,7 +64,7 @@ class MetadataEventSubscriber implements EventSubscriberInterface {
             'theme' => $data['theme'],
             'content' => serialize($data['content']),
           ];
-          $entity = FilebrowserMetadataEntity::create($value);
+          $entity = $this->storage->create($value);
           $entity->save();
         }
       }
@@ -88,7 +90,7 @@ class MetadataEventSubscriber implements EventSubscriberInterface {
         case 'created':
           return [
             'theme' => "",
-            'content' => \Drupal::service('date.formatter')->format($file->fileData->timestamp, 'short'),
+            'content' => Drupal::service('date.formatter')->format($file->fileData->timestamp, 'short'),
           ];
 
         case 'mimetype':
@@ -99,10 +101,18 @@ class MetadataEventSubscriber implements EventSubscriberInterface {
       }
     }
     else {
-      return [
-        'theme' => "",
-        'content' => "",
-      ];
+      if ($id == 'description') {
+        return [
+          'content' => $this->generateDescription($file, $subdir_fid, $fid),
+          'theme' => 'filebrowser_description'
+        ];
+      }
+      else {
+        return [
+          'theme' => "",
+          'content' => "",
+        ];
+      }
     }
   }
 
@@ -118,7 +128,8 @@ class MetadataEventSubscriber implements EventSubscriberInterface {
   public function generateDescription($file, $subdir_fid, $fid) {
     /** @var FilebrowserMetadataEntity $metadata */
     // get the present description
-    $query = \Drupal::entityQuery('filebrowser_metadata_entity')
+    $query = Drupal::entityQuery('filebrowser_metadata_entity')
+      ->accessCheck(FALSE)
       ->condition('fid', $fid)
       ->condition('module', 'filebrowser')
       ->condition('name', 'description');
@@ -128,22 +139,23 @@ class MetadataEventSubscriber implements EventSubscriberInterface {
       // entity exists
       $metadata = $this->storage->load(reset($entity_id));
       $content = unserialize($metadata->content->value);
-      $description = $content['title'];
+      //originally title was not set for directories. So even if the entity existed, there was no title
+      $description = $content['title'] ?? $this->t('Default description');
     }
     else{
       // no description available
-      $description = 'Default description';
+      $description = $this->t('Default description');
     }
 
     if(!empty($subdir_fid)) {
-      //this is a subfolder
+      //this is a sub-folder
       $p = ['nid' => $this->nid, 'query_fid' => $subdir_fid, 'fids' => $fid,];
     }
     else {
       $p = ['nid' => $this->nid, 'fids' => $fid,];
     }
     return [
-      'create_link' => $file->name == '..' ? false : true,
+      'create_link' => !($file->name == '..'),
       'title' => $file->name == '..' ? '' : $description,
       'url' => Url::fromRoute('filebrowser.inline_description_form', $p),
       'attributes' => [

@@ -2,6 +2,7 @@
 
 namespace Drupal\filebrowser\Breadcrumb;
 
+use Drupal;
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Breadcrumb\Breadcrumb;
@@ -37,12 +38,16 @@ class BreadcrumbBuilder implements BreadcrumbBuilderInterface {
   }
 
   /**
-   * @var \Drupal\Node\NodeInterface $node
    * @inheritdoc
    */
   public function applies(RouteMatchInterface $route_match) {
     $this->node = $this->common->getNodeFromPath();
-    return isset($this->node) && $this->node->bundle() == 'dir_listing';
+    if (isset($this->node) && $this->node->bundle() == 'dir_listing') {
+      if ($this->node->filebrowser->overwriteBreadcrumb == 1) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -53,7 +58,7 @@ class BreadcrumbBuilder implements BreadcrumbBuilderInterface {
     $breadcrumb = new Breadcrumb();
     $this->node =  $this->common->getNodeFromPath();
     $title = $this->node->getTitle();
-    $fid = \Drupal::request()->query->get('fid');
+    $fid = Drupal::request()->query->get('fid');
     if (isset($fid)) {
       $content = $this->storage->loadAllRecordsFromRoot($this->node->id());
     }
