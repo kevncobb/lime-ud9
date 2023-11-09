@@ -1,7 +1,16 @@
 access moderation notes:
   title: 'Access Moderation Notes'
+  description: 'Able to view Moderation Notes'
 create moderation notes:
-  title: 'Create Moderation Notes'
+  title: 'Create Moderation Note'
+create moderation notes on uneditable entities:
+  title: 'Create Moderation Note if unable to edit content'
+create moderation note replies:
+  title: 'Reply to moderation note'
+resolve moderation notes:
+  title: 'Resolve Moderation Note'
+resolve moderation notes on editable entities:
+  title: 'Resolve Moderation Note if able to edit content'
 administer moderation notes:
   title: 'Administer Moderation Notes'
   restrict access: true

@@ -4,7 +4,7 @@ moderation_note.new:
     _controller: '\Drupal\moderation_note\Controller\ModerationNoteController::createNote'
     _title: 'Add note'
   requirements:
-    _permission: 'create moderation notes'
+    _custom_access: '\Drupal\moderation_note\Controller\ModerationNoteController::createNoteAccess'
   options:
     parameters:
       entity:
@@ -40,8 +40,7 @@ moderation_note.reply:
     _controller: '\Drupal\moderation_note\Controller\ModerationNoteController::replyToNote'
     _title: 'Reply to note'
   requirements:
-    _entity_access: 'moderation_note.view'
-    _permission: 'create moderation notes'
+    _entity_access: 'moderation_note.reply'
 
 moderation_note.view:
   path: '/moderation-note/{moderation_note}'

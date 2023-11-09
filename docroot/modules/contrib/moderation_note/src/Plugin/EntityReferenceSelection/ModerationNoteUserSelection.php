@@ -13,7 +13,8 @@ use Drupal\user\Entity\User;
  *   label = @Translation("Select users who can access moderation notes"),
  *   group = "moderation_note",
  *   entity_types = {"user"},
- *   weight = 1
+ *   weight = 1,
+ *   base_plugin_label = "Moderation Note: Filtered user selection"
  * )
  */
 class ModerationNoteUserSelection extends PhpSelection {

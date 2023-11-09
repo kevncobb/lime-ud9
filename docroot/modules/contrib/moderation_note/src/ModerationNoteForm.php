@@ -2,13 +2,17 @@
 
 namespace Drupal\moderation_note;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseDialogCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\moderation_note\Ajax\AddModerationNoteCommand;
 use Drupal\moderation_note\Ajax\ReplyModerationNoteCommand;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Form handler for the moderation_note edit forms.
@@ -16,12 +20,53 @@ use Drupal\moderation_note\Ajax\ReplyModerationNoteCommand;
 class ModerationNoteForm extends ContentEntityForm {
 
   /**
+   * The moderation note menu count service.
+   *
+   * @var \Drupal\moderation_note\ModerationNoteMenuCountInterface
+   */
+  protected $menu;
+
+  /**
+   * Constructs a new ModerationNoteResolveForm object.
+   *
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   The entity repository service.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
+   *   The entity type bundle info service.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
+   * @param \Drupal\moderation_note\ModerationNoteMenuCountInterface $menu
+   *   The moderation note menu count service.
+   */
+  public function __construct(
+    EntityRepositoryInterface $entity_repository,
+    EntityTypeBundleInfoInterface $entity_type_bundle_info,
+    TimeInterface $time,
+    ModerationNoteMenuCountInterface $menu
+    ) {
+    parent::__construct($entity_repository, $entity_type_bundle_info, $time);
+    $this->menu = $menu;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity.repository'),
+      $container->get('entity_type.bundle.info'),
+      $container->get('datetime.time'),
+      $container->get('moderation_note.menu_count')
+    );
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
 
-    /** @var \Drupal\moderation_note\Entity\ModerationNote $note */
+    /** @var \Drupal\moderation_note\ModerationNoteInterface $note */
     $note = $this->entity;
 
     // Wrap our form so that our submit callback can re-render the form.
@@ -65,7 +110,7 @@ class ModerationNoteForm extends ContentEntityForm {
       '#default_value' => $note->getQuoteOffset(),
     ];
 
-    if ($this->getOperation() === 'reply' || $this->entity->hasParent()) {
+    if ($this->getOperation() === 'reply' || $note->hasParent()) {
       $form['#attributes']['class'][] = 'moderation-note-form-reply';
     }
 
@@ -176,10 +221,26 @@ class ModerationNoteForm extends ContentEntityForm {
     if ($this->getOperation() === 'create') {
       $command = new AddModerationNoteCommand($note);
       $response->addCommand($command);
+
+      $entity = $note->getModeratedEntity();
+      $entity_type = $entity->getEntityTypeId();
+      $entity_id = $entity->id();
+      $tab_selector = '.use-ajax.tabs__link.js-tabs-link[data-drupal-link-system-path="moderation-note/list/' . $entity_type . '/' . $entity_id . '"]';
+      $link = $this->menu->contentLink($entity_type, $entity_id);
+      $command = new ReplaceCommand($tab_selector, $link);
+      $response->addCommand($command);
+      if ($this->currentUser()->id() == ($note->getAssignee() ? $note->getAssignee()->id() : 0)) {
+        $link = $this->menu->assignedTo($this->currentUser()->id());
+        $command = new ReplaceCommand('.toolbar-menu.moderation-note', $link);
+        $response->addCommand($command);
+      }
+
       $command = new CloseDialogCommand('#drupal-off-canvas');
     }
     else {
-      $content = $this->entityTypeManager->getViewBuilder('moderation_note')->view($note);
+      $content = $this->entityTypeManager
+        ->getViewBuilder('moderation_note')
+        ->view($note);
       $command = new ReplaceCommand($selector, $content);
     }
 

@@ -135,7 +135,8 @@
     "drupal/libraries_ui": "^2.3",
     "drupal/link_plain_text_formatter": "^1.2",
     "drupal/maestro": "^3.1@RC",
-    "drupal/menu_condition": "^1.4"
+    "drupal/menu_condition": "^1.4",
+    "drupal/moderation_note": "^1.0@beta"
   },
   "require-dev": {
     "drupal/core-dev": "~10",

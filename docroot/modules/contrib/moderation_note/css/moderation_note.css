@@ -1,13 +1,14 @@
 .moderation-note-tooltip {
   position: absolute;
-  background: #277abd;
+  z-index: 100;
+  padding: 6px 1em;
+  transition: background .5s ease;
+  color: white;
   border: 0;
   border-radius: 5px;
-  color: white;
-  transition: background .5s ease;
-  padding: 6px 1em;
-  font-size: 12px;
+  background: #277abd;
   font-family: "Lucida Grande", 'Lucida Sans Unicode','liberation sans', sans-serif;
+  font-size: 12px;
 }
 
 .moderation-note-quickedit-active .moderation-note-tooltip {
@@ -16,23 +17,23 @@
 
 .moderation-note-tooltip:hover,
 .moderation-note-tooltip:focus {
-  outline: none;
-  border: 0;
   color: white;
+  border: 0;
+  outline: none;
   background: #46a0f5;
 }
 
 .moderation-note-tooltip::after {
-  content: " ";
   position: absolute;
-  left: calc(50% - 10px);
   top: 100%;
+  left: calc(50% - 10px);
   width: 0;
   height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-top: 10px solid #277abd;
+  content: " ";
   transition: border-top .5s ease;
+  border-top: 10px solid #277abd;
+  border-right: 10px solid transparent;
+  border-left: 10px solid transparent;
 }
 
 .moderation-note-tooltip:hover::after,
@@ -41,8 +42,8 @@
 }
 
 .moderation-note-highlight {
-  background: yellow;
   transition: background .5s ease;
+  background: yellow;
 }
 
 .moderation-note-contextual-highlight {
@@ -50,41 +51,49 @@
 }
 
 .moderation-note-sidebar-wrapper,
-#drupal-off-canvas .moderation-note-sidebar-wrapper {
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-sidebar-wrapper,
+#drupal-off-canvas-wrapper .moderation-note-sidebar-wrapper {
   padding-bottom: 150px;
 }
 
 div.moderation-note,
 .moderation-note-form,
-#drupal-off-canvas div.moderation-note,
-#drupal-off-canvas .moderation-note-form {
-  background: #2a6594;
+#drupal-off-canvas:not(.drupal-off-canvas-reset) div.moderation-note,
+#drupal-off-canvas-wrapper div.moderation-note,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form,
+#drupal-off-canvas-wrapper .moderation-note-form {
   display: block;
-  color: white;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   max-width: 500px;
-  padding: 10px;
   margin-top: 10px;
+  padding: 10px;
+  color: white;
+  background: #2a6594;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-.ui-dialog-off-canvas #drupal-off-canvas .moderation-note-form .form-item.form-item-assignee {
+.ui-dialog-off-canvas #drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form .form-item.form-item-assignee,
+.ui-dialog-off-canvas #drupal-off-canvas-wrapper .moderation-note-form .form-item.form-item-assignee {
   display: flex;
+  overflow: hidden;
   align-items: center;
   margin-top: 10px;
 }
 
 .moderation-note-form .form-item-assignee label,
-#drupal-off-canvas .moderation-note-form .form-item-assignee label {
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form .form-item-assignee label,
+#drupal-off-canvas-wrapper .moderation-note-form .form-item-assignee label {
   margin-right: .5rem;
 }
 
 .moderation-note-form .form-item-assignee input,
-#drupal-off-canvas .moderation-note-form .form-item-assignee input {
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form .form-item-assignee input,
+#drupal-off-canvas-wrapper .moderation-note-form .form-item-assignee input {
   width: 100%;
   margin: 0;
 }
 
-#drupal-off-canvas .moderation-note-form input {
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form input,
+#drupal-off-canvas-wrapper .moderation-note-form input {
   min-width: inherit;
 }
 
@@ -107,28 +116,33 @@ div.moderation-note,
 }
 
 .moderation-note-form-delete,
-#drupal-off-canvas .moderation-note-form-delete {
-  background: #b53535;
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form-delete,
+#drupal-off-canvas-wrapper .moderation-note-form-delete {
   animation: moderation-note-form-delete .5s;
+  background: #b53535;
 }
 
 .ui-dialog .ui-dialog-content .moderation-note-form.moderation-note-form-delete .form-actions,
 .moderation-note-form.moderation-note-form-delete input[type="submit"],
 .moderation-note-form.moderation-note-form-delete .form-actions,
-#drupal-off-canvas .moderation-note-form.moderation-note-form-delete .form-actions,
-#drupal-off-canvas .moderation-note-form.moderation-note-form-delete input[type="submit"].button {
-  background: #b94747;
-  color: white;
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form.moderation-note-form-delete .form-actions,
+#drupal-off-canvas-wrapper .moderation-note-form.moderation-note-form-delete .form-actions,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form.moderation-note-form-delete input[type="submit"].button,
+#drupal-off-canvas-wrapper .moderation-note-form.moderation-note-form-delete input[type="submit"].button {
   animation: moderation-note-form-delete-actions .5s;
+  color: white;
+  background: #b94747;
 }
 
 .moderation-note-form.moderation-note-form-delete input[type="submit"]:hover,
-#drupal-off-canvas .moderation-note-form.moderation-note-form-delete input[type="submit"].button:hover {
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form.moderation-note-form-delete input[type="submit"].button:hover,
+#drupal-off-canvas-wrapper .moderation-note-form.moderation-note-form-delete input[type="submit"].button:hover {
   background: #893737;
 }
 
 .moderation-note .moderation-note-text,
-#drupal-off-canvas .moderation-note .moderation-note-text {
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note .moderation-note-text,
+#drupal-off-canvas-wrapper .moderation-note .moderation-note-text {
   margin-bottom: 10px;
 }
 
@@ -136,159 +150,199 @@ div.moderation-note,
 .moderation-note .moderation-note-owner a,
 .moderation-note .moderation-note-assignee,
 .moderation-note .moderation-note-assignee a,
-#drupal-off-canvas .moderation-note .moderation-note-owner,
-#drupal-off-canvas .moderation-note .moderation-note-owner a,
-#drupal-off-canvas .moderation-note .moderation-note-assignee,
-#drupal-off-canvas .moderation-note .moderation-note-assignee a {
-  font-size: 12px;
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note .moderation-note-owner,
+#drupal-off-canvas-wrapper .moderation-note .moderation-note-owner,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note .moderation-note-owner a,
+#drupal-off-canvas-wrapper .moderation-note .moderation-note-owner a,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note .moderation-note-assignee,
+#drupal-off-canvas-wrapper .moderation-note .moderation-note-assignee,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note .moderation-note-assignee a,
+#drupal-off-canvas-wrapper .moderation-note .moderation-note-assignee a {
   text-align: right;
+  font-size: 12px;
 }
 
 .moderation-note .moderation-note-assignee,
-#drupal-off-canvas .moderation-note .moderation-note-assignee {
-  padding: 5px;
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note .moderation-note-assignee,
+#drupal-off-canvas-wrapper .moderation-note .moderation-note-assignee {
   margin: -10px -10px 10px -10px;
+  padding: 5px;
 }
 
 .moderation-note a,
-#drupal-off-canvas .moderation-note a {
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note a,
+#drupal-off-canvas-wrapper .moderation-note a {
   color: #85bef4;
   border: 0;
 }
 
 .moderation-note a:hover,
-#drupal-off-canvas .moderation-note a:hover {
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note a:hover,
+#drupal-off-canvas-wrapper .moderation-note a:hover {
   color: #46a0f5;
 }
 
 .moderation-note-quote-information,
-#drupal-off-canvas .moderation-note-quote-information {
-  background: #245780;
-  padding: 10px;
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-quote-information,
+#drupal-off-canvas-wrapper .moderation-note-quote-information {
   margin-bottom: 10px;
+  padding: 10px;
   border: 1px solid #407baa;
+  background: #245780;
 }
 
 .moderation-note-quote-information blockquote,
-#drupal-off-canvas .moderation-note-quote-information blockquote {
-  background: none;
-  border: 0;
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-quote-information blockquote,
+#drupal-off-canvas-wrapper .moderation-note-quote-information blockquote {
+  overflow: hidden;
   margin: 5px;
   padding: 0;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
+  border: 0;
+  background: none;
 }
 
 .moderation-note-quote-information p,
-#drupal-off-canvas .moderation-note-quote-information p {
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-quote-information p,
+#drupal-off-canvas-wrapper .moderation-note-quote-information p {
   margin: 0;
   font-size: 12px;
 }
 
 .ui-dialog .moderation-note-quote-information,
 .ui-dialog .moderation-note-quote-information p,
-#drupal-off-canvas .ui-dialog .moderation-note-quote-information,
-#drupal-off-canvas .ui-dialog .moderation-note-quote-information p {
-  display: none;
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .ui-dialog .moderation-note-quote-information,
+#drupal-off-canvas-wrapper .ui-dialog .moderation-note-quote-information,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .ui-dialog .moderation-note-quote-information p,
+#drupal-off-canvas-wrapper .ui-dialog .moderation-note-quote-information p {
+  display: none !important;
 }
 
 .ui-dialog .moderation-note-preview .moderation-note-quote-information,
-#drupal-off-canvas .ui-dialog .moderation-note-preview .moderation-note-quote-information {
-  display: block;
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .ui-dialog .moderation-note-preview .moderation-note-quote-information,
+#drupal-off-canvas-wrapper .ui-dialog .moderation-note-preview .moderation-note-quote-information {
+  display: block !important;
 }
 
 .moderation-note .moderation-note-actions,
 .ui-dialog .ui-dialog-content .moderation-note-form .form-actions,
 .moderation-note-form .form-actions,
-#drupal-off-canvas .moderation-note .moderation-note-actions,
-#drupal-off-canvas .ui-dialog .ui-dialog-content .moderation-note-form .form-actions,
-#drupal-off-canvas .moderation-note-form .form-actions {
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note .moderation-note-actions,
+#drupal-off-canvas-wrapper .moderation-note .moderation-note-actions,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .ui-dialog .ui-dialog-content .moderation-note-form .form-actions,
+#drupal-off-canvas-wrapper .ui-dialog .ui-dialog-content .moderation-note-form .form-actions,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form .form-actions,
+#drupal-off-canvas-wrapper .moderation-note-form .form-actions {
   display: block;
-  background: #407baa;
+  width: calc(100% + 20px);
+  margin-top: 10px;
+  margin-bottom: -10px;
+  margin-left: -10px;
   padding-top: 0;
   text-align: right;
-  margin-left: -10px;
-  margin-bottom: -10px;
-  margin-top: 10px;
-  width: calc(100% + 20px);
+  background: #407baa;
 }
 
 .moderation-note-reply,
 .moderation-note-form-reply,
-#drupal-off-canvas .moderation-note-reply,
-#drupal-off-canvas .moderation-note-form-reply {
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-reply,
+#drupal-off-canvas-wrapper .moderation-note-reply,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form-reply,
+#drupal-off-canvas-wrapper .moderation-note-form-reply {
   margin-left: 15px;
 }
 
 .moderation-note-actions a,
-.ui-dialog-off-canvas #drupal-off-canvas .moderation-note-actions a,
+.ui-dialog-off-canvas #drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-actions a,
+.ui-dialog-off-canvas #drupal-off-canvas-wrapper .moderation-note-actions a,
 .moderation-note-form input[type="submit"],
-#drupal-off-canvas .moderation-note-actions a,
-#drupal-off-canvas .moderation-note-form input[type="submit"].button {
-  background: #407baa;
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-actions a,
+#drupal-off-canvas-wrapper .moderation-note-actions a,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form input[type="submit"].button,
+#drupal-off-canvas-wrapper .moderation-note-form input[type="submit"].button {
+  display: inline-block;
+  width: initial;
+  margin: 0;
+  padding: 10px;
+  transition: .2s ease;
   color: white;
+  border: 0;
+  border-radius: 0;
+  background: #407baa;
   font-size: 13px;
   font-weight: normal;
-  margin: 0;
-  display: inline-block;
-  padding: 10px;
-  width: initial;
-  border-radius: 0;
-  border: 0;
-  transition: .2s ease;
 }
 
 .moderation-note-actions a:hover,
-.ui-dialog-off-canvas #drupal-off-canvas .moderation-note-actions a:hover,
+.ui-dialog-off-canvas #drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-actions a:hover,
+.ui-dialog-off-canvas #drupal-off-canvas-wrapper .moderation-note-actions a:hover,
 .moderation-note-form input[type="submit"]:hover,
-#drupal-off-canvas .moderation-note-actions a:hover,
-#drupal-off-canvas .moderation-note-form input[type="submit"].button:hover,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-actions a:hover,
+#drupal-off-canvas-wrapper .moderation-note-actions a:hover,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form input[type="submit"].button:hover,
+#drupal-off-canvas-wrapper .moderation-note-form input[type="submit"].button:hover,
 .moderation-note-actions a:active,
-.ui-dialog-off-canvas #drupal-off-canvas .moderation-note-actions a:active,
+.ui-dialog-off-canvas #drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-actions a:active,
+.ui-dialog-off-canvas #drupal-off-canvas-wrapper .moderation-note-actions a:active,
 .moderation-note-form input[type="submit"]:active,
-#drupal-off-canvas .moderation-note-actions a:active,
-#drupal-off-canvas .moderation-note-form input[type="submit"].button:active,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-actions a:active,
+#drupal-off-canvas-wrapper .moderation-note-actions a:active,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form input[type="submit"].button:active,
+#drupal-off-canvas-wrapper .moderation-note-form input[type="submit"].button:active,
 .moderation-note-actions a:focus,
-.ui-dialog-off-canvas #drupal-off-canvas .moderation-note-actions a:focus,
+.ui-dialog-off-canvas #drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-actions a:focus,
+.ui-dialog-off-canvas #drupal-off-canvas-wrapper .moderation-note-actions a:focus,
 .moderation-note-form input[type="submit"]:focus,
-#drupal-off-canvas .moderation-note-actions a:focus,
-#drupal-off-canvas .moderation-note-form input[type="submit"].button:focus {
-  background: #376189;
-  border: 0;
-  color: white;
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-actions a:focus,
+#drupal-off-canvas-wrapper .moderation-note-actions a:focus,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form input[type="submit"].button:focus,
+#drupal-off-canvas-wrapper .moderation-note-form input[type="submit"].button:focus {
   text-decoration: none;
+  color: white;
+  border: 0;
+  background: #376189;
 }
 
-.ui-dialog-off-canvas #drupal-off-canvas .moderation-note-form .form-item {
+.ui-dialog-off-canvas #drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form .form-item,
+.ui-dialog-off-canvas #drupal-off-canvas-wrapper .moderation-note-form .form-item {
   margin-top: 0;
   margin-bottom: 0;
 }
 
-#drupal-off-canvas .moderation-note-form .messages__wrapper,
-#drupal-off-canvas .moderation-note-form .messages {
-  background: none;
-  padding-top: 0;
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form .messages__wrapper,
+#drupal-off-canvas-wrapper .moderation-note-form .messages__wrapper,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form .messages,
+#drupal-off-canvas-wrapper .moderation-note-form .messages {
   margin: 0;
+  padding-top: 0;
+  background: none;
 }
 
-.ui-dialog-off-canvas #drupal-off-canvas .moderation-note-form .form-item.form-item-assignee,
-.ui-dialog-off-canvas #drupal-off-canvas .moderation-note-form .form-item.form-item-assignee label,
-#drupal-off-canvas .ui-autocomplete *,
-#drupal-off-canvas .moderation-note *,
-#drupal-off-canvas .moderation-note-form-wrapper,
-#drupal-off-canvas .moderation-note-form-wrapper p {
+.ui-dialog-off-canvas #drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form .form-item.form-item-assignee,
+.ui-dialog-off-canvas #drupal-off-canvas-wrapper .moderation-note-form .form-item.form-item-assignee,
+.ui-dialog-off-canvas #drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form .form-item.form-item-assignee label,
+.ui-dialog-off-canvas #drupal-off-canvas-wrapper .moderation-note-form .form-item.form-item-assignee label,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .ui-autocomplete *,
+#drupal-off-canvas-wrapper .ui-autocomplete *,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note *,
+#drupal-off-canvas-wrapper .moderation-note *,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form-wrapper,
+#drupal-off-canvas-wrapper .moderation-note-form-wrapper,
+#drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note-form-wrapper p,
+#drupal-off-canvas-wrapper .moderation-note-form-wrapper p {
   background: none;
   font-size: 14px;
   font-weight: normal;
 }
 
-.ui-dialog-off-canvas #drupal-off-canvas .moderation-note .moderation-note-publishing-status {
-  padding: 10px;
-  background: #407baa;
-  color: white;
-  text-align: right;
+.ui-dialog-off-canvas #drupal-off-canvas:not(.drupal-off-canvas-reset) .moderation-note .moderation-note-publishing-status,
+.ui-dialog-off-canvas #drupal-off-canvas-wrapper .moderation-note .moderation-note-publishing-status {
   margin: -10px -10px 15px -10px;
+  padding: 10px;
+  text-align: right;
+  color: white;
+  background: #407baa;
 }
 
 .moderation-note-resolved {
@@ -297,7 +351,8 @@ div.moderation-note,
 
 /* @todo Remove when https://www.drupal.org/project/drupal/issues/2945571 is closed */
 
-.ui-dialog-off-canvas #drupal-off-canvas {
+.ui-dialog-off-canvas #drupal-off-canvas:not(.drupal-off-canvas-reset),
+.ui-dialog-off-canvas #drupal-off-canvas-wrapper {
   background: none;
 }
 

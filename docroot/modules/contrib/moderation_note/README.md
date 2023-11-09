@@ -1,22 +1,34 @@
-Moderation Note
-================
+# Moderation Note
 
-About this module
-------------------
 The Moderation Note module allows you to notate moderated entities.
 
-Requirements
--------------
-- Content Moderation module
-- User module
+For a full description of the module, visit the
+[project page](https://www.drupal.org/project/moderation_note).
 
-Configuration
---------------
+Submit bug reports and feature suggestions, or track changes in the
+[issue queue](https://www.drupal.org/project/issues/moderation_note).
+
+## Requirements
+
+This module requires no modules outside of Drupal core.
+
+## Installation
+
+Install as you would normally install a contributed Drupal module. For further
+information, see
+[Installing Drupal Modules](https://www.drupal.org/docs/extending-drupal/installing-drupal-modules).
+
+## Configuration
+
 You can disable email notifications sent by this module by visiting
-/admin/config/moderation-note, or Admin -> Configuration -> Moderation Notes.
+`/admin/config/moderation-note`,
 
-Usage
-------
+or
+
+`Admin -> Configuration -> Moderation Notes`.
+
+## Usage
+
 When viewing the latest revision of a moderated entity, any user with the
 "create moderation notes" permission can select text in an entity field and add
 a note to it.
@@ -35,34 +47,34 @@ clicking "Resolve" when viewing the note. Resolved notes can be re-opened or
 permanently deleted by clicking the "View notes" local task and viewing the
 full resolved note.
 
-Email notifications
---------------------
+## Email notifications
+
 To inform content editors of new notes, email notifications are sent out in
 response to a variety of events:
 
 1. When a note is created, the creator and last-updater of the notated entity
-is notified.
-2. When a note is assigned to a user, the assignee is notified.
-3. When a note is resolved, re-opened, or replied to, the creator and
-last-updater of the notated entity, the note assignee (if there is one), and
-all users who replied to the note are notified.
+   is notified.
+1. When a note is assigned to a user, the assignee is notified.
+1. When a note is resolved, re-opened, or replied to, the creator and
+   last-updater of the notated entity, the note assignee (if there is one),
+   and all users who replied to the note are notified.
 
 When a note is deleted, no one is notified as the resolve notification had
 already been sent out.
 
 If you want to customize the email message, your theme can override the
-template at templates/mail-moderation-note.html.twig.
+template at `templates/mail-moderation-note.html.twig`.
 
-You can disable these notifications at /admin/config/moderation-note
+You can disable these notifications at `/admin/config/moderation-note`
 
-Multilingual
--------------
+## Multilingual
+
 Each note is tied to the langcode of the field being notated. That means that
 editors can perform concurrent review of the same content in different
 languages.
 
-Note about permissions
------------------
+## Note about permissions
+
 With a typical Content Moderation setup, you will probably want to give all
 users with the "access moderation notes" permission the "view latest version"
 and potentially the "view any unpublished content" permission. These allow note

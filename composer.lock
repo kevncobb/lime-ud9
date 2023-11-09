@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e24ca069b8d5108fc7559653e9bfa10c",
+    "content-hash": "f10e12df44d6fe077048a89d8542c3ed",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -12627,6 +12627,57 @@
             "support": {
                 "source": "https://git.drupalcode.org/project/minifyhtml",
                 "issues": "https://www.drupal.org/project/issues/minifyhtml"
+            }
+        },
+        {
+            "name": "drupal/moderation_note",
+            "version": "1.0.0-beta5",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/moderation_note.git",
+                "reference": "8.x-1.0-beta5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/moderation_note-8.x-1.0-beta5.zip",
+                "reference": "8.x-1.0-beta5",
+                "shasum": "bf4fd220375c364e58b6080c786628eefe79a9d9"
+            },
+            "require": {
+                "drupal/core": "^9 || ^10"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-1.0-beta5",
+                    "datestamp": "1698076659",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Beta releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Samuel Mortenson (samuel.mortenson)",
+                    "homepage": "https://www.drupal.org/u/samuelmortenson",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Steven Ayers (bluegeek9)",
+                    "homepage": "https://www.drupal.org/u/bluegeek9",
+                    "role": "Co-Maintainer"
+                }
+            ],
+            "description": "Moderation Note module allows you to notate and review moderated Entities, all in the front-end.",
+            "homepage": "https://drupal.org/project/moderation_note",
+            "support": {
+                "source": "https://git.drupalcode.org/project/moderation_note",
+                "issues": "https://www.drupal.org/project/issues/moderation_note?version=8.x"
             }
         },
         {
@@ -34490,7 +34541,8 @@
         "drupal/facets": 20,
         "drupal/filebrowser": 5,
         "drupal/l10n_client": 15,
-        "drupal/maestro": 5
+        "drupal/maestro": 5,
+        "drupal/moderation_note": 10
     },
     "prefer-stable": true,
     "prefer-lowest": false,

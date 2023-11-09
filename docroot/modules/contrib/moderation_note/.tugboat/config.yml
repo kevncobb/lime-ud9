@@ -1,0 +1,66 @@
+services:
+  php:
+    # Specify the version of Drupal you wish to use for Tugboat below.
+    image: q0rban/tugboat-drupal:10
+    default: true
+    http: false
+    depends: mysql
+    commands:
+      update: |
+        set -eux
+        # Check out a branch using the unique Tugboat ID for this repository, to
+        # ensure we don't clobber an existing branch.
+        git checkout -b $TUGBOAT_REPO_ID
+        # Composer is hungry. You need a Tugboat project with a pretty sizeable
+        # chunk of memory.
+        export COMPOSER_MEMORY_LIMIT=-1
+        # This is an environment variable we added in the Dockerfile that
+        # provides the path to Drupal composer root (not the web root).
+        cd $DRUPAL_COMPOSER_ROOT
+        # We configure the Drupal project to use the checkout of the module as a
+        # Composer package repository.
+        composer config repositories.tugboat vcs $TUGBOAT_ROOT
+        composer require 'drupal/devel:^5.0'
+        # Now we can require this module, specifying the branch name we created
+        # above that uses the $TUGBOAT_REPO_ID environment variable.
+        composer require drupal/moderation_note:dev-$TUGBOAT_REPO_ID
+
+        # Install Drupal on the site.
+        # Use --db-url=mysql://tugboat:tugboat@mysql:3306/tugboat for mysql connection.
+        vendor/bin/drush \
+          --yes \
+          --db-url=sqlite://sites/default/files/db.sqlite \
+          --site-name="Live preview for ${TUGBOAT_PREVIEW_NAME}" \
+          --account-pass=admin \
+          site:install standard
+        # Set up the files directory permissions.
+        mkdir -p $DRUPAL_DOCROOT/sites/default/files
+        chgrp -R www-data $DRUPAL_DOCROOT/sites/default/files
+        chmod 2775 $DRUPAL_DOCROOT/sites/default/files
+        chmod -R g+w $DRUPAL_DOCROOT/sites/default/files
+        # Enable the module.
+        vendor/bin/drush --yes pm:enable moderation_note
+        vendor/bin/drush --yes pm:enable devel
+        vendor/bin/drush --yes pm:enable devel_generate
+        vendor/bin/drush cache:rebuild
+        vendor/bin/drush config:set moderation_note.settings send_email 0
+        vendor/bin/drush role:perm:add anonymous 'access moderation notes,create moderation notes,administer moderation notes'
+        vendor/bin/drush config:set --input-format=yaml workflows.workflow.editorial type_settings.entity_types.node [article,page]
+        vendor/bin/drush genc 1
+        vendor/bin/drush config:set system.site page.front /node/1
+
+
+      build: |
+        set -eux
+        # Delete and re-check out this branch in case this is built from a Base Preview.
+        git branch -D $TUGBOAT_REPO_ID && git checkout -b $TUGBOAT_REPO_ID || true
+        export COMPOSER_MEMORY_LIMIT=-1
+        cd $DRUPAL_COMPOSER_ROOT
+        composer install --optimize-autoloader
+        # Update this module, including all dependencies.
+        composer update drupal/moderation_note
+        vendor/bin/drush --yes updb
+        vendor/bin/drush cache:rebuild
+
+  mysql:
+    image: tugboatqa/mariadb
