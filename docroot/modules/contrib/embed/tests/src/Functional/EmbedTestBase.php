@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\embed\Functional;
 
+use Drupal\editor\Entity\Editor;
 use Drupal\file\Entity\File;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\Tests\BrowserTestBase;
@@ -19,11 +20,12 @@ abstract class EmbedTestBase extends BrowserTestBase {
    *
    * @var array
    */
-  protected static $modules = [
+  public static $modules = [
     'block',
     'embed',
     'embed_test',
     'editor',
+    'ckeditor',
   ];
 
   /**
@@ -58,6 +60,23 @@ abstract class EmbedTestBase extends BrowserTestBase {
       'filters' => [],
     ]);
     $format->save();
+
+    $editor_group = [
+      'name' => 'Embed',
+      'items' => [
+        'embed_test_default',
+      ],
+    ];
+    $editor = Editor::create([
+      'format' => 'embed_test',
+      'editor' => 'ckeditor',
+      'settings' => [
+        'toolbar' => [
+          'rows' => [[$editor_group]],
+        ],
+      ],
+    ]);
+    $editor->save();
 
     // Create a user with required permissions.
     $this->adminUser = $this->drupalCreateUser([

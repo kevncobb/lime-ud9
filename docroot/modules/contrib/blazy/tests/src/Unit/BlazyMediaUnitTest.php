@@ -2,10 +2,9 @@
 
 namespace Drupal\Tests\blazy\Unit;
 
-use Drupal\Tests\UnitTestCase;
-use Drupal\blazy\Media\BlazyMedia;
-use Drupal\blazy\BlazyDefault;
+use Drupal\blazy\Blazy;
 use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
+use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\blazy\BlazyMedia
@@ -27,26 +26,23 @@ class BlazyMediaUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests \Drupal\blazy\BlazyMedia::build().
+   * Tests \Drupal\blazy\Media\BlazyMedia::view().
    *
-   * @covers ::build
-   * @covers ::wrap
+   * @covers ::view
    * @dataProvider providerTestBlazyMediaBuild
    */
   public function testBlazyMediaBuild($markup) {
     $source_field = $this->randomMachineName();
     $view_mode = 'default';
     $settings = [
-      // 'source_field' => $source_field,
       'image_style'  => 'blazy_crop',
       'ratio'        => 'fluid',
-      // 'view_mode'    => 'default',
-      // 'media_source' => 'remote_video',
+      'view_mode'    => 'default',
       'media_switch' => 'media',
       // @todo 'bundle' => 'entity_test',
-    ] + BlazyDefault::htmlSettings();
+    ] + Blazy::init();
 
-    $blazies = &$settings['blazies'];
+    $blazies = $settings['blazies'];
     $info = [
       // 'input_url'    => $input_url,
       'source_field' => $source_field,
@@ -65,23 +61,39 @@ class BlazyMediaUnitTest extends UnitTestCase {
     $field_definition = $this->createMock('\Drupal\Core\Field\FieldDefinitionInterface');
 
     $items = $this->createMock('\Drupal\Core\Field\FieldItemListInterface');
+
+    // Since 2.17.
+    $this->blazyMedia = $this->createMock('\Drupal\blazy\Media\BlazyMediaInterface');
+
     $items->expects($this->any())
       ->method('getFieldDefinition')
       ->willReturn($field_definition);
+
     $items->expects($this->any())
       ->method('view')
       ->with($view_mode)
       ->willReturn($markup);
+
     $items->expects($this->any())
       ->method('getEntity')
       ->willReturn($entity);
 
-    $entity->expects($this->once())
+    $entity->expects($this->any())
       ->method('get')
       ->with($source_field)
       ->will($this->returnValue($items));
 
-    $render = BlazyMedia::build($entity, $settings);
+    $data = [
+      '#entity' => $entity,
+      '#settings' => $settings,
+    ];
+
+    $this->blazyMedia->expects($this->any())
+      ->method('view')
+      ->with($data)
+      ->willReturn($markup);
+
+    $render = $this->blazyMedia->view($data);
     $this->assertArrayHasKey('#settings', $render);
   }
 

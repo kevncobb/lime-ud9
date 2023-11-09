@@ -26,7 +26,6 @@ use Drupal\entity_embed\EntityEmbedDisplay\EntityEmbedDisplayManager;
 use Drupal\Component\Serialization\Json;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Drupal\inline_entity_form\Element\InlineEntityForm;
 
 /**
  * Provides a form to embed entities by specifying data attributes.
@@ -95,20 +94,6 @@ class EntityEmbedDialog extends FormBase {
    * @var array
    */
   protected $entityBrowserSettings = [];
-
-  /**
-   * The Inline Entity Form.
-   *
-   * @var Bool.
-   */
-  protected $inlineEntityForm;
-
-  /**
-   * The inline entity form settings from the entity embed button.
-   *
-   * @var array
-   */
-  protected $inlineEntityFormSettings = [];
 
   /**
    * Constructs a EntityEmbedDialog object.
@@ -217,7 +202,6 @@ class EntityEmbedDialog extends FormBase {
       'data-entity-embed-display' => 'entity_reference:entity_reference_entity_view',
       'data-entity-embed-display-settings' => isset($form_state->get('entity_element')['data-entity-embed-settings']) ? $form_state->get('entity_element')['data-entity-embed-settings'] : [],
     ];
-    $entity_element['data-entity-uuid'] = is_null($entity_element['data-entity-uuid']) ? '' : $entity_element['data-entity-uuid'];
     $form_state->set('entity_element', $entity_element);
     $entity = $this->loadEntityByAttributes($entity_element);
     $form_state->set('entity', $entity ?: NULL);
@@ -240,7 +224,6 @@ class EntityEmbedDialog extends FormBase {
     $form['#attributes']['class'][] = 'entity-embed-dialog-step--' . $form_state->get('step');
 
     $this->loadEntityBrowser($form_state);
-    $this->loadInlineEntityForm($form_state);
 
     if ($form_state->get('step') == 'select') {
       $form = $this->buildSelectStep($form, $form_state);
@@ -303,30 +286,6 @@ class EntityEmbedDialog extends FormBase {
         ],
       ];
     }
-    else if ($this->inlineEntityForm) {
-
-      $bundle = NULL;
-      // Get the first selected bundle. to use it for the inline entity form.
-      $bundles = $embed_button->getTypeSetting('bundles');
-      if (is_array($bundles) && count($bundles) > 0) {
-        $bundle = $bundles[0];
-      }
-
-      $entity_form_display = $embed_button->getTypePlugin()
-        ->getConfigurationValue('inline_entity_form_settings')['entity_form_display'];
-
-      $form['inline_entity_form'] = [
-        '#type' => 'inline_entity_form',
-        '#op' => 'add',
-        '#entity_type' => $entity_element['data-entity-type'],
-        '#entity' => $entity,
-        '#default_value' => $entity,
-        '#required' => TRUE,
-        '#bundle' => $bundle,
-        '#form_mode' => $entity_form_display,
-        '#cardinality' => 1,
-      ];
-    }
     else {
       $form['entity_id'] = [
         '#type' => 'entity_autocomplete',
@@ -374,13 +333,6 @@ class EntityEmbedDialog extends FormBase {
       ],
     ];
 
-    if ($this->inlineEntityForm) {
-      $form['#submit'] = [['Drupal\inline_entity_form\ElementSubmit', 'trigger']];
-      $form['actions']['save_modal']['#ief_submit_trigger'] = TRUE;
-      $form['actions']['save_modal']['#ief_submit_trigger_all'] = TRUE;
-      $form['actions']['save_modal']['#attributes']['class'] = [];
-    }
-
     return $form;
   }
 
@@ -419,11 +371,6 @@ class EntityEmbedDialog extends FormBase {
         'event' => 'click',
       ],
     ];
-
-    if ($this->inlineEntityForm) {
-      $form['actions']['back']['#value'] = $this->t('Edit');
-      $form['actions']['back']['#ajax']['callback'] = $this->inlineEntityFormSettings['display_review'] ? '::submitAndShowReview' : '::submitAndShowSelect'; 
-    }
 
     $form['actions']['save_modal'] = [
       '#type' => 'submit',
@@ -651,28 +598,6 @@ class EntityEmbedDialog extends FormBase {
       }
       $element = $form['entity_browser'];
     }
-    else if ($this->inlineEntityForm) {
-
-      InlineEntityForm::validateEntityForm($form['inline_entity_form'], $form_state);
-      if ($form_state->hasAnyErrors()) {
-        return;
-      }
-
-      // Create a new entity to be embedded.
-      InlineEntityForm::submitEntityForm($form['inline_entity_form'], $form_state);
-
-      if (isset($form['inline_entity_form']['#entity'])) {
-        /** @var \Drupal\Core\Entity\EntityInterface $ief_entity */
-        $ief_entity = $form['inline_entity_form']['#entity'];
-
-        $entity_element = $form_state->get('entity_element');
-        $entity_element['data-entity-uuid'] = $ief_entity->uuid();
-        $form_state->set('entity_element', $entity_element);
-
-        $id = $ief_entity->Id();
-        $element = $ief_entity;
-      }
-    }
     else {
       $id = trim($form_state->getValue(['entity_id']));
       $element = $form['entity_id'];
@@ -809,16 +734,6 @@ class EntityEmbedDialog extends FormBase {
     }
     else {
       $form_state->set('step', !empty($this->entityBrowserSettings['display_review']) ? 'review' : 'embed');
-      if ($this->entityBrowser) {
-        $form_state->set('step', !empty($this->entityBrowserSettings['display_review']) ? 'review' : 'embed');
-      }
-      else if ($this->inlineEntityForm) {
-        $form_state->set('step', $this->inlineEntityFormSettings['display_review'] ? 'review' : 'embed');
-      }
-      else {
-        $form_state->set('step', !empty($this->entityBrowserSettings['display_review']) ? 'review' : 'embed'); 
-      }
-
       $form_state->setRebuild(TRUE);
       $rebuild_form = $this->formBuilder->rebuildForm('entity_embed_dialog', $form_state, $form);
       unset($rebuild_form['#prefix'], $rebuild_form['#suffix']);
@@ -996,28 +911,6 @@ class EntityEmbedDialog extends FormBase {
     if ($embed_button && $entity_browser_id = $embed_button->getTypePlugin()->getConfigurationValue('entity_browser')) {
       $this->entityBrowser = $this->entityTypeManager->getStorage('entity_browser')->load($entity_browser_id);
       $this->entityBrowserSettings = $embed_button->getTypePlugin()->getConfigurationValue('entity_browser_settings');
-    }
-  }
-
-  /**
-   * Load the current inline entity form and its settings from the form state.
-   *
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The form state object.
-   */
-  protected function loadInlineEntityForm(FormStateInterface $form_state) {
-    $this->inlineEntityForm = FALSE;
-    $this->inlineEntityFormSettings = [];
-
-    /** @var \Drupal\embed\EmbedButtonInterface $embed_button */
-    $embed_button = $form_state->get('embed_button');
-
-    if ($embed_button
-      && $embed_button->getTypePlugin()->getConfigurationValue('inline_entity_form')
-      && $this->moduleHandler->moduleExists('inline_entity_form')) {
-
-      $this->inlineEntityForm = TRUE;
-      $this->inlineEntityFormSettings = $embed_button->getTypePlugin()->getConfigurationValue('inline_entity_form_settings');
     }
   }
 

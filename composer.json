@@ -140,7 +140,8 @@
     "drupal/node_form_overrides": "^1.0",
     "drupal/obfuscate_email": "^2.1",
     "drupal/pdf_api": "^2.4",
-    "drupal/printable": "^3.0"
+    "drupal/printable": "^3.0",
+    "drupal/slick": "^2.10"
   },
   "require-dev": {
     "drupal/core-dev": "~10",

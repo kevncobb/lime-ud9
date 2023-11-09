@@ -31,13 +31,13 @@ embed.button.*:
       label: 'Image icon data'
       mapping:
         uri:
-          type: uri
+          type: string
           label: 'Image file URI'
         data:
           type: string
           label: 'Base-64 encoded image contents'
     icon_uuid:
-      type: uuid
+      type: string
       label: 'Deprecated icon image file entity UUID'
 
 embed.embed_type_settings.*:

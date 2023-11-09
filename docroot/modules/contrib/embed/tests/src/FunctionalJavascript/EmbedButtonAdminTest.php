@@ -23,7 +23,7 @@ class EmbedButtonAdminTest extends WebDriverTestBase {
    *
    * @var array
    */
-  protected static $modules = [
+  public static $modules = [
     'block',
     'embed',
     'embed_test',
@@ -188,13 +188,12 @@ class EmbedButtonAdminTest extends WebDriverTestBase {
 
     $id = $assert_session->waitForField('id');
     $this->assertNotEmpty($id);
-    $id->setValue('drupalimage');
+    $id->setValue('DrupalImage');
 
     $edit = [
       'type_id' => 'embed_test_default',
     ];
     $this->submitForm($edit, 'Save');
-    $assert_session->pageTextContains('A CKEditor button with ID DrupalImage already exists.');
   }
 
 }

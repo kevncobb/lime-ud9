@@ -3,89 +3,94 @@
 namespace Drupal\blazy\Utility;
 
 use Drupal\blazy\Blazy;
+use Drupal\blazy\internals\Internals;
 
 /**
  * Provides url, route, request, stream, or any path-related methods.
+ *
+ * @internal
+ *   This is an internal part of the Blazy system and should only be used by
+ *   blazy-related code in Blazy module. Please use the public method instead.
  */
 class Path {
 
   /**
    * The AMP page.
    *
-   * @var bool
+   * @var bool|null
    */
-  private static $isAmp;
+  protected static $isAmp;
 
   /**
    * The preview mode to disable Blazy where JS is not available, or useless.
    *
-   * @var bool
+   * @var bool|null
    */
-  private static $isPreview;
+  protected static $isPreview;
 
   /**
    * The preview mode to disable interactive elements.
    *
-   * @var bool
+   * @var bool|null
    */
-  private static $isSandboxed;
+  protected static $isSandboxed;
 
   /**
    * Retrieves the file url generator service.
    *
-   * @return \Drupal\Core\File\FileUrlGenerator
+   * @return \Drupal\Core\File\FileUrlGenerator|null
    *   The file url generator.
    *
    * @see https://www.drupal.org/node/2940031
    */
   public static function fileUrlGenerator() {
-    return Blazy::service('file_url_generator');
+    return Internals::service('file_url_generator');
   }
 
   /**
    * Retrieves the path resolver.
    *
-   * @return \Drupal\Core\Extension\ExtensionPathResolver
+   * @return \Drupal\Core\Extension\ExtensionPathResolver|null
    *   The path resolver.
    */
   public static function pathResolver() {
-    return Blazy::service('extension.path.resolver');
+    return Internals::service('extension.path.resolver');
   }
 
   /**
    * Retrieves the request stack.
    *
-   * @return \Symfony\Component\HttpFoundation\RequestStack
+   * @return \Symfony\Component\HttpFoundation\RequestStack|null
    *   The request stack.
    */
   public static function requestStack() {
-    return Blazy::service('request_stack');
+    return Internals::service('request_stack');
   }
 
   /**
    * Retrieves the currently active route match object.
    *
-   * @return \Drupal\Core\Routing\RouteMatchInterface
+   * @return \Drupal\Core\Routing\RouteMatchInterface|null
    *   The currently active route match object.
    */
   public static function routeMatch() {
-    return Blazy::service('current_route_match');
+    return Internals::service('current_route_match');
   }
 
   /**
    * Retrieves the stream wrapper manager service.
    *
-   * @return \Drupal\Core\StreamWrapper\StreamWrapperManager
+   * @return \Drupal\Core\StreamWrapper\StreamWrapperManager|null
    *   The stream wrapper manager.
    */
   public static function streamWrapperManager() {
-    return Blazy::service('stream_wrapper_manager');
+    return Internals::service('stream_wrapper_manager');
   }
 
   /**
    * Retrieves the request.
    *
-   * @return \Symfony\Component\HttpFoundation\Request
+   * @return \Symfony\Component\HttpFoundation\Request|null
    *   The request.
    *
    * @see https://github.com/symfony/symfony/blob/6.0/src/Symfony/Component/HttpFoundation/Request.php
@@ -108,55 +113,44 @@ class Path {
     }
     else {
       $function = 'drupal_get_path';
+      /* @phpstan-ignore-next-line */
       $path = is_callable($function) ? $function($type, $name) : '';
     }
     return $absolute ? \base_path() . $path : $path;
   }
 
   /**
-   * Provides a wrapper to replace deprecated libraries_get_path() at ease.
-   */
-  public static function getLibrariesPath($name, $base_path = FALSE): ?string {
-    if ($finder = Blazy::service('library.libraries_directory_file_finder')) {
-      return $finder->find($name);
-    }
-
-    $function = 'libraries_get_path';
-    return is_callable($function) ? $function($name, $base_path) : '';
-  }
-
-  /**
    * Checks if Blazy is in CKEditor preview mode where no JS assets are loaded.
    */
   public static function isPreview(): bool {
-    if (!isset(self::$isPreview)) {
-      self::$isPreview = self::isAmp() || self::isSandboxed();
+    if (!isset(static::$isPreview)) {
+      static::$isPreview = self::isAmp() || self::isSandboxed();
     }
-    return self::$isPreview;
+    return static::$isPreview;
   }
 
   /**
    * Checks if Blazy is in AMP pages.
    */
   public static function isAmp(): bool {
-    if (!isset(self::$isAmp)) {
+    if (!isset(static::$isAmp)) {
       $request = self::request();
-      self::$isAmp = $request && $request->query->get('amp');
+      static::$isAmp = $request && $request->query->get('amp') !== NULL;
     }
-    return self::$isAmp;
+    return static::$isAmp;
   }
 
   /**
    * In CKEditor without JS assets, interactive elements must be sandboxed.
    */
   public static function isSandboxed(): bool {
-    if (!isset(self::$isSandboxed)) {
+    if (!isset(static::$isSandboxed)) {
       $check = FALSE;
       if ($router = self::routeMatch()) {
         if ($route = $router->getRouteName()) {
           $edits = ['entity_browser.', 'edit_form', 'add_form', '.preview'];
           foreach ($edits as $key) {
-            if (mb_strpos($route, $key) !== FALSE) {
+            if (Blazy::has($route, $key)) {
               $check = TRUE;
               break;
             }
@@ -164,9 +158,75 @@ class Path {
         }
       }
 
-      self::$isSandboxed = $check;
+      static::$isSandboxed = $check;
     }
-    return self::$isSandboxed;
+    return static::$isSandboxed;
+  }
+
+  /**
+   * Returns multiple libraries keyed by its name.
+   *
+   * @todo remove for \Drupal\blazy\Asset\Libraries::getLibraries() at 3.x.
+   */
+  public static function getLibraries(array $names, $base_path = FALSE): array {
+    $libraries = [];
+    foreach (self::libraries($names, TRUE) as $key => $path) {
+      if ($path) {
+        $libraries[$key] = $base_path ? \base_path() . $path : $path;
+      }
+    }
+    return $libraries;
+  }
+
+  /**
+   * Returns the first found library path.
+   *
+   * @todo remove for \Drupal\blazy\Asset\Libraries::getPath() at 3.x.
+   */
+  public static function getLibrariesPath($name, $base_path = FALSE): ?string {
+    $library = '';
+    $names = is_array($name) ? $name : [$name];
+    foreach (self::libraries($names) as $path) {
+      if ($path) {
+        $library = $base_path ? \base_path() . $path : $path;
+        break;
+      }
+    }
+    return $library;
+  }
+
+  /**
+   * Provides a wrapper to replace deprecated libraries_get_path() at ease.
+   *
+   * @todo remove for \Drupal\blazy\Asset\Libraries methods at 3.x.
+   */
+  private static function libraries(array $libraries, $keyed = FALSE): \Generator {
+    if ($finder = Internals::service('library.libraries_directory_file_finder')) {
+      foreach ($libraries as $library) {
+        $result = $finder->find($library);
+        if ($keyed) {
+          yield $library => $result;
+        }
+        else {
+          yield $result;
+        }
+      }
+    }
+    else {
+      // @todo remove when min D9.2, and make libraries a service at 3.x.
+      $dep = 'libraries_get_path';
+      foreach ($libraries as $library) {
+        // @todo phpstan bug, given different Drupal branches outside tests.
+        /* @phpstan-ignore-next-line */
+        $result = is_callable($dep) ? $dep($library) : '';
+        if ($keyed) {
+          yield $library => $result;
+        }
+        else {
+          yield $result;
+        }
+      }
+    }
   }
 
 }

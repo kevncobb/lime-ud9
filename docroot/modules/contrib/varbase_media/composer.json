@@ -42,9 +42,9 @@
     "drupal/entity_browser_enhanced": "~2.0.0",
     "drupal/dropzonejs": "~2.0",
     "drupal/media_bulk_upload": "~3.0.0",
-    "drupal/entity_embed": "1.5.0",
+    "drupal/entity_embed": "~1.0",
     "drupal/inline_entity_form": "~1.0",
-    "drupal/embed": "~1.0",
+    "drupal/embed": "1.6.0",
     "drupal/media_entity_instagram": "~3.0",
     "drupal/media_entity_twitter": "~2.0",
     "drupal/media_library_edit": "~3.0",
@@ -53,9 +53,9 @@
     "drupal/focal_point": "~2.0.0",
     "drupal/imagemagick": "~3.0",
     "drupal/imageapi_optimize": "~4.0",
-    "drupal/blazy": "2.16.0",
-    "drupal/slick": "2.9.0",
-    "drupal/slick_views": "2.7.0",
+    "drupal/blazy": "~2.0",
+    "drupal/slick": "~2.0",
+    "drupal/slick_views": "~2.0",
     "drupal/metatag": "~2.0.0",
     "drupal/webp": "~1.0",
     "drupal/drimage": "~2.0",
@@ -90,11 +90,11 @@
     "enable-patching": true,
     "composer-exit-on-patch-failure": true,
     "patches": {
-      "drupal/entity_embed": {
-        "Issue #3070343: Allow to add a Drupal core link with Link Widget for Image entities using Entity Embed Dialog in CKEditor":
-        "https://www.drupal.org/files/issues/2023-11-02/entity-embed-add-link-image-entity-3070343-37.patch",
-        "Issue #2679875: Inline Entity Form integration":
-        "https://www.drupal.org/files/issues/2023-11-08/2679875-27.patch"
+      "drupal/embed": {
+        "Issue #3309747: CKEditor 5 compatibility":
+        "docroot/modules/contrib/varbase_media/patches/embed-2023-01-30--3309747-2.diff",
+        "Issue #3348424: Fix Entity queries must explicitly set whether the query should be access checked or not in the Embed module":
+        "https://www.drupal.org/files/issues/2023-03-16/3348424-3.patch"
       }
     }
   }

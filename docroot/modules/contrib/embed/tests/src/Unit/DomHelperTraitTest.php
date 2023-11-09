@@ -57,9 +57,10 @@ class DomHelperTraitTest extends UnitTestCase {
   }
 
   /**
-   * Data provider for testSetNodeContent().
+   * @return array
+   * @see ::testSetNodeContent()
    */
-  public function providerTestSetNodeContent(): array {
+  public function providerTestSetNodeContent() {
     return [
       'empty' => [
         '',
@@ -95,9 +96,10 @@ class DomHelperTraitTest extends UnitTestCase {
   }
 
   /**
-   * Data provider for testReplaceNodeContent().
+   * @return array
+   * @see ::testReplaceNodeContent()
    */
-  public function providerTestReplaceNodeContent(): array {
+  public function providerTestReplaceNodeContent() {
     return [
       'empty' => [
         '',

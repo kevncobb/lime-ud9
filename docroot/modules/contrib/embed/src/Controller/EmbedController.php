@@ -2,7 +2,6 @@
 
 namespace Drupal\embed\Controller;
 
-use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Ajax\AjaxHelperTrait;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Controller\ControllerBase;
@@ -34,39 +33,21 @@ class EmbedController extends ControllerBase {
   protected $renderer;
 
   /**
-   * The CSRF token generator.
-   *
-   * @var \Drupal\Core\Access\CsrfTokenGenerator
-   */
-  protected $csrfToken;
-
-  /**
-   * The CSRF token name.
-   *
-   * @var string
-   */
-  public const PREVIEW_CSRF_TOKEN_NAME = 'X-Drupal-EmbedPreview-CSRF-Token';
-
-  /**
    * Constructs an EmbedController instance.
    *
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer service.
-   * @param \Drupal\Core\Access\CsrfTokenGenerator $csrf_token
-   *   The CSRF token generator.
    */
-  public function __construct(RendererInterface $renderer, CsrfTokenGenerator $csrf_token) {
+  public function __construct(RendererInterface $renderer) {
     $this->renderer = $renderer;
-    $this->csrfToken = $csrf_token;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container): self {
+  public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('renderer'),
-      $container->get('csrf_token')
+      $container->get('renderer')
     );
   }
 
@@ -87,7 +68,7 @@ class EmbedController extends ControllerBase {
    *   The preview of the embedded item specified by the data attributes.
    */
   public function preview(Request $request, FilterFormatInterface $filter_format) {
-    $this->checkCsrf($request, \Drupal::currentUser());
+    self::checkCsrf($request, \Drupal::currentUser());
 
     $text = $request->get('text') ?: $request->get('value');
     if (empty($text)) {
@@ -149,27 +130,22 @@ class EmbedController extends ControllerBase {
    * This is used instead of \Drupal\Core\Access\CsrfAccessCheck, in order to
    * allow access for anonymous users.
    *
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   *   The request object.
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   The current user account.
-   *
    * @todo Refactor this to an access checker.
    */
-  private function checkCsrf(Request $request, AccountInterface $account): void {
-    if (!$request->headers->has(static::PREVIEW_CSRF_TOKEN_NAME)) {
+  private static function checkCsrf(Request $request, AccountInterface $account) {
+    $header = 'X-Drupal-EmbedPreview-CSRF-Token';
+
+    if (!$request->headers->has($header)) {
       throw new AccessDeniedHttpException();
     }
-
     if ($account->isAnonymous()) {
       // For anonymous users, just the presence of the custom header is
       // sufficient protection.
       return;
     }
-
     // For authenticated users, validate the token value.
-    $token = $request->headers->get(static::PREVIEW_CSRF_TOKEN_NAME);
-    if (!$this->csrfToken->validate($token, static::PREVIEW_CSRF_TOKEN_NAME)) {
+    $token = $request->headers->get($header);
+    if (!\Drupal::csrfToken()->validate($token, $header)) {
       throw new AccessDeniedHttpException();
     }
   }

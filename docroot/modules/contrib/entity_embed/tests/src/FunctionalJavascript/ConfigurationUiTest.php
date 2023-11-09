@@ -98,7 +98,8 @@ class ConfigurationUiTest extends EntityEmbedTestBase {
     // as the text editor.
     $page = $this->getSession()->getPage();
     $page->fillField('name', 'Test Format');
-    $this->assertJsCondition("document.querySelector('[name=\"format\"]').value === 'test_format'");
+    $this->showHiddenFields();
+    $page->findField('format')->setValue('test_format');
 
     if ($filter_html_status) {
       $page->checkField('filters[filter_html][status]');

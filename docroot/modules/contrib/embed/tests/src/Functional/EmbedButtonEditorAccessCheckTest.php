@@ -2,85 +2,29 @@
 
 namespace Drupal\Tests\embed\Functional;
 
-use Drupal\editor\EditorInterface;
 use Drupal\editor\Entity\Editor;
-use Drupal\embed\Access\EmbedButtonEditorAccessCheck;
 use Drupal\Tests\system\Functional\Cache\AssertPageCacheContextsAndTagsTrait;
 
 /**
  * Tests EmbedButtonEditorAccessCheck.
  *
- * @coversDefaultClass \Drupal\embed\Access\EmbedButtonEditorAccessCheck
  * @group embed
  */
 class EmbedButtonEditorAccessCheckTest extends EmbedTestBase {
 
   use AssertPageCacheContextsAndTagsTrait;
 
+  const SUCCESS = 'Success!';
+
   /**
    * {@inheritdoc}
    */
-  protected static $modules = [
-    'ckeditor',
-    'ckeditor5',
-  ];
-
-  /**
-   * Sets up the editor for testing.
-   *
-   * @param string $editor_id
-   *   The editor plugin ID.
-   *
-   * @return \Drupal\editor\EditorInterface
-   *   The saved editor entity.
-   */
-  public function setupEditor(string $editor_id): EditorInterface {
-    $editor = Editor::create([
-      'format' => 'embed_test',
-      'editor' => $editor_id,
-    ]);
-
-    switch ($editor_id) {
-      case 'ckeditor':
-        $editor->setSettings([
-          'toolbar' => [
-            'rows' => [[[
-              'name' => 'Embed',
-              'items' => [
-                'embed_test_default',
-              ],
-            ]]],
-          ],
-        ]);
-        break;
-
-      case 'ckeditor5':
-        $editor->setSettings([
-          'toolbar' => [
-            'items' => [
-              'embed_test_default',
-            ],
-          ],
-        ]);
-        break;
-
-      default:
-        $this->fail("Unsupported editor plugin $editor_id.");
-    }
-
-    $editor->save();
-    return $editor;
-  }
+  protected $defaultTheme = 'stark';
 
   /**
    * Tests \Drupal\embed\Access\EmbedButtonEditorAccessCheck.
-   *
-   * @covers ::access
-   * @dataProvider providerEmbedbuttonEditorAccessCheck
    */
-  public function testEmbedButtonEditorAccessCheck(string $editor) {
-    $this->setUpEditor($editor);
-
+  public function testEmbedButtonEditorAccessCheck() {
     // The anonymous user should have access to the plain_text format, but it
     // hasn't been configured to use an editor yet.
     $this->getRoute('plain_text', 'embed_test_default');
@@ -108,7 +52,7 @@ class EmbedButtonEditorAccessCheckTest extends EmbedTestBase {
     // Add an empty configuration for the plain_text editor configuration.
     $editor = Editor::create([
       'format' => 'plain_text',
-      'editor' => $editor,
+      'editor' => 'ckeditor',
     ]);
     $editor->save();
     $this->getRoute('plain_text', 'embed_test_default');
@@ -122,7 +66,7 @@ class EmbedButtonEditorAccessCheckTest extends EmbedTestBase {
     $this->assertCacheContext('route');
     $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'config:editor.editor.embed_test');
     $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'config:embed.button.embed_test_default');
-    $this->assertSession()->pageTextContains('Success!');
+    $this->assertSession()->pageTextContains(static::SUCCESS);
 
     // Test route with an empty request.
     $this->getRoute('embed_test', 'embed_test_default', '');
@@ -147,15 +91,6 @@ class EmbedButtonEditorAccessCheckTest extends EmbedTestBase {
   }
 
   /**
-   * Data provider for testEmbedbuttonEditorAccessCheck().
-   */
-  public function providerEmbedbuttonEditorAccessCheck(): array {
-    return array_map(static function (string $editor_id) {
-      return [$editor_id];
-    }, ['ckeditor', 'ckeditor5']);
-  }
-
-  /**
    * Performs a request to the embed_test.test_access route.
    *
    * @param string $editor_id
@@ -171,7 +106,7 @@ class EmbedButtonEditorAccessCheckTest extends EmbedTestBase {
   public function getRoute($editor_id, $embed_button_id, $value = NULL) {
     $url = 'embed-test/access/' . $editor_id . '/' . $embed_button_id;
     if (!isset($value)) {
-      $value = 'Success!';
+      $value = static::SUCCESS;
     }
     return $this->drupalGet($url, ['query' => ['value' => $value]]);
   }

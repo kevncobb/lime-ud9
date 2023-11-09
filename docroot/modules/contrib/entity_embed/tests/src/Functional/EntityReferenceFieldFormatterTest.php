@@ -28,7 +28,7 @@ class EntityReferenceFieldFormatterTest extends EntityEmbedTestBase {
     $this->menu = \Drupal::entityTypeManager()
       ->getStorage('menu')
       ->create([
-        'id' => 'menu-name',
+        'id' => 'menu_name',
         'label' => 'Label',
         'description' => 'Description text',
       ]);
