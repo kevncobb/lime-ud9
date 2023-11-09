@@ -1,16 +1,10 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\pdf_api\Plugin\MpdfGenerator.
- */
-
 namespace Drupal\pdf_api\Plugin\PdfGenerator;
 
-use Drupal\pdf_api\Plugin\PdfGeneratorBase;
+use Drupal\Component\Utility\Random;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\pdf_api\Annotation\PdfGenerator;
-use Drupal\Core\Annotation\Translation;
+use Drupal\pdf_api\Plugin\PdfGeneratorBase;
 use Drupal\pdf_api\Plugin\PdfGeneratorInterface;
 use Mpdf\Mpdf;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -22,7 +16,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   id = "mpdf",
  *   module = "pdf_api",
  *   title = @Translation("mPDF"),
- *   description = @Translation("PDF generator using the mPDF generator.")
+ *   description = @Translation("PDF generator using the mPDF generator."),
+ *   required_class = "Mpdf\Mpdf"
  * )
  */
 class MpdfGenerator extends PdfGeneratorBase implements ContainerFactoryPluginInterface {
@@ -56,11 +51,11 @@ class MpdfGenerator extends PdfGeneratorBase implements ContainerFactoryPluginIn
   protected $footerContent;
 
   /**
-   * {@inheritdoc}
+   * The temporary directory we created.
+   *
+   * @var string
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-  }
+  protected $tmpDir;
 
   /**
    * {@inheritdoc}
@@ -117,7 +112,7 @@ class MpdfGenerator extends PdfGeneratorBase implements ContainerFactoryPluginIn
     else {
       $orientation = 'L';
     }
-    $this->setOptions(array('orientation' => $orientation));
+    $this->setOptions(['orientation' => $orientation]);
   }
 
   /**
@@ -125,7 +120,7 @@ class MpdfGenerator extends PdfGeneratorBase implements ContainerFactoryPluginIn
    */
   public function setPageSize($page_size) {
     if ($this->isValidPageSize($page_size)) {
-      $this->setOptions(array('sheet-size' => $page_size));
+      $this->setOptions(['sheet-size' => $page_size]);
     }
   }
 
@@ -138,7 +133,7 @@ class MpdfGenerator extends PdfGeneratorBase implements ContainerFactoryPluginIn
   public function setPassword($password) {
     if (isset($password) && $password != NULL) {
       // Print and Copy is allowed.
-      $this->generator->SetProtection(array('print', 'copy'), $password, $password);
+      $this->generator->SetProtection(['print', 'copy'], $password, $password);
     }
   }
 
@@ -146,7 +141,7 @@ class MpdfGenerator extends PdfGeneratorBase implements ContainerFactoryPluginIn
    * {@inheritdoc}
    */
   public function setFooter($text) {
-    // $this->generator->SetFooter($text);
+    $this->generator->SetFooter($text);
   }
 
   /**
@@ -155,6 +150,7 @@ class MpdfGenerator extends PdfGeneratorBase implements ContainerFactoryPluginIn
   public function save($location) {
     $this->preGenerate();
     $this->generator->Output($location, 'F');
+    $this->postGenerate();
   }
 
   /**
@@ -187,12 +183,18 @@ class MpdfGenerator extends PdfGeneratorBase implements ContainerFactoryPluginIn
      */
     $options = $this->options;
 
-    $config = [ ];
-    $orientation = '';
-
     $orientation = $options['orientation'] ? $options['orientation'] : 'P';
 
-    $config['format'] = $this->isValidPageSize($options['sheet-size']) ? $options['sheet-size'] : 'A4';
+    $filesystem = \Drupal::service('file_system');
+    $random = new Random();
+    $this->tmpDir = $filesystem->getTempDirectory() . '/' . $random->name(16, TRUE);
+    $filesystem->mkdir($this->tmpDir);
+
+    $config = [
+      'format' => $this->isValidPageSize($options['sheet-size']) ? $options['sheet-size'] : 'A4',
+      'tempDir' => $this->tmpDir,
+    ];
+
     if ($orientation == 'L') {
       $config['format'] .= '-' . $orientation;
     }
@@ -208,8 +210,17 @@ class MpdfGenerator extends PdfGeneratorBase implements ContainerFactoryPluginIn
     $this->setHeader($this->headerContent);
     $this->setFooter($this->footerContent);
     $stylesheet = '.node_view  { display: none; }';
+    $this->generator->allow_charset_conversion = FALSE;
     $this->generator->WriteHTML($stylesheet, 1);
-    $this->generator->WriteHTML(utf8_encode($this->pdfContent), 0);
+    $this->generator->WriteHTML($this->pdfContent, 0);
+  }
+
+  /**
+   * Post generation cleanup.
+   */
+  protected function postGenerate() {
+    $filesystem = \Drupal::service('file_system');
+    $filesystem->deleteRecursive($this->tmpDir);
   }
 
 }

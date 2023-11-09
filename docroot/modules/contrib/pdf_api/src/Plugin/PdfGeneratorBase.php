@@ -1,16 +1,10 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\printable\Plugin\PrintableFormatBase.
- */
-
 namespace Drupal\pdf_api\Plugin;
 
-use Drupal\Core\Plugin\PluginBase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Drupal\Component\Render\FormattableMarkup;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
@@ -23,7 +17,14 @@ abstract class PdfGeneratorBase extends PluginBase implements PdfGeneratorInterf
    *
    * @var array
    */
-  protected $options = array();
+  protected $options = [];
+
+  /**
+   * The entity being rendered.
+   *
+   * @var \Drupal\Core\Entity\EntityInterface
+   */
+  protected $entity;
 
   /**
    * {@inheritdoc}
@@ -52,7 +53,7 @@ abstract class PdfGeneratorBase extends PluginBase implements PdfGeneratorInterf
    * @param string $page_size
    *   The page size to get the dimensions for (e.g. A4).
    *
-   * @return array|FALSE
+   * @return array|false
    *   An array with the keys "width" and "height" that contain the width and
    *   height dimensions respectively. False if the page size is unknown.
    */
@@ -84,128 +85,128 @@ abstract class PdfGeneratorBase extends PluginBase implements PdfGeneratorInterf
    *   keys the page size name (e.g. A4).
    */
   protected function pageSizes() {
-    return array(
-      'A0' => array(
+    return [
+      'A0' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'A1' => array(
+      ],
+      'A1' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'A2' => array(
+      ],
+      'A2' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'A3' => array(
+      ],
+      'A3' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'A4' => array(
+      ],
+      'A4' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'A5' => array(
+      ],
+      'A5' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'A6' => array(
+      ],
+      'A6' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'A7' => array(
+      ],
+      'A7' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'A8' => array(
+      ],
+      'A8' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'A9' => array(
+      ],
+      'A9' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'B0' => array(
+      ],
+      'B0' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'B1' => array(
+      ],
+      'B1' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'B10' => array(
+      ],
+      'B10' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'B2' => array(
+      ],
+      'B2' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'B3' => array(
+      ],
+      'B3' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'B4' => array(
+      ],
+      'B4' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'B5' => array(
+      ],
+      'B5' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'B6' => array(
+      ],
+      'B6' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'B7' => array(
+      ],
+      'B7' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'B8' => array(
+      ],
+      'B8' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'B9' => array(
+      ],
+      'B9' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'C5E' => array(
+      ],
+      'C5E' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'Comm10E' => array(
+      ],
+      'Comm10E' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'DLE' => array(
+      ],
+      'DLE' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'Executive' => array(
+      ],
+      'Executive' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'Folio' => array(
+      ],
+      'Folio' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'Ledger' => array(
+      ],
+      'Ledger' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'Legal' => array(
+      ],
+      'Legal' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'Letter' => array(
+      ],
+      'Letter' => [
         'width' => 0,
         'height' => 0,
-      ),
-      'Tabloid' => array(
+      ],
+      'Tabloid' => [
         'width' => 0,
         'height' => 0,
-      ),
-    );
+      ],
+    ];
   }
 
   /**
@@ -231,7 +232,7 @@ abstract class PdfGeneratorBase extends PluginBase implements PdfGeneratorInterf
   /**
    * Display error messages.
    *
-   * @return boolean
+   * @return bool
    *   Whether any errors occurred and were not ignored.
    */
   public function displayErrors() {
@@ -252,10 +253,10 @@ abstract class PdfGeneratorBase extends PluginBase implements PdfGeneratorInterf
         $markup = $error;
       }
       $this->messenger->addError($markup);
-      return true;
+      return TRUE;
     }
 
-    return false;
+    return FALSE;
   }
 
   /**
@@ -266,6 +267,27 @@ abstract class PdfGeneratorBase extends PluginBase implements PdfGeneratorInterf
    */
   public function setOptions(array $options) {
     $this->options += $options;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function usePrintableDisplay() {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setEntity(EntityInterface $entity) {
+    $this->entity = $entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEntity() {
+    return $this->entity;
   }
 
 }

@@ -138,7 +138,8 @@
     "drupal/menu_condition": "^1.4",
     "drupal/moderation_note": "^1.0@beta",
     "drupal/node_form_overrides": "^1.0",
-    "drupal/obfuscate_email": "^2.1"
+    "drupal/obfuscate_email": "^2.1",
+    "drupal/pdf_api": "^2.4"
   },
   "require-dev": {
     "drupal/core-dev": "~10",
