@@ -1,7 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\Tests\dbal\Kernel;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ConnectionRegistry;
+use Drupal\dbal\DoctrineConnectionRegistry;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
@@ -14,7 +19,7 @@ class DbalConnectionKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['system', 'dbal'];
+  protected static $modules = ['system', 'dbal'];
 
   /**
    * {@inheritdoc}
@@ -43,6 +48,32 @@ class DbalConnectionKernelTest extends KernelTestBase {
       ->fields('s', ['value'])
       ->execute()
       ->fetchField());
+  }
+
+  /**
+   * Tests accessing private connection registry service via auto-wiring alias.
+   */
+  public function testConnectionRegistry(): void {
+    // Accessing private connection registry service via auto-wiring alias.
+    /** @var \Doctrine\Persistence\ConnectionRegistry $connectionRegistry */
+    $connectionRegistry = \Drupal::service(ConnectionRegistry::class);
+
+    $this->assertEquals(['default'], $connectionRegistry->getConnectionNames());
+    $this->assertEquals('default', $connectionRegistry->getDefaultConnectionName());
+
+    $connections = $connectionRegistry->getConnections();
+    $this->assertCount(1, $connections);
+    $this->assertInstanceOf(Connection::class, $connections['default']);
+
+    $defaultConnection = $connectionRegistry->getConnection();
+    $this->assertInstanceOf(Connection::class, $defaultConnection);
+
+    $defaultConnection = $connectionRegistry->getConnection('default');
+    $this->assertInstanceOf(Connection::class, $defaultConnection);
+
+    $this->expectException(\Exception::class);
+    $this->expectExceptionMessage('Missing foobar connection');
+    $connectionRegistry->getConnection('foobar');
   }
 
 }

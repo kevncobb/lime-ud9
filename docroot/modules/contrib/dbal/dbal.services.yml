@@ -4,3 +4,4 @@ services:
   dbal_connection:
     class: Doctrine\DBAL\Connection
     factory: dbal_connection_factory:get
+  'Doctrine\DBAL\Connection': '@dbal_connection'
