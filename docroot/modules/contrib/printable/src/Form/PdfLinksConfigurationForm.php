@@ -2,6 +2,7 @@
 
 namespace Drupal\printable\Form;
 
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\printable\PrintableEntityManagerInterface;
 use Drupal\printable\PrintableFormatPluginManager;
 use Drupal\Core\Form\FormBase;
@@ -29,6 +30,13 @@ class PdfLinksConfigurationForm extends FormBase {
   protected $configFactory;
 
   /**
+   * The messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * Constructs a new form object.
    *
    * @param \Drupal\printable\PrintableEntityManagerInterface $printable_entity_manager
@@ -37,11 +45,14 @@ class PdfLinksConfigurationForm extends FormBase {
    *   The printable format plugin manager.
    * @param \Drupal\Core\Config\ConfigFactory $configFactory
    *   Defines the configuration object factory.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger service.
    */
-  public function __construct(PrintableEntityManagerInterface $printable_entity_manager, PrintableFormatPluginManager $printable_format_manager, ConfigFactory $configFactory) {
+  public function __construct(PrintableEntityManagerInterface $printable_entity_manager, PrintableFormatPluginManager $printable_format_manager, ConfigFactory $configFactory, MessengerInterface $messenger) {
     $this->printableEntityManager = $printable_entity_manager;
     $this->printableFormatManager = $printable_format_manager;
     $this->configFactory = $configFactory;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -51,7 +62,8 @@ class PdfLinksConfigurationForm extends FormBase {
     return new static(
       $container->get('printable.entity_manager'),
       $container->get('printable.format_plugin_manager'),
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('messenger')
     );
   }
 
@@ -95,7 +107,7 @@ class PdfLinksConfigurationForm extends FormBase {
     $this->configFactory->getEditable('printable.settings')
       ->set('printable_pdf_link_locations', $form_state->getValue('print_pdf_link_pos'))
       ->save();
-    drupal_set_message('The configuration option has been saved','status');
+    $this->messenger()->addStatus($this->t('The configuration option has been saved'));
   }
 
 }

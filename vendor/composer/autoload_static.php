@@ -31,13 +31,13 @@ class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
         'fbeead2280a8f3911a1fe6dd034f7d5e' => __DIR__ . '/..' . '/mkalkbrenner/php-htmldiff-advanced/src/HtmlDiffAdvancedInterface.php',
         '96f8d8288528d52059397cad6ec61f17' => __DIR__ . '/..' . '/mkalkbrenner/php-htmldiff-advanced/src/HtmlDiffAdvanced.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
+        'db356362850385d08a5381de2638b5fd' => __DIR__ . '/..' . '/mpdf/mpdf/src/functions.php',
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
         '79f66bc0a1900f77abe4a9a299057a0a' => __DIR__ . '/..' . '/starkbank/ecdsa/src/ellipticcurve.php',
         '0d59ee240a4cd96ddbb4ff164fccea4d' => __DIR__ . '/..' . '/symfony/polyfill-php73/bootstrap.php',
         '73321c0e02b4d45ae9c8366042d80de4' => __DIR__ . '/..' . '/arthurkushman/query-path/src/qp_functions.php',
         '3917c79c5052b270641b5a200963dbc2' => __DIR__ . '/..' . '/kint-php/kint/init.php',
         '9e4824c5afbdc1482b6025ce3d4dfde8' => __DIR__ . '/..' . '/league/csv/src/functions_include.php',
-        'db356362850385d08a5381de2638b5fd' => __DIR__ . '/..' . '/mpdf/mpdf/src/functions.php',
         'b067bc7112e384b61c701452d53a14a8' => __DIR__ . '/..' . '/mtdowling/jmespath.php/src/JmesPath.php',
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
         '92c8763cd6170fce6fcfe7e26b4e8c10' => __DIR__ . '/..' . '/symfony/phpunit-bridge/bootstrap.php',
@@ -81,6 +81,7 @@ class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
         'W' => 
         array (
             'Webmozart\\Assert\\' => 17,
+            'Wa72\\HtmlPageDom\\' => 17,
         ),
         'V' => 
         array (
@@ -373,6 +374,10 @@ class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
         'Webmozart\\Assert\\' => 
         array (
             0 => __DIR__ . '/..' . '/webmozart/assert/src',
+        ),
+        'Wa72\\HtmlPageDom\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/wa72/htmlpagedom/src',
         ),
         'VariableAnalysis\\' => 
         array (
@@ -12016,6 +12021,9 @@ class ComposerStaticInit4e2b923f1c545ea0ac4424925651915d
         'VariableAnalysis\\Lib\\ScopeType' => __DIR__ . '/..' . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis/Lib/ScopeType.php',
         'VariableAnalysis\\Lib\\VariableInfo' => __DIR__ . '/..' . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis/Lib/VariableInfo.php',
         'VariableAnalysis\\Sniffs\\CodeAnalysis\\VariableAnalysisSniff' => __DIR__ . '/..' . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis/Sniffs/CodeAnalysis/VariableAnalysisSniff.php',
+        'Wa72\\HtmlPageDom\\Helpers' => __DIR__ . '/..' . '/wa72/htmlpagedom/src/Helpers.php',
+        'Wa72\\HtmlPageDom\\HtmlPage' => __DIR__ . '/..' . '/wa72/htmlpagedom/src/HtmlPage.php',
+        'Wa72\\HtmlPageDom\\HtmlPageCrawler' => __DIR__ . '/..' . '/wa72/htmlpagedom/src/HtmlPageCrawler.php',
         'WebDriver\\AbstractWebDriver' => __DIR__ . '/..' . '/instaclick/php-webdriver/lib/WebDriver/AbstractWebDriver.php',
         'WebDriver\\AppCacheStatus' => __DIR__ . '/..' . '/instaclick/php-webdriver/lib/WebDriver/AppCacheStatus.php',
         'WebDriver\\ApplicationCache' => __DIR__ . '/..' . '/instaclick/php-webdriver/lib/WebDriver/ApplicationCache.php',

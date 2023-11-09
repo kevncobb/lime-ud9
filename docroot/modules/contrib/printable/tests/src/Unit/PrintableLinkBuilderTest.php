@@ -43,16 +43,14 @@ class PrintableLinkBuilderTest extends UnitTestCase {
 
     $config = $this->getConfigFactoryStub(['printable.settings' => ['open_target_blank' => TRUE]]);
 
-    $printable_manager = $this->getMockBuilder('Drupal\printable\PrintableFormatPluginManager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $printable_manager = $this->createMock('Drupal\printable\PrintableFormatPluginManager');
     $printable_manager->expects($this->once())
       ->method('getDefinitions')
       ->will($this->returnValue($definitions));
 
     $link_builder = new PrintableLinkBuilder($config, $printable_manager);
 
-    $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');
+    $entity = $this->createMock('Drupal\Core\Entity\EntityInterface');
     $entity->expects($this->exactly(2))
       ->method('getEntityTypeId')
       ->will($this->returnValue($entity_type));

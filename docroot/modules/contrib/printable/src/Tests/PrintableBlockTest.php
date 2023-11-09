@@ -2,8 +2,9 @@
 
 namespace Drupal\printable\Tests;
 
-use Drupal\node\Tests\NodeTestBase;
+use Drupal\Tests\node\Functional\NodeTestBase;
 use Drupal\block\Entity\Block;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Tests the blocks present in printable module.
@@ -11,6 +12,8 @@ use Drupal\block\Entity\Block;
  * @group printable
  */
 class PrintableBlockTest extends NodeTestBase {
+
+  use StringTranslationTrait;
 
   /**
    * An administrative user for testing.
@@ -24,12 +27,17 @@ class PrintableBlockTest extends NodeTestBase {
    *
    * @var array
    */
-  public static $modules = ['printable', 'block', 'views'];
+  protected static $modules = ['printable', 'block', 'views'];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
 
   /**
    * Perform any initial set up tasks that run before every test method.
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     // Create users and test node.
@@ -54,21 +62,28 @@ class PrintableBlockTest extends NodeTestBase {
       'id' => strtolower($this->randomMachineName()),
       'settings[label]' => $this->randomMachineName(8),
       'region' => 'sidebar_first',
-      'visibility[node_type][bundles][article]' => 'article',
+      'visibility[entity_bundle:node][bundles][article]' => 'article',
     ];
     $theme = \Drupal::service('theme_handler')->getDefault();
-    $this->drupalPostForm("admin/structure/block/add/printable_links_block%3Anode/$theme", $edit, t('Save block'));
+    $this->drupalGet("admin/structure/block/add/printable_links_block%3Anode/$theme");
+    $this->submitForm($edit, $this->t('Save block'));
 
     $block = Block::load($edit['id']);
     $visibility = $block->getVisibility();
-    $this->assertTrue(isset($visibility['node_type']['bundles']['article']), 'Visibility settings were saved to configuration');
+    $this->assertTrue(isset($visibility['entity_bundle:node']['bundles']['article']), 'Visibility settings were saved to configuration');
 
     // Test deleting the block from the edit form.
     $this->drupalGet('admin/structure/block/manage/' . $edit['id']);
-    $this->clickLink(t('Delete'));
-    $this->assertRaw(t('Are you sure you want to delete the block %name?', ['%name' => $edit['settings[label]']]));
-    $this->drupalPostForm(NULL, [], t('Delete'));
-    $this->assertRaw(t('The block %name has been deleted.', ['%name' => $edit['settings[label]']]));
+    $this->clickLink($this->t('Remove block'));
+    $this->assertSession()->responseContains($this->t('Are you sure you want to remove the block :name from the :region region?', [
+      ':name' => $edit['settings[label]'],
+      ':region' => 'Left sidebar',
+    ]));
+    $this->submitForm([], $this->t('Remove'));
+    $this->assertSession()->responseContains($this->t('The block %name has been removed from the %region region.', [
+      '%name' => $edit['settings[label]'],
+      '%region' => 'Left sidebar',
+    ]));
   }
 
 }

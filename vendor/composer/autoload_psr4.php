@@ -20,6 +20,7 @@ return array(
     'cweagans\\Composer\\' => array($vendorDir . '/cweagans/composer-patches/src'),
     'ZipStream\\' => array($vendorDir . '/maennchen/zipstream-php/src'),
     'Webmozart\\Assert\\' => array($vendorDir . '/webmozart/assert/src'),
+    'Wa72\\HtmlPageDom\\' => array($vendorDir . '/wa72/htmlpagedom/src'),
     'VariableAnalysis\\' => array($vendorDir . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis'),
     'Vardot\\Installer\\' => array($vendorDir . '/vardot/module-installer-factory/src/Installer'),
     'Vardot\\Entity\\' => array($vendorDir . '/vardot/entity-definition-update-manager/src/Entity'),

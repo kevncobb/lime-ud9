@@ -1,7 +1,7 @@
 # Schema for the configuration files of the Printable module.
 
 printable.settings:
-  type: mapping
+  type: config_object
   label: 'Printable settings'
   mapping:
     printable_entities:
@@ -24,7 +24,7 @@ printable.settings:
       label: 'Save or inline pdf'
     pdf_tool:
       type: string
-      label: 'Tool to be used in generating pdf'    
+      label: 'Tool to be used in generating pdf'
     paper_size:
       type: string
       label: 'Page size'
@@ -58,3 +58,12 @@ printable.settings:
       sequence:
         - type: string
           label: 'Pdf link locations'
+    print_pdf_use_xvfb_run:
+      type: boolean
+      label: 'Use Xvfb-run'
+    path_to_xvfb_run:
+      type: string
+      label: 'Path to Xvfb-run binary file'
+    ignore_warnings:
+      type: boolean
+      label: 'Use the generated PDF even if warnings are indicated'

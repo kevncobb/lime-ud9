@@ -29,13 +29,9 @@ class PrintableLinksBlockTest extends UnitTestCase {
    * @covers PrintableLinksBlock::GetDerivativeDefinitions
    */
   public function testGetDerivativeDefinitions() {
-    $entity_definition = $this->getMockBuilder('Drupal\Core\Entity\EntityType')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $entity_definition = $this->createMock('Drupal\Core\Entity\EntityType');
 
-    $printable_format_manager = $this->getMockBuilder('Drupal\printable\PrintableEntityManager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $printable_format_manager = $this->createMock('Drupal\printable\PrintableEntityManager');
     $printable_format_manager->expects($this->once())
       ->method('getPrintableEntities')
       ->will($this->returnValue([

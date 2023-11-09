@@ -2,7 +2,8 @@
 
 namespace Drupal\printable\Tests;
 
-use Drupal\node\Tests\NodeTestBase;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Tests\node\Functional\NodeTestBase;
 
 /**
  * Tests the printable module functionality.
@@ -11,22 +12,28 @@ use Drupal\node\Tests\NodeTestBase;
  */
 class PrintablePageTest extends NodeTestBase {
 
+  use StringTranslationTrait;
   /**
    * Modules to install.
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'printable',
-    'node_test_exception',
+    'node',
     'dblog',
     'system',
   ];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Perform any initial set up tasks that run before every test method.
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $web_user = $this->drupalCreateUser([
       'create page content',
@@ -42,58 +49,59 @@ class PrintablePageTest extends NodeTestBase {
    */
   public function testCustomPageExists() {
     global $base_url;
-    $node_type_storage = \Drupal::entityManager()->getStorage('node_type');
+    $node_type_storage = \Drupal::entityTypeManager()->getStorage('node_type');
 
     // Test /node/add page with only one content type.
     $node_type_storage->load('article')->delete();
     $this->drupalGet('node/add');
-    $this->assertResponse(200);
-    $this->assertUrl('node/add/page');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->addressEquals('node/add/page');
     // Create a node.
     $edit = [];
     $edit['title[0][value]'] = $this->randomMachineName(8);
     $bodytext = $this->randomMachineName(16) . 'This is functional test which I am writing for printable module.';
     $edit['body[0][value]'] = $bodytext;
-    $this->drupalPostForm('node/add/page', $edit, t('Save'));
+    $this->drupalGet('node/add/page');
+    $this->submitForm($edit, $this->t('Save'));
 
     // Check that the Basic page has been created.
-    $this->assertRaw(t('!post %title has been created.', [
-      '!post' => 'Basic page',
-      '%title' => $edit['title[0][value]'],
-    ]), 'Basic page created.');
+    $this->assertSession()->linkByHrefExists('/node/1', 0, $edit['title[0][value]']);
 
     // Check that the node exists in the database.
     $node = $this->drupalGetNodeByTitle($edit['title[0][value]']);
-    $this->assertTrue($node, 'Node found in database.');
+    $this->assertNotNull(($node === FALSE ? NULL : $node), 'Node found in database.');
 
     // Verify that pages do not show submitted information by default.
     $this->drupalGet('node/' . $node->id());
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $this->drupalGet('node/' . $node->id() . '/printable/print');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     // Checks the presence of header in the page.
-    $this->assertRaw($edit['title[0][value]'], 'Title discovered successfully in the printable page');
+    $this->assertSession()->responseContains($edit['title[0][value]']);
     // Checks the presence of image in the header.
-    $this->assertRaw(theme_get_setting('logo.url'), 'Image discovered successfully in the printable page');
+    $this->assertSession()->responseContains(theme_get_setting('logo.url'));
     // Checks the presence of body in the page.
-    $this->assertRaw($edit['body[0][value]'], 'Body discovered successfully in the printable page');
+    $this->assertSession()->responseContains($edit['body[0][value]']);
     // Check if footer is rendering correctly.
-    $this->assertRaw($base_url . '/node/' . $node->id(), 'Source Url discovered in the printable page');
-    $this->verbose($base_url);
+    $this->assertSession()->responseContains($base_url . '/node/' . $node->id());
     // Enable the option of showing links present in the footer of page.
     $this->drupalGet('admin/config/user-interface/printable/print');
-    $this->drupalPostForm(NULL, [
+    $this->submitForm([
       'print_html_display_sys_urllist' => 1,
-    ], t('Submit'));
+    ], $this->t('Submit'));
 
+    // Check that the printable URL can be retrieved without error.
     $this->drupalGet('node/' . $node->id() . '/printable/print');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
 
     // Checks whether the URLs in the footer region are rendering properly.
-    $this->assertRaw('List of links present in page', 'Main heading for displaying URLs discovered in the printable page');
-    $this->assertRaw($base_url . '/node/' . $node->id(), 'First link discovered successfully');
-    $this->assertRaw('/user/1', 'Second link discovered successfully');
-    $this->assertRaw('/node/' . $node->id() . '/printable/print', 'Third link discovered successfully');
+    $this->assertSession()->responseContains('List of links present in page');
+    $this->assertSession()->responseContains($base_url . '/node/' . $node->id());
+    $this->assertSession()->responseContains('/node/' . $node->id() . '/printable/print');
+
+    // Check that invalid plugin URLs throw a 404.
+    $this->drupalGet('node/' . $node->id() . '/printable/UNDEFINED');
+    $this->assertSession()->statusCodeEquals(404);
   }
 
 }

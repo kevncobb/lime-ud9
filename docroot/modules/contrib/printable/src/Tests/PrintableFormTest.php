@@ -2,21 +2,28 @@
 
 namespace Drupal\printable\Tests;
 
-use Drupal\simpletest\WebTestBase;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests the printable module functionality.
  *
  * @group printable
  */
-class PrintableFormTest extends WebTestBase {
+class PrintableFormTest extends BrowserTestBase {
 
+  use StringTranslationTrait;
   /**
    * Modules to install.
    *
    * @var array
    */
-  public static $modules = ['printable'];
+  protected static $modules = ['printable', 'node'];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
 
   /**
    * A simple user with 'administer printable' permission.
@@ -28,7 +35,7 @@ class PrintableFormTest extends WebTestBase {
   /**
    * Perform any initial set up tasks that run before every test method.
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $this->user = $this->drupalCreateUser(['administer printable']);
     $this->drupalLogin($this->user);
@@ -40,17 +47,17 @@ class PrintableFormTest extends WebTestBase {
   public function testPrintFormWorks() {
     $this->drupalLogin($this->user);
     $this->drupalGet('admin/config/user-interface/printable/print');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
 
     $config = $this->config('printable.settings');
-    $this->assertFieldByName('print_html_sendtoprinter', $config->get('printable.send_to_printer'), 'The field was found with the correct value.');
+    $this->assertSession()->fieldValueEquals('print_html_sendtoprinter', $config->get('printable.send_to_printer'));
 
-    $this->drupalPostForm(NULL, [
+    $this->submitForm([
       'print_html_sendtoprinter' => 1,
-    ], t('Submit'));
+    ], $this->t('Submit'));
     $this->drupalGet('admin/config/user-interface/printable/print');
-    $this->assertResponse(200);
-    $this->assertFieldByName('print_html_sendtoprinter', 1, 'The field was found with the correct value.');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldValueEquals('print_html_sendtoprinter', 1);
   }
 
 }

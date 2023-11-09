@@ -51,7 +51,7 @@ class RouteSubscriber implements EventSubscriberInterface {
         "$entity_type/{entity}/printable/{printable_format}",
         [
           '_controller' => 'Drupal\printable\Controller\PrintableController::showFormat',
-          '_title' => 'Printable',
+          '_title_callback' => 'Drupal\printable\Controller\PrintableController::getTitle',
         ],
         [
           '_entity_access' => 'entity.view',

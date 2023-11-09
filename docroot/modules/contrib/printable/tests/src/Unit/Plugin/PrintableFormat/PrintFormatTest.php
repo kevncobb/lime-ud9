@@ -107,7 +107,9 @@ class PrintFormatTest extends UnitTestCase {
    */
   public function testGetPassedInConfiguration() {
     $format = new PrintFormat(['test_configuration_value' => TRUE], $this->pluginId, $this->pluginDefinition, $this->getConfigFactoryStub(), $this->getCssIncludeStub(), $this->getLinkExtractorIncludeStub());
-    $this->assertEquals(['show_print_dialogue' => TRUE, 'test_configuration_value' => TRUE], $format->getConfiguration());
+    $this->assertEquals(
+      ['show_print_dialogue' => TRUE, 'test_configuration_value' => TRUE], $format->getConfiguration()
+    );
   }
 
   /**
@@ -118,9 +120,7 @@ class PrintFormatTest extends UnitTestCase {
   public function testSetConfiguration() {
     $new_configuration = ['show_print_dialogue' => FALSE];
 
-    $config_mock = $this->getMockBuilder('\Drupal\Core\Config\Config')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $config_mock = $this->createMock('\Drupal\Core\Config\Config');
     $config_mock->expects($this->once())
       ->method('set')
       ->with('print', $new_configuration)
@@ -128,9 +128,7 @@ class PrintFormatTest extends UnitTestCase {
     $config_mock->expects($this->once())
       ->method('save');
 
-    $config_factory_mock = $this->getMockBuilder('\Drupal\Core\Config\ConfigFactory')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $config_factory_mock = $this->createMock('\Drupal\Core\Config\ConfigFactory');
     $config_factory_mock->expects($this->once())
       ->method('get')
       ->with('printable.format')
@@ -146,18 +144,14 @@ class PrintFormatTest extends UnitTestCase {
    * Get the CSS include stub.
    */
   protected function getCssIncludeStub() {
-    return $this->getMockBuilder('Drupal\printable\PrintableCssIncludeInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
+    return $this->createMock('Drupal\printable\PrintableCssIncludeInterface');
   }
 
   /**
    * Get the Link extractor stub.
    */
   protected function getLinkExtractorIncludeStub() {
-    return $this->getMockBuilder('Drupal\printable\LinkExtractor\LinkExtractorInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
+    return $this->createMock('Drupal\printable\LinkExtractor\LinkExtractorInterface');
   }
 
 }

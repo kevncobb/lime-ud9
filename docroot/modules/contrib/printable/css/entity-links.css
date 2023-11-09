@@ -2,6 +2,7 @@
   list-style-type: none;
 }
 .node_view a {
+  font-weight: bold;
   text-decoration: none;
 }
 .node_view ul.pre_links li {

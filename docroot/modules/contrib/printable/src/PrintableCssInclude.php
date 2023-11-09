@@ -3,7 +3,7 @@
 namespace Drupal\printable;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Extension\ThemeHandlerInterface;
+use Drupal\Core\Extension\ThemeExtensionList;
 
 /**
  * Helper class for the printable module.
@@ -18,23 +18,23 @@ class PrintableCssInclude implements PrintableCssIncludeInterface {
   protected $configFactory;
 
   /**
-   * The theme handler service.
+   * The theme extension list service.
    *
-   * @var \Drupal\Core\Extension\ThemeHandlerInterface
+   * @var Drupal\Core\Extension\ThemeExtensionList
    */
-  protected $themeHandler;
+  protected $themeExtensionList;
 
   /**
    * Constructs a new PrintableCssInclude object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The configuration factory service.
-   * @param \Drupal\Core\Extension\ThemeHandlerInterface $theme_handler
+   * @param \Drupal\Core\Extension\ThemeExtensionList $themeExtensionList
    *   The theme handler service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, ThemeHandlerInterface $theme_handler) {
+  public function __construct(ConfigFactoryInterface $config_factory, ThemeExtensionList $themeExtensionList) {
     $this->configFactory = $config_factory;
-    $this->themeHandler = $theme_handler;
+    $this->themeExtensionList = $themeExtensionList;
   }
 
   /**
@@ -43,8 +43,9 @@ class PrintableCssInclude implements PrintableCssIncludeInterface {
   public function getCssIncludePath() {
     if ($include_path = $this->configFactory->get('printable.settings')->get('css_include')) {
       if ($token = $this->extractCssIncludeToken($include_path)) {
-        list(, $theme) = explode(':', trim($token, '[]'));
-        $include_path = str_replace($token, $this->getThemePath($theme), $include_path);
+        [, $theme] = explode(':', trim($token, '[]'));
+        $themePath = $this->themeExtensionList->getPath($theme);
+        $include_path = str_replace($token, $themePath, $include_path);
       }
       return $include_path;
     }
@@ -75,27 +76,6 @@ class PrintableCssInclude implements PrintableCssIncludeInterface {
     $length = strpos($path, $end, $index) + 1;
 
     return substr($path, $index, $length);
-  }
-
-  /**
-   * Get the path to a theme.
-   *
-   * @param string $theme
-   *   The machine name of the theme to get the path for.
-   *
-   * @return string
-   *   The path to the given theme.
-   *
-   * @todo replace this with an injectable version of drupal_get_path() when/if
-   *  it lands.
-   */
-  protected function getThemePath($theme) {
-    $info = $this->themeHandler->listInfo();
-    $path = '';
-    if (isset($info[$theme])) {
-      $path = $info[$theme]->getPath();
-    }
-    return $path;
   }
 
 }

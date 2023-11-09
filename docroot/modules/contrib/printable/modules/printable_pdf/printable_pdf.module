@@ -9,7 +9,7 @@
  * Implements hook_theme().
  */
 function printable_pdf_theme() {
-  $module_path = drupal_get_path('module', 'printable_pdf');
+  $module_path = \Drupal::service('extension.list.module')->getPath('printable_pdf');
   return [
     'printable_pdf_footer' => [
       'template' => 'printable-footer',

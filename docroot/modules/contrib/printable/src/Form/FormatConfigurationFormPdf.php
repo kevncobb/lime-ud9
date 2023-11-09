@@ -2,18 +2,22 @@
 
 namespace Drupal\printable\Form;
 
-use Drupal\printable\PrintableEntityManagerInterface;
+use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Doctrine\Common\ClassLoader;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\pdf_api\PdfGeneratorPluginManager;
+use Drupal\printable\PrintableEntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Config\ConfigFactory;
 
 /**
  * Provides shared configuration form for all printable formats.
  */
 class FormatConfigurationFormPdf extends FormBase {
 
+  use StringTranslationTrait;
   /**
    * The printable entity manager.
    *
@@ -29,16 +33,51 @@ class FormatConfigurationFormPdf extends FormBase {
   protected $configFactory;
 
   /**
+   * The messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+  
+  /**
+   * The PDF generator plugin manager.
+   *
+   * @var \Drupal\pdf_api\PdfGeneratorPluginManager
+   */
+  protected $pdfGeneratorPluginManager;
+
+  /**
    * Constructs a new form object.
    *
    * @param \Drupal\printable\PrintableEntityManagerInterface $printable_entity_manager
    *   The printable entity manager.
    * @param \Drupal\Core\Config\ConfigFactory $configFactory
    *   Defines the configuration object factory.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger service.
+   * @param \Drupal\Core\Extension\ModuleHandler $moduleHandler
+   *   The module handler service.
+   * @param \Drupal\pdf_api\PdfGeneratorPluginManager $pluginManager
+   *   The PDF manager plugin manager service.
    */
-  public function __construct(PrintableEntityManagerInterface $printable_entity_manager, ConfigFactory $configFactory) {
+  public function __construct(
+    PrintableEntityManagerInterface $printable_entity_manager,
+    ConfigFactory $configFactory,
+    MessengerInterface $messenger,
+    ModuleHandler $moduleHandler,
+    PdfGeneratorPluginManager $pluginManager) {
     $this->printableEntityManager = $printable_entity_manager;
     $this->configFactory = $configFactory;
+    $this->messenger = $messenger;
+    $this->moduleHandler = $moduleHandler;
+    $this->pdfGeneratorPluginManager = $pluginManager;
   }
 
   /**
@@ -47,7 +86,10 @@ class FormatConfigurationFormPdf extends FormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('printable.entity_manager'),
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('messenger'),
+      $container->get('module_handler'),
+      $container->get('plugin.manager.pdf_generator')
     );
   }
 
@@ -62,11 +104,13 @@ class FormatConfigurationFormPdf extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $printable_format = NULL) {
-    $wkhtmltopdf_present = ClassLoader::classExists('mikehaertl\wkhtmlto\Pdf');
-    $mpdf_present = ClassLoader::classExists('Mpdf\Mpdf');
-    $tcpdf_present = ClassLoader::classExists('TCPDF');
-    $dompdf_present = ClassLoader::classExists('Dompdf\Dompdf');
-    if ($wkhtmltopdf_present || $mpdf_present || $tcpdf_present || $dompdf_present) {
+    $plugins = $this->pdfGeneratorPluginManager->getDefinitions();
+    foreach ($plugins as $id => $plugin) {
+      if (!class_exists($plugin['required_class'])) {
+        unset($plugins[$id]);
+      }
+    }
+    if (!empty($plugins)) {
       $form['settings']['print_pdf_pdf_tool'] = [
         '#type' => 'radios',
         '#title' => $this->t('PDF generation tool'),
@@ -77,20 +121,13 @@ class FormatConfigurationFormPdf extends FormBase {
       ];
     }
     else {
-      drupal_set_message($this->t('You are seeing no PDF generating tool because you have not installed any third party library using composer.'));
+      $this->messenger()
+        ->addWarning($this->t('You are seeing no PDF generating tool because you have not installed any third party library using composer.'));
     }
-    if ($mpdf_present) {
-      $form['settings']['print_pdf_pdf_tool']['#options'] += ['mPDF' => 'mPDF'];
+    foreach ($plugins as $id => $plugin) {
+      $form['settings']['print_pdf_pdf_tool']['#options'][$id] = $plugin['title'];
     }
-    if ($tcpdf_present) {
-      $form['settings']['print_pdf_pdf_tool']['#options'] += ['TCPDF' => 'TCPDF'];
-    }
-    if ($wkhtmltopdf_present) {
-      $form['settings']['print_pdf_pdf_tool']['#options'] += ['wkhtmltopdf' => 'wkhtmltopdf'];
-    }
-    if ($dompdf_present) {
-      $form['settings']['print_pdf_pdf_tool']['#options'] += ['dompdf' => 'dompdf'];
-    }
+
     $form['settings']['print_pdf_content_disposition'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Save the pdf'),
@@ -158,14 +195,47 @@ class FormatConfigurationFormPdf extends FormBase {
         ->get('page_orientation'),
       '#description' => $this->t('Choose the page orientation of the generated PDF.'),
     ];
+
+    $token_help = '';
+    $token_args = [];
+
+    if ($this->moduleHandler->moduleExists('token')) {
+      $build = [
+        '#type' => 'container',
+        'token_tree_link' => [
+          '#theme' => 'token_tree_link',
+          '#token_types' => ['all'],
+          '#click_insert' => TRUE,
+          '#dialog' => TRUE,
+        ],
+      ];
+      $token_args = [
+        '@browse_tokens_link' => \Drupal::service('renderer')->render($build),
+      ];
+
+      $token_help = ' This field supports tokens: ';
+
+    }
+
     $form['settings']['print_pdf_filename'] = [
       '#type' => 'textfield',
       '#title' => $this->t('PDF filename'),
       '#default_value' => $this->config('printable.settings')
         ->get('pdf_location'),
-      '#description' => $this->t("Filename with its location can be entered. If left empty and Save the pdf option has been selected the generated filename defaults to the node's path.The .pdf extension will be appended automatically."),
+      '#description' => $this->t("Filename with its location can be entered. If left empty and Save the pdf option has been selected the generated filename defaults to the node's path.The .pdf extension will be appended automatically. @token_help @token_args", [
+        '@token_help' => $token_help,
+        '@token_args' => $token_args["@browse_tokens_link"],
+      ]),
     ];
-    if ($wkhtmltopdf_present) {
+    if (function_exists('token_element_validate')) {
+      $form['settings']['print_pdf_filename']['#element_validate'][] = 'token_element_validate';
+    }
+    $form['settings']['print_pdf_filename'] += [
+      '#token_types' => [
+        'all',
+      ],
+    ];
+    if (!empty($plugins['wkhtmltopdf'])) {
       $form['settings']['path_to_binary'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Path to binary file'),
@@ -226,14 +296,15 @@ class FormatConfigurationFormPdf extends FormBase {
       ->set('page_orientation', $form_state->getValue('print_pdf_page_orientation'))
       ->set('pdf_location', $form_state->getValue('print_pdf_filename'))
       ->save();
-    if (ClassLoader::classExists('mikehaertl\wkhtmlto\Pdf') && $pdf_tool == 'wkhtmltopdf') {
+    if (class_exists('mikehaertl\wkhtmlto\Pdf') && $pdf_tool == 'wkhtmltopdf') {
       $this->configFactory->getEditable('printable.settings')
         ->set('path_to_binary', $form_state->getValue('path_to_binary'))
         ->set('print_pdf_use_xvfb_run', $form_state->getValue('print_pdf_use_xvfb_run'))
         ->set('path_to_xfb_run', $form_state->getValue('path_to_xfb_run'))
         ->save();
     }
-    drupal_set_message('The configuration option has been saved','status');
+    $this->messenger()
+      ->addStatus($this->t('The configuration option has been saved'));
   }
 
 }

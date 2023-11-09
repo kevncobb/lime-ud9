@@ -1,10 +1,14 @@
 <?php
 
 /**
+ * @file
+ * Install functions for the printable module.
+ */
+
+/**
  * Implements hook_requirements().
  */
-function printable_requirements()
-{
+function printable_requirements() {
   $requirements = [];
   if (!class_exists('\Wa72\HtmlPageDom\HtmlPageCrawler')) {
     $requirements['printable_library'] = [

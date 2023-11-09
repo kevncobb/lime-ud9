@@ -2,6 +2,7 @@
 
 namespace Drupal\printable\Form;
 
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\printable\PrintableEntityManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -28,16 +29,26 @@ class FormatConfigurationFormPrint extends FormBase {
   protected $configFactory;
 
   /**
+   * The messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * Constructs a new form object.
    *
    * @param \Drupal\printable\PrintableEntityManagerInterface $printable_entity_manager
    *   The printable entity manager.
    * @param \Drupal\Core\Config\ConfigFactory $configFactory
    *   Defines the configuration object factory.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger service.
    */
-  public function __construct(PrintableEntityManagerInterface $printable_entity_manager, ConfigFactory $configFactory) {
+  public function __construct(PrintableEntityManagerInterface $printable_entity_manager, ConfigFactory $configFactory, MessengerInterface $messenger) {
     $this->printableEntityManager = $printable_entity_manager;
     $this->configFactory = $configFactory;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -46,7 +57,8 @@ class FormatConfigurationFormPrint extends FormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('printable.entity_manager'),
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('messenger')
     );
   }
 
@@ -100,7 +112,7 @@ class FormatConfigurationFormPrint extends FormBase {
       ->set('close_window', $form_state->getValue('print_html_windowclose'))
       ->set('list_attribute', $form_state->getValue('print_html_display_sys_urllist'))
       ->save();
-    drupal_set_message('The configuration option has been saved','status');
+    $this->messenger()->addStatus($this->t('The configuration option has been saved'));
   }
 
 }
