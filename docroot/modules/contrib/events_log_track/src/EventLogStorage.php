@@ -48,14 +48,13 @@ class EventLogStorage {
       $query->condition('ref_char', $getData['name']);
     }
     if (!empty($getData['path'])) {
-      $query->condition('path', '%' . db_like($getData['path']) . '%', 'LIKE');
+      $query->condition('path', '%' . $db->escapeLike($getData['path']) . '%', 'LIKE');
     }
     if (!empty($getData['keyword'])) {
-      $query->condition('description', '%' . db_like($getData['keyword']) . '%', 'LIKE');
+      $query->condition('description', '%' . $db->escapeLike($getData['keyword']) . '%', 'LIKE');
     }
     if (!empty($getData['user'])) {
-      $getUid = substr($getData['user'], strrpos($getData['user'], '(') + 1, -1);
-      $query->condition('uid', $getUid);
+      $query->condition('uid', $getData['user']);
     }
     $result = $pager->execute();
 
@@ -72,15 +71,14 @@ class EventLogStorage {
    *   A form element.
    */
   public static function formGetOperations($type) {
-    $element = array(
+    $element = [
       '#type' => 'select',
       '#name' => 'operation',
-      '#title' => t('Operation'),
-      '#description' => t('The entity operation.'),
-      '#options' => array('' => t('Choose an operation')),
+      '#title' => t('CUD Operation'),
+      '#options' => ['' => t('Choose an operation')],
       '#prefix' => '<div id="operation-dropdown-replace">',
       '#suffix' => '</div>',
-    );
+    ];
     if ($type) {
       $db = \Drupal::database();
       $query = $db->select('event_log_track', 'e')
@@ -91,7 +89,7 @@ class EventLogStorage {
       $query->distinct(TRUE);
       $results = $query->execute()->fetchAllKeyed(0);
 
-      $operations = array();
+      $operations = [];
       foreach ($results as $name => $count) {
         $operations[$name] = $name . ' (' . $count . ')';
       }

@@ -9954,6 +9954,72 @@
             "install-path": "../../docroot/modules/contrib/entityqueue_form_widget"
         },
         {
+            "name": "drupal/events_log_track",
+            "version": "3.1.8",
+            "version_normalized": "3.1.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/events_log_track.git",
+                "reference": "3.1.8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/events_log_track-3.1.8.zip",
+                "reference": "3.1.8",
+                "shasum": "051639ffad393c1fab749b22e1b85fbf59a84547"
+            },
+            "require": {
+                "drupal/core": "^9 || ^10"
+            },
+            "require-dev": {
+                "drupal/event_log_track-event_log_track": "*",
+                "drupal/event_log_track_auth-event_log_track_auth": "*",
+                "drupal/group": "*",
+                "drupal/media": "*",
+                "drupal/tfa": "*",
+                "drupal/token": "*"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "3.1.8",
+                    "datestamp": "1697214291",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "installation-source": "dist",
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Stephen Mustgrave",
+                    "homepage": "https://www.drupal.org/user/1840602",
+                    "email": "smustgrave@gmail.com",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "smustgrave",
+                    "homepage": "https://www.drupal.org/user/3252890"
+                },
+                {
+                    "name": "stevenlafl",
+                    "homepage": "https://www.drupal.org/user/2236078"
+                }
+            ],
+            "description": "Logs general CUD events performed by the user (using the forms) on the website.",
+            "homepage": "https://drupal.org/project/events_log_track",
+            "support": {
+                "source": "https://git.drupalcode.org/project/events_log_track",
+                "issues": "https://drupal.org/project/issues/events_log_track"
+            },
+            "install-path": "../../docroot/modules/contrib/events_log_track"
+        },
+        {
             "name": "drupal/expand_collapse_formatter",
             "version": "2.0.2",
             "version_normalized": "2.0.2.0",

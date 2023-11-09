@@ -122,7 +122,8 @@
     "drupal/custom_search": "^1.0@beta",
     "drupal/dbal": "2.x-dev@dev",
     "drupal/disqus": "^2.0@alpha",
-    "drupal/easy_email": "^2.1@beta"
+    "drupal/easy_email": "^2.1@beta",
+    "drupal/events_log_track": "^3.1"
   },
   "require-dev": {
     "drupal/core-dev": "~10",

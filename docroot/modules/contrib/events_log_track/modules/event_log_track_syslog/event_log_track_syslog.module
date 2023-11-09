@@ -1,0 +1,245 @@
+<?php
+
+/**
+ * @file
+ * Integrates ELT with syslog.
+ */
+
+use Drupal\Core\Datetime\Entity\DateFormat;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\user\Entity\User;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function event_log_track_syslog_form_system_logging_settings_alter(&$form, FormStateInterface $form_state) {
+
+  $config = \Drupal::configFactory()->getEditable('event_log_track.settings');
+
+  $form['event_log_track_format'] = [
+    '#type' => 'textarea',
+    '#title' => 'Events Log Track format',
+    '#default_value' => $config->get('format'),
+    '#weight' => 10,
+  ];
+
+  if (\Drupal::moduleHandler()->moduleExists('token')) {
+    $form['event_log_track_format_tokens'] = [
+      '#theme' => 'token_tree_link',
+      '#token_types' => ['event-log'],
+      '#global_types' => TRUE,
+      '#click_insert' => TRUE,
+      '#weight' => 11,
+    ];
+  }
+
+  $form['event_log_track_output_type'] = [
+    '#type' => 'select',
+    '#title' => 'Events Log Track Output type',
+    '#default_value' => $config->get('output_type'),
+    '#options' => [
+      'watchdog' => t('Watchdog (default)'),
+      'syslog' => t('Raw Syslog'),
+    ],
+    '#description' => t('<strong>Note:</strong> The Raw Syslog option dumps output <em>exactly</em> as in ELT format above, so you need to add your own timestamp, IP, etc using tokens.<br/>The Watchdog (default) option dumps output using the Syslog format with "message" field formatted using the ELT format above.'),
+    '#weight' => 12,
+  ];
+
+  $row = [
+    'type' => 'authorization',
+    'operation' => 'fail',
+    'description' => 'Unauthorized access attempt',
+    'created' => \Drupal::time()->getRequestTime(),
+    'severity' => 5,
+    'entity' => User::load(1),
+    'uid' => 1,
+    'ip' => '123.123.123.123',
+    'path' => '/some/admin/path',
+    'ref_char' => 'username',
+    'ref_numeric' => 0,
+  ];
+  $token_service = \Drupal::token();
+  $bubbleable_metadata = new BubbleableMetadata();
+  $output = $token_service->replace($config->get('format'), ['event-log' => $row], [], $bubbleable_metadata);
+
+  $form['example'] = [
+    '#type' => 'textarea',
+    '#title' => 'Example output based on above',
+    '#default_value' => $output,
+    '#disabled' => TRUE,
+    '#weight' => 12,
+  ];
+
+  $form['#submit'][] = 'event_log_track_syslog_logging_settings_submit';
+}
+
+/**
+ * Logging settings page submit hook.
+ *
+ * @throws Drupal\Core\Config\ConfigValueException
+ */
+function event_log_track_syslog_logging_settings_submit($form, FormStateInterface $form_state) {
+  if (\Drupal::moduleHandler()->moduleExists('token')) {
+    \Drupal::configFactory()->getEditable('event_log_track.settings')
+      ->set('format', $form_state->getValue('event_log_track_format'))
+      ->set('output_type', $form_state->getValue('event_log_track_output_type'))
+      ->save();
+  }
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function event_log_track_syslog_token_info(): array {
+  $type = [
+    'name' => t('Event Log'),
+    'description' => t('Tokens related to event log'),
+    'needs-data' => 'event-log',
+  ];
+
+  // Core tokens for media.
+  $event['type'] = [
+    'name' => t('Type'),
+  ];
+  $event['operation'] = [
+    'name' => t('Operation'),
+  ];
+  $event['description'] = [
+    'name' => t('Description'),
+  ];
+  $event['created'] = [
+    'name' => t('Date action was taken'),
+    'type' => 'date',
+  ];
+  $event['entity'] = [
+    'name' => t('Entity this action was taken against, if any'),
+    'type' => 'entity',
+  ];
+  $event['user'] = [
+    'name' => t('User who made the action'),
+    'type' => 'user',
+  ];
+  $event['session_duration'] = [
+    'name' => t('Session duration'),
+    'description' => t('Duration in seconds; 0 if anonymous'),
+  ];
+  $event['ip'] = [
+    'name' => t('IP Address of user'),
+  ];
+  $event['path'] = [
+    'name' => t('Entity bundle name'),
+  ];
+  $event['severity'] = [
+    'name' => t('Severity code (RFC 5424)'),
+  ];
+  $event['ref_char'] = [
+    'name' => t('Reference ID - readable'),
+  ];
+  $event['ref_numeric'] = [
+    'name' => t('Reference ID'),
+  ];
+
+  return [
+    'types' => ['event-log' => $type],
+    'tokens' => ['event-log' => $event],
+  ];
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function event_log_track_syslog_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata): array {
+  $token_service = \Drupal::token();
+
+  $langcode = $options['langcode'] ?? LanguageInterface::LANGCODE_DEFAULT;
+
+  $replacements = [];
+  if ($type === 'event-log' && !empty($data['event-log'])) {
+    $event = $data['event-log'];
+
+    foreach ($tokens as $name => $original) {
+      switch ($name) {
+        case 'type':
+          $replacements[$original] = $event['type'];
+          break;
+
+        case 'operation':
+          $replacements[$original] = $event['operation'];
+          break;
+
+        case 'description':
+          $replacements[$original] = $event['description'];
+          break;
+
+        case 'severity':
+          $replacements[$original] = $event['severity'];
+          break;
+
+        case 'ip':
+          $replacements[$original] = $event['ip'];
+          break;
+
+        case 'path':
+          $replacements[$original] = $event['path'];
+          break;
+
+        case 'ref_numeric':
+          $replacements[$original] = $event['ref_numeric'];
+          break;
+
+        case 'ref_char':
+          $replacements[$original] = $event['ref_char'];
+          break;
+
+        case 'user':
+          $account = User::load($event['uid']);
+          $bubbleable_metadata->addCacheableDependency($account);
+          $replacements[$original] = $account->label();
+          break;
+
+        case 'session_duration':
+          if ($event['uid'] > 0) {
+            // The user is not anonymous; calculate duration from login time.
+            $account = User::load($event['uid']);
+            $replacements[$original] = \Drupal::time()->getRequestTime() - $account->getLastLoginTime();
+          }
+          else {
+            // Literal '0' for string output.
+            $replacements[$original] = '0';
+          }
+          break;
+
+        case 'entity':
+          $entity = $event['entity'];
+          $bubbleable_metadata->addCacheableDependency($entity);
+          $replacements[$original] = $entity->label();
+          break;
+
+        case 'created':
+          $date_format = DateFormat::load('medium');
+          $bubbleable_metadata->addCacheableDependency($date_format);
+          $replacements[$original] = \Drupal::service('date.formatter')
+            ->format($event['created'], $date_format->id(), '', NULL, $langcode);
+          break;
+      }
+    }
+
+    if ($author_tokens = $token_service->findWithPrefix($tokens, 'user')) {
+      $account = User::load($event['uid']);
+      $replacements += $token_service->generate('user', $author_tokens, ['user' => $account], $options, $bubbleable_metadata);
+    }
+
+    if ($entity_tokens = $token_service->findWithPrefix($tokens, 'entity')) {
+      $entity = $event['entity'];
+      $replacements += $token_service->generate('entity', $entity_tokens, ['entity' => $entity], $options, $bubbleable_metadata);
+    }
+
+    if ($created_tokens = $token_service->findWithPrefix($tokens, 'created')) {
+      $replacements += $token_service->generate('date', $created_tokens, ['date' => $event['created']], $options, $bubbleable_metadata);
+    }
+  }
+
+  return $replacements;
+}

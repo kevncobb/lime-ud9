@@ -1,0 +1,87 @@
+<?php
+
+/**
+ * @file
+ * Logs user CUD commands in the event_log_track module.
+ */
+
+/**
+ * Implements hook_event_log_track_handlers().
+ */
+function event_log_track_user_event_log_track_handlers() {
+  // User event log handler.
+  $handlers = [];
+  $handlers['user'] = [
+    'title' => t('User'),
+  ];
+  return $handlers;
+}
+
+/**
+ * Implements hook_user_insert().
+ */
+function event_log_track_user_insert($account) {
+  $roles = $account->getRoles();
+
+  if (empty($roles)) {
+    $roles = 'NULL';
+  }
+  else {
+    $roles = implode(',', $roles);
+  }
+  $log = [
+    'type' => 'user',
+    'operation' => 'insert',
+    'description' => t('%name (%uid) as %role', [
+      '%name' => !empty($account->getAccountName()) ? $account->getAccountName() : t('Anonymous'),
+      '%uid' => $account->id(),
+      '%role' => $roles,
+    ]),
+    'ref_numeric' => $account->id(),
+    'ref_char' => !empty($account->getAccountName()) ? $account->getAccountName() : t('Anonymous'),
+  ];
+  event_log_track_insert($log);
+}
+
+/**
+ * Implements hook_user_update().
+ */
+function event_log_track_user_update($account) {
+  $roles = $account->original->getRoles();
+
+  if (empty($roles)) {
+    $roles = 'NULL';
+  }
+  else {
+    $roles = implode(',', $roles);
+  }
+  $log = [
+    'type' => 'user',
+    'operation' => 'update',
+    'description' => t('%name (%uid) as %role', [
+      '%name' => !empty($account->original->getAccountName()) ? $account->original->getAccountName() : t('Anonymous'),
+      '%uid' => $account->original->id(),
+      '%role' => $roles,
+    ]),
+    'ref_numeric' => $account->original->id(),
+    'ref_char' => !empty($account->getAccountName()) ? $account->getAccountName() : t('Anonymous'),
+  ];
+  event_log_track_insert($log);
+}
+
+/**
+ * Implements hook_user_delete().
+ */
+function event_log_track_user_delete($account) {
+  $log = [
+    'type' => 'user',
+    'operation' => 'delete',
+    'description' => t('%name (uid %uid)', [
+      '%name' => $account->getAccountName(),
+      '%uid' => $account->id(),
+    ]),
+    'ref_numeric' => $account->id(),
+    'ref_char' => !empty($account->getAccountName()) ? $account->getAccountName() : t('Anonymous'),
+  ];
+  event_log_track_insert($log);
+}

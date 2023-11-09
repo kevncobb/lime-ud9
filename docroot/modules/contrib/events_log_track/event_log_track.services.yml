@@ -1,0 +1,4 @@
+services:
+  event_log_track.api:
+    class: Drupal\event_log_track\EventLogTrackApi
+    arguments: ['@config.factory', '@database']

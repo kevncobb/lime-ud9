@@ -1,0 +1,4 @@
+services:
+  logger.eventlog:
+    class: Drupal\event_log_track_syslog\Logger\EventLog
+    arguments: ['@config.factory', '@logger.log_message_parser', '@logger.factory', '@token']

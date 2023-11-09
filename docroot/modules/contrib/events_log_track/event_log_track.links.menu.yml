@@ -1,6 +1,5 @@
-event_log_track.report_form:
+event_log_track.settings_form:
   title: 'Events Log Track'
-  parent: system.admin_reports
-  description: 'Get report about cud operation performed by the user on the website.'
-  weight: -5
-  route_name: event_log_track.report_form
+  route_name: event_log_track.settings_form
+  description: 'Add settings related to events log track'
+  parent: system.admin_config_system

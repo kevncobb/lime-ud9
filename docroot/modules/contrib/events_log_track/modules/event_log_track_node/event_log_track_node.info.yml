@@ -1,9 +1,10 @@
-name: Events Log Track
-description: 'Logs general CUD events performed by the user (using the forms) on the website.'
+name: Events Log Track Node
+description: 'Logs node CUD events performed by the user.'
 type: module
+dependencies:
+  - event_log_track:event_log_track
 core_version_requirement: ^9 || ^10
 package: Logging
-configure: event_log_track.settings_form
 
 # Information added by Drupal.org packaging script on 2023-10-13
 version: '3.1.8'

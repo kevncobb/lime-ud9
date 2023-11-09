@@ -1,0 +1,5 @@
+services:
+  event_log_track_auth_exit:
+    class: Drupal\event_log_track_auth\EventSubscriber\EventLogTrackAuthExit
+    tags:
+      - {name: event_subscriber}

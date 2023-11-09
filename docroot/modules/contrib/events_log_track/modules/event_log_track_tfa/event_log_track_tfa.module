@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * @file
+ * Logs user authentication via TFA in the event_log_track module.
+ */
+
+/**
+ * Implements hook_event_log_track_handlers().
+ */
+function event_log_track_tfa_event_log_track_handlers(): array {
+  // User Authentication event log handler.
+  $handlers = [];
+  $handlers['authentication_tfa'] = [
+    'title' => t('User authentication - TFA'),
+    'form_ids' => ['tfa_entry_form'],
+    'form_submit_callback' => 'event_log_track_tfa_form_submit',
+  ];
+  return $handlers;
+}
+
+/**
+ * Event log callback for the user authentication event log.
+ */
+function event_log_track_tfa_form_submit($form, $form_state, $form_id): ?array {
+  $account = \Drupal::currentUser();
+  $log = NULL;
+  switch ($form_id) {
+    case 'tfa_entry_form':
+      $uid = $account->id();
+      if ($uid === 0) {
+        break;
+      }
+      // At this point, new session hasn't started yet.
+      $session_count = _event_log_track_session_count($uid) + 1;
+
+      $log = [
+        'operation' => 'TFA login',
+        'description' => "SC($session_count)",
+        'uid' => $uid,
+        'ref_numeric' => $uid,
+        'ref_char' => $account->getAccountName(),
+      ];
+      break;
+  }
+  return $log;
+}

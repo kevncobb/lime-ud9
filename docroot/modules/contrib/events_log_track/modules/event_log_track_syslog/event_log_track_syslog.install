@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the event_log_track_syslog.
+ */
+
+/**
+ * Updates the default Events Log Track format.
+ */
+function event_log_track_syslog_update_9001() {
+  $new_format = 'ELT [[event-log:type]] [[event-log:ref_char]] [[event-log:operation]] ON [[event-log:path]] BY [user:[event-log:user:uid]:[event-log:user:name]:[event-log:user:roles:join:,]] [[event-log:description]]';
+  \Drupal::configFactory()->getEditable('event_log_track.settings')->set('format', $new_format)->save();
+}

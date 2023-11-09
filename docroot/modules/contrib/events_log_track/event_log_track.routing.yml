@@ -1,7 +1,7 @@
-event_log_track.report_form:
-  path: '/admin/reports/events-track'
+event_log_track.settings_form:
+  path: '/admin/config/system/events-log-track'
   defaults:
-    _controller: '\Drupal\event_log_track\Controller\AdminController::adminPage'
+    _form: '\Drupal\event_log_track\Form\EventsTrackForm'
     _title: 'Event log track'
   requirements:
-    _permission: 'access event log track'
+    _permission: 'administer site configuration'

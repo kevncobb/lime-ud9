@@ -1,0 +1,12 @@
+# Schema for the configuration files of the events_log_track module.
+
+event_log_track.settings:
+  type: config_object
+  label: 'Events Log Track settings'
+  mapping:
+    format:
+      type: string
+      label: 'Format'
+    output_type:
+      type: string
+      label: 'Output Type'

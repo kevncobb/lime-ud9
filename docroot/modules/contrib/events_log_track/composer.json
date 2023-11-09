@@ -1,0 +1,18 @@
+{
+    "name": "drupal/events_log_track",
+    "description": "Logs general CUD events performed by the user (using the forms) on the website.",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Stephen Mustgrave",
+            "email": "smustgrave@gmail.com",
+            "role": "Maintainer"
+        }
+    ],
+    "homepage": "https://drupal.org/project/events_log_track",
+    "support": {
+        "issues": "https://drupal.org/project/issues/events_log_track",
+        "source": "https://git.drupalcode.org/project/events_log_track"
+    }
+}
