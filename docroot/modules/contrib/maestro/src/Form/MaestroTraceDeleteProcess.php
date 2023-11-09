@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\maestro\Form;
 
 use Drupal\Core\Form\ConfirmFormBase;
@@ -18,14 +19,24 @@ class MaestroTraceDeleteProcess extends ConfirmFormBase {
    */
   protected $id;
 
+  /**
+   * The Maestro process ID.
+   *
+   * @var string
+   */
   protected $processID;
 
-  protected $templateName;
   /**
-   * {@inheritdoc}.
+   * The Maestro template machine name.
+   *
+   * @var string
    */
-  public function getFormId()
-  {
+  protected $templateName;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId() {
     return 'maestro_trace_delete_process';
   }
 
@@ -33,7 +44,7 @@ class MaestroTraceDeleteProcess extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return t('Do you want to delete this instance (Process: %pid) of the workflow: %template?', array('%pid' => $this->processID, '%template' => $this->templateName));
+    return t('Do you want to delete this instance (Process: %pid) of the workflow: %template?', ['%pid' => $this->processID, '%template' => $this->templateName]);
   }
 
   /**
@@ -57,7 +68,6 @@ class MaestroTraceDeleteProcess extends ConfirmFormBase {
     return $this->t('Delete Queue Items Now and process records now!');
   }
 
-
   /**
    * {@inheritdoc}
    */
@@ -68,8 +78,8 @@ class MaestroTraceDeleteProcess extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    *
-   * @param int $id
-   *   (optional) This is the discrete ID or the list of task IDs to delete
+   * @param int $idList
+   *   (optional) This is the discrete ID or the list of task IDs to delete.
    */
   public function buildForm(array $form, FormStateInterface $form_state, $processID = NULL, $idList = NULL) {
     $this->id = $idList;
@@ -84,7 +94,8 @@ class MaestroTraceDeleteProcess extends ConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     MaestroEngine::deleteProcess($this->processID);
 
-    drupal_set_message('Process and Task history successfully deleted');
+    \Drupal::messenger()->addMessage(t('Process and Task history successfully deleted'));
     $form_state->setRedirect('view.maestro_outstanding_tasks.maestro_outstanding_tasks');
   }
+
 }

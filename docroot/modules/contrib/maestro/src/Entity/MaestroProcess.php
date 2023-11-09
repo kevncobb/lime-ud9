@@ -10,15 +10,16 @@ use Drupal\maestro\MaestroProcessInterface;
 use Drupal\user\UserInterface;
 use Drupal\Core\Entity\EntityChangedTrait;
 
-//TODO: need the access controller for the process entity
-//TODO: need the list builder for the process entity
+// TODO: need the access controller for the process entity
+// TODO: need the list builder for the process entity.
 
 /**
  * Defines the MaestroProcess entity.
- * 
+ *
  * We have no forms for this entity as this entity is managed by the Maestro engine.
  * Deletions, additions, alterations are managed by Maestro, not natively in Drupal.
  *  *
+ *
  * @ingroup maestro
  *
  * @ContentEntityType(
@@ -39,10 +40,11 @@ use Drupal\Core\Entity\EntityChangedTrait;
  *     "label" = "process_name",
  *     "uuid" = "uuid"
  *   },
+ *   config_export = {
+ *     "id"
+ *   },
  *   field_ui_base_route = "maestro.maestro_process_settings",
  * )
- *
- * 
  */
 class MaestroProcess extends ContentEntityBase implements MaestroProcessInterface {
 
@@ -56,9 +58,9 @@ class MaestroProcess extends ContentEntityBase implements MaestroProcessInterfac
    */
   public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
     parent::preCreate($storage_controller, $values);
-    $values += array(
+    $values += [
       'user_id' => \Drupal::currentUser()->id(),
-    );
+    ];
   }
 
   /**
@@ -106,21 +108,20 @@ class MaestroProcess extends ContentEntityBase implements MaestroProcessInterfac
   }
 
   /**
-   * Get the completed time for the process
+   * Get the completed time for the process.
    */
   public function getCompletedTime() {
     return $this->get('completed')->value;
   }
-  
+
   /**
    * {@inheritdoc}
    *
    * Field properties defined here.
-   *
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
 
-    //Auto increment process ID
+    // Auto increment process ID.
     $fields['process_id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ProcessID'))
       ->setDescription(t('The ID of the Maestro Process.'))
@@ -132,59 +133,59 @@ class MaestroProcess extends ContentEntityBase implements MaestroProcessInterfac
       ->setDescription(t('The UUID of the Maestro Process entity.'))
       ->setReadOnly(TRUE);
 
-    //the name for the process.  Carried over by the template
+    // The name for the process.  Carried over by the template.
     $fields['process_name'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Process Name'))
       ->setDescription(t('The Process Name. Carried from the Template.'))
-      ->setSettings(array(
-          'default_value' => '',
-          'max_length' => 255,
-          'text_processing' => 0,
-      ));
-    
-    //the machine name (id) of the template being 
+      ->setSettings([
+        'default_value' => '',
+        'max_length' => 255,
+        'text_processing' => 0,
+      ]);
+
+    // The machine name (id) of the template being.
     $fields['template_id'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Template Machine Name/ID'))
       ->setDescription(t('Machine name of the template.'))
-      ->setSettings(array(
-          'default_value' => '',
-          'max_length' => 255,
-          'text_processing' => 0,
-      ));
-    
-    //completion flag
-    //0 is incomplete.  1 is complete.
+      ->setSettings([
+        'default_value' => '',
+        'max_length' => 255,
+        'text_processing' => 0,
+      ]);
+
+    // Completion flag
+    // 0 is incomplete.  1 is complete.
     $fields['complete'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Complete Flag'))
       ->setDescription(t('Completion flag'))
-      ->setSettings(array(
-          'default_value' => '0',
-      ));
-    
-    //initiator UID.  The UID of the person who started it.
-    //0 for Maestro.  This is also mimicked in the initiator variable
+      ->setSettings([
+        'default_value' => '0',
+      ]);
+
+    // Initiator UID.  The UID of the person who started it.
+    // 0 for Maestro.  This is also mimicked in the initiator variable.
     $fields['initiator_uid'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('User ID of the initiator.'))
       ->setDescription(t('Initiator User ID'))
-      ->setSettings(array(
-          'default_value' => '0',
-      ));
-      
+      ->setSettings([
+        'default_value' => '0',
+      ]);
+
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the process was created.'));
-    
+
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
       ->setDescription(t('The time that the process entity was last edited.'));
-      
+
     $fields['completed'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Completed'))
       ->setDescription(t('The time that the process was completed.'))
-      ->setSettings(array(
-          'default_value' => '0',
-      ));
-      
+      ->setSettings([
+        'default_value' => '0',
+      ]);
+
     return $fields;
   }
 

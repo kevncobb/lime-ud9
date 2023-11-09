@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
-* Definition of \Plugin\views\filter\MaestroEngineTemplateFilter.
-*/
-
 namespace Drupal\maestro\Plugin\views\filter;
 
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
@@ -13,7 +8,7 @@ use Drupal\maestro\Engine\MaestroEngine;
 use Drupal\views\Plugin\views\filter\InOperator;
 
 /**
- * Filter for Maestro Template names
+ * Filter for Maestro Template names.
  *
  * @ingroup views_filter_handlers
  *
@@ -27,7 +22,7 @@ class MaestroEngineTemplateFilter extends InOperator {
   public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL) {
     parent::init($view, $display, $options);
     $this->valueTitle = $this->t('Templates to Filter On');
-    $this->definition['options callback'] = array($this, 'generateTemplateOptions');
+    $this->definition['options callback'] = [$this, 'generateTemplateOptions'];
   }
 
   /**
@@ -50,13 +45,14 @@ class MaestroEngineTemplateFilter extends InOperator {
     }
   }
 
-
-  
+  /**
+   * Generate the options for this template.
+   */
   protected function generateTemplateOptions() {
     $templates = MaestroEngine::getTemplates();
     $options = [];
     $options[0] = $this->t(' - Any -');
-    foreach($templates as $machine_name => $template) {
+    foreach ($templates as $machine_name => $template) {
       $options[$machine_name] = $template->label;
     }
 

@@ -108,7 +108,7 @@ maestro.maestro_template.*:
             label: 'Show in Detail Listings'
           participate_in_workflow_status_stage:
             type: boolean
-            label: 'Particpate in setting the workflow stage and status'
+            label: 'Participate in setting the workflow stage and status'
           workflow_status_stage_number:
             type: integer
             label: 'Workflow Status Stage Number'
@@ -152,4 +152,3 @@ maestro.maestro_template.*:
 maestro.task.*:
   type: mapping
   label: 'Maestro Task Data'
-  

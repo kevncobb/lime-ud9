@@ -1,15 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\maestro\Entity\Template.
- *
- * This contains our entity class.
- *
- * credits: originally based on code from blog post at
- * http://previousnext.com.au/blog/understanding-drupal-8s-config-entities
- */
-
 namespace Drupal\maestro\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
@@ -34,7 +24,6 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *  - entity_keys: Specifies the class variable(s) in which unique keys are
  *    stored for this entity type.
  *
- *
  * @see annotation
  * @see Drupal\Core\Annotation\Translation
  *
@@ -57,6 +46,24 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "id" = "id",
  *     "label" = "label",
  *     "uuid" = "uuid"
+ *   },
+ *   config_export = {
+ *     "id",
+ *     "label",
+ *     "uuid",
+ *     "app_group",
+ *     "canvas_height",
+ *     "canvas_width",
+ *     "default_workflow_timeline_stage_count",
+ *     "show_details",
+ *     "validated",
+ *     "views_attached",
+ *     "variables",
+ *     "initiator",
+ *     "workflow_timeline_stage_count",
+ *     "workflow_current_stage",
+ *     "workflow_current_stage_message",
+ *     "tasks"
  *   },
  *   links = {
  *     "edit-form" = "/maestro/manage/{maestro_template}",
@@ -102,7 +109,6 @@ class MaestroTemplate extends ConfigEntityBase {
    */
   public $canvas_height;
 
-  
 
   /**
    * The Template canvas width.
@@ -110,18 +116,18 @@ class MaestroTemplate extends ConfigEntityBase {
    * @var string
    */
   public $canvas_width;
-  
 
   /**
    * {@inheritdoc}
    */
   protected function urlRouteParameters($rel) {
     $uri_route_parameters = parent::urlRouteParameters($rel);
-  
+
     if ($rel == 'config-translation-overview') {
       $uri_route_parameters['is_modal'] = 'notmodal';
     }
-  
+
     return $uri_route_parameters;
   }
+
 }

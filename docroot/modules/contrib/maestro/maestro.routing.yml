@@ -65,7 +65,7 @@ maestro.trace:
     no_cache: TRUE
 
 maestro.execute:
-  path: '/maestro/execute/task/{queueid}/{modal}'
+  path: '/maestro/execute/task/{queueid_or_token}/{modal}'
   defaults:
     _form: '\Drupal\maestro\Form\MaestroExecuteInteractive'
     _title: 'Interactive Task Execution'
@@ -179,7 +179,4 @@ maestro.process_details_ajax_close:
   requirements:
     _permission: 'view maestro task console'
   options:
-    no_cache: TRUE 
-
-
-
+    no_cache: TRUE

@@ -16,11 +16,11 @@ class MaestroQueueViewsData extends EntityViewsData implements EntityViewsDataIn
   public function getViewsData() {
     $data = parent::getViewsData();
 
-    $data['maestro_queue']['table']['base'] = array(
+    $data['maestro_queue']['table']['base'] = [
       'field' => 'id',
       'title' => $this->t('Maestro Queue'),
       'help' => $this->t('The Maestro Queue entity ID.'),
-    );
+    ];
 
     return $data;
   }

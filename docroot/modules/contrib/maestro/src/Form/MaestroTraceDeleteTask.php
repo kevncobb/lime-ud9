@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\maestro\Form;
 
 use Drupal\Core\Form\ConfirmFormBase;
@@ -18,13 +19,18 @@ class MaestroTraceDeleteTask extends ConfirmFormBase {
    */
   protected $id;
 
-  
-  protected $processID;
+
   /**
-   * {@inheritdoc}.
+   * The Maestro Process ID.
+   *
+   * @var string
    */
-  public function getFormId()
-  {
+  protected $processID;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId() {
     return 'maestro_trace_delete_task';
   }
 
@@ -32,7 +38,7 @@ class MaestroTraceDeleteTask extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return t('Do you want to delete Queue Item(s) %id?', array('%id' => $this->id));
+    return t('Do you want to delete Queue Item(s) %id?', ['%id' => $this->id]);
   }
 
   /**
@@ -56,7 +62,6 @@ class MaestroTraceDeleteTask extends ConfirmFormBase {
     return $this->t('Delete Queue Items Now!');
   }
 
-
   /**
    * {@inheritdoc}
    */
@@ -67,8 +72,8 @@ class MaestroTraceDeleteTask extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    *
-   * @param int $id
-   *   (optional) This is the discrete ID or the list of task IDs to delete
+   * @param int $idList
+   *   (optional) This is the discrete ID or the list of task IDs to delete.
    */
   public function buildForm(array $form, FormStateInterface $form_state, $processID = NULL, $idList = NULL) {
     $this->id = $idList;
@@ -81,12 +86,13 @@ class MaestroTraceDeleteTask extends ConfirmFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $ids = explode(',', $this->id);
-    foreach($ids as $queueID) {
-      if($queueID != '') {
+    foreach ($ids as $queueID) {
+      if ($queueID != '') {
         $queueRecord = MaestroEngine::getQueueEntryById($queueID);
         $queueRecord->delete();
       }
     }
     $form_state->setRedirect('maestro.trace', ['processID' => $this->processID]);
   }
+
 }

@@ -2,6 +2,7 @@
 
 namespace Drupal\maestro\Plugin\EngineTasks;
 
+use Drupal\maestro\Engine\Exception\MaestroSaveEntityException;
 use Drupal\Core\Url;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\maestro\MaestroEngineTaskInterface;
@@ -17,7 +18,7 @@ use Drupal\maestro\Form\MaestroExecuteInteractive;
  * id: The task type ID for this task.  For Maestro tasks, this is Maestro[TaskType].
  *     So for example, the start task shipped by Maestro is MaestroStart.
  *     The Maestro End task has an id of MaestroEnd
- *     Those task IDs are what's used in the engine when a task is injected into the queue
+ *     Those task IDs are what's used in the engine when a task is injected into the queue.
  *
  * @Plugin(
  *   id = "MaestroSpawnSubFlow",
@@ -27,9 +28,12 @@ use Drupal\maestro\Form\MaestroExecuteInteractive;
 class MaestroSpawnSubFlowTask extends PluginBase implements MaestroEngineTaskInterface {
 
   use MaestroTaskTrait;
- 
-  function __construct($configuration = NULL) {
-    if(is_array($configuration)) {
+
+  /**
+   * Constructor.
+   */
+  public function __construct($configuration = NULL) {
+    if (is_array($configuration)) {
       $this->processID = $configuration[0];
       $this->queueID = $configuration[1];
     }
@@ -41,14 +45,14 @@ class MaestroSpawnSubFlowTask extends PluginBase implements MaestroEngineTaskInt
   public function isInteractive() {
     return FALSE;
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public function shortDescription() {
     return t('Spawn Sub Flow');
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -57,8 +61,8 @@ class MaestroSpawnSubFlowTask extends PluginBase implements MaestroEngineTaskInt
   }
 
   /**
-   * 
    * {@inheritDoc}
+   *
    * @see \Drupal\Component\Plugin\PluginBase::getPluginId()
    */
   public function getPluginId() {
@@ -69,112 +73,118 @@ class MaestroSpawnSubFlowTask extends PluginBase implements MaestroEngineTaskInt
    * {@inheritDoc}
    */
   public function getTaskColours() {
-   return '#707070';
+    return '#707070';
   }
-  
-  
+
+  /**
+   * {@inheritdoc}
+   */
   public function getExecutableForm($modal, MaestroExecuteInteractive $parent) {
-   
+
   }
-  
+
+  /**
+   * {@inheritdoc}
+   */
   public function handleExecuteSubmit(array &$form, FormStateInterface $form_state) {
-  
+
   }
-  
-  /*
+
+  /**
    * Part of the ExecutableInterface
    * Execution of the Sub Flow task will create a new process and push all selected parent variables to the newly spawned
-   * sub process.  The variables pushed to the sub process will be prefixed with "maestro_parent_" and will also include a new 
+   * sub process.  The variables pushed to the sub process will be prefixed with "maestro_parent_" and will also include a new
    * variable named "parent_process_id" which will store the process ID of the parent.
-   * {@inheritdoc}
+   * {@inheritdoc}.
    */
   public function execute() {
     $templateMachineName = MaestroEngine::getTemplateIdFromProcessId($this->processID);
     $taskMachineName = MaestroEngine::getTaskIdFromQueueId($this->queueID);
     $task = MaestroEngine::getTemplateTaskByID($templateMachineName, $taskMachineName);
-    
+
     $spawnTemplate = $task['data']['maestro_template'];
     $variables = [];
-    if(isset($task['data']['variables'])) {
+    if (isset($task['data']['variables'])) {
       $variables = $task['data']['variables'];
     }
-    //Let's first start by adding in the new process ID
+    // Let's first start by adding in the new process ID.
     $maestro = new MaestroEngine();
     $newProcessID = $maestro->newProcess($spawnTemplate);
-    if($newProcessID !== FALSE) {
-      //first, create the parent process ID variable
-      $values = array (
+    if ($newProcessID !== FALSE) {
+      // first, create the parent process ID variable.
+      $values = [
         'process_id' => $newProcessID,
         'variable_name' => 'maestro_parent_process_id',
         'variable_value' => $this->processID,
-      );
+      ];
       $new_var = \Drupal::entityTypeManager()->getStorage('maestro_process_variables')->create($values);
       $new_var->save();
-      if(!$new_var->id()) {
-        //throw a maestro exception
-        //completion should technically end here for this initiation
-        throw new \Drupal\maestro\Engine\Exception\MaestroSaveEntityException('maestro_process_variable', $values['variable_name'] . ' failed saving during new process creation.');
+      if (!$new_var->id()) {
+        // Throw a maestro exception
+        // completion should technically end here for this initiation.
+        throw new MaestroSaveEntityException('maestro_process_variable', $values['variable_name'] . ' failed saving during new process creation.');
       }
-      
-      foreach($variables as $machine_name => $checked_value) {
-        if($machine_name != '') {
-          //we now populate the new process with variables
+
+      foreach ($variables as $machine_name => $checked_value) {
+        if ($machine_name != '') {
+          // We now populate the new process with variables.
           $parent_value = MaestroEngine::getProcessVariable($machine_name, $this->processID);
-          $values = array (
+          $values = [
             'process_id' => $newProcessID,
             'variable_name' => 'maestro_parent_' . $machine_name,
             'variable_value' => $parent_value,
-          );
+          ];
           $new_var = \Drupal::entityTypeManager()->getStorage('maestro_process_variables')->create($values);
           $new_var->save();
-          if(!$new_var->id()) {
-            //throw a maestro exception
-            //completion should technically end here for this initiation
-            throw new \Drupal\maestro\Engine\Exception\MaestroSaveEntityException('maestro_process_variable', $values['variable_name'] . ' failed saving during new process creation.');
+          if (!$new_var->id()) {
+            // Throw a maestro exception
+            // completion should technically end here for this initiation.
+            throw new MaestroSaveEntityException('maestro_process_variable', $values['variable_name'] . ' failed saving during new process creation.');
           }
           $parent_value = '';
         }
       }
-      
-        
+      return TRUE;
+
     }
     else {
       \Drupal::logger('maestro')->error('Unable to spawn sub process.  Process spawn returned an error.');
       return FALSE;
     }
-    
-    
+
   }
-  
+
+  /**
+   * {@inheritdoc}
+   */
   public function getTaskEditForm(array $task, $templateMachineName) {
-    $form = array(
+    $form = [
       '#markup' => t('Spawn Sub Flow Edit'),
-    );
-    
+    ];
+
     $maestro_templates = MaestroEngine::getTemplates();
     $templates = [];
     $templates['none'] = $this->t('Please Select Template');
-    foreach($maestro_templates as $machine_name => $template) {
+    foreach ($maestro_templates as $machine_name => $template) {
       $templates[$machine_name] = $template->label();
     }
-    
+
     $form['maestro_task_machine_name'] = [
       '#type' => 'hidden',
       '#value' => $task['id'],
     ];
-    
+
     $form['maestro_template_machine_name'] = [
       '#type' => 'hidden',
       '#value' => $templateMachineName,
     ];
-    
+
     $selected_template = '';
-    if(isset($task['data']['maestro_template'])) {
+    if (isset($task['data']['maestro_template'])) {
       $selected_template = $task['data']['maestro_template'];
     }
-    
-    
-    $form['maestro_template'] = array(
+
+    $form['maestro_template'] = [
       '#type' => 'select',
       '#options' => $templates,
       '#title' => $this->t('Choose the Maestro Template'),
@@ -189,15 +199,15 @@ class MaestroSpawnSubFlowTask extends PluginBase implements MaestroEngineTaskInt
           'message' => NULL,
         ],
       ],
-    );
-    
+    ];
+
     $template_machine_name = $selected_template;
     $form_state_template = $task['form_state']->getValue('maestro_template');
-    if(isset($form_state_template)) {
+    if (isset($form_state_template)) {
       $template_machine_name = $form_state_template;
     }
-    
-    if($template_machine_name != 'none' && $template_machine_name != '') {
+
+    if ($template_machine_name != 'none' && $template_machine_name != '') {
       $template = MaestroEngine::getTemplate($template_machine_name);
       $form['maestro_sub_flow_label'] = [
         '#type' => 'link',
@@ -208,7 +218,7 @@ class MaestroSpawnSubFlowTask extends PluginBase implements MaestroEngineTaskInt
           'target' => '_new',
           'id' => ['handler-ajax-refresh-wrapper'],
         ],
-        
+
       ];
     }
     else {
@@ -221,37 +231,41 @@ class MaestroSpawnSubFlowTask extends PluginBase implements MaestroEngineTaskInt
           'id' => ['handler-ajax-refresh-wrapper'],
         ],
       ];
-  
+
     }
-    
+
     $form['maestro_sub_flow_settings'] = [
       '#type' => 'details',
       '#open' => TRUE,
       '#description' => $this->t('Choose the variables you wish to send from the parent to the child. Variables will be prefixed with "maestro_parent_" when injected into the sub-process.'),
       '#title' => $this->t('Variable Selection'),
     ];
-    
+
     $template = MaestroEngine::getTemplate($templateMachineName);
-    
+
     $form['maestro_sub_flow_settings']['variables'] = [];
-    
-    //get all variables other than some of the exclusive Maestro variables.
-    foreach($template->variables as $var_name => $var_definition) {
-      $form['maestro_sub_flow_settings']['variables']['variable_' . $var_name] = array(
+
+    // Get all variables other than some of the exclusive Maestro variables.
+    foreach ($template->variables as $var_name => $var_definition) {
+      $default_value = FALSE;
+      if(is_array($var_name) && array_key_exists($var_name, $task['data']['variables'])) {
+        $default_value = TRUE;
+      }
+      $form['maestro_sub_flow_settings']['variables']['variable_' . $var_name] = [
         '#type' => 'checkbox',
         '#title' => $var_name,
-        '#default_value' => @array_key_exists($var_name, $task['data']['variables'])? TRUE : FALSE,
+        '#default_value' => $default_value,
         '#attributes' => [
           'autocomplete' => 'off',
         ],
-      );
+      ];
     }
-     
+
     $form['#cache'] = ['max-age' => 0];
-    $form['#attributes']['autocomplete'] = 'off'; //Hi Firefox, I see you caching.
+    // Hi Firefox, I see you caching.
+    $form['#attributes']['autocomplete'] = 'off';
     return $form;
   }
-
 
   /**
    * Implements callback for Ajax event on objective selection.
@@ -273,52 +287,54 @@ class MaestroSpawnSubFlowTask extends PluginBase implements MaestroEngineTaskInt
    */
   public function validateTaskEditForm(array &$form, FormStateInterface $form_state) {
     $template = $form_state->getValue('maestro_template');
-    //Let's validate the handler here to ensure that it actually exists.
-    if($template == 'none') {
+    // Let's validate the handler here to ensure that it actually exists.
+    if ($template == 'none') {
       $form_state->setErrorByName('maestro_template', $this->t('You must choose a template.'));
     }
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public function prepareTaskForSave(array &$form, FormStateInterface $form_state, array &$task) {
     $task['data']['maestro_template'] = $form_state->getValue('maestro_template');
-    //now handle the variables
+    // Now handle the variables.
     unset($task['data']['variables']);
     $all_values = $form_state->getValues();
-    foreach($all_values as $key => $var) {
-      if(strpos($key, 'variable_') === 0) {
-        //starts with 'variable_',so we know this is our variables
+    foreach ($all_values as $key => $var) {
+      if (strpos($key, 'variable_') === 0) {
+        // Starts with 'variable_',so we know this is our variables.
         $is_checked = $form_state->getValue($key);
-        if($is_checked) {
-          $varname = substr($key, 9);  //strip of "variable_"
-          $task['data']['variables'][$varname] = 1;  //signal that it's checked.
+        if ($is_checked) {
+          // Strip of "variable_".
+          $varname = substr($key, 9);
+          // Signal that it's checked.
+          $task['data']['variables'][$varname] = 1;
         }
       }
     }
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public function performValidityCheck(array &$validation_failure_tasks, array &$validation_information_tasks, array $task) {
-    //so we know that we need a few keys in this $task array to even have a batch function run properly.
-    //namely the handler
-    
-    if( (array_key_exists('maestro_template', $task['data']) && $task['data']['maestro_template'] == '')  || !array_key_exists('maestro_template', $task['data'])) {
-      $validation_failure_tasks[] = array(
+    // So we know that we need a few keys in this $task array to even have a batch function run properly.
+    // namely the handler.
+    if ((array_key_exists('maestro_template', $task['data']) && $task['data']['maestro_template'] == '')  || !array_key_exists('maestro_template', $task['data'])) {
+      $validation_failure_tasks[] = [
         'taskID' => $task['id'],
         'taskLabel' => $task['label'],
         'reason' => t('This task requires a Maestro Template to be chosen.'),
-      );
+      ];
     }
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public function getTemplateBuilderCapabilities() {
-    return array('edit', 'drawlineto', 'removelines', 'remove');
+    return ['edit', 'drawlineto', 'removelines', 'remove'];
   }
+
 }

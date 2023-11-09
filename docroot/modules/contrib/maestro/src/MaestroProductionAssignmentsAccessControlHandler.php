@@ -9,7 +9,6 @@ use Drupal\Core\Access\AccessResult;
 
 /**
  * Access controller for the Maestro Production Assignments entity.
- *
  */
 class MaestroProductionAssignmentsAccessControlHandler extends EntityAccessControlHandler {
 
@@ -17,10 +16,8 @@ class MaestroProductionAssignmentsAccessControlHandler extends EntityAccessContr
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
-    
-    //return AccessResult::neutral();
-    
-    
+
+    // Return AccessResult::neutral();
     switch ($operation) {
       case 'view':
         return AccessResult::allowedIfHasPermission($account, 'view maestro production assignment entities');

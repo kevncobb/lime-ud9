@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\maestro\TemplateAccessController.
- */
-
 namespace Drupal\maestro;
 
 use Drupal\Core\Entity\EntityAccessControlHandler;
@@ -30,15 +25,15 @@ class MaestroTemplateAccessController extends EntityAccessControlHandler {
     if ($operation == 'view' && $account->hasPermission('administer maestro templates')) {
       return AccessResult::allowed();
     }
-    
+
     if ($operation == 'update' && $account->hasPermission('administer maestro templates')) {
       return AccessResult::allowed();
     }
-    
+
     if ($operation == 'delete' && $account->hasPermission('administer maestro templates')) {
       return AccessResult::allowed();
     }
-    
+
     return parent::checkAccess($entity, $operation, $account);
   }
 

@@ -1,24 +1,15 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\maestro\Plugin\views\field\MaestroEngineActiveHandler
- */
-
 namespace Drupal\maestro\Plugin\views\field;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\maestro\Engine\MaestroEngine;
 use Drupal\maestro\Utility\TaskHandler;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
 use Drupal\Core\Url;
-use Drupal\Component\Serialization\Json;
-use Drupal\Component\Utility\UrlHelper;
-
 
 /**
- * Field handler to create a usable link to the task via the handler field
+ * Field handler to create a usable link to the task via the handler field.
  *
  * @ingroup views_field_handlers
  *
@@ -27,15 +18,17 @@ use Drupal\Component\Utility\UrlHelper;
 class MaestroEngineActiveHandler extends FieldPluginBase {
 
   /**
-   * @{inheritdoc}
+   * {@inheritdoc}
    */
   public function query() {
-    // no Query to be done.
+    // No Query to be done.
   }
 
   /**
-   * Define the available options
+   * Define the available options.
+   *
    * @return array
+   *   The array of options.
    */
   protected function defineOptions() {
     $options = parent::defineOptions();
@@ -51,63 +44,63 @@ class MaestroEngineActiveHandler extends FieldPluginBase {
    */
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
 
-    $form['show_as_link'] = array(
+    $form['show_as_link'] = [
       '#title' => $this->t('Show as an HTML link'),
       '#type' => 'checkbox',
       '#default_value' => isset($this->options['show_as_link']) ? $this->options['show_as_link'] : 0,
-    );
-    
-    $form['link_text'] = array(
+    ];
+
+    $form['link_text'] = [
       '#title' => $this->t('Text used for the link'),
       '#type' => 'textfield',
       '#default_value' => isset($this->options['link_text']) ? $this->options['link_text'] : $this->t('Link'),
-      '#states' => array(
-        'visible' => array(
-          ':input[name="options[show_as_link]"]' => array('checked' => TRUE),
-        ),
-      ),
-    );
-    
-    
+      '#states' => [
+        'visible' => [
+          ':input[name="options[show_as_link]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
     parent::buildOptionsForm($form, $form_state);
   }
 
   /**
-   * @{inheritdoc}
+   * {@inheritdoc}
    */
   public function render(ResultRow $values) {
     global $base_url;
 
     $item = $values->_entity;
-    //this will ONLY work for production assignments and/or maestro queues
+    // This will ONLY work for production assignments and/or maestro queues.
     if ($item->getEntityTypeId() == 'maestro_production_assignments' || $item->getEntityTypeId() == 'maestro_queue') {
-      //we are of the right types.  So let's get the right queue ID
+      // We are of the right types.  So let's get the right queue ID.
       if ($item->getEntityTypeId() == 'maestro_production_assignments') {
         $queueID = $item->queue_id->getString();
       }
       else {
         $queueID = $item->id->getString();
       }
-      
+
       $taskhandler = TaskHandler::getHandlerURL($queueID);
-      
-      if(isset($this->options['show_as_link']) && $this->options['show_as_link'] == 1) {
-        $build['handler'][$queueID]['execute'] = array(
+
+      if (isset($this->options['show_as_link']) && $this->options['show_as_link'] == 1) {
+        $build['handler'][$queueID]['execute'] = [
           '#type' => 'link',
           '#title' => isset($this->options['link_text']) ? $this->options['link_text'] : $this->t('Link'),
           '#url' => Url::fromUri($taskhandler),
-        );
+        ];
       }
       else {
-        $build['handler'][$queueID]['execute'] = array(
+        $build['handler'][$queueID]['execute'] = [
           '#plain_text' => $taskhandler,
-        );
+        ];
       }
-      
+
       return $build;
     }
     else {
       return '';
     }
   }
+
 }

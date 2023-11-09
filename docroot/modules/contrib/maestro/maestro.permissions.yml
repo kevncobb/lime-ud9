@@ -81,4 +81,3 @@ delete maestro entity identifiers entities:
 administer maestro entity identifiers entities:
   title: 'Administer Maestro Entity Identifier entity'
   restrict access: TRUE
-  

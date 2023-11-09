@@ -11,7 +11,7 @@ class MaestroGeneralException extends \Exception {
 
   /**
    * Constructs an MaestroGeneralException.
-   *  
+   *
    * @param string $condition
    *   The condition in which this exception ocurred.
    */

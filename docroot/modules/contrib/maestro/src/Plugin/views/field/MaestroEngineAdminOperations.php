@@ -1,12 +1,7 @@
-<?php 
+<?php
 
-/**
- * @file
- * Definition of Drupal\maestro\Plugin\views\field\MaestroEngineActiveHandler
- */
- 
 namespace Drupal\maestro\Plugin\views\field;
- 
+
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\maestro\Engine\MaestroEngine;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
@@ -14,48 +9,48 @@ use Drupal\views\ResultRow;
 use Drupal\Core\Url;
 
 /**
- * Field handler to create Administrative Operations for a queue entry in views
+ * Field handler to create Administrative Operations for a queue entry in views.
  *
  * @ingroup views_field_handlers
  *
  * @ViewsField("maestro_admin_operations")
  */
 class MaestroEngineAdminOperations extends FieldPluginBase {
- 
+
   /**
-   * @{inheritdoc}
+   * {@inheritdoc}
    */
   public function query() {
-    // no Query to be done.
+    // No Query to be done.
   }
- 
+
   /**
-   * Define the available options
+   * Define the available options.
+   *
    * @return array
+   *   Returns an array of options.
    */
   protected function defineOptions() {
     $options = parent::defineOptions();
-   
- 
+
     return $options;
   }
- 
+
   /**
    * Provide the options form.
    */
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
-    
- 
+
     parent::buildOptionsForm($form, $form_state);
   }
- 
+
   /**
-   * @{inheritdoc}
+   * {@inheritdoc}
    */
   public function render(ResultRow $values) {
     $item = $values->_entity;
-    $rows = array();
-    $links = array();
+    $rows = [];
+    $links = [];
 
     /*
      * Tracing mechanism needs the process ID
@@ -71,12 +66,11 @@ class MaestroEngineAdminOperations extends FieldPluginBase {
     elseif ($item->getEntityTypeId() == 'maestro_process') {
       $processID = $item->process_id->getString();
     }
-    
 
-    $links['trace'] = array(
+    $links['trace'] = [
       'title' => t('Trace'),
-      'url' => Url::fromRoute('maestro.trace', array('processID' => $processID)),
-    );
+      'url' => Url::fromRoute('maestro.trace', ['processID' => $processID]),
+    ];
 
     /*
      * Reassignment mechanism: only works for queue and production assignment types
@@ -95,19 +89,18 @@ class MaestroEngineAdminOperations extends FieldPluginBase {
      * First, the reassign. for each of the assignees, provide a link to reassign
      */
     foreach ($assignees as $name => $assignment) {
-      $links[$name] = array(
+      $links[$name] = [
         'title' => t('Reassign') . ' ' . $name,
-        'url' => Url::fromRoute('maestro.reassign_task', array('assignmentID' => $assignment['id'])),
-      );
+        'url' => Url::fromRoute('maestro.reassign_task', ['assignmentID' => $assignment['id']]),
+      ];
     }
 
-    $rows[] = array(
-      'data' => array(
+    $rows[] = [
+      'data' => [
         '#type' => 'operations',
         '#links' => $links,
-      ),
-    );
-
+      ],
+    ];
 
     return $rows;
 

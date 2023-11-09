@@ -1,6 +1,5 @@
 langcode: en
 status: true
-dependencies: {  }
 id: maestro_example
 label: 'Maestro Example'
 dependencies:  #this enforced dependency will remove this role on module removal

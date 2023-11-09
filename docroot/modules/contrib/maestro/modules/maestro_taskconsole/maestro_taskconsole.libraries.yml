@@ -1,5 +1,4 @@
 maestro_taskconsole_css:
   css:
     theme:
-      css/taskconsole.css: {}  
-      
+      css/taskconsole.css: {}

@@ -16,11 +16,11 @@ class MaestroProcessViewsData extends EntityViewsData implements EntityViewsData
   public function getViewsData() {
     $data = parent::getViewsData();
 
-    $data['maestro_process']['table']['base'] = array(
+    $data['maestro_process']['table']['base'] = [
       'field' => 'id',
       'title' => $this->t('Maestro Process'),
       'help' => $this->t('The Maestro Process entity ID.'),
-    );
+    ];
 
     return $data;
   }

@@ -7,7 +7,7 @@ var dragger = function () {
     try {
       var fromtask = {}, lineCount = 0, fromtasks = [];;
       var newx = 0, newy = 0;
-      
+
       //lets first see if this thing is going out of bounds before we do anything
       if(Number(this.ox+dx) < 0) dx = 0 - this.ox;
       if(Number(this.ox+dx+this.getBBox().width) > r.width) dx = Number(r.width - this.ox - this.getBBox().width);
@@ -18,12 +18,12 @@ var dragger = function () {
       //snap to grid -- set dx to the next closest 10 pixel
       newx = Math.ceil((this.ox + dx) / 10) * 10;
       newy = Math.ceil((this.oy + dy) / 10) * 10;
-      
+
       var att = this.type == "rect" ? {x: newx, y: newy} : {cx: newx, cy: newy};
       this.set.attr(att);  //only the main task body has 'set' on it and thus this will throw a typeError for the other non-draggable elements
       this.parent.raphaelTextName.transform('t10,6');
       this.parent.raphaelTaskText.transform('t2,53');
-      
+
       if(this.parent.raphaelStatusTaskText != null && this.parent.raphaelStatusTaskText != '') { //move the status bubble
         this.parent.raphaelStatusTaskText.transform('t85,35');
       }
@@ -31,7 +31,7 @@ var dragger = function () {
         this.parent.statusbubble.attr('cx', newx + 88);  //transform seemed to not move the circle. Just move it absolutely.
         this.parent.statusbubble.attr('cy', newy + 35);
       }
-      
+
       this.parent.editrectraphael.transform('t-8,-8');
       this.parent.editimageraphael.transform('t-5,-5');
 
@@ -62,7 +62,7 @@ var dragger = function () {
           fromtasks.push(fromtask);
         }
       }
-      //now remove the pointedfrom 
+      //now remove the pointedfrom
       this.parent.pointedfrom.splice(0);
       for(cntr=0; cntr < fromtasks.length; cntr++) {
         maestro_draw_one_task_line(fromtasks[cntr], r);
@@ -79,7 +79,7 @@ var dragger = function () {
       //this section of code helps determine what it is we're actually dealing with.
       //The nesting of the parent/raphael element can be brought one level higher when new tasks are generated on the fly
       //the base is this.parent, but we also get full nesting when we have a task loaded by the initial UI
-      //we also have various sub-elements (like the edit button, lines around the tasks etc) that require us to 
+      //we also have various sub-elements (like the edit button, lines around the tasks etc) that require us to
       //rifle through the object to get down to the actual task body
       if(this.hasOwnProperty('parent')) { //at the very least this element should have a parent
         if(this.parent.hasOwnProperty('raphael')) {
@@ -87,7 +87,7 @@ var dragger = function () {
           else parent = this.parent;
         }
         else parent = this.parent;
-      
+
         if(lineFrom != false && lineFrom != parent.id && parent != undefined) {
           var taskFrom = maestro_get_task_reference(lineFrom);
           var taskTo = maestro_get_task_reference(parent.id);
@@ -102,15 +102,15 @@ var dragger = function () {
             taskFrom.raphael.parent.to.push(parent.id);
             maestro_update_task_information(taskFrom);
             maestro_update_task_information(taskTo);
-            
+
             jQuery('[name="task_line_from"]').val(lineFrom);
             jQuery('[name="task_line_to"]').val(parent.id);
             jQuery('#edit-draw-line-complete').trigger('mousedown');  //fires the ajax event wired to this button
           }
         }
-        
+
         if(falseLineFrom != false && falseLineFrom != parent.id && parent != undefined) {
-          
+
           var taskFrom = maestro_get_task_reference(falseLineFrom);
           var taskTo = maestro_get_task_reference(parent.id);
           alreadyExists = false;
@@ -123,13 +123,13 @@ var dragger = function () {
             taskFrom.raphael.parent.falsebranch.push(parent.id);
             maestro_update_task_information(taskFrom);
             maestro_update_task_information(taskTo);
-            
+
             jQuery('[name="task_line_from"]').val(falseLineFrom);
             jQuery('[name="task_line_to"]').val(parent.id);
             jQuery('#edit-draw-false-line-complete').trigger('mousedown');  //fires the ajax event wired to this button
           }
         }
-        
+
         if(lineFrom == false && parent != undefined) {  //only do this if we're not drawing lines
           var divtop, divleft, x, y;
           divtop = jQuery('#maestro_div_template').offset().top;
@@ -137,21 +137,21 @@ var dragger = function () {
           x=this.attrs.x;
           y=this.attrs.y;
           jQuery('[name="task_clicked"]').val(parent.id);
-          
+
           jQuery('[name="task_top"]').val(y);
           jQuery('[name="task_left"]').val(x);
           jQuery('#edit-move-task-complete').trigger('mousedown'); //trigger the ajax event wired to this button
         }
-        
+
         lineFrom = false;
         falseLineFrom = false;
         jQuery('.maestro-template-message-area').css('display', 'none');
         jQuery('.maestro-template-message-area').html('');
-        
+
         this.animate({"fill-opacity": this.attrs['fill-opacity']}, 500);
       }
   };
-  
+
 /**
  * Create the Raphael join function that draws our custom lines
  */
@@ -207,7 +207,7 @@ Raphael.fn.join = function(from, to, colour) {
 function maestro_draw_task(taskInformation) {
   var task = {};
   var eltext, sampleText, tasktext, statustext;
- 
+
   task.raphael = r.rect(Number(taskInformation.left), Number(taskInformation.top), 100, 60, 2);
   task.raphael.parent = taskInformation;
   task.raphael.parent.pointedfrom = [];
@@ -225,7 +225,7 @@ function maestro_draw_task(taskInformation) {
   task.raphael.attr({text: tasktext });
   task.raphael.parent.raphaelTextName = eltext;
   task.raphael.parent.raphaelTaskText = tasktext;
-  
+
   //status data if any
   task.raphael.parent.statusbubble = null;
   statustext = r.text(Number(taskInformation.left)+85, Number(taskInformation.top)+35, '').attr({"cursor": "default", "title": '', 'font-weight': 'bold', fill: '#000000', 'text-anchor': 'start'});
@@ -235,7 +235,7 @@ function maestro_draw_task(taskInformation) {
     //statustext = r.text(Number(taskInformation.left)+85, Number(taskInformation.top)+35, taskInformation.workflow_status_stage_number).attr({"cursor": "default", "title": taskInformation.workflow_status_stage_message, 'font-weight': 'bold', fill: '#000000', 'text-anchor': 'start'});
     task.raphael.parent.raphaelStatusTaskText.attr({'text': taskInformation.workflow_status_stage_number, "title": taskInformation.workflow_status_stage_message });
   }
-  
+
   task.raphael.toFront();
   if(task.raphael.parent.statusbubble) { // move the status bubble to the foreground
     task.raphael.parent.statusbubble.toFront();
@@ -260,7 +260,7 @@ function maestro_draw_task(taskInformation) {
                   task.raphael.parent.editimageraphael,
                   task.raphael.parent.statusbubble)
                   .drag(move, dragger, up);
-  
+
   task.raphael.attr({fill: '#f0f0f0', stroke: drupalSettings.maestroTaskColours[taskInformation.type] ,"fill-opacity": 0.1, "stroke-width": 2, cursor: "move", title: taskInformation.taskname});
   return task;
 }
@@ -276,11 +276,11 @@ function maestro_draw_one_task_line(incomingTask, r) {
   var to, pointers = [], flag, i2, task = {};
   if(incomingTask.hasOwnProperty('raphael')) task = incomingTask;
   else task.raphael = incomingTask;
-  
+
   if(typeof task.raphael.parent.to != undefined) {
     for(i2 = 0; i2 < task.raphael.parent.to.length; i2++) {
       to = maestro_get_task_reference(task.raphael.parent.to[i2]);
-      if(to != undefined) { 
+      if(to != undefined) {
         task.raphael.parent.lines.push(r.join(task.raphael,to.raphael));
       }
       //now, remove any duplicates we may have from the pointedfrom
@@ -307,13 +307,13 @@ function maestro_draw_one_task_line(incomingTask, r) {
         }
       }
     }
-    
+
     //now for the false branches
     //TODO: need to remove the duplicates that are generated here
     pointers = [];
     for(i2 = 0; i2 < task.raphael.parent.falsebranch.length; i2++) {
       to = maestro_get_task_reference(task.raphael.parent.falsebranch[i2]);
-      if(to != undefined) { 
+      if(to != undefined) {
         task.raphael.parent.lines.push(r.join(task.raphael,to.raphael, '#ff0000'));
         to.raphael.parent.pointedfrom.push(task.raphael.parent.id);
       }
@@ -340,7 +340,7 @@ function maestro_draw_one_task_line(incomingTask, r) {
           if(flag == false) to.raphael.parent.pointedfrom.push(task.raphael.parent.id);
         }
       }
-        
+
     }
   }
   return task;
@@ -369,7 +369,7 @@ function maestro_handle_edit_click(obj, absx, absy) {
       }
     }
   });
-    
+
   jQuery('#maestro-task-menu').css('top', y + 'px');
   jQuery('#maestro-task-menu').css('left', x + 'px');
   jQuery('#maestro-task-menu').css('display', 'block');
@@ -383,7 +383,7 @@ function maestro_line_click(obj) {
   //TODO: Optional: open a dialogue box to ask whether to give the option to delete this line
   //this has not been implemented by the server-side as of yet and must currently be done
   //by the remove lines button on the task edit
- 
+
 }
 
 function maestro_submit_form(event) {
@@ -415,7 +415,7 @@ function maestro_update_task_information(task) {
 function maestro_remove_task_lines(taskToRemoveLinesFrom) {
   var cntr, cntr2, fromtask, totask;
   var task = maestro_get_task_reference(taskToRemoveLinesFrom);
-  
+
   //each line tells us who is connected on both ends.
   //task.raphael.parent.lines[cntr].from and .to tell us who we need to pick on specifically for the pointedfrom aspect
   for(cntr=0; cntr < task.raphael.parent.lines.length; cntr++) {
@@ -436,7 +436,7 @@ function maestro_remove_task_lines(taskToRemoveLinesFrom) {
   //Now, for each task that points to us
   for(cntr=0; cntr < task.raphael.parent.pointedfrom.length; cntr++) { //task.raphael.parent.pointedfrom WHO points to us
     fromtask = maestro_get_task_reference(task.raphael.parent.pointedfrom[cntr]);
-    
+
     //this for loop removes the fromtask line from raphael and removes the line from the fromtask
     for(cntr2=0; cntr2 < fromtask.raphael.parent.lines.length; cntr2++) {  //for each of the lines the fromtask has
       if(fromtask.raphael.parent.lines[cntr2].to == task.raphael.parent.id) { //if the current line in the fromtask points to us
@@ -445,7 +445,7 @@ function maestro_remove_task_lines(taskToRemoveLinesFrom) {
         maestro_update_task_information(fromtask);  //update the task
       }
     }
-    
+
     //this loop removes the line from the fromtask's to pointers.
     for(cntr2=0; cntr2 < fromtask.raphael.parent.to.length; cntr2++) {
       if(fromtask.raphael.parent.to[cntr2] == task.raphael.parent.id) {
@@ -453,7 +453,7 @@ function maestro_remove_task_lines(taskToRemoveLinesFrom) {
         maestro_update_task_information(fromtask);
       }
     }
-    
+
     //and now to deal with lines that are set in the falsebranch.
     for(cntr2=0; cntr2 < fromtask.raphael.parent.falsebranch.length; cntr2++) {
       if(fromtask.raphael.parent.falsebranch[cntr2] == task.raphael.parent.id) {
@@ -461,7 +461,7 @@ function maestro_remove_task_lines(taskToRemoveLinesFrom) {
         maestro_update_task_information(fromtask);
       }
     }
-    
+
   }
   task.raphael.parent.pointedfrom.splice(0);
   maestro_update_task_information(task);
@@ -470,7 +470,7 @@ function maestro_remove_task_lines(taskToRemoveLinesFrom) {
 
 
 /**
- * 
+ *
  * Our Drupal Ajax callbacks
  */
 (function($, Drupal) {
@@ -487,6 +487,7 @@ function maestro_remove_task_lines(taskToRemoveLinesFrom) {
     taskInformation.left = 15;
     taskInformation.lines = [];
     taskInformation.to = [];
+    taskInformation.nextfalsestep = [];
     taskInformation.falsebranch = [];
     taskInformation.pointedfrom = [];
     taskInformation.capabilities = response.capabilities;
@@ -496,7 +497,7 @@ function maestro_remove_task_lines(taskToRemoveLinesFrom) {
     task = maestro_draw_task(taskInformation);
     maestroTasks.push(task);
   }
-  
+
   Drupal.AjaxCommands.prototype.maestroUpdateMetaData = function(ajax, response, status) {
     var newLabel = response.label;
     var statustext, sampleText;
@@ -507,8 +508,8 @@ function maestro_remove_task_lines(taskToRemoveLinesFrom) {
     var task = maestro_get_task_reference(response.taskid);
     task.raphael.parent.raphaelTextName.attr({text: sampleText });
     //Now to draw/undraw the task's status bubble if the settings exist.
-    
-    
+
+
     if(response.participate_in_workflow_status_stage) {  //not right here with taskInformation.  Need to get task x,y
       if(task.raphael.parent.statusbubble) {
         task.raphael.parent.raphaelStatusTaskText.attr({'text': ''});
@@ -530,52 +531,52 @@ function maestro_remove_task_lines(taskToRemoveLinesFrom) {
       }
       catch(e) {}
     }
-    
-    
-    
+
+
+
   }
 
   Drupal.AjaxCommands.prototype.maestroShowSavedMessage = function(ajax, response, status) {
     //turn on the task's saved notification in ID save-task-notificaiton
-    
+
     jQuery('#drupal-modal').animate({ scrollTop: 0 }, "fast");
     jQuery('#save-task-notificaiton').css('display', 'block');
     jQuery('#save-task-notificaiton').fadeOut(3000);
   }
-  
+
   Drupal.AjaxCommands.prototype.maestroEditTask = function(ajax, response, status) {
     jQuery('#edit-edit-task-complete').trigger('click');
   }
-  
+
   Drupal.AjaxCommands.prototype.maestroNoOp = function(ajax, response, status) {
   }
 
   Drupal.AjaxCommands.prototype.maestroSignalError = function(ajax, response, status) {
     alert(response.message);
   }
-  
+
   Drupal.AjaxCommands.prototype.maestroDrawLineTo = function(ajax, response, status) {
     lineFrom = response.taskid;
     var message = Drupal.t('Please choose the task to draw the line to.');
     jQuery('.maestro-template-message-area').html(message);
     jQuery('.maestro-template-message-area').css('display', 'block');
   }
-  
+
   Drupal.AjaxCommands.prototype.maestroDrawFalseLineTo = function(ajax, response, status) {
     falseLineFrom = response.taskid;
     var message = Drupal.t('Please choose the task to draw the FALSE line to.');
     jQuery('.maestro-template-message-area').html(message);
     jQuery('.maestro-template-message-area').css('display', 'block');
   }
-  
+
   Drupal.AjaxCommands.prototype.maestroCloseTaskMenu = function(ajax, response, status) {
     jQuery('#maestro-task-menu').css('display', 'none');
   }
-  
+
   Drupal.AjaxCommands.prototype.maestroRemoveTaskLines = function(ajax, response, status) {
     maestro_remove_task_lines(response.task);
   }
-  
+
   Drupal.AjaxCommands.prototype.maestroRemoveTask = function(ajax, response, status) {
     var taskToRemove = response.task;
     var taskIndex = -1;
@@ -599,18 +600,18 @@ function maestro_remove_task_lines(taskToRemoveLinesFrom) {
     jQuery('#maestro-task-menu').css('display', 'none');
     jQuery('[name="task_clicked"]').val('');
   }
-  
+
   Drupal.AjaxCommands.prototype.alterCanvas = function(ajax, response, status) {
     r.setSize(response.width, response.height);
     $('#maestro_div_template').width(response.width);
     $('#maestro_div_template').height(response.height);
   }
-  
+
   Drupal.AjaxCommands.prototype.signalValidationRequired = function(ajax, response, status) {
     //we just turn on the needs validation flag here.
     $('#maestro-template-validation').css('display', 'block');
   }
-  
+
   Drupal.AjaxCommands.prototype.turnOffValidationRequired = function(ajax, response, status) {
     //we just turn off the needs validation flag here.
     $('#maestro-template-validation').css('display', 'none');

@@ -9,7 +9,6 @@ use Drupal\Core\Access\AccessResult;
 
 /**
  * Access controller for the Maestro Queue entity.
- *
  */
 class MaestroQueueAccessControlHandler extends EntityAccessControlHandler {
 
@@ -17,10 +16,8 @@ class MaestroQueueAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
-    
-    //return AccessResult::neutral();
-    
-    
+
+    // Return AccessResult::neutral();
     switch ($operation) {
       case 'view':
         return AccessResult::allowedIfHasPermission($account, 'view maestro queue entities');

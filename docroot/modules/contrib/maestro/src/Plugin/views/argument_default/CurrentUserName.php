@@ -7,7 +7,7 @@ use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\views\Plugin\views\argument_default\ArgumentDefaultPluginBase;
 
 /**
- * Default argument plugin to extract the current user name
+ * Default argument plugin to extract the current user name.
  *
  * No Options for this plugin.
  *

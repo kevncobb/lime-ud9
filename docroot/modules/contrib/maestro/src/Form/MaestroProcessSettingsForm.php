@@ -13,6 +13,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @ingroup maestro
  */
 class MaestroProcessSettingsForm extends FormBase {
+
   /**
    * Returns a unique string identifying the form.
    *

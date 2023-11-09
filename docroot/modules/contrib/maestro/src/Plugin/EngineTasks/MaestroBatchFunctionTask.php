@@ -16,7 +16,7 @@ use Drupal\maestro\Form\MaestroExecuteInteractive;
  * id: The task type ID for this task.  For Maestro tasks, this is Maestro[TaskType].
  *     So for example, the start task shipped by Maestro is MaestroStart.
  *     The Maestro End task has an id of MaestroEnd
- *     Those task IDs are what's used in the engine when a task is injected into the queue
+ *     Those task IDs are what's used in the engine when a task is injected into the queue.
  *
  * @Plugin(
  *   id = "MaestroBatchFunction",
@@ -26,9 +26,12 @@ use Drupal\maestro\Form\MaestroExecuteInteractive;
 class MaestroBatchFunctionTask extends PluginBase implements MaestroEngineTaskInterface {
 
   use MaestroTaskTrait;
- 
-  function __construct($configuration = NULL) {
-    if(is_array($configuration)) {
+
+  /**
+   * Constructor.
+   */
+  public function __construct($configuration = NULL) {
+    if (is_array($configuration)) {
       $this->processID = $configuration[0];
       $this->queueID = $configuration[1];
     }
@@ -40,14 +43,14 @@ class MaestroBatchFunctionTask extends PluginBase implements MaestroEngineTaskIn
   public function isInteractive() {
     return FALSE;
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public function shortDescription() {
     return t('Batch Function');
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -56,8 +59,8 @@ class MaestroBatchFunctionTask extends PluginBase implements MaestroEngineTaskIn
   }
 
   /**
-   * 
    * {@inheritDoc}
+   *
    * @see \Drupal\Component\Plugin\PluginBase::getPluginId()
    */
   public function getPluginId() {
@@ -68,77 +71,88 @@ class MaestroBatchFunctionTask extends PluginBase implements MaestroEngineTaskIn
    * {@inheritDoc}
    */
   public function getTaskColours() {
-   return '#707070';
+    return '#707070';
   }
-  
-  /*
+
+  /**
    * Part of the ExecutableInterface
    * Execution of the Batch Function task will use the handler for this task as the executable function.
    * The handler must return TRUE in order for this function to be completed by the engine.
    * We simply pass the return boolean value back from the called handler to the engine for processing.
-   * {@inheritdoc}
+   * {@inheritdoc}.
    */
   public function execute() {
     $returnValue = FALSE;
     $returnStatus = FALSE;
     $queueRecord = MaestroEngine::getQueueEntryById($this->queueID);
-    if($queueRecord) {
-      //pick off the handler here and call the code via the user func array
-      
-      if($queueRecord->handler != NULL) {
+    if ($queueRecord) {
+      // Pick off the handler here and call the code via the user func array.
+      if ($queueRecord->handler != NULL) {
         $handler = $queueRecord->handler->getString();
-        if(function_exists($handler)) {
-          $returnStatus = call_user_func_array($handler, array($this->processID, $this->queueID));
-          //lets see if the return status is an array.  if so, we will check if it has any established structure to set status codes
-          if(is_array($returnStatus)) {
-            if(array_key_exists('completion_status', $returnStatus)) {
+        if (function_exists($handler)) {
+          $returnStatus = call_user_func_array($handler, [$this->processID, $this->queueID]);
+          // Lets see if the return status is an array.  if so, we will check if it has any established structure to set status codes.
+          if (is_array($returnStatus)) {
+            if (array_key_exists('completion_status', $returnStatus)) {
               $this->completionStatus = $returnStatus['completion_status'];
             }
-            
-            if(array_key_exists('execution_status', $returnStatus)) {
+
+            if (array_key_exists('execution_status', $returnStatus)) {
               $this->executionStatus = $returnStatus['execution_status'];
             }
-            
-            if(array_key_exists('status', $returnStatus)) {
-              $returnValue = $returnStatus['status'];  //on false, this holds the engine at this task
+
+            if (array_key_exists('status', $returnStatus)) {
+              // On false, this holds the engine at this task.
+              $returnValue = $returnStatus['status'];
             }
-            
+
           }
-          else {  //not an array.. single value.  set the returnValue with the returnStatus
+          // Not an array.. single value.  set the returnValue with the returnStatus.
+          else {
             $returnValue = $returnStatus;
           }
         }
       }
       else {
-        //just do a NOOP here
+        // Just do a NOOP here.
         $returnValue = TRUE;
       }
-      
-    }
-    return $returnValue;  //true or false to complete the task
-  }
-  
-  public function getExecutableForm($modal, MaestroExecuteInteractive $parent) {
-   
-  }
-  
-  public function handleExecuteSubmit(array &$form, FormStateInterface $form_state) {
-  
-  }
-  
-  public function getTaskEditForm(array $task, $templateMachineName) {
-    $form = array(
-      '#markup' => t('Batch Function Edit'),
-    );
 
-    //let modules signal the handlers they wish to share
-    $handlers = \Drupal::moduleHandler()->invokeAll('maestro_batch_handlers', array());
+    }
+    // True or false to complete the task.
+    return $returnValue;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExecutableForm($modal, MaestroExecuteInteractive $parent) {
+
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function handleExecuteSubmit(array &$form, FormStateInterface $form_state) {
+
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTaskEditForm(array $task, $templateMachineName) {
+    $form = [
+      '#markup' => t('Batch Function Edit'),
+    ];
+
+    // Let modules signal the handlers they wish to share.
+    $handlers = \Drupal::moduleHandler()->invokeAll('maestro_batch_handlers', []);
     $handler_desc = $this->t('The batch function name you wish to call.');
-    if(isset($task['handler']) && isset($handlers[$task['handler']])) {
+    if (isset($task['handler']) && isset($handlers[$task['handler']])) {
       $handler_desc = $handlers[$task['handler']];
     }
-    
-    $form['handler'] = array(
+
+    $form['handler'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Handler'),
       '#default_value' => isset($task['handler']) ? $task['handler'] : '',
@@ -153,7 +167,7 @@ class MaestroBatchFunctionTask extends PluginBase implements MaestroEngineTaskIn
           'message' => NULL,
         ],
       ],
-    );
+    ];
 
     $form['handler_help_text'] = [
       '#type' => 'html_tag',
@@ -166,10 +180,8 @@ class MaestroBatchFunctionTask extends PluginBase implements MaestroEngineTaskIn
       ],
     ];
 
-    
     return $form;
   }
-
 
   /**
    * Implements callback for Ajax event on objective selection.
@@ -185,12 +197,12 @@ class MaestroBatchFunctionTask extends PluginBase implements MaestroEngineTaskIn
   public function batchFunctionHandlerCallback(array &$form, FormStateInterface $form_state) {
     $selected_handler = $new_objective_id = $form_state->getValue('handler');
 
-    //let modules signal the handlers they wish to share
-    $handlers = \Drupal::moduleHandler()->invokeAll('maestro_batch_handlers', array());
-    if($selected_handler != '' && !function_exists($selected_handler)) {
+    // Let modules signal the handlers they wish to share.
+    $handlers = \Drupal::moduleHandler()->invokeAll('maestro_batch_handlers', []);
+    if ($selected_handler != '' && !function_exists($selected_handler)) {
       $handler_desc = \Drupal::translation()->translate('This handler form function does not exist.');
     }
-    elseif(isset($handlers[$selected_handler])) {
+    elseif (isset($handlers[$selected_handler])) {
       $handler_desc = $handlers[$selected_handler];
     }
     else {
@@ -212,46 +224,44 @@ class MaestroBatchFunctionTask extends PluginBase implements MaestroEngineTaskIn
 
   }
 
-
-
   /**
    * {@inheritDoc}
    */
   public function validateTaskEditForm(array &$form, FormStateInterface $form_state) {
     $handler = $form_state->getValue('handler');
-    //Let's validate the handler here to ensure that it actually exists.
-    if(!function_exists($handler)) {
+    // Let's validate the handler here to ensure that it actually exists.
+    if (!function_exists($handler)) {
       $form_state->setErrorByName('handler', $this->t('This handler batch function does not exist.'));
     }
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public function prepareTaskForSave(array &$form, FormStateInterface $form_state, array &$task) {
     $task['handler'] = $form_state->getValue('handler');
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public function performValidityCheck(array &$validation_failure_tasks, array &$validation_information_tasks, array $task) {
-    //so we know that we need a few keys in this $task array to even have a batch function run properly.
-    //namely the handler
-    
-    if( (array_key_exists('handler', $task) && $task['handler'] == '')  || !array_key_exists('handler', $task)) {
-      $validation_failure_tasks[] = array(
+    // So we know that we need a few keys in this $task array to even have a batch function run properly.
+    // namely the handler.
+    if ((array_key_exists('handler', $task) && $task['handler'] == '')  || !array_key_exists('handler', $task)) {
+      $validation_failure_tasks[] = [
         'taskID' => $task['id'],
         'taskLabel' => $task['label'],
         'reason' => t('The handler for the task has not been set. This will cause a failure of the engine to execute'),
-      );
+      ];
     }
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public function getTemplateBuilderCapabilities() {
-    return array('edit', 'drawlineto', 'removelines', 'remove');
+    return ['edit', 'drawlineto', 'removelines', 'remove'];
   }
+
 }

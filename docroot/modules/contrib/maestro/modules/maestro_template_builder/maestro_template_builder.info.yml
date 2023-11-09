@@ -1,6 +1,6 @@
 name: Maestro Template Builder
 description: Maestro Template Builder SVG.
-# core: 8.x
+core_version_requirement: ^9.4 || ^10
 configure: maestro_template_builder.maestro_template_builder_admin_settings
 package: Maestro
 type: module
@@ -8,14 +8,8 @@ scripts:
   - js/template-display.js
 dependencies:
   - maestro:maestro
-# Information added by Drupal.org packaging script on 2017-10-20
-# version: '8.x-2.0-beta2'
-# core: '8.x'
-# project: 'maestro'
-# datestamp: 1508519647
 
-# Information added by Drupal.org packaging script on 2019-05-03
-version: '8.x-2.1-rc3'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2023-09-28
+version: '3.1.0-rc3'
 project: 'maestro'
-datestamp: 1556912892
+datestamp: 1695912924

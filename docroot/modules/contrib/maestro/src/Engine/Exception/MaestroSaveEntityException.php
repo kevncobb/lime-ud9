@@ -14,7 +14,6 @@ class MaestroSaveEntityException extends \Exception {
    *
    * @param string $entity_identifier
    *   The entity identifier.
-   *   
    * @param string $condition
    *   The condition in which this exception ocurred.
    */

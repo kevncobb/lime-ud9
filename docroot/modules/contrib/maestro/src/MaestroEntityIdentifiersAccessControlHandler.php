@@ -9,7 +9,6 @@ use Drupal\Core\Access\AccessResult;
 
 /**
  * Access controller for the Maestro Entity Identifiers entity.
- *
  */
 class MaestroEntityIdentifiersAccessControlHandler extends EntityAccessControlHandler {
 
@@ -17,7 +16,7 @@ class MaestroEntityIdentifiersAccessControlHandler extends EntityAccessControlHa
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
-    
+
     switch ($operation) {
       case 'view':
         return AccessResult::allowedIfHasPermission($account, 'view maestro entity identifiers entities');

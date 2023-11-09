@@ -9,7 +9,6 @@ use Drupal\Core\Access\AccessResult;
 
 /**
  * Access controller for the Maestro Process entity.
- *
  */
 class MaestroProcessAccessControlHandler extends EntityAccessControlHandler {
 
@@ -17,10 +16,9 @@ class MaestroProcessAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
-    
+
     return AccessResult::neutral();
-    
-    
+
     switch ($operation) {
       case 'view':
         return AccessResult::allowedIfHasPermission($account, 'view maestro process entities');

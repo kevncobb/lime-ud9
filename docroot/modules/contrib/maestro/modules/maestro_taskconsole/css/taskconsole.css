@@ -1,24 +1,24 @@
 table.taskconsole-tasks {
-    margin-bottom: 50px;
+  margin-bottom: 50px;
 }
 
 .taskconsole-tasks table {
   table-layout: fixed;
-  width:100%;
+  width: 100%;
 }
 
 .taskconsole-tasks td {
   white-space: nowrap;
-  width:20%
+  width: 20%;
 }
 
 .taskconsole-tasks td:last-child {
   white-space: nowrap;
-  width:25%;
+  width: 25%;
 }
 
 .maestro-highlight-task {
-  background-color: #32CD32 !important;
+  background-color: #32cd32 !important;
 }
 
 .maestro-highlight-task > td > a {
@@ -26,12 +26,12 @@ table.taskconsole-tasks {
 }
 
 .maestro-status-toggle {
-	background-image: url('../images/chevron-down.png');
-	background-repeat: no-repeat;
-	background-size: contain;
-	background-position: center;
-	cursor: pointer;
-	color: transparent;
+  background-image: url('../images/chevron-down.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  cursor: pointer;
+  color: transparent;
 }
 
 .maestro-status-toggle-up {
@@ -40,7 +40,7 @@ table.taskconsole-tasks {
   background-size: contain;
   background-position: center;
   cursor: pointer;
-  color: transparent; 
+  color: transparent;
 }
 
 .maestro-expand-wrapper,
@@ -49,26 +49,26 @@ table.taskconsole-tasks {
 .maestro-expand-wrapper > a:active,
 .maestro-expand-wrapper > a:visited,
 .maestro-expand-wrapper > a:link {
-	color: transparent;
+  color: transparent;
 }
 
 .maestro-ajax-row {
-	display: none;
+  display: none;
 }
 
-.maestro-ajax-row > td{
+.maestro-ajax-row > td {
   background-color: #f0f0f0;
 }
 
-.maestro-expand-wrapper .ajax-progress-throbber  {
-	position: absolute;
-	margin-left: -20px;
-	padding: 0;
+.maestro-expand-wrapper .ajax-progress-throbber {
+  position: absolute;
+  margin-left: -20px;
+  padding: 0;
 }
 
 .maestro-timeline-status {
-	text-align: center;
-	width: 5%;
+  text-align: center;
+  width: 5%;
 }
 
 .maestro-timeline {
@@ -80,7 +80,7 @@ table.taskconsole-tasks {
 }
 
 .maestro-task-details {
-	padding-bottom: 0px;
+  padding-bottom: 0px;
 }
 
 .taskconsole-details-task-label {
@@ -90,7 +90,7 @@ table.taskconsole-tasks {
 }
 
 .maestro-details-entities-wrapper details summary {
-	display: list-item;
+  display: list-item;
 }
 
 .maestro-details-tasks-wrapper details summary {
@@ -98,7 +98,7 @@ table.taskconsole-tasks {
 }
 
 .maestro-details-tasks-wrapper details summary:focus {
-    outline: 0;
+  outline: 0;
 }
 
 .maestro-details-tasks-wrapper details div {
@@ -108,10 +108,10 @@ table.taskconsole-tasks {
 
 
 .views-field-entity-label {
-	font-weight: bold;
-	float: left;
+  font-weight: bold;
+  float: left;
 }
 
 .views-field-entity-edit-link span {
-	margin-left: 20px;
+  margin-left: 20px;
 }

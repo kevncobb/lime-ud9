@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e6983e65e04d9bbaba2895fc8d808d22",
+    "content-hash": "009dd76107226b6bc1d1a925db71629c",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -11395,6 +11395,62 @@
             "support": {
                 "source": "https://git.drupalcode.org/project/login_destination",
                 "issues": "https://drupal.org/project/issues/login_destination"
+            }
+        },
+        {
+            "name": "drupal/maestro",
+            "version": "3.1.0-rc3",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/maestro.git",
+                "reference": "3.1.0-rc3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/maestro-3.1.0-rc3.zip",
+                "reference": "3.1.0-rc3",
+                "shasum": "74fd4a7d8b8bb5cf97f8e1f24151e29a6f5237da"
+            },
+            "require": {
+                "drupal/core": "^9.4 || ^10"
+            },
+            "require-dev": {
+                "drupal/maestro_taskconsole": "*",
+                "drupal/webform": "*"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "3.1.0-rc3",
+                    "datestamp": "1695912922",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "RC releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "blainelang",
+                    "homepage": "https://www.drupal.org/user/726382"
+                },
+                {
+                    "name": "_randy",
+                    "homepage": "https://www.drupal.org/user/704970"
+                },
+                {
+                    "name": "_timpatrick",
+                    "homepage": "https://www.drupal.org/user/1944274"
+                }
+            ],
+            "description": "Provides the engine and API for Maestro.",
+            "homepage": "https://www.drupal.org/project/maestro",
+            "support": {
+                "source": "https://git.drupalcode.org/project/maestro"
             }
         },
         {
@@ -34381,7 +34437,8 @@
         "drupal/easy_email": 10,
         "drupal/facets": 20,
         "drupal/filebrowser": 5,
-        "drupal/l10n_client": 15
+        "drupal/l10n_client": 15,
+        "drupal/maestro": 5
     },
     "prefer-stable": true,
     "prefer-lowest": false,

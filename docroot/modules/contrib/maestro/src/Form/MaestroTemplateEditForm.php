@@ -1,16 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\maestro\Form\TemplateEditForm.
- */
-
 namespace Drupal\maestro\Form;
 
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class MaestroTemplateEditForm
+ * Class MaestroTemplateEditForm.
  *
  * Provides the edit form for our Template entity.
  *
@@ -27,7 +22,7 @@ class MaestroTemplateEditForm extends MaestroTemplateFormBase {
    *
    * @param array $form
    *   An associative array containing the structure of the form.
-   * @param array $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   An associative array containing the current state of the form.
    *
    * @return array
@@ -35,28 +30,30 @@ class MaestroTemplateEditForm extends MaestroTemplateFormBase {
    */
   protected function actions(array $form, FormStateInterface $form_state) {
     $isModal = $this->getRequest()->get('is_modal');
-    
+
     $actions = parent::actions($form, $form_state);
     $actions['submit']['#value'] = t('Update Template');
-    if($isModal == 'modal') {
-      $actions['submit']['#ajax'] =  [
-        'callback' => [$this, 'save'], 
+    if ($isModal == 'modal') {
+      $actions['submit']['#ajax'] = [
+        'callback' => [$this, 'save'],
         'wrapper' => '',
       ];
     }
-    
+
     return $actions;
   }
 
-
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state) {
     // Get anything we need form the base class.
-    $form['description'] = array(
-      '#markup' => $this->t("Edit a Maestro Template Definition" ),
-    );
+    $form['description'] = [
+      '#markup' => $this->t("Edit a Maestro Template Definition"),
+    ];
     $form = parent::buildForm($form, $form_state);
-
 
     return $form;
   }
+
 }

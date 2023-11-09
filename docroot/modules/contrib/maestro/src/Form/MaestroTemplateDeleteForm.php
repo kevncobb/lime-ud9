@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\maestro\Form\MaestroTemplateDeleteForm.
- */
-
 namespace Drupal\maestro\Form;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;
@@ -25,26 +20,29 @@ class MaestroTemplateDeleteForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getDescription() {
-    //let's see if there's any open processes using this template and tell the user that there's open processes that will be jettisoned.
+    // let's see if there's any open processes using this template and tell the user that there's open processes that will be jettisoned.
     $count_warning = '';
     $query = \Drupal::entityQuery('maestro_process')
+      ->accessCheck(FALSE)
       ->condition('template_id', $this->entity->id);
     $res = $query->execute();
     $count = count($res);
-    
-    if($count >1 ) {
-      return $this->t('<strong style="color: red; font-size: 1.2em;">Warning!</strong>  There are %count open processes attached to this Template.  
-          Deleting this process will remove all associated Maestro data.  This action cannot be undone.', array(
-        '%count' => $count ));
+
+    if ($count > 1) {
+      return $this->t('<strong style="color: red; font-size: 1.2em;">Warning!</strong>  There are %count open processes attached to this Template.
+          Deleting this process will remove all associated Maestro data.  This action cannot be undone.', [
+            '%count' => $count,
+          ]);
     }
-    elseif($count == 1) {
-      return $this->t('<strong style="color: red; font-size: 1.2em;">Warning!</strong>  There is %count open process attached to this Template.  
-          Deleting this process will remove all associated Maestro data.  This action cannot be undone.', array(
-        '%count' => $count ));
+    elseif ($count == 1) {
+      return $this->t('<strong style="color: red; font-size: 1.2em;">Warning!</strong>  There is %count open process attached to this Template.
+          Deleting this process will remove all associated Maestro data.  This action cannot be undone.', [
+            '%count' => $count,
+          ]);
     }
     return $this->t('This action cannot be undone.');
   }
-  
+
   /**
    * Gathers a confirmation question.
    *
@@ -52,9 +50,9 @@ class MaestroTemplateDeleteForm extends EntityConfirmFormBase {
    *   Translated string.
    */
   public function getQuestion() {
-    return $this->t('Are you sure you want to delete Template %label?', array(
-      '%label' => $this->entity->label()
-    ));
+    return $this->t('Are you sure you want to delete Template %label?', [
+      '%label' => $this->entity->label(),
+    ]);
   }
 
   /**
@@ -70,8 +68,8 @@ class MaestroTemplateDeleteForm extends EntityConfirmFormBase {
   /**
    * Gets the cancel route.
    *
-   * @return Url
-   *   
+   * @return \Drupal\Core\Url
+   *   Returns a formatted Drupal URL.
    */
   public function getCancelUrl() {
     return new Url('entity.maestro_template.list');
@@ -82,26 +80,26 @@ class MaestroTemplateDeleteForm extends EntityConfirmFormBase {
    *
    * @param array $form
    *   An associative array containing the structure of the form.
-   * @param FormStateInterface $form_state
-   *   
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form's form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    //delete all open processes with this template
+    // Delete all open processes with this template.
     $query = \Drupal::entityQuery('maestro_process')
+      ->accessCheck(FALSE)
       ->condition('template_id', $this->entity->id);
     $entityIDs = $query->execute();
-    foreach($entityIDs as $processID) {
+    foreach ($entityIDs as $processID) {
       MaestroEngine::deleteProcess($processID);
     }
-    
-    
+
     // Delete the entity.
     $this->entity->delete();
 
     // Set a message that the entity was deleted.
-    drupal_set_message(t('Template %label was deleted.', array(
+    \Drupal::messenger()->addMessage(t('Template %label was deleted.', [
       '%label' => $this->entity->label(),
-    )));
+    ]));
 
     // Redirect the user to the list controller when complete.
     $form_state->setRedirect('entity.maestro_template.list');

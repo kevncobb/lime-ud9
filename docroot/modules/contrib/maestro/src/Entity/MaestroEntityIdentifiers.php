@@ -6,19 +6,19 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\maestro\MaestroProcessInterface;
 use Drupal\user\UserInterface;
 use Drupal\Core\Entity\EntityChangedTrait;
 
-//TODO: need the access controller for the Process Status entity
-//TODO: need the list builder for the Process Status entity
+// TODO: need the access controller for the Process Status entity
+// TODO: need the list builder for the Process Status entity.
 
 /**
  * Defines the MaestroEntityIdentifiers entity.
- * 
+ *
  * We have no forms for this entity as this entity is managed by the Maestro engine.
  * Deletions, additions, alterations are managed by Maestro, not natively in Drupal.
  *  *
+ *
  * @ingroup maestro
  *
  * @ContentEntityType(
@@ -38,9 +38,10 @@ use Drupal\Core\Entity\EntityChangedTrait;
  *   entity_keys = {
  *     "id" = "id",
  *   },
+ *   config_export = {
+ *     "id"
+ *   },
  * )
- *
- * 
  */
 class MaestroEntityIdentifiers extends ContentEntityBase {
 
@@ -54,9 +55,9 @@ class MaestroEntityIdentifiers extends ContentEntityBase {
    */
   public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
     parent::preCreate($storage_controller, $values);
-    $values += array(
+    $values += [
       'user_id' => \Drupal::currentUser()->id(),
-    );
+    ];
   }
 
   /**
@@ -104,74 +105,73 @@ class MaestroEntityIdentifiers extends ContentEntityBase {
   }
 
   /**
-   * Get the completed time for the process
+   * Get the completed time for the process.
    */
   public function getCompletedTime() {
     return NULL;
   }
-  
+
   /**
    * {@inheritdoc}
    *
    * Field properties defined here.
-   *
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
 
     $fields = [];
-    //Auto increment ID
+    // Auto increment ID.
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('id'))
       ->setDescription(t('The unique ID of the Maestro Entity Identifiers entry.'))
       ->setReadOnly(TRUE);
-   
-    //relation/entity ref to process
+
+    // relation/entity ref to process.
     $fields['process_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Process ID'))
       ->setDescription(t('The process ID this entity identifier belongs to.'))
       ->setSetting('target_type', 'maestro_process')
       ->setSetting('handler', 'default');
 
-    //the unique ID of the entity
+    // The unique ID of the entity.
     $fields['unique_id'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Unique ID'))
       ->setDescription(t('The unique identifier for the task to bind to the identifier.'))
-      ->setSettings(array(
+      ->setSettings([
         'default_value' => '',
         'max_length' => 255,
         'text_processing' => 0,
-      ));
-      
-    //the entity type.  example, node, webform
+      ]);
+
+    // The entity type.  example, node, webform.
     $fields['entity_type'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Entity Type'))
       ->setDescription(t('The type of entity.'))
-      ->setSettings(array(
+      ->setSettings([
         'default_value' => '',
         'max_length' => 255,
         'text_processing' => 0,
-      ));
-      
-    //the bundle associated to the entity type.  example, article, basic_page...
+      ]);
+
+    // The bundle associated to the entity type.  example, article, basic_page...
     $fields['bundle'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Bundle'))
       ->setDescription(t('The bundle associated to the entity_type.'))
-      ->setSettings(array(
+      ->setSettings([
         'default_value' => '',
         'max_length' => 255,
         'text_processing' => 0,
-      ));
-      
-    //the bundle associated to the entity type.  example, article, basic_page...
+      ]);
+
+    // The bundle associated to the entity type.  example, article, basic_page...
     $fields['entity_id'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Entity ID'))
       ->setDescription(t('The ID of the entity.'))
-      ->setSettings(array(
+      ->setSettings([
         'default_value' => '',
         'max_length' => 255,
         'text_processing' => 0,
-      ));
-      
+      ]);
+
     return $fields;
   }
 

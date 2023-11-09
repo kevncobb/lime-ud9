@@ -1,14 +1,9 @@
 <?php
-/**
- * @file
- * Contains Drupal\maestro\Controller\MaestroTemplateListController.
- */
 
 namespace Drupal\maestro\Controller;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core;
 use Drupal\Core\Url;
 
 /**
@@ -18,7 +13,7 @@ use Drupal\Core\Url;
  *
  * @ingroup maestro
  */
-class MaestroTemplateListBuilder extends ConfigEntityListBuilder  {
+class MaestroTemplateListBuilder extends ConfigEntityListBuilder {
 
   /**
    * Builds the header row for the entity listing.
@@ -37,7 +32,7 @@ class MaestroTemplateListBuilder extends ConfigEntityListBuilder  {
   /**
    * Builds a row for an entity in the entity listing.
    *
-   * @param EntityInterface $entity
+   * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity for which to build the row.
    *
    * @return array
@@ -47,11 +42,11 @@ class MaestroTemplateListBuilder extends ConfigEntityListBuilder  {
    */
   public function buildRow(EntityInterface $entity) {
     $valid = FALSE;
-    $validity_message = '<span class="maestro-template-validation-failed">' . $this->t(' (*Needs Validation)') . '</span>';
-    if(isset($entity->validated) && $entity->validated == TRUE) {
+    $validity_message = '<span class="maestro-template-validation-failed">(*' . $this->t('Needs Validation') . ')</span>';
+    if (isset($entity->validated) && $entity->validated == TRUE) {
       $validity_message = '';
     }
-    $row['label'] = array('data' => array('#markup' => $this->getLabel($entity) . $validity_message));
+    $row['label'] = ['data' => ['#markup' => $entity->label() . $validity_message]];
     $row['machine_name'] = $entity->id();
     $row = $row + parent::buildRow($entity);
     return $row;
@@ -64,21 +59,19 @@ class MaestroTemplateListBuilder extends ConfigEntityListBuilder  {
    *   Renderable array.
    */
   public function render() {
-    $build['description'] = array(
+    $build['description'] = [
       '#markup' => $this->t("<p>This is the full listing of Maestro Templates in your system.</p>"),
-      '#attached' => array(
-          'library' => 'maestro/maestro-engine-css',
-      ),
-    );
+      '#attached' => [
+        'library' => 'maestro/maestro-engine-css',
+      ],
+    ];
     $build[] = parent::render();
 
     return $build;
   }
 
-
   /**
    * {@inheritdoc}
-   *
    */
   public function getOperations(EntityInterface $entity) {
     $operations = parent::getOperations($entity);
@@ -88,21 +81,21 @@ class MaestroTemplateListBuilder extends ConfigEntityListBuilder  {
      * Check and see if the maestro task console is enabled
      */
     if (\Drupal::moduleHandler()->moduleExists('maestro_template_builder')) {
-      $operations['tasks'] = array(
+      $operations['tasks'] = [
         'title' => t('Task Editor'),
         'url' => Url::fromUserInput('/template-builder/' . $entity->id),
-        'weight' => 1
-      );
+        'weight' => 1,
+      ];
     }
-    
-    if($user->hasPermission('start template ' . $entity->id)) {
-      $operations['start_process'] = array(
+
+    if ($user->hasPermission('start template ' . $entity->id)) {
+      $operations['start_process'] = [
         'title' => t('Start Process'),
         'url' => Url::fromRoute('maestro.start_process', ['templateMachineName' => $entity->id]),
-        'weight' => 10
-      );
+        'weight' => 10,
+      ];
     }
-    
+
     /*
      * Check to see if the current user has permission to start this process
      */
@@ -111,16 +104,15 @@ class MaestroTemplateListBuilder extends ConfigEntityListBuilder  {
       $operations['edit']['weight'] = 5;
       $operations['edit']['url'] = Url::fromRoute('entity.maestro_template.edit_form', ['maestro_template' => $entity->id]);
 
-      // Weight sorting seemingly wasn't happening.  Just making sure I can sort by weight for our purposes
+      // Weight sorting seemingly wasn't happening.  Just making sure I can sort by weight for our purposes.
       uasort($operations, '\Drupal\Component\Utility\SortArray::sortByWeightElement');
     }
     else {
-      // Make sure the edit is unset for those without this permission
+      // Make sure the edit is unset for those without this permission.
       unset($operations['edit']);
     }
-    
+
     return $operations;
   }
-
 
 }

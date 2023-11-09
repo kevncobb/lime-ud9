@@ -13902,6 +13902,65 @@
             "install-path": "../../docroot/modules/contrib/login_destination"
         },
         {
+            "name": "drupal/maestro",
+            "version": "3.1.0-rc3",
+            "version_normalized": "3.1.0.0-RC3",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/maestro.git",
+                "reference": "3.1.0-rc3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/maestro-3.1.0-rc3.zip",
+                "reference": "3.1.0-rc3",
+                "shasum": "74fd4a7d8b8bb5cf97f8e1f24151e29a6f5237da"
+            },
+            "require": {
+                "drupal/core": "^9.4 || ^10"
+            },
+            "require-dev": {
+                "drupal/maestro_taskconsole": "*",
+                "drupal/webform": "*"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "3.1.0-rc3",
+                    "datestamp": "1695912922",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "RC releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "installation-source": "dist",
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "blainelang",
+                    "homepage": "https://www.drupal.org/user/726382"
+                },
+                {
+                    "name": "_randy",
+                    "homepage": "https://www.drupal.org/user/704970"
+                },
+                {
+                    "name": "_timpatrick",
+                    "homepage": "https://www.drupal.org/user/1944274"
+                }
+            ],
+            "description": "Provides the engine and API for Maestro.",
+            "homepage": "https://www.drupal.org/project/maestro",
+            "support": {
+                "source": "https://git.drupalcode.org/project/maestro"
+            },
+            "install-path": "../../docroot/modules/contrib/maestro"
+        },
+        {
             "name": "drupal/mailsystem",
             "version": "4.4.0",
             "version_normalized": "4.4.0.0",

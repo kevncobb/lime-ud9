@@ -8,7 +8,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\maestro\Engine\MaestroEngine;
 
 /**
- * Prevents example task module from being uninstalled when the task is bound in a template
+ * Prevents example task module from being uninstalled when the task is bound in a template.
  */
 class MaestroInteractiveExampleTaskUninstallValidator implements ModuleUninstallValidatorInterface {
 
@@ -21,7 +21,8 @@ class MaestroInteractiveExampleTaskUninstallValidator implements ModuleUninstall
    *   The string translation service.
    */
   public function __construct(TranslationInterface $string_translation) {
-    $this->stringTranslation = $string_translation;  //we only use string translation in this validator, the rest is up to the Maestro Engine
+    // We only use string translation in this validator, the rest is up to the Maestro Engine.
+    $this->stringTranslation = $string_translation;
   }
 
   /**
@@ -30,17 +31,17 @@ class MaestroInteractiveExampleTaskUninstallValidator implements ModuleUninstall
   public function validate($module) {
     $reasons = [];
     if ($module == 'maestro_interactive_task_plugin_example') {
-      //cycle through all of the Maestro templates and determine if any of the tasks are of type MaestroIntExample
-      
+      // Cycle through all of the Maestro templates and determine if any of the tasks are of type MaestroIntExample.
       $templates = MaestroEngine::getTemplates();
-      foreach($templates as $template) {
-        foreach($template->tasks as $task) {
-          if($task['tasktype'] == 'MaestroIntExample') {
-            $reasons[] = $this->t('To uninstall the Interactive Plugin Task Example module, remove the Interactive Example task from the <em>:template</em> template.', array(':template' => $template->label));
+      foreach ($templates as $template) {
+        foreach ($template->tasks as $task) {
+          if ($task['tasktype'] == 'MaestroIntExample') {
+            $reasons[] = $this->t('To uninstall the Interactive Plugin Task Example module, remove the Interactive Example task from the <em>:template</em> template.', [':template' => $template->label]);
           }
         }
       }
     }
     return $reasons;
   }
+
 }

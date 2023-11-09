@@ -6,14 +6,17 @@ use Drupal\Core\Url;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\maestro\Engine\MaestroEngine;
 
-/*
+/**
  * Internal function that helps determine the handler type that is
- * used for interactive tasks
+ * used for interactive tasks.
  *
- * Returns either unknown, external, internal or function
+ * Returns either unknown, external, internal or function.
  */
 class TaskHandler {
 
+  /**
+   * Get the type of task handler.
+   */
   public static function getType($handler) {
     global $base_url;
 
@@ -32,7 +35,8 @@ class TaskHandler {
             $handler_type = 'internal';
           }
         }
-      } catch (\InvalidArgumentException $e) {
+      }
+      catch (\InvalidArgumentException $e) {
         $handler_type = 'unknown';
       }
     }
@@ -42,45 +46,56 @@ class TaskHandler {
 
     return $handler_type;
   }
-  
+
+  /**
+   * Get the handler's URL.
+   */
   public static function getHandlerURL($queueID) {
     global $base_url;
     $url = FALSE;
     $queueRecord = \Drupal::entityTypeManager()->getStorage('maestro_queue')->load($queueID);
     $templateMachineName = MaestroEngine::getTemplateIdFromProcessId($queueRecord->process_id->getString());
-    $query_options = array('queueid' => $queueID);
+    //Do We have a token?  If so, let's use that in place of the direct QueueID.
+    $queueToken = MaestroEngine::getTokenFromQueueId($queueID);
+    if($queueToken !== FALSE && $queueToken !== '') {
+      $query_options = ['queueid_or_token' => $queueToken];
+    }
+    else {
+      $query_options = ['queueid_or_token' => $queueID];
+    }
     
+
     $handler = $queueRecord->handler->getString();
-    if($handler && !empty($handler) && $queueRecord->is_interactive->getString() == '1') {
+    if ($handler && !empty($handler) && $queueRecord->is_interactive->getString() == '1') {
       $handler = str_replace($base_url, '', $handler);
       $handler_type = TaskHandler::getType($handler);
-      
+
       $handler_url_parts = UrlHelper::parse($handler);
       $query_options += $handler_url_parts['query'];
-      
+
     }
-    elseif($queueRecord->is_interactive->getString() == '1' && empty($handler)) {
-      //handler is empty.  If this is an interactive task and has no handler, we're still OK.  This is an interactive function that uses a default handler then.
+    elseif ($queueRecord->is_interactive->getString() == '1' && empty($handler)) {
+      // Handler is empty.  If this is an interactive task and has no handler, we're still OK.  This is an interactive function that uses a default handler then.
       $handler_type = 'function';
     }
     else {
-      //this doesn't match, so return nothing.
+      // This doesn't match, so return nothing.
       return FALSE;
     }
     $query_options += ['modal' => 'notmodal'];
-    switch($handler_type) {
-      case 'external' :
-          $url = Url::fromUri($handler, array('query' => $query_options))->toString();
+    switch ($handler_type) {
+      case 'external':
+        $url = Url::fromUri($handler, ['query' => $query_options])->toString();
         break;
-      
+
       case 'internal':
-        $url = Url::fromUserInput($handler, array('query' => $query_options))->toString();
+        $url = Url::fromUserInput($handler, ['query' => $query_options])->toString();
         break;
-      
+
       case 'function':
         $url = Url::fromRoute('maestro.execute', $query_options, ['absolute' => TRUE])->toString();
         break;
-      
+
       default:
         $url = FALSE;
         break;

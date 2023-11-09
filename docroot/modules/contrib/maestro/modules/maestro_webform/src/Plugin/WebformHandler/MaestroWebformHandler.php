@@ -12,8 +12,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\webform\WebformSubmissionConditionsValidatorInterface;
 use Drupal\webform\WebformTokenManagerInterface;
 use Drupal\maestro\Engine\MaestroEngine;
+use Drupal\webform\Entity\WebformSubmission;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
 
 /**
  * Launches a Maestro workflow with a Webform submission.
@@ -29,7 +29,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class MaestroWebformHandler extends WebformHandlerBase {
-
+  
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+  
   /**
    * The module handler.
    *
@@ -38,59 +45,84 @@ class MaestroWebformHandler extends WebformHandlerBase {
   protected $moduleHandler;
   
   /**
-   * The token manager.
+   * The language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+  
+  /**
+   * The configuration object factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+  
+  /**
+   * A mail manager for sending email.
+   *
+   * @var \Drupal\Core\Mail\MailManagerInterface
+   */
+  protected $mailManager;
+  
+  /**
+   * The webform token manager.
    *
    * @var \Drupal\webform\WebformTokenManagerInterface
    */
   protected $tokenManager;
   
   /**
-   * {@inheritdoc}
+   * The webform theme manager.
+   *
+   * @var \Drupal\webform\WebformThemeManagerInterface
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, LoggerChannelFactoryInterface $logger_factory, ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, WebformSubmissionConditionsValidatorInterface $conditions_validator, ModuleHandlerInterface $module_handler, WebformTokenManagerInterface $token_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $logger_factory, $config_factory, $entity_type_manager, $conditions_validator);
-    $this->moduleHandler = $module_handler;
-    $this->tokenManager = $token_manager;
-  }
+  protected $themeManager;
+  
+  /**
+   * The webform element plugin manager.
+   *
+   * @var \Drupal\webform\Plugin\WebformElementManagerInterface
+   */
+  protected $elementManager;
+  
   
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('logger.factory'),
-      $container->get('config.factory'),
-      $container->get('entity_type.manager'),
-      $container->get('webform_submission.conditions_validator'),
-      $container->get('module_handler'),
-      $container->get('webform.token_manager')
-      );
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->currentUser = $container->get('current_user');
+    $instance->moduleHandler = $container->get('module_handler');
+    $instance->languageManager = $container->get('language_manager');
+    $instance->mailManager = $container->get('plugin.manager.mail');
+    $instance->themeManager = $container->get('webform.theme_manager');
+    $instance->tokenManager = $container->get('webform.token_manager');
+    $instance->elementManager = $container->get('plugin.manager.webform.element');
+    return $instance;
   }
-  
   
   /**
    * {@inheritdoc}
    */
   public function getSummary() {
-    $summary = parent::getSummary();  //gets the overall settings
-    //lets now fetch the Maestro Template label.
+    // Gets the overall settings.
+    $summary = parent::getSummary();
+    // Lets now fetch the Maestro Template label.
     $template = MaestroEngine::getTemplate($this->configuration['maestro_template']);
     $summary['#settings']['template_label'] = $template->label;
     return $summary;
   }
-  
   
   /**
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
     return [
-        'maestro_template' => '',
-        'maestro_message_success' => '',
-        'maestro_message_failure' => '',
+      'maestro_template' => '',
+      'maestro_message_success' => '',
+      'maestro_message_failure' => '',
+      'maestro_spawn_states' => [WebformSubmissionInterface::STATE_COMPLETED],
     ];
   }
   
@@ -100,11 +132,11 @@ class MaestroWebformHandler extends WebformHandlerBase {
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $maestro_templates = MaestroEngine::getTemplates();
     $templates = [];
-    $templates ['none'] = $this->t('Select Template');
-    foreach($maestro_templates as $machine_name => $template) {
+    $templates['none'] = $this->t('Select Template');
+    foreach ($maestro_templates as $machine_name => $template) {
       $templates[$machine_name] = $template->label;
     }
-      
+    
     $form['maestro_template'] = [
       '#type' => 'select',
       '#title' => $this->t('Maestro Workflow Template'),
@@ -128,7 +160,19 @@ class MaestroWebformHandler extends WebformHandlerBase {
       '#description' => $this->t('If a Maestro Process fails to start, this message will be displayed to the end user (Uses a Drupal message). Leave blank for no message.'),
       '#default_value' => $this->configuration['maestro_message_failure'],
     ];
-  
+
+    $form['maestro_spawn_states'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this->t('Choose the webform states to spawn this flow from.'),
+      '#description' => $this->t('The selected webform submission states will launch a Maestro flow.'),
+      '#options' => [
+        WebformSubmissionInterface::STATE_COMPLETED => $this->t('Completed'),
+        WebformSubmissionInterface::STATE_DRAFT_CREATED => $this->t('Draft Created'),
+        WebformSubmissionInterface::STATE_DRAFT_UPDATED => $this->t('Draft Updated'),
+      ],
+      '#default_value' => $this->configuration['maestro_spawn_states'],
+    ];
+    
     return $form;
   }
   
@@ -149,19 +193,20 @@ class MaestroWebformHandler extends WebformHandlerBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state, WebformSubmissionInterface $webform_submission) {
-
-    //If we have maestro elements in the URL, we know that this is a submission that is as a result of 
-    //the task being INSIDE of a workflow and not spawned by itself.
-    //If we can bind to a template task based on the maestro elements, then we will 
-    //set a webform submission data value signalling NOT to do any post-save actions if the task
-    //has it's webform submission handler option checked off.
-    $webform_submission->data['maestro_skip'] = FALSE;  //make sure the key exists and default to not checked
+    
+    // If we have maestro elements in the URL, we know that this is a submission that is as a result of
+    // the task being INSIDE of a workflow and not spawned by itself.
+    // If we can bind to a template task based on the maestro elements, then we will
+    // set a webform submission data value signalling NOT to do any post-save actions if the task
+    // has it's webform submission handler option checked off.
+    // Make sure the key exists and default to not checked.
+    $webform_submission->data['maestro_skip'] = FALSE;
     $maestroElements = $form_state->getValue('maestro');
-    if($maestroElements) {
+    if ($maestroElements) {
       $queueID = $maestroElements['queue_id'];
       $templateTask = MaestroEngine::getTemplateTaskByQueueID($queueID);
-      if($templateTask) {
-        //$webform_submission->setElementData('maestro_skip', $templateTask['data']['skip_webform_handlers']);
+      if ($templateTask) {
+        // $webform_submission->setElementData('maestro_skip', $templateTask['data']['skip_webform_handlers']);
         $webform_submission->data['maestro_skip'] = $templateTask['data']['skip_webform_handlers'];
       }
     }
@@ -172,26 +217,62 @@ class MaestroWebformHandler extends WebformHandlerBase {
    * {@inheritdoc}
    */
   public function postSave(WebformSubmissionInterface $webform_submission, $update = TRUE) {
-    //this is where we launch our maestro workflow based on the configuration options for this webform.
-    if(!$update && !$webform_submission->data['maestro_skip']) {  //only do this on NEW webforms & webforms that are not mid-workflow.
+    // This is where we launch our maestro workflow based on the configuration options for this webform.
+    $webform_state = $webform_submission->getState();
+    $maestro_skip = FALSE;
+    if (isset($webform_submission->data['maestro_skip'])) {
+      if ($webform_submission->data['maestro_skip']) {
+        $maestro_skip = TRUE;
+      }
+    }
+    else {
+      $maestro_skip = FALSE;
+    }
+
+    if(array_search($webform_state, $this->configuration['maestro_spawn_states']) === FALSE) {
+      $maestro_skip = TRUE;
+    }
+
+    // Only do this on NEW webforms & webforms that are not mid-workflow.
+    if (!$maestro_skip) {
       $maestro = new MaestroEngine();
       $processID = $maestro->newProcess($this->configuration['maestro_template']);
-      if($processID !== FALSE) {
-        if($this->configuration['maestro_message_success'] != '') {
-          drupal_set_message($this->configuration['maestro_message_success'], 'status');
+      if ($processID !== FALSE) {
+        if ($this->configuration['maestro_message_success'] != '') {
+          \Drupal::messenger()->addStatus($this->configuration['maestro_message_success']);
         }
-        //Set the entity identifier to attach this webform to the maestro workflow template that is put into production
-        if(!MaestroEngine::createEntityIdentifier($processID, $webform_submission->getEntityTypeId(), $webform_submission->bundle(), 'submission', $webform_submission->id())) {
-          drupal_set_message($this->configuration['maestro_message_failure'], 'error');
+        // Set the entity identifier to attach this webform to the maestro workflow template that is put into production.
+        if (!MaestroEngine::createEntityIdentifier($processID, $webform_submission->getEntityTypeId(), $webform_submission->bundle(), 'submission', $webform_submission->id())) {
+          \Drupal::messenger()->addError($this->configuration['maestro_message_failure']);
+          
         }
       }
-      else {  //the Maestro new process method failed for some reason.
-        if($this->configuration['maestro_message_failure'] != '') { //only show the message if our config says to do so
-          drupal_set_message($this->configuration['maestro_message_failure'], 'error');
+      // The Maestro new process method failed for some reason.
+      else {
+        // Only show the message if our config says to do so.
+        if ($this->configuration['maestro_message_failure'] != '') {
+          \Drupal::messenger()->addError($this->configuration['maestro_message_failure']);
         }
       }
     }
   }
   
-
+  
+  /**
+   * {@inheritdoc}
+   */
+  public function isExcluded() {
+    return $this->configFactory->get('webform.settings')
+    ->get('handler.excluded_handlers.' . $this->pluginDefinition['id']) ? TRUE : FALSE;
+  }
+  
+  /**
+   * {@inheritdoc}
+   */
+  public function isEnabled() {
+    return $this->status ? TRUE : FALSE;
+  }
+  
+  
+  
 }

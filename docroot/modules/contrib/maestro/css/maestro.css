@@ -1,5 +1,5 @@
 #edit-label-machine-name-suffix .admin-link {
-	margin-left: 5px;
+  margin-left: 5px;
 }
 
 .maestro-existing-variable {
@@ -37,9 +37,9 @@
 
 .maestro-existing-variable .form-type-checkbox,
 .maestro-existing-variable-no-delete .form-type-checkbox {
-	float: left;
-	padding-right: 10px;
-	text-align: center;
+  float: left;
+  padding-right: 10px;
+  text-align: center;
 }
 
 
@@ -50,8 +50,8 @@
 
 
 .maestro-engine-assignments-hidden-user {
-	display: block;
-	visibility: visible;
+  display: block;
+  visibility: visible;
 }
 
 .maestro-engine-assignments-hidden-role {
@@ -66,7 +66,7 @@
 
 
 .maestro-engine-notifications-hidden-variable {
-	display: none;
+  display: none;
   visibility: none;
 }
 
@@ -82,20 +82,19 @@
 
 
 .maestro-reminder-wrapper {
-	float: left;
+  float: left;
 }
 
 .maestro-escalation-wrapper {
-	padding-left: 25px;
-	float: left;
+  padding-left: 25px;
+  float: left;
 }
 
 .maestro_hide_col {
-	display: none;
+  display: none;
 }
- 
 .maestro-template-validation-failed {
-	color: #ff0000;
+  color: #ff0000;
 }
 
 .maestro-block-process-title {
@@ -120,7 +119,7 @@
 .maestro-status-circle-complete {
   border-radius: 50%;
   width: 30px;
-  height: 30px; 
+  height: 30px;
   background: green;
   vertical-align: middle;
   text-align: center;
@@ -138,12 +137,12 @@
   margin-top: 13px;
   margin-left: -15px;
   margin-right: -2px;
-  }
+}
 
 .maestro-status-circle-incomplete {
   border-radius: 50%;
   width: 30px;
-  height: 30px; 
+  height: 30px;
   background: #a0a0a0;
   vertical-align: middle;
   text-align: center;
@@ -167,7 +166,7 @@
   z-index: 1000;
   border-radius: 50%;
   width: 30px;
-  height: 30px; 
+  height: 30px;
   background: orange;
   vertical-align: middle;
   text-align: center;
@@ -194,7 +193,7 @@
 
 .stage-status-message {
   margin-left: -45px;
-  width: 60px;  
+  width: 60px;
   position: relative;
   white-space: normal;
   word-wrap: break-word;
@@ -207,26 +206,30 @@
 }
 
 .all_flows_bar {
-	position: absolute;
-	width: 95%;
-	border: solid black 1px;
-	margin-top: 20px;
+  position: absolute;
+  width: 95%;
+  border: solid black 1px;
+  margin-top: 20px;
 }
 
 .all_flows_block {
-	display: block;
-	width: auto;
+  display: block;
+  width: auto;
 }
 
 .maestro-details-hide-row {
-	display: none;
-	background-color: #f0f0f0;
+  display: none;
+  background-color: #f0f0f0;
 }
 
 .details-replace-column {
-	padding-left: 20px !important;
+  padding-left: 20px !important;
 }
 
 .maestro-process-details-expand-wrapper {
-	min-width: 81px;
+  min-width: 81px;
+}
+
+.maestro-ajax-details-view-table {
+  width: max-content;
 }
