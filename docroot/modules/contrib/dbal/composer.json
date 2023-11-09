@@ -3,7 +3,7 @@
     "description": "Provides a Doctrine/DBAL connection from your Database connection settings.",
     "type": "drupal-module",
     "require": {
-        "doctrine/dbal": "^2.5"
+        "doctrine/dbal": "^2.5 || ^ 3.0"
     },
     "license": "GPL2+",
     "authors": [
