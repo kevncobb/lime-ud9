@@ -17,7 +17,12 @@ class TextFormatConfigurationTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = [
     'video_embed_field',
     'video_embed_wysiwyg',
     'editor',
@@ -37,7 +42,7 @@ class TextFormatConfigurationTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->drupalLogin($this->createAdminUser());

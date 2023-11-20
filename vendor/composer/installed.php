@@ -3,7 +3,7 @@
         'name' => 'vardot/varbase-project',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => 'da6c991f0f8063765c8ec5cfb5bfe6ba64a6b2f6',
+        'reference' => '788b939c625a041e05bbd4d079f98b663a64fa17',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -3285,6 +3285,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'drupal/video_embed_field' => array(
+            'pretty_version' => '2.5.0',
+            'version' => '2.5.0.0',
+            'reference' => '8.x-2.5',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/video_embed_field',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'drupal/views_bootstrap' => array(
             'pretty_version' => '5.5.0-alpha1',
             'version' => '5.5.0.0-alpha1',
@@ -5284,7 +5293,7 @@
         'vardot/varbase-project' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'da6c991f0f8063765c8ec5cfb5bfe6ba64a6b2f6',
+            'reference' => '788b939c625a041e05bbd4d079f98b663a64fa17',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

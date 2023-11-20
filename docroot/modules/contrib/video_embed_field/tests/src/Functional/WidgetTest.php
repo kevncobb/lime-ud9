@@ -18,7 +18,12 @@ class WidgetTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = [
     'field_ui',
     'node',
     'video_embed_field',

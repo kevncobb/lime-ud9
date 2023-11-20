@@ -17,7 +17,12 @@ class ColorboxFormatterTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = [
     'node',
     'colorbox',
     'video_embed_field',
@@ -33,7 +38,7 @@ class ColorboxFormatterTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->setupEntityDisplays();
   }
