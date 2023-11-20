@@ -147,7 +147,12 @@
     "drupal/typed_data": "^1.0@beta",
     "drupal/video_embed_field": "^2.5",
     "drupal/views_menu_children_filter": "^3.0@RC",
-    "drupal/workflow_buttons": "^1.0@beta"
+    "drupal/workflow_buttons": "^1.0@beta",
+    "drupal/anchor_link": "^2.6",
+    "drupal/image_resize_filter": "^1.2",
+    "drupal/page_manager": "^4.0@RC",
+    "drupal/panels": "^4.7",
+    "drupal/total_control": "^3.0"
   },
   "require-dev": {
     "drupal/core-dev": "~10",
