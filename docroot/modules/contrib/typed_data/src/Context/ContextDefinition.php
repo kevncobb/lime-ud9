@@ -2,11 +2,17 @@
 
 namespace Drupal\typed_data\Context;
 
-use Drupal\Core\Plugin\Context\ContextDefinition as ContextDefinitionCore;
 use Drupal\Component\Plugin\Exception\ContextException;
+use Drupal\Core\Plugin\Context\ContextDefinition as ContextDefinitionCore;
+
+@trigger_error('\Drupal\typed_data\Context\ContextDefinition is deprecated in typed_data:8.x-1.0 and is removed from typed_data:2.0.0. Use \Drupal\Core\Plugin\Context\ContextDefinition instead. See https://www.drupal.org/project/typed_data/issues/3169307', E_USER_DEPRECATED);
 
 /**
  * Extends the core context definition class with useful methods.
+ *
+ * @deprecated in typed_data:8.x-1.0 and is removed from typed_data:2.0.0. Use \Drupal\Core\Plugin\Context\ContextDefinition instead.
+ *
+ * @see https://www.drupal.org/project/typed_data/issues/3169307
  */
 class ContextDefinition extends ContextDefinitionCore implements ContextDefinitionInterface {
 
@@ -74,7 +80,7 @@ class ContextDefinition extends ContextDefinitionCore implements ContextDefiniti
     if (isset($values['class']) && !in_array(ContextDefinitionInterface::class, class_implements($values['class']))) {
       throw new ContextException('ContextDefinition class must implement ' . ContextDefinitionInterface::class . '.');
     }
-    // Default to Typed data context definition class.
+    // Default to Typed Data context definition class.
     $values['class'] = isset($values['class']) ? $values['class'] : ContextDefinition::class;
     if (!isset($values['value'])) {
       $values['value'] = 'any';

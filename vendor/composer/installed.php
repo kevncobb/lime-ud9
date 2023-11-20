@@ -3,7 +3,7 @@
         'name' => 'vardot/varbase-project',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '41fb8f87262c7f4b96c6414c91d4c6123297490a',
+        'reference' => 'da6c991f0f8063765c8ec5cfb5bfe6ba64a6b2f6',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -2970,6 +2970,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'drupal/typed_data' => array(
+            'pretty_version' => '1.0.0-beta2',
+            'version' => '1.0.0.0-beta2',
+            'reference' => '8.x-1.0-beta2',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/typed_data',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'drupal/ui_patterns' => array(
             'pretty_version' => '1.7.0',
             'version' => '1.7.0.0',
@@ -5275,7 +5284,7 @@
         'vardot/varbase-project' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '41fb8f87262c7f4b96c6414c91d4c6123297490a',
+            'reference' => 'da6c991f0f8063765c8ec5cfb5bfe6ba64a6b2f6',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
