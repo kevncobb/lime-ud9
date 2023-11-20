@@ -2,7 +2,6 @@ services:
   views_menu_children_filter.join_handler:
     class: Drupal\views_menu_children_filter\Plugin\views\join\MenuChildrenNodeJoin
     arguments:
-      - '@module_handler'
       -
         type: INNER
         table: menu_link_content_data

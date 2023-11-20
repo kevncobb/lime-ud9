@@ -16,21 +16,29 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class MenuChildren extends SortPluginBase {
 
   /**
+   * A join handler object.
+   *
    * @var \Drupal\views_menu_children_filter\Plugin\views\join\MenuChildrenNodeJoin
    */
   protected $joinHandler;
 
   /**
    * MenuChildren constructor.
+   *
    * @param \Drupal\views_menu_children_filter\Plugin\views\join\MenuChildrenNodeJoin $join_handler
+   *   A join handler object.
    * @param array $configuration
+   *   A configuration array.
    * @param string $plugin_id
+   *   A plugin id.
    * @param mixed $plugin_definition
+   *   A plugin definition.
    */
-  function __construct(MenuChildrenNodeJoin $join_handler, array $configuration, $plugin_id, $plugin_definition) {
+  public function __construct(MenuChildrenNodeJoin $join_handler, array $configuration, $plugin_id, $plugin_definition) {
     $this->joinHandler = $join_handler;
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
+
   /**
    * Creates an instance of the plugin.
    *
@@ -55,6 +63,9 @@ class MenuChildren extends SortPluginBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function query() {
     $this->joinHandler->joinToNodeTable($this->query);
     $tables = $this->query->tables['node_field_data'];

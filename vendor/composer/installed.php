@@ -3,7 +3,7 @@
         'name' => 'vardot/varbase-project',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '788b939c625a041e05bbd4d079f98b663a64fa17',
+        'reference' => '8af172ca7f9292fd3640cf2b96feb8308134357b',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -3330,6 +3330,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'drupal/views_menu_children_filter' => array(
+            'pretty_version' => '3.0.0-rc2',
+            'version' => '3.0.0.0-RC2',
+            'reference' => '3.0.0-rc2',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/views_menu_children_filter',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'drupal/views_role_based_global_text' => array(
             'pretty_version' => '3.1.1',
             'version' => '3.1.1.0',
@@ -5293,7 +5302,7 @@
         'vardot/varbase-project' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '788b939c625a041e05bbd4d079f98b663a64fa17',
+            'reference' => '8af172ca7f9292fd3640cf2b96feb8308134357b',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
