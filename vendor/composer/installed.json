@@ -20526,6 +20526,53 @@
             "install-path": "../../docroot/modules/contrib/twigsuggest"
         },
         {
+            "name": "drupal/type_style",
+            "version": "1.1.0",
+            "version_normalized": "1.1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/type_style.git",
+                "reference": "8.x-1.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/type_style-8.x-1.1.zip",
+                "reference": "8.x-1.1",
+                "shasum": "61c6958a03b0ee572b94cdc4ded6b88565452629"
+            },
+            "require": {
+                "drupal/core": "^8 || ^9 || ^10"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-1.1",
+                    "datestamp": "1670992450",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "installation-source": "dist",
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "samuel.mortenson",
+                    "homepage": "https://www.drupal.org/user/2582268"
+                }
+            ],
+            "description": "Adds configuration to distinctly style types (entity bundles).",
+            "homepage": "https://www.drupal.org/project/type_style",
+            "support": {
+                "source": "https://git.drupalcode.org/project/type_style"
+            },
+            "install-path": "../../docroot/modules/contrib/type_style"
+        },
+        {
             "name": "drupal/ui_patterns",
             "version": "1.7.0",
             "version_normalized": "1.7.0.0",

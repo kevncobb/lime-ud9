@@ -142,7 +142,8 @@
     "drupal/pdf_api": "^2.4",
     "drupal/printable": "^3.0",
     "drupal/slick": "^2.10",
-    "drupal/svg_image": "^3.0"
+    "drupal/svg_image": "^3.0",
+    "drupal/type_style": "^1.1"
   },
   "require-dev": {
     "drupal/core-dev": "~10",

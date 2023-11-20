@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 /**
  * @file
  * Hooks related to Type Style module.
@@ -21,7 +22,7 @@
  * @param \Drupal\Core\Config\Entity\ConfigEntityBundleBase $type
  *   The type being edited.
  */
-function hook_type_style_form_alter(array &$form, \Drupal\Core\Config\Entity\ConfigEntityBundleBase $type) {
+function hook_type_style_form_alter(array &$form, ConfigEntityBundleBase $type) {
   $label = $type->getEntityType()->getLabel();
   $settings = $type->getThirdPartySettings('type_style');
 
@@ -31,7 +32,7 @@ function hook_type_style_form_alter(array &$form, \Drupal\Core\Config\Entity\Con
     '#description' => t('The secondary color for this @label', ['@label' => $label]),
     '#default_value' => isset($settings['secondary_color']) ? $settings['secondary_color'] : '',
   ];
-  /** @see type_style_entity_builder() for reference on how to set values. */
+  /* @see type_style_entity_builder() for reference on how to set values. */
   $form['#entity_builders'][] = 'your_module_type_style_entity_builder';
 }
 

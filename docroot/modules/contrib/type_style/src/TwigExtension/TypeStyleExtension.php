@@ -2,12 +2,14 @@
 
 namespace Drupal\type_style\TwigExtension;
 
+use Twig\TwigFunction;
 use Drupal\Core\Entity\EntityInterface;
+use Twig\Extension\AbstractExtension;
 
 /**
  * A Twig extension to render type styles.
  */
-class TypeStyleExtension extends \Twig_Extension {
+class TypeStyleExtension extends AbstractExtension {
 
   /**
    * Generates a list of all Twig functions that this extension defines.
@@ -23,7 +25,7 @@ class TypeStyleExtension extends \Twig_Extension {
    */
   public function getFunctions() {
     return [
-      'type_style' => new \Twig_Function_Function(['Drupal\type_style\TwigExtension\TypeStyleExtension', 'getTypeStyle']),
+      'type_style' => new TwigFunction('type_style', ['Drupal\type_style\TwigExtension\TypeStyleExtension', 'getTypeStyle']),
     ];
   }
 
@@ -58,7 +60,7 @@ class TypeStyleExtension extends \Twig_Extension {
     if ($type instanceof EntityInterface) {
       return type_style_get_style($type, $id, $style);
     }
-    else if (($storage = \Drupal::entityTypeManager()->getStorage($type)) && $style) {
+    elseif (($storage = \Drupal::entityTypeManager()->getStorage($type)) && $style) {
       if ($entity = $storage->load($id)) {
         return type_style_get_style($entity, $style, $default);
       }
