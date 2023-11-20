@@ -2,11 +2,8 @@
 
 namespace Drupal\workflow_buttons\Form;
 
-use Drupal\Component\Utility\Xss;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure global workflow_buttons settings.
@@ -35,21 +32,14 @@ class SettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state, $field_type = NULL) {
     $config = $this->config('workflow_buttons.settings');
 
-    $form['top_buttons'] = array(
+    $form['top_buttons'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Buttons at top of form'),
+      '#title' => $this->t('Buttons on top and bottom'),
       '#default_value' => $config->get('display.top_buttons'),
-      '#description' => $this->t('Additionally show the buttons at the top of the form, <em>in addition</em> to their usual location at the bottom.'),
-    );
+      '#description' => $this->t('Show the workflow buttons at <em>both</em> the top and the bottom of the form.'),
+    ];
 
     return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
   }
 
   /**

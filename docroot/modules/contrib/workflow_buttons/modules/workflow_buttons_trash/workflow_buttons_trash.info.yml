@@ -1,14 +1,13 @@
 name: Trash workflow
 type: module
-description: 'Provides a trash (soft-delete) workflow which works well with (but does not require) Workflow buttons.'
-core: 8.x
+description: "Provides a trash (soft-delete) workflow which works well with (but does not require) Workflow buttons."
+core_version_requirement: ^9 || ^10
 
 dependencies:
-  - drupal:system (>=8.4)
-  - workflows
-  - content_moderation
+  - drupal:workflows
+  - drupal:content_moderation
 
-# Information added by Drupal.org packaging script on 2020-11-21
-version: '8.x-1.0-beta1+10-dev'
+# Information added by Drupal.org packaging script on 2023-08-01
+version: '8.x-1.0-beta5'
 project: 'workflow_buttons'
-datestamp: 1605920153
+datestamp: 1690930879

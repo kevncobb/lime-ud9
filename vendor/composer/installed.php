@@ -3,7 +3,7 @@
         'name' => 'vardot/varbase-project',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '8af172ca7f9292fd3640cf2b96feb8308134357b',
+        'reference' => 'f07c759927a6a5acd231f90eeacbd2536d64f4c3',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -3413,6 +3413,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'drupal/workflow_buttons' => array(
+            'pretty_version' => '1.0.0-beta5',
+            'version' => '1.0.0.0-beta5',
+            'reference' => '8.x-1.0-beta5',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../docroot/modules/contrib/workflow_buttons',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'drupal/yoast_seo' => array(
             'pretty_version' => '1.8.0',
             'version' => '1.8.0.0',
@@ -5302,7 +5311,7 @@
         'vardot/varbase-project' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '8af172ca7f9292fd3640cf2b96feb8308134357b',
+            'reference' => 'f07c759927a6a5acd231f90eeacbd2536d64f4c3',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

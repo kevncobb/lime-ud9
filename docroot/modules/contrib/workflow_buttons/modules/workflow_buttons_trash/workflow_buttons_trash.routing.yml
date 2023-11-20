@@ -1,6 +1,6 @@
 workflow_buttons_trash.admin_trashed_content:
-  path: '/admin/content/trash'
+  path: "/admin/content/trash"
   defaults:
-    _title: 'Trash'
+    _title: "Trash"
   requirements:
-    _permission: 'view any unpublished content'
+    _permission: "view any unpublished content"

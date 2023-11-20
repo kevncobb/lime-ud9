@@ -146,7 +146,8 @@
     "drupal/type_style": "^1.1",
     "drupal/typed_data": "^1.0@beta",
     "drupal/video_embed_field": "^2.5",
-    "drupal/views_menu_children_filter": "^3.0@RC"
+    "drupal/views_menu_children_filter": "^3.0@RC",
+    "drupal/workflow_buttons": "^1.0@beta"
   },
   "require-dev": {
     "drupal/core-dev": "~10",
