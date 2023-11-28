@@ -151,8 +151,11 @@
     "drupal/anchor_link": "^2.6",
     "drupal/image_resize_filter": "^1.2",
     "drupal/page_manager": "^4.0@RC",
-    "drupal/panels": "^4.7",
-    "drupal/total_control": "^3.0"
+    "drupal/panels": "4.x-dev@dev",
+    "drupal/total_control": "^3.0",
+    "drupal/hal": "^2.0",
+    "drupal/rdf": "^2.1",
+    "drupal/seven": "^1.0"
   },
   "require-dev": {
     "drupal/core-dev": "~10",
