@@ -117,8 +117,12 @@ class NgLightbox {
       return $this->matches[$path];
     }
 
-    // Normalise the patterns as well so they match the normalised paths.
-    $patterns = strtolower($this->config->get('patterns'));
+    // Normalise the patterns as well so that they match the normalised paths.
+    // Exit early if no enabled paths.
+    if (!$patterns = $this->config->get('patterns')) {
+      return FALSE;
+    }
+    $patterns = strtolower($patterns);
 
     // Check for internal paths first which is much quicker than alias lookup.
     if ($this->pathMatcher->matchPath($path, $patterns)) {
