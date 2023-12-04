@@ -3,6 +3,7 @@ cl_server.render:
   defaults:
     _controller: '\Drupal\cl_server\Controller\ServerEndpointController::render'
     _title: "CL Server"
+  methods: [GET, POST]
   requirements:
     _permission: "use cl server"
   options:

@@ -212,7 +212,8 @@ class ViewModeMappingsSettings extends BaseMappingsSettings {
     foreach ($prop_schemas as $prop => $schema) {
       $elements[$prop] = [
         '#type' => 'radios',
-        '#title' => $schema['title'] ?? $prop,
+        '#title' => $schema['title'] ?? ucwords(strtr($prop, ['_' => ' ', '-' => ' '])),
+        '#description' => $schema['description'] ?? NULL,
         '#options' => $mapping_selector_options,
         '#default_value' => $default_values[$prop] ?? NULL,
       ];
@@ -227,7 +228,7 @@ class ViewModeMappingsSettings extends BaseMappingsSettings {
    *   The component.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
-   * @param $default_values
+   * @param array $default_values
    *   The default values.
    *
    * @return array
@@ -236,7 +237,7 @@ class ViewModeMappingsSettings extends BaseMappingsSettings {
   protected function dynamicMappingsSlotsForm(
     Component $component,
     FormStateInterface $form_state,
-    $default_values,
+    array $default_values,
   ): array {
     $mapping_selector_options = $this->getDynamicMappingsSelectorOptions($form_state);
     $elements = [];
@@ -244,7 +245,8 @@ class ViewModeMappingsSettings extends BaseMappingsSettings {
     foreach ($slots as $slot => $info) {
       $elements[$slot] = [
         '#type' => 'checkboxes',
-        '#title' => $info['title'] ?? $slot,
+        '#title' => $info['title'] ?? ucwords(strtr($slot, ['_' => ' ', '-' => ' '])),
+        '#description' => $schema['description'] ?? NULL,
         '#options' => $mapping_selector_options,
         '#default_value' => array_keys(
           array_filter($default_values[$slot] ?? [])
@@ -258,6 +260,7 @@ class ViewModeMappingsSettings extends BaseMappingsSettings {
    * Builds the options for the select/checkboxes in the mappings forms.
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
    *
    * @return array
    *   The options for the Form API elements.

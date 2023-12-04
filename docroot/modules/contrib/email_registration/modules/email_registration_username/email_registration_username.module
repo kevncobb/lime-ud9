@@ -9,6 +9,8 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\email_registration\Plugin\Action\UpdateUsernameAction;
+use Drupal\email_registration_username\Plugin\Action\UpdateUsernameWithMailAction;
 use Drupal\user\UserInterface;
 
 /**

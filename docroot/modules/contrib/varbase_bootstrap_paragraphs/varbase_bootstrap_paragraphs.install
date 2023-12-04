@@ -2,12 +2,16 @@
 
 /**
  * @file
- * Install, uninstall and update hooks for Varbase Boostrap Paragraphs module.
+ * Install, uninstall and update hooks for Varbase Bootstrap Paragraphs module.
  */
 
 use Drupal\Core\Config\InstallStorage;
 use Vardot\Entity\EntityDefinitionUpdateManager;
 use Vardot\Installer\ModuleInstallerFactory;
+
+// Include all helpers and updates.
+include_once __DIR__ . '/includes/helpers.inc';
+include_once __DIR__ . '/includes/updates.inc';
 
 /**
  * Implements hook_install().
@@ -39,15 +43,4 @@ function varbase_bootstrap_paragraphs_install() {
   // Add permissions.
   ModuleInstallerFactory::addPermissions('varbase_bootstrap_paragraphs');
 
-}
-
-/**
- * Issue #3272278: Switch to use the Module Installer Factory.
- *
- * In the Varbase Bootstrap Paragraphs module
- */
-function varbase_bootstrap_paragraphs_update_90001() {
-  // Set the weight of the module after installation of list of modules.
-  // To make sure that any hook or event subscriber workers after all used modules.
-  ModuleInstallerFactory::setModuleWeightAfterInstallation('varbase_bootstrap_paragraphs');
 }

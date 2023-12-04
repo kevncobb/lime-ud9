@@ -7,7 +7,7 @@ dependencies:
   - jquery_ui:jquery_ui
   - jquery_ui_draggable:jquery_ui_draggable
 
-# Information added by Drupal.org packaging script on 2022-12-12
-version: '2.0.0'
+# Information added by Drupal.org packaging script on 2022-11-14
+version: '8.x-1.5'
 project: 'jquery_ui_droppable'
-datestamp: 1670871522
+datestamp: 1668452748

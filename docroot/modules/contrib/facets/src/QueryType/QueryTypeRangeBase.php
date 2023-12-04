@@ -29,12 +29,15 @@ abstract class QueryTypeRangeBase extends QueryTypePluginBase {
       $filter = $query->createConditionGroup($operator, ['facet:' . $field_identifier]);
       if (count($active_items)) {
         foreach ($active_items as $value) {
-          $range = $this->calculateRange($value);
+          $range = $this->calculateRange($value) + [
+            'include_lower' => TRUE,
+            'include_upper' => TRUE,
+          ];
 
           $conjunction = $exclude ? 'OR' : 'AND';
           $item_filter = $query->createConditionGroup($conjunction, ['facet:' . $field_identifier]);
-          $item_filter->addCondition($this->facet->getFieldIdentifier(), $range['start'], $exclude ? '<' : '>=');
-          $item_filter->addCondition($this->facet->getFieldIdentifier(), $range['stop'], $exclude ? '>' : '<=');
+          $item_filter->addCondition($this->facet->getFieldIdentifier(), $range['start'], $exclude ? '<' : ($range['include_lower'] ? '>=' : '>'));
+          $item_filter->addCondition($this->facet->getFieldIdentifier(), $range['stop'], $exclude ? '>' : ($range['include_upper'] ? '<=' : '<'));
 
           $filter->addConditionGroup($item_filter);
         }

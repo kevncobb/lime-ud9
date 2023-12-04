@@ -3,8 +3,8 @@
 namespace Drupal\Tests\nomarkup\Kernel;
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
-use Drupal\field\Entity\FieldConfig;
 use Drupal\entity_test\Entity\EntityTest;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\KernelTests\KernelTestBase;
@@ -49,7 +49,7 @@ class FieldOutputTest extends KernelTestBase {
    *
    * @var string[]
    */
-  public static $modules = [
+  protected static $modules = [
     'user',
     'system',
     'field',

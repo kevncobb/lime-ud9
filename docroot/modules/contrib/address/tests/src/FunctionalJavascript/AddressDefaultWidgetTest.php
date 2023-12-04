@@ -4,6 +4,7 @@ namespace Drupal\Tests\address\FunctionalJavascript;
 
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
@@ -15,6 +16,8 @@ use Drupal\node\Entity\NodeType;
  * @group address
  */
 class AddressDefaultWidgetTest extends WebDriverTestBase {
+
+  use StringTranslationTrait;
 
   /**
    * Modules to enable.
@@ -187,7 +190,7 @@ class AddressDefaultWidgetTest extends WebDriverTestBase {
       return $country;
     }, $countries);
     $this->drupalGet($this->fieldConfigUrl);
-    $this->submitForm($edit, t('Save settings'));
+    $this->submitForm($edit, $this->t('Save settings'));
     $this->drupalGet($this->nodeAddUrl);
     $this->assertOptions($field_name . '[0][address][country_code]', $countries, 'The restricted list of available countries is present.');
 
@@ -211,7 +214,7 @@ class AddressDefaultWidgetTest extends WebDriverTestBase {
       $path = $field_name . '[0][address][' . $property . ']';
       $edit[$path] = $value;
     }
-    $this->submitForm($edit, t('Save'));
+    $this->submitForm($edit, $this->t('Save'));
     // Check that the article has been created.
     $node = $this->getNodeByTitle($edit['title[0][value]']);
     $this->assertNotEmpty($node, 'Created article ' . $edit['title[0][value]']);
@@ -258,7 +261,7 @@ class AddressDefaultWidgetTest extends WebDriverTestBase {
     $this->drupalGet('node/' . $node->id() . '/edit');
     $this->assertSession()->fieldNotExists($field_name . '[0][address][country_code]');
     // Submitting the form should result in no data loss.
-    $this->submitForm([], t('Save'));
+    $this->submitForm([], $this->t('Save'));
     $this->drupalGet('node/' . $node->id() . '/edit');
     $this->assertSession()->fieldValueEquals($field_name . '[0][address][given_name]', $address['given_name']);
     $this->assertSession()->fieldValueEquals($field_name . '[0][address][family_name]', $address['family_name']);
@@ -285,7 +288,7 @@ class AddressDefaultWidgetTest extends WebDriverTestBase {
       'default_value_input[field_address][0][address][given_name]' => 'John',
       'default_value_input[field_address][0][address][family_name]' => 'Smith',
     ];
-    $this->submitForm($edit, t('Save settings'));
+    $this->submitForm($edit, $this->t('Save settings'));
     $this->assertSession()->pageTextContains('Saved Address configuration.');
 
     $this->container->get('entity_type.manager')->getStorage('field_config')->resetCache();
@@ -335,7 +338,7 @@ class AddressDefaultWidgetTest extends WebDriverTestBase {
     $this->drupalGet($this->nodeAddUrl);
     $this->getSession()->getPage()->fillField($field_name . '[0][address][country_code]', 'GB');
     $this->assertSession()->assertWaitOnAjaxRequest();
-    $this->assertSession()->pageTextContains(t('County'));
+    $this->assertSession()->pageTextContains($this->t('County'));
     $this->assertSession()->fieldExists($field_name . '[0][address][administrative_area]');
     $this->assertOptions($field_name . '[0][address][administrative_area]', $expected_counties);
 
@@ -397,7 +400,7 @@ class AddressDefaultWidgetTest extends WebDriverTestBase {
       'settings[field_overrides][postalCode][override]' => 'hidden',
     ];
     $this->drupalGet($this->fieldConfigUrl);
-    $this->submitForm($edit, t('Save settings'));
+    $this->submitForm($edit, $this->t('Save settings'));
 
     $this->drupalGet($this->nodeAddUrl);
     $this->assertEmpty((bool) $this->xpath('//input[@name="field_address[0][address][given_name]" and contains(@required, "required")]'));
@@ -419,7 +422,7 @@ class AddressDefaultWidgetTest extends WebDriverTestBase {
     $edit[$field_name . '[0][address][address_line3]'] = 'Street 3';
     $edit[$field_name . '[0][address][locality]'] = 'Mountain View';
     $edit[$field_name . '[0][address][administrative_area]'] = 'CA';
-    $this->submitForm($edit, t('Save'));
+    $this->submitForm($edit, $this->t('Save'));
     $node = $this->getNodeByTitle($edit['title[0][value]']);
     $this->assertNotEmpty($node, 'Created article ' . $edit['title[0][value]']);
   }
@@ -434,8 +437,15 @@ class AddressDefaultWidgetTest extends WebDriverTestBase {
     $administrative_area = 'HE';
     $locality = 'Chengde Shi';
     $administrative_areas = $this->subdivisionRepository->getList([$country]);
-    $localities = $this->subdivisionRepository->getList([$country, $administrative_area]);
-    $dependent_localities = $this->subdivisionRepository->getList([$country, $administrative_area, $locality]);
+    $localities = $this->subdivisionRepository->getList([
+      $country,
+      $administrative_area,
+    ]);
+    $dependent_localities = $this->subdivisionRepository->getList([
+      $country,
+      $administrative_area,
+      $locality,
+    ]);
     // Confirm the presence and format of the administrative area dropdown.
     $this->drupalGet($this->nodeAddUrl);
     $this->getSession()->getPage()->fillField($field_name . '[0][address][country_code]', $country);
@@ -478,7 +488,7 @@ class AddressDefaultWidgetTest extends WebDriverTestBase {
     $edit[$field_name . '[0][address][locality]'] = 'Mountain View';
     $edit[$field_name . '[0][address][administrative_area]'] = 'CA';
     $edit[$field_name . '[0][address][postal_code]'] = '94043';
-    $this->submitForm($edit, t('Save'));
+    $this->submitForm($edit, $this->t('Save'));
     $node = $this->getNodeByTitle($edit['title[0][value]']);
 
     $this->drupalGet('node/' . $node->id() . '/edit');
@@ -491,7 +501,7 @@ class AddressDefaultWidgetTest extends WebDriverTestBase {
     $this->drupalGet('node/' . $node->id() . '/edit');
     $this->getSession()->getPage()->fillField($field_name . '[0][address][country_code]', 'CN');
     $this->assertSession()->assertWaitOnAjaxRequest();
-    $this->submitForm([], t('Save'));
+    $this->submitForm([], $this->t('Save'));
     // Check that values are cleared.
     $this->assertSession()->fieldValueEquals($field_name . '[0][address][country_code]', 'CN');
     $this->assertSession()->fieldValueEquals($field_name . '[0][address][administrative_area]', '');
@@ -550,7 +560,7 @@ class AddressDefaultWidgetTest extends WebDriverTestBase {
       $path = $field_name . '[0][address][' . $property . ']';
       $edit[$path] = $value;
     }
-    $this->submitForm($edit, t('Save'));
+    $this->submitForm($edit, $this->t('Save'));
 
     // Check the article is created.
     $node = $this->getNodeByTitle($edit['title[0][value]']);
@@ -571,7 +581,7 @@ class AddressDefaultWidgetTest extends WebDriverTestBase {
     }
     $this->getSession()->getPage()->fillField($field_name . '[1][address][country_code]', $country_code);
     $this->assertSession()->assertWaitOnAjaxRequest();
-    $this->submitForm($edit, t('Save'));
+    $this->submitForm($edit, $this->t('Save'));
 
     // The submit failed due to validation error of required fields in the
     // second address field where we set country only.
@@ -605,7 +615,7 @@ class AddressDefaultWidgetTest extends WebDriverTestBase {
       $path = $field_name . '[1][address][' . $property . ']';
       $edit[$path] = $value;
     }
-    $this->submitForm($edit, t('Save'));
+    $this->submitForm($edit, $this->t('Save'));
 
     // Check the article created.
     $node = $this->getNodeByTitle($edit['title[0][value]']);
@@ -667,9 +677,17 @@ class AddressDefaultWidgetTest extends WebDriverTestBase {
    * @not-deprecated
    */
   protected function assertOptionSelected($id, $option, $message = '') {
-    $elements = $this->xpath('//select[@name=:id]//option[@value=:option]', [':id' => $id, ':option' => $option]);
+    $elements = $this->xpath('//select[@name=:id]//option[@value=:option]', [
+      ':id' => $id,
+      ':option' => $option,
+    ]);
     foreach ($elements as $element) {
-      $this->assertNotEmpty($element->isSelected(), $message ? $message : new FormattableMarkup('Option @option for field @id is selected.', ['@option' => $option, '@id' => $id]));
+      $this->assertNotEmpty(
+        $element->isSelected(),
+        $message ? $message : new FormattableMarkup('Option @option for field @id is selected.', [
+          '@option' => $option,
+          '@id' => $id,
+        ]));
     }
   }
 

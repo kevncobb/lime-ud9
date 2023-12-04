@@ -185,7 +185,10 @@ class ZoneDefaultFormatter extends FormatterBase implements ContainerFactoryPlug
         ];
       }
       if ($locality = $territory->getLocality()) {
-        $localities = $this->subdivisionRepository->getList([$country_code, $administrative_area]);
+        $localities = $this->subdivisionRepository->getList([
+          $country_code,
+          $administrative_area,
+        ]);
         $locality_name = $locality;
         if (isset($localities[$locality])) {
           $locality_name = $localities[$locality];
@@ -201,7 +204,11 @@ class ZoneDefaultFormatter extends FormatterBase implements ContainerFactoryPlug
         ];
       }
       if ($dependent_locality = $territory->getDependentLocality()) {
-        $dependent_localities = $this->subdivisionRepository->getList([$country_code, $administrative_area, $locality]);
+        $dependent_localities = $this->subdivisionRepository->getList([
+          $country_code,
+          $administrative_area,
+          $locality,
+        ]);
         $dependent_locality_name = $dependent_locality;
         if (isset($dependent_localities[$dependent_locality])) {
           $dependent_locality_name = $dependent_localities[$dependent_locality];

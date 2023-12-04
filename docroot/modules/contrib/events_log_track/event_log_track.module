@@ -67,8 +67,12 @@ function event_log_track_insert(array &$log, bool $logOnCLI = FALSE) {
     return;
   }
 
-  if (PHP_SAPI === 'cli' && $logOnCLI !== TRUE) {
-    // Ignore CLI requests.
+  if ($logOnCLI) {
+    @trigger_error("$logOnCLI is deprecated in event_log_track:3.1.9 and will be removed prior to event_log_track:4.0.0.  Use config setting for logging CLI instead. See https://www.drupal.org/node/3404465", E_USER_DEPRECATED);
+  }
+
+  $config = \Drupal::config('event_log_track.settings');
+  if (PHP_SAPI === 'cli' && $logOnCLI !== TRUE && $config->get('log_cli') !== TRUE) {
     return;
   }
 
@@ -106,7 +110,7 @@ function event_log_track_insert(array &$log, bool $logOnCLI = FALSE) {
     $elog_service->logEvent($log);
   }
 
-  $config = \Drupal::config('event_log_track.adminsettings');
+  $config = \Drupal::config('event_log_track.settings');
   if (!$config->get('disable_db_logs')) {
     if (empty($log['lid'])) {
       \Drupal::database()->insert('event_log_track')
@@ -146,7 +150,7 @@ function event_log_track_insert(array &$log, bool $logOnCLI = FALSE) {
  * Implements hook_cron().
  */
 function event_log_track_cron() {
-  $config = \Drupal::config('event_log_track.adminsettings');
+  $config = \Drupal::config('event_log_track.settings');
   if ($config->get('enable_log_deletion')) {
     $event_log_track_service = \Drupal::service('event_log_track.api');
     $old_record = $event_log_track_service->getOldRecords();

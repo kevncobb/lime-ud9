@@ -134,3 +134,11 @@ function event_log_track_update_9401($sandbox) {
     drupal_flush_all_caches();
   }
 }
+
+/**
+ * Install event_log_track_ui submodule.
+ */
+function event_log_track_update_9402($sandbox) {
+  $config = \Drupal::getContainer()->get('config.factory')->getEditable('event_log_track.settings');
+  $config->set('log_cli', FALSE)->save();
+}

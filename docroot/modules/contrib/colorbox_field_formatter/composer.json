@@ -8,7 +8,6 @@
   ],
   "license": "GPL-2.0-or-later",
   "homepage": "https://www.drupal.org/project/colorbox_field_formatter",
-  "minimum-stability": "dev",
   "support": {
     "issues": "http://drupal.org/project/issues/colorbox_field_formatter",
     "source": "http://cgit.drupalcode.org/colorbox_field_formatter"

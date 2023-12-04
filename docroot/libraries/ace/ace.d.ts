@@ -1015,6 +1015,8 @@ export namespace Ace {
       prefix: string,
       callback: CompleterCallback): void;
     getDocTooltip?(item: Completion): undefined | string | Completion;
+    onSeen?: (editor: Ace.Editor, completion: Completion) => void;
+    onInsert?: (editor: Ace.Editor, completion: Completion) => void;
     cancel?(): void;
     id?: string;
     triggerCharacters?: string[];
@@ -1072,6 +1074,7 @@ export namespace Ace {
     setSelectOnHover?: Boolean;
     stickySelectionDelay?: Number;
     ignoreCaption?: Boolean;
+    showLoadingState?: Boolean;
     emptyMessage?(prefix: String): String;
     getPopup(): AcePopup;
     showPopup(editor: Editor, options: CompletionOptions): void;

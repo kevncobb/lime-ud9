@@ -8,6 +8,8 @@ use Drupal\sdc\Exception\TemplateNotFoundException;
 use Drupal\sdc\Plugin\Component;
 use Drupal\sdc\Component\ComponentMetadata;
 use Drupal\Core\Template\Attribute;
+use Drupal\Core\State\StateInterface;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\PageCache\ResponsePolicy\KillSwitch;
@@ -37,16 +39,44 @@ class ServerEndpointController extends ControllerBase {
   private ComponentPluginManager $pluginManager;
 
   /**
+   * The state service.
+   *
+   * @var \Drupal\Core\State\StateInterface
+   */
+  private StateInterface $state;
+
+  /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  private TimeInterface $time;
+
+  /**
+   * Indicates if the site is operating in development mode.
+   *
+   * @var bool
+   */
+  private bool $developmentMode;
+
+  /**
    * Creates an object.
    *
    * @param \Drupal\Core\PageCache\ResponsePolicy\KillSwitch $cache_kill_switch
    *   The cache kill switch.
    * @param \Drupal\sdc\ComponentPluginManager $plugin_manager
    *   The plugin manager.
+   * @param \Drupal\Core\State\StateInterface $state
+   *   The state service.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
    */
-  public function __construct(KillSwitch $cache_kill_switch, ComponentPluginManager $plugin_manager) {
+  public function __construct(KillSwitch $cache_kill_switch, ComponentPluginManager $plugin_manager, StateInterface $state, TimeInterface $time, bool $development_mode) {
     $this->cacheKillSwitch = $cache_kill_switch;
     $this->pluginManager = $plugin_manager;
+    $this->state = $state;
+    $this->time = $time;
+    $this->developmentMode = $development_mode;
   }
 
   /**
@@ -57,7 +87,12 @@ class ServerEndpointController extends ControllerBase {
     assert($cache_kill_switch instanceof KillSwitch);
     $plugin_manager = $container->get('plugin.manager.sdc');
     assert($plugin_manager instanceof ComponentPluginManager);
-    return new static($cache_kill_switch, $plugin_manager);
+    $state = $container->get('state');
+    assert($state instanceof StateInterface);
+    $time = $container->get('datetime.time');
+    assert($time instanceof TimeInterface);
+    $development_mode = (bool) $container->getParameter('cl_server.development');
+    return new static($cache_kill_switch, $plugin_manager, $state, $time, $development_mode);
   }
 
   /**
@@ -72,10 +107,19 @@ class ServerEndpointController extends ControllerBase {
     }
     catch (ComponentNotFoundException $e) {
       $build = [
-        '#markup' => '<div class="messages messages--error"><h3>' . $this->t('Unable to find component') . '</h3>' . $this->t('Check that the module or theme containing the component is enabled and matches the stories file name.') . '</div>',
+        '#markup' => '<div class="messages messages--error"><h3>' . $this->t('Unable to find component') . '</h3>' . $this->t('Check that the module or theme containing the component is enabled and matches the stories file name. Message: %message', ['%message' => $e->getMessage()]) . '</div>',
       ];
     }
-    $this->cacheKillSwitch->trigger();
+    if ($this->developmentMode) {
+      $this->cacheKillSwitch->trigger();
+      // Replace with the 'asset.query_string' service in drupal:^10.2.0.
+      // @see https://www.drupal.org/node/3358337
+      $query_string = base_convert(strval($this->time->getRequestTime()), 10, 36);
+      $this->state->setMultiple([
+        'system.css_js_query_string' => $query_string,
+        'asset.css_js_query_string' => $query_string,
+      ]);
+    }
     return [
       '#attached' => ['library' => ['cl_server/attach_behaviors']],
       '#type' => 'container',
@@ -99,23 +143,15 @@ class ServerEndpointController extends ControllerBase {
    *   The array of arguments.
    */
   private function getArguments(Request $request): array {
+    $json = '[]';
     if ($request->getMethod() === 'GET') {
-      $params = $request->query->get('_params');
-      $json = base64_decode($params, TRUE);
-      if ($json === FALSE) {
-        throw new BadRequestHttpException('Invalid component parameters');
-      }
-
-      return Json::decode($json);
+      $json = base64_decode($request->query->get('_params'), TRUE);
     }
-
     if ($request->getMethod() === 'POST') {
-      $params = $request->getContent();
-
-      return Json::decode($params);
+      $json = $request->getContent();
     }
-
-    return [];
+    $args = Json::decode($json ?: '[]');
+    return is_array($args) ? $args : [];
   }
 
   /**
@@ -172,7 +208,7 @@ class ServerEndpointController extends ControllerBase {
 
   /**
    * Checks if the provided attributes need to be upcasted.
-   * 
+   *
    * Returns TRUE when the component library sends an associative
    * array for the "attributes" property, and the metadata says
    * it should be a Drupal\Core\Template\Attribute.

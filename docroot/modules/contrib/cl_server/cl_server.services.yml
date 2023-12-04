@@ -1,3 +1,5 @@
+parameters:
+  cl_server.development: false
 services:
   # Set the theme based on the query string parameter.
   theme.negotiator.cl_server:
@@ -24,6 +26,8 @@ services:
     public: false
     tags:
       - { name: page_cache_request_policy }
+    arguments:
+      - '%cl_server.development%'
 
   # Decorate the data cache backend to avoid caching on the render route.
   Drupal\cl_server\Cache\SkippableBackend:
@@ -32,6 +36,7 @@ services:
     arguments:
       - '@Drupal\cl_server\Cache\SkippableBackend.inner'
       - '@request_stack'
+      - '%cl_server.development%'
 
   # Decorate the asset resolver, so we can turn off caching and optimization for
   # the render controller.
@@ -41,6 +46,7 @@ services:
     arguments:
       - '@Drupal\cl_server\Asset\UnoptimizedAssetResolver.inner'
       - '@request_stack'
+      - '%cl_server.development%'
 
   Drupal\cl_server\EventSubscriber\RemoveXFrameOptionsSubscriber:
     tags:

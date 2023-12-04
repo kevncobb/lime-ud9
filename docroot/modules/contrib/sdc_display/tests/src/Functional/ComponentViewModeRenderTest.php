@@ -29,7 +29,7 @@ final class ComponentViewModeRenderTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'stark';
+  protected $defaultTheme = 'starterkit_theme';
 
   /**
    * {@inheritdoc}

@@ -251,7 +251,7 @@ class Address extends FormElement {
         ];
       }
 
-      foreach ($line_fields as $field_index => $field) {
+      foreach ($line_fields as $field) {
         $property = FieldHelper::getPropertyName($field);
         $class = str_replace('_', '-', $property);
 

@@ -5,10 +5,10 @@ namespace Drupal\address\Plugin\Field\FieldWidget;
 use CommerceGuys\Addressing\Country\CountryRepositoryInterface;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\Element;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -125,7 +125,10 @@ class AddressDefaultWidget extends WidgetBase implements ContainerFactoryPluginI
     ];
     // Make sure no properties are required on the default value widget.
     if ($this->isDefaultValueWidget($form_state)) {
-      $element['address']['#after_build'][] = [get_class($this), 'makeFieldsOptional'];
+      $element['address']['#after_build'][] = [
+        get_class($this),
+        'makeFieldsOptional',
+      ];
     }
 
     return $element;

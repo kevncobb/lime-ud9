@@ -47,6 +47,8 @@ body {
 
   button,
   input[type="submit"] {
+    width: auto !important;
+
     &.button--primary {
       text-align: center;
     }
@@ -191,6 +193,12 @@ body {
     }
   }
 
+  form.layout-builder-configure-block {
+    [data-drupal-selector^="edit-appearance-alignment"] {
+      display: none !important;
+    }
+  }
+
   // To make varbase layout builder search blocks field take a full width.
   fieldset {
     &.form-type-search {
@@ -240,6 +248,16 @@ body {
         color: var(--gin-color-button-text);
       }
     }
+  }
+
+  .media-library-item__attributes {
+    background: transparent !important;
+  }
+
+  .media-library-item__remove,
+  .media-library-item .button.media-library-item__remove {
+    width: 1.5rem !important;
+    height: 1.5rem !important;
   }
 }
 
@@ -517,7 +535,7 @@ body {
     }
 
     &.ui-front.media-library-widget-modal {
-      z-index: 101;
+      z-index: 1270;
     }
   }
 }

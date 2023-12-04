@@ -65,7 +65,7 @@
     "drupal/viewsreference": "2.x-dev@dev",
     "drupal/addtocal": "^3.0@beta",
     "drupal/chosen": "^3.0",
-    "drupal/colorbox_field_formatter": "^2.0",
+    "drupal/colorbox_field_formatter": "^2.1",
     "drupal/ckeditor_media_embed": "^1.11",
     "drupal/csv_serialization": "^4.0",
     "drupal/expand_collapse_formatter": "^2.0",
@@ -81,7 +81,7 @@
     "pantheon-systems/search_api_pantheon": "^8",
     "drupal/devel_php": "1.x-dev@dev",
     "drupal/search_api_page": "1.x-dev@dev",
-    "drupal/search_api": "^1.23",
+    "drupal/search_api": "^1.31",
     "drupal/draggableviews": "^2.0",
     "drupal/image_effects": "^3.2",
     "drupal/minifyhtml": "^2.0",
@@ -151,7 +151,7 @@
     "drupal/anchor_link": "^2.6",
     "drupal/image_resize_filter": "^1.2",
     "drupal/page_manager": "^4.0@RC",
-    "drupal/panels": "4.x-dev@dev",
+    "drupal/panels": "^4.7",
     "drupal/total_control": "^3.0",
     "drupal/hal": "^2.0",
     "drupal/rdf": "^2.1",
@@ -169,7 +169,8 @@
     "drupal/flexslider": "^3.0@alpha",
     "drupal/image_url_formatter": "^1.1",
     "drupal/imce": "^3.0",
-    "drupal/rabbit_hole": "^2.0@alpha"
+    "drupal/rabbit_hole": "^2.0@alpha",
+    "drupal/sophron": "^2.0"
   },
   "require-dev": {
     "drupal/core-dev": "~10",

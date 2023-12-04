@@ -7,16 +7,9 @@
     "require": {
         "php": "^8.0",
         "drupal/core": "^9.5 || ^10",
-        "commerceguys/addressing": "^2.1.0"
+        "commerceguys/addressing": "^2.1.1"
     },
     "require-dev": {
         "drupal/token": "^1.0"
-    },
-    "extra": {
-        "drush": {
-            "services": {
-                "drush.services.yml": "^11"
-            }
-        }
     }
 }
