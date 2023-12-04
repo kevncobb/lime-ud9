@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d3763af4eceea5ada47083dc17f94de6",
+    "content-hash": "28cea7b8fcb00ed5c97d7af0ea1dbf20",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -37475,7 +37475,8 @@
         "drupal/panels": 20,
         "drupal/block_field": 5,
         "drupal/feeds_tamper": 10,
-        "drupal/flexslider": 15
+        "drupal/flexslider": 15,
+        "drupal/rabbit_hole": 15
     },
     "prefer-stable": true,
     "prefer-lowest": false,
