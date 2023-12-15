@@ -31,7 +31,7 @@ class DefaultNameTest extends MediaKernelTestBase {
    *
    * @var array
    */
-  protected static $modules = [
+  public static $modules = [
     'video_embed_field',
     'video_embed_media',
     'media',
@@ -73,7 +73,7 @@ class DefaultNameTest extends MediaKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp(): void {
+  public function setUp() {
     parent::setUp();
     $this->installConfig(['video_embed_field', 'video_embed_media']);
 

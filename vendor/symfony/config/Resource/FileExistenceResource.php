@@ -38,7 +38,7 @@ class FileExistenceResource implements SelfCheckingResourceInterface
 
     public function __toString(): string
     {
-        return 'existence.'.$this->resource;
+        return $this->resource;
     }
 
     public function getResource(): string

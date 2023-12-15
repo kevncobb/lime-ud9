@@ -1382,21 +1382,13 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      */
     public function registerAliasForArgument(string $id, string $type, string $name = null): Alias
     {
-        $parsedName = (new Target($name ??= $id))->getParsedName();
+        $name = (new Target($name ?? $id))->name;
 
-        if (!preg_match('/^[a-zA-Z_\x7f-\xff]/', $parsedName)) {
-            if ($id !== $name) {
-                $id = sprintf(' for service "%s"', $id);
-            }
-
-            throw new InvalidArgumentException(sprintf('Invalid argument name "%s"'.$id.': the first character must be a letter.', $name));
+        if (!preg_match('/^[a-zA-Z_\x7f-\xff]/', $name)) {
+            throw new InvalidArgumentException(sprintf('Invalid argument name "%s" for service "%s": the first character must be a letter.', $name, $id));
         }
 
-        if ($parsedName !== $name) {
-            $this->setAlias('.'.$type.' $'.$name, $type.' $'.$parsedName);
-        }
-
-        return $this->setAlias($type.' $'.$parsedName, $id);
+        return $this->setAlias($type.' $'.$name, $id);
     }
 
     /**

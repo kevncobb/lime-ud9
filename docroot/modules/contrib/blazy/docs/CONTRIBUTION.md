@@ -63,7 +63,7 @@ For the Blazy library bug, please report it to:
   [Blazy library](https://github.com/dinbror/blazy)
 
 You can create a fiddle to isolate the bug if reproduceable outside the module:
-  [Fiddle](https://jsfiddle.net/)
+  [Fiddle](http://jsfiddle.net/)
 
 For the support requests, a screenshot of the output and Blazy form are helpful.
 Shortly, you should kindly help the maintainers with detailed info to help you.

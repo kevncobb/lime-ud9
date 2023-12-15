@@ -30,11 +30,13 @@ class PrintableEntityManagerTest extends UnitTestCase {
    */
   public function testGetPrintableEntities() {
     // Construct a printable entity manager and it's dependencies.
-    $entity_definition = $this->createMock('Drupal\Core\Entity\EntityType');
+    $entity_definition = $this->getMockBuilder('Drupal\Core\Entity\EntityType')
+      ->disableOriginalConstructor()
+      ->getMock();
     $entity_definition->expects($this->any())
       ->method('hasHandlerClass')
       ->will($this->returnValue(TRUE));
-    $entity_manager = $this->createMock('Drupal\Core\Entity\EntityTypeManager');
+    $entity_manager = $this->getMock('Drupal\Core\Entity\EntityManagerInterface');
     $entity_manager->expects($this->once())
       ->method('getDefinitions')
       ->will($this->returnValue([

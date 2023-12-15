@@ -50,31 +50,6 @@ class EmailRegistrationFunctionalTest extends EmailRegistrationFunctionalTestBas
   }
 
   /**
-   * Test the error message when a blocked user tries to login.
-   */
-  public function testBlockedUserLogin() {
-    $user_config = $this->container->get('config.factory')->getEditable('user.settings');
-    $email_registration_config = $this->container->get('config.factory')->getEditable('email_registration.settings');
-    $user_config
-      ->set('verify_mail', FALSE)
-      ->save();
-    $user = $this->createUser([], $this->randomMachineName(), FALSE, [
-        'mail' => $this->randomMachineName() . '@example.com',
-        'pass' => 'test',
-        'status' => 0
-      ]);
-    $email_registration_config->set('login_with_username', FALSE)->save();
-    $this->drupalGet('user/login');
-    $this->assertSession()->responseContains('Enter your email address.');
-    $this->assertSession()->responseContains('Enter the password that accompanies your email address.');
-    $this->submitForm([
-      'name' => $user->get('mail')->value,
-      'pass' => $user->passRaw
-    ], 'Log in');
-    $this->assertSession()->pageTextContains('The account with email address ' . $user->get('mail')->value . ' has not been activated or is blocked.');
-  }
-
-  /**
    * Test various behaviors for anonymous users.
    */
   public function testRegistration() {

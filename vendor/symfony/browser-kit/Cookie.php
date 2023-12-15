@@ -61,11 +61,11 @@ class Cookie
     public function __construct(string $name, ?string $value, string $expires = null, string $path = null, string $domain = '', bool $secure = false, bool $httponly = true, bool $encodedValue = false, string $samesite = null)
     {
         if ($encodedValue) {
-            $this->rawValue = $value ?? '';
-            $this->value = urldecode($this->rawValue);
+            $this->value = urldecode($value);
+            $this->rawValue = $value;
         } else {
-            $this->value = $value ?? '';
-            $this->rawValue = rawurlencode($this->value);
+            $this->value = $value;
+            $this->rawValue = rawurlencode($value ?? '');
         }
         $this->name = $name;
         $this->path = empty($path) ? '/' : $path;

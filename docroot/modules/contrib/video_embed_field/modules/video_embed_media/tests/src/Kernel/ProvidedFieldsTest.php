@@ -32,7 +32,7 @@ class ProvidedFieldsTest extends MediaKernelTestBase {
    *
    * @var array
    */
-  protected static $modules = [
+  public static $modules = [
     'video_embed_media',
     'video_embed_field',
   ];
@@ -114,7 +114,7 @@ class ProvidedFieldsTest extends MediaKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp(): void {
+  public function setUp() {
     parent::setUp();
     $this->entityType = $this->createMediaType('video_embed_field');
 

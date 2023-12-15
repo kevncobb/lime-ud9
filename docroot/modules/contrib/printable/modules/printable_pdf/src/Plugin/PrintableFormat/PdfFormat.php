@@ -2,26 +2,18 @@
 
 namespace Drupal\printable_pdf\Plugin\PrintableFormat;
 
-use Drupal\Core\Config\ConfigFactory;
-use Drupal\Core\File\FileSystemInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Link;
-use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Path\CurrentPathStack;
-use Drupal\Core\Render\RenderContext;
-use Drupal\Core\Render\RendererInterface;
-use Drupal\Core\StreamWrapper\StreamWrapperInterface;
-use Drupal\Core\Url;
-use Drupal\pdf_api\PdfGeneratorPluginManager;
-use Drupal\printable\LinkExtractor\LinkExtractorInterface;
 use Drupal\printable\Plugin\PrintableFormatBase;
 use Drupal\printable\PrintableCssIncludeInterface;
+use Drupal\printable\LinkExtractor\LinkExtractorInterface;
+use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\pdf_api\PdfGeneratorPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Path\CurrentPathStack;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Mime\Header\UnstructuredHeader;
 
 /**
  * Provides a plugin to display a PDF version of a page.
@@ -71,27 +63,6 @@ class PdfFormat extends PrintableFormatBase {
   protected $requestStack;
 
   /**
-   * The public stream wrapper service.
-   *
-   * @var \Drupal\Core\StreamWrapper\StreamWrapperInterface
-   */
-  protected $publicStream;
-
-  /**
-   * The Drupal messenger service.
-   *
-   * @var \Drupal\Core\Messenger\MessengerInterface
-   */
-  protected $messenger;
-
-  /**
-   * The file system service.
-   *
-   * @var \Drupal\Core\File\FileSystemInterface
-   */
-  protected $fileSystem;
-
-  /**
    * {@inheritdoc}
    *
    * @param array $configuration
@@ -108,68 +79,30 @@ class PdfFormat extends PrintableFormatBase {
    *   The printable CSS include interface.
    * @param \Drupal\printable\LinkExtractor\LinkExtractorInterface $link_extractor
    *   The Link extractor service.
-   * @param \Drupal\Core\Render\RendererInterface $renderer
-   *   The renderer service.
    * @param \Drupal\Core\Path\CurrentPathStack $pathCurrent
    *   Represents the current path for the current request.
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
    *   Request stack that controls the lifecycle of requests.
-   * @param \Drupal\Core\StreamWrapper\StreamWrapperInterface $public_stream
-   *   The public stream wrapper service.
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The Drupal messenger service.
-   * @param \Drupal\Core\File\FileSystemInterface $fileSystem
-   *   The filesystem service.
    */
-  public function __construct(array $configuration,
-                              $plugin_id,
-                              array $plugin_definition,
-                              ConfigFactory $config_factory,
-                              PdfGeneratorPluginManager $pdf_generator_manager,
-                              PrintableCssIncludeInterface $printable_css_include,
-                              LinkExtractorInterface $link_extractor,
-                              RendererInterface $renderer,
-                              CurrentPathStack $pathCurrent,
-                              RequestStack $requestStack,
-                              StreamWrapperInterface $public_stream,
-                              MessengerInterface $messenger,
-                              FileSystemInterface $fileSystem) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition,
-      $config_factory, $printable_css_include, $link_extractor, $renderer);
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ConfigFactory $config_factory, PdfGeneratorPluginManager $pdf_generator_manager, PrintableCssIncludeInterface $printable_css_include, LinkExtractorInterface $link_extractor, CurrentPathStack $pathCurrent, RequestStack $requestStack) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $config_factory, $printable_css_include, $link_extractor);
     $this->pdfGeneratorManager = $pdf_generator_manager;
     $this->pathCurrent = $pathCurrent;
     $this->requestStack = $requestStack;
-    $this->publicStream = $public_stream;
-    $this->messenger = $messenger;
-    $this->fileSystem = $fileSystem;
     $pdf_library = (string) $this->configFactory->get('printable.settings')->get('pdf_tool');
 
     if (!$pdf_library) {
-      $this->messenger->addError($this->t('A PDF generation toolkit needs to be selected. Please visit the %link.', [
-        '%link' => Link::fromTextAndUrl('admin interface', Url::fromRoute('printable.format_configure_pdf'))->toString(),
-      ]));
-      throw new NotFoundHttpException();
+      return;
     }
 
     $pdf_library = strtolower($pdf_library);
-    try {
-      $library_config = $configuration['pdf_library_config'] ?? [];
-      $this->pdfGenerator = $this->pdfGeneratorManager->createInstance($pdf_library, $library_config);
-    }
-    catch (\Exception $e) {
-      // The thrower is assumed to have already logged an error but not
-      // displayed a message.
-      $this->messenger()->addError('PDF generation is not working at the moment. We apologise for the inconvenience.');
-      throw $e;
-    }
+    $this->pdfGenerator = $this->pdfGeneratorManager->createInstance($pdf_library);
 
     if ($pdf_library != 'wkhtmltopdf') {
       return;
     }
 
-    $options = [
-      'enable-local-file-access',
-    ];
+    $options = [];
     $use_xvfb_run = (string) $this->configFactory->get('printable.settings')->get('print_pdf_use_xvfb_run');
     $path_to_xfb_run = (string) $this->configFactory->get('printable.settings')->get('path_to_xfb_run');
     $ignore_warnings = (bool) $this->configFactory->get('printable.settings')->get('ignore_warnings');
@@ -181,7 +114,6 @@ class PdfFormat extends PrintableFormatBase {
           'xvfbRunBinary' => $path_to_xfb_run,
         ],
         'ignoreWarnings' => $ignore_warnings,
-        'enable-local-file-access' => NULL,
       ];
     }
     $this->pdfGenerator->getObject()->setOptions($options);
@@ -197,12 +129,8 @@ class PdfFormat extends PrintableFormatBase {
       $container->get('plugin.manager.pdf_generator'),
       $container->get('printable.css_include'),
       $container->get('printable.link_extractor'),
-      $container->get('renderer'),
       $container->get('path.current'),
-      $container->get('request_stack'),
-      $container->get('stream_wrapper.public'),
-      $container->get('messenger'),
-      $container->get('file_system'),
+      $container->get('request_stack')
     );
   }
 
@@ -258,11 +186,7 @@ class PdfFormat extends PrintableFormatBase {
     $pdf_header = [
       '#theme' => 'printable_pdf_header',
     ];
-
-    return $this->renderer->executeInRenderContext(new RenderContext(),
-      function () use ($pdf_header) {
-        return $this->renderer->render($pdf_header);
-      });
+    return render($pdf_header);
   }
 
   /**
@@ -275,12 +199,7 @@ class PdfFormat extends PrintableFormatBase {
     $pdf_footer = [
       '#theme' => 'printable_pdf_footer',
     ];
-
-    return $this->renderer->executeInRenderContext(new RenderContext(),
-      function () use ($pdf_footer) {
-        return $this->renderer->render($pdf_footer);
-      }
-    );
+    return render($pdf_footer);
   }
 
   /**
@@ -291,14 +210,7 @@ class PdfFormat extends PrintableFormatBase {
    */
   public function buildPdfContent() {
     $content = parent::buildContent();
-
-    $content = $this->renderer->executeInRenderContext(new RenderContext(),
-      function () use ($content) {
-        return $this->renderer->render($content);
-      });
-
-    $content = preg_replace(['#printable://#', '/\?itok=.*"/'], ['', '"'], $content);
-    $rendered_page = parent::extractLinks($content);
+    $rendered_page = parent::extractLinks(render($content));
     return $rendered_page;
   }
 
@@ -315,7 +227,7 @@ class PdfFormat extends PrintableFormatBase {
    * Return default headers (may be overridden by the generator).
    *
    * @param string $filename
-   *   The path to generated file that is sent to the browser.
+   *   The filename to suggest to the browser.
    * @param bool $download
    *   Whether to download the PDF or display it in the browser.
    *
@@ -325,8 +237,8 @@ class PdfFormat extends PrintableFormatBase {
   private function getHeaders($filename, $download) {
     $disposition = $download ? 'attachment' : 'inline';
     return [
-      'Content-Type'              => (new UnstructuredHeader('content-type', 'application/pdf'))->getBodyAsString(),
-      'Content-Disposition'       => $disposition . '; filename="' . basename($filename) . '"',
+      'Content-Type'              => Unicode::mimeHeaderEncode('application/pdf'),
+      'Content-Disposition'       => $disposition . '; filename="' . $filename . '"',
       'Content-Length'            => filesize($filename),
       'Content-Transfer-Encoding' => 'binary',
       'Pragma'                    => 'no-cache',
@@ -354,7 +266,7 @@ class PdfFormat extends PrintableFormatBase {
       $have_matches = preg_match('/[\s\'"]/', substr($subject, $next_pos), $matches, PREG_OFFSET_CAPTURE);
       $path_end = $have_matches ? $matches[0][1] : strlen($subject) - $next_pos + 1;
       $query_start = strpos(substr($subject, $next_pos, $path_end), '?');
-      if ($query_start !== FALSE) {
+      if ($query_start !== false) {
         $subject = substr($subject, 0, $next_pos + $query_start) . substr($subject, $next_pos + $path_end);
       }
       $next_pos = strpos($subject, DRUPAL_ROOT, $next_pos + $path_end - $query_start + 1);
@@ -365,33 +277,14 @@ class PdfFormat extends PrintableFormatBase {
   /**
    * {@inheritdoc}
    */
-  public function getOutput() {
-    $paper_size = (string) $this->configFactory->get('printable.settings')
-      ->get('paper_size');
-    $paper_orientation = $this->configFactory->get('printable.settings')
-      ->get('page_orientation');
-    $path_to_binary = $this->configFactory->get('printable.settings')
-      ->get('path_to_binary');
-    $pdf_location = $this->configuration['filename'] ?? $this->configFactory->get('printable.settings')
-      ->get('pdf_location');
-    $save_pdf = $this->configFactory->get('printable.settings')
-      ->get('save_pdf');
-
-    if ($this->pdfGenerator->usePrintableDisplay()) {
-      $raw_content = $this->buildPdfContent();
-
-      $basepath = \Drupal::request()->getBasePath();
-      if ($basepath) {
-        $raw_content = str_replace('src="' . $basepath, 'src="', $raw_content);
-      }
-
-      $pdf_content = $this->removeImageTokens($raw_content);
-    }
-    else {
-      $pdf_content = NULL;
-      $this->pdfGenerator->setEntity($this->entity);
-    }
-
+  public function getResponse() {
+    $paper_size = (string) $this->configFactory->get('printable.settings')->get('paper_size');
+    $paper_orientation = $this->configFactory->get('printable.settings')->get('page_orientation');
+    $path_to_binary = $this->configFactory->get('printable.settings')->get('path_to_binary');
+    $save_pdf = $this->configFactory->get('printable.settings')->get('save_pdf');
+    $pdf_location = $this->configFactory->get('printable.settings')->get('pdf_location');
+    $raw_content = $this->buildPdfContent();
+    $pdf_content = $this->removeImageTokens($raw_content);
     $footer_content = $this->getFooterContent();
     $header_content = $this->getHeaderContent();
     // $this->formattedHeaderFooter();
@@ -399,34 +292,12 @@ class PdfFormat extends PrintableFormatBase {
 
     if (empty($pdf_location)) {
       $pdf_location = str_replace("/", "_", $this->pathCurrent->getPath()) . '.pdf';
-      $dir = $this->fileSystem->getTempDirectory();
-      $pdf_location = $dir . '/' . substr($pdf_location, 1);
-    }
-    else {
-      // @todo A token per source entity type? Seems overkill so I'll wait
-      // until requested.
-      $token_service = \Drupal::token();
-      $url_parts = explode('/', $this->pathCurrent->getPath());
-      $entity = \Drupal::routeMatch()->getParameter('entity');
-      $entity_type = count($url_parts) > 2 ? $url_parts[1] : NULL;
-      $pdf_location = $token_service->replace($pdf_location, [$entity_type => $entity]);
+      $pdf_location = substr($pdf_location, 1);
     }
 
-    $this->filename = $pdf_location;
+    $this->filename = DRUPAL_ROOT . '/' . $pdf_location;
 
-    $this->status = $this->pdfGenerator->save($this->filename);
-    return $this->filename;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getResponse() {
-    $save_pdf = $this->configFactory->get('printable.settings')
-      ->get('save_pdf');
-
-    $pdf_location = $this->getOutput();
-
+    $this->pdfGenerator->save($this->filename);
     if ($this->pdfGenerator->displayErrors()) {
       $source_url = $this->requestStack->getCurrentRequest()->getRequestUri();
       $pos = strpos($source_url, "printable");
@@ -434,7 +305,7 @@ class PdfFormat extends PrintableFormatBase {
       return new RedirectResponse($source_url);
     }
 
-    return (new BinaryFileResponse($this->filename, 200, $this->getHeaders($pdf_location, $save_pdf)))->deleteFileAfterSend(TRUE);
+    return (new BinaryFileResponse($this->filename, 200, $this->getHeaders($pdf_location, $save_pdf)))->deleteFileAfterSend(true);
   }
 
 }

@@ -72,13 +72,14 @@ class VarbaseLayoutBuilderThemeNegotiator extends AjaxBasePageNegotiator {
    */
   public function applies(RouteMatchInterface $route_match) {
     $use_claro = $this->configFactory->get('varbase_layout_builder.settings')->get('use_claro');
-    if (isset($use_claro)
-      && $use_claro == 1
-      && varbase_layout_builder__is_layout_builder_route()
-      && !varbase_layout_builder__is_dashboard_route()
-      && ($this->themeHandler->themeExists('gin') || $this->themeHandler->themeExists('claro'))) {
+    if (isset($use_claro) && $use_claro == 1) {
 
-      return TRUE;
+      $route_name = $route_match->getRouteName();
+      if (isset($route_name) && _is_layout_builder_route() && !str_contains($route_name, 'dashboards')) {
+        if ($this->themeHandler->themeExists('gin') || $this->themeHandler->themeExists('claro')) {
+          return TRUE;
+        }
+      }
     }
 
     return FALSE;
@@ -94,38 +95,36 @@ class VarbaseLayoutBuilderThemeNegotiator extends AjaxBasePageNegotiator {
    *   The selected active theme.
    */
   public function determineActiveTheme(RouteMatchInterface $route_match) {
+    $current_request = $this->requestStack->getCurrentRequest()->request->all();
 
-    $current_request = [];
-    if ($this->requestStack->getCurrentRequest()->getMethod() === 'GET') {
-      $current_request = $this->requestStack->getCurrentRequest()->query->all();
-    }
-    else {
-      $current_request = $this->requestStack->getCurrentRequest()->request->all();
-    }
-
-    // Media Library Theme Negotiator.
+    // Media Library Theme Negotiator
+    $dialog_has_target_media_library = FALSE;
     if (isset($current_request['_triggering_element_name'])
       && str_contains($current_request['_triggering_element_name'], 'media-library')) {
 
-      return $this->configFactory->get('system.theme')->get('admin');
+      $dialog_has_target_media_library = TRUE;
     }
 
     if (isset($current_request['dialogOptions'])
       && isset($current_request['dialogOptions']['dialogClass'])
       && $current_request['dialogOptions']['dialogClass'] == 'media-library-widget-modal') {
 
-      if (isset($current_request['ajax_form'])
-        && $current_request['ajax_form'] == '1'
-        && isset($current_request['_wrapper_format'])
-        && ($current_request['_wrapper_format'] == 'drupal_dialog'
-        || $current_request['_wrapper_format'] == 'drupal_dialog.off_canvas'
-        || $current_request['_wrapper_format'] == 'drupal_ajax')) {
+      $dialog_has_target_media_library = TRUE;
+    }
 
+    if ($dialog_has_target_media_library) {
+      $request_query_wrapper_format = $this->requestStack->getCurrentRequest()->query->get('_wrapper_format');
+      $request_query_ajax_form = $this->requestStack->getCurrentRequest()->query->get('ajax_form');
+      if ($request_query_ajax_form == '1'
+        && ($request_query_wrapper_format == 'drupal_dialog'
+        || $request_query_wrapper_format == 'drupal_dialog.off_canvas'
+        || $request_query_wrapper_format == 'drupal_ajax')) {
         return $this->configFactory->get('system.theme')->get('admin');
       }
     }
 
-    if (!empty($current_request['media_library_opener_id'])) {
+    $request_query_media_library_opener = $this->requestStack->getCurrentRequest()->query->get('media_library_opener_id');
+    if (!empty($request_query_media_library_opener)) {
       return $this->configFactory->get('system.theme')->get('admin');
     }
 
@@ -139,19 +138,20 @@ class VarbaseLayoutBuilderThemeNegotiator extends AjaxBasePageNegotiator {
 
     $parent_theme_is_front_end_theme = FALSE;
     if (isset($current_request['ajax_page_state'])
-      && isset($current_request['ajax_page_state']['theme'])
-      && $current_request['ajax_page_state']['theme'] == $this->configFactory->get('system.theme')->get('default')) {
+    && isset($current_request['ajax_page_state']['theme'])
+    && $current_request['ajax_page_state']['theme'] == $this->configFactory->get('system.theme')->get('default')) {
       $parent_theme_is_front_end_theme = TRUE;
     }
 
     if ($dialog_has_target_layout_builder_modal && $parent_theme_is_front_end_theme) {
-
-      if (isset($current_request['_wrapper_format'])
-        && $current_request['_wrapper_format'] == 'drupal_dialog.off_canvas') {
-        return $this->configFactory->get('system.theme')->get('admin');
-      }
-      else {
-        return $this->configFactory->get('system.theme')->get('default');
+      $request_query_wrapper_format = $this->requestStack->getCurrentRequest()->query->get('_wrapper_format');
+      if (isset($request_query_wrapper_format)) {
+        if ($request_query_wrapper_format == 'drupal_dialog.off_canvas') {
+          return $this->configFactory->get('system.theme')->get('admin');
+        }
+        else {
+          return $this->configFactory->get('system.theme')->get('default');
+        }
       }
     }
 

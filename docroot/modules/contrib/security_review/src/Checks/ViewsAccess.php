@@ -21,6 +21,7 @@ class ViewsAccess extends Check {
     $this->settings = new ViewSettings($this, $this->config);
   }
 
+
   /**
    * {@inheritdoc}
    */

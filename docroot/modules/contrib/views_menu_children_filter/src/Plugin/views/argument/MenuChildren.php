@@ -2,7 +2,6 @@
 
 namespace Drupal\views_menu_children_filter\Plugin\views\argument;
 
-use Drupal\menu_link_content\Plugin\Menu\MenuLinkContent;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
 use Drupal\Core\Url;
@@ -13,7 +12,7 @@ use Drupal\views_menu_children_filter\Plugin\views\join\MenuChildrenNodeJoin;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * A filter to show menu children of a parent menu item.
+ * A filter to show menu children of a parent menu item
  *
  * @ingroup views_argument_handlers
  *
@@ -22,16 +21,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class MenuChildren extends NumericArgument {
 
   /**
-   * A join handler object.
-   *
    * @var \Drupal\views_menu_children_filter\Plugin\views\join\MenuChildrenNodeJoin
    */
   protected $joinHandler;
 
   /**
-   * A menu link manager object.
-   *
-   * @var \Drupal\Core\Menu\MenuLinkManagerInterface
+   * @var MenuLinkManagerInterface
    */
   protected $menuLinkManager;
 
@@ -39,17 +34,12 @@ class MenuChildren extends NumericArgument {
    * MenuChildren constructor.
    *
    * @param \Drupal\views_menu_children_filter\Plugin\views\join\MenuChildrenNodeJoin $join_handler
-   *   A join handler object.
-   * @param \Drupal\Core\Menu\MenuLinkManagerInterface $menu_link_manager
-   *   A menu link manager object.
+   * @param MenuLinkManagerInterface $menu_link_manager
    * @param array $configuration
-   *   A configuration array.
    * @param string $plugin_id
-   *   A plugin id.
    * @param mixed $plugin_definition
-   *   A plugin definition.
    */
-  public function __construct(MenuChildrenNodeJoin $join_handler, MenuLinkManagerInterface $menu_link_manager, array $configuration, $plugin_id, $plugin_definition) {
+  function __construct(MenuChildrenNodeJoin $join_handler, MenuLinkManagerInterface $menu_link_manager, array $configuration, $plugin_id, $plugin_definition) {
     $this->joinHandler = $join_handler;
     $this->menuLinkManager = $menu_link_manager;
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -85,8 +75,6 @@ class MenuChildren extends NumericArgument {
    */
   protected function defineOptions() {
     $options = parent::defineOptions();
-    unset($options['not']);
-    unset($options['break_phrase']);
     $options['target_menus'] = ['default' => []];
     return $options;
   }
@@ -96,8 +84,7 @@ class MenuChildren extends NumericArgument {
    */
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     parent::buildOptionsForm($form, $form_state);
-    unset($form['not']);
-    unset($form['break_phrase']);
+    unset($form['not'], $form['break_phrase']);
     $form['target_menus'] = MenuOptionsHelper::getSelectField($this->options['target_menus']);
   }
 
@@ -105,36 +92,26 @@ class MenuChildren extends NumericArgument {
    * {@inheritdoc}
    */
   public function query($group_by = FALSE) {
-    $page_identifier = (is_array($this->value)) ? reset($this->value) : NULL;
+    $page_identifier = reset($this->value);
     // If we aren't going to filter by a parent, just depend on the
     // join that is established in $this::setRelationship().
     if (!empty($page_identifier)) {
       $menus = $this->options['target_menus'];
 
-      // Filter results to children nodes of the node found for the provided
-      // page_identifier.
+      // Filter results to children nodes of the node found for the provided page_identifier.
       $this->filterChildrenNodeByParent($this->query, $page_identifier, $menus);
-    }
-    // If 0 is passed through, we want top-level menu items only.
-    elseif (is_null($page_identifier)) {
-      $this->query->addWhere(0, 'menu_link_content_data.parent', NULL, 'IS NULL');
     }
   }
 
   /**
-   * Filter results to child nodes of a MenuLink.
-   *
    * Filter results to child nodes of a MenuLink found by the
    * $parent_page_identifier.
    *
    * @param \Drupal\views\Plugin\views\query\Sql $query
-   *   The sql query.
-   * @param string $parent_page_identifier
-   *   String representation of a parent
+   * @param string $parent_page_identifier String representation of a parent
    *   node to lookup. This could be a node ID or a relative URL to a parent
    *   page.
-   * @param array $menus
-   *   The menu names to constrain the results to.
+   * @param array $menus The menu names to constrain the results to.
    */
   public function filterChildrenNodeByParent(Sql $query, $parent_page_identifier, array $menus) {
     $url = self::getUrlFromFilterInput($parent_page_identifier);
@@ -143,17 +120,14 @@ class MenuChildren extends NumericArgument {
   }
 
   /**
-   * Takes a url and finds the matching MenuLink within the provided menus.
+   * Takes a path (url) and finds the matching MenuLink within the provided
+   * menus.
    *
-   * @param array|null $menus
-   *   The menus to search for the parent within.
-   * @param \Drupal\Core\Url $url
-   *   The argument, usually a path or a NID.
-   * @param bool $reset_cache
-   *   Resets the static caching.
+   * @param array|NULL $menus The menus to search for the parent within
+   * @param Url $url The argument, usually a path or a NID
+   * @param bool $reset_cache Resets the static caching.
    *
    * @return \Drupal\Core\Menu\MenuLinkInterface|null
-   *   The menu link within the provided menus.
    */
   public function getMenuLinkFromTargetUrl($menus, Url $url = NULL, $reset_cache = FALSE) {
     static $route_links = [];
@@ -198,10 +172,9 @@ class MenuChildren extends NumericArgument {
 
         if (!empty($menu_links)) {
           // Ideally, only one result is returned.
-          // If multiple links returned, maybe I should add some
-          // kind of reporting?
-          // @todo Add alerting, throw exception,
-          // or log the fact that more than one result was found.
+          // If multiple links returned, maybe I should add some kind of reporting?
+          //TODO: Add alerting, throw exception, or log the fact that more than one result was found.
+
           $target_menu_link = reset($menu_links);
           $route_links[$path_identifier] = $target_menu_link;
           break;
@@ -214,22 +187,16 @@ class MenuChildren extends NumericArgument {
 
   /**
    * Creates a string representing menu link for static caching.
-   *
-   * Example output: menu_name:route_name:route_param1_key:route_param1_value.
+   * Example output: menu_name:route_name:route_param1_key:route_param1_value
    *
    * @param string $menu_name
-   *   The menu name.
    * @param string $route_name
-   *   The route name.
-   * @param array $route_parameters
-   *   Example: [ 'node': 1 ].
+   * @param array $route_parameters Example: [ 'node': 1 ]
    *
    * @return string
-   *   A string representing menu link for static caching.
    */
   public static function buildRouteIdentifier($menu_name, $route_name, array $route_parameters) {
-    // Merge the keys and values of the $route_parameters array into
-    // a zipper like fashion.
+    // Merge the keys and values of the $route_parameters array into a zipper like fashion.
     $zipped_arrays = array_map(NULL, array_keys($route_parameters), array_values($route_parameters));
 
     $parameters = '';
@@ -241,7 +208,7 @@ class MenuChildren extends NumericArgument {
   }
 
   /**
-   * {@inheritdoc}
+   * @inheritdoc
    */
   public function setRelationship() {
     $this->joinHandler->joinToNodeTable($this->query);
@@ -256,22 +223,18 @@ class MenuChildren extends NumericArgument {
     }
   }
 
+
   /**
-   * Filter the query.
-   *
    * Filter the query by either a: parent node, page page via its link_path, or
    * null and limit to root nodes.
    *
-   * @param \Drupal\views\Plugin\views\query\Sql $query
-   *   The $query The query
+   * @param \Drupal\views\Plugin\views\query\Sql $query The $query The query
    *   we're going to alter.
-   * @param \Drupal\menu_link_content\Plugin\Menu\MenuLinkContent|null $link
-   *   The by
+   * @param \Drupal\menu_link_content\Plugin\Menu\MenuLinkContent $link The by
    *   parent link.
    */
-  public static function filterByPage(Sql $query, ?MenuLinkContent $link) {
-    // Set $parent to 0 if no link was given to indicate no results:
-    $parent = !empty($link)
+  public static function filterByPage(Sql $query, $link) {
+    $parent = isset($link)
       ? $link->getPluginId()
       : 0;
 
@@ -284,13 +247,12 @@ class MenuChildren extends NumericArgument {
 
   /**
    * Gets a Url based on the provided user input.
+   * Could be either a Node Id, or a menu entry path.
    *
-   * @param string|int $input
-   *   The routable url path, or node ID. I.e.:
+   * @param string|integer $input The routable url path, or node ID. I.e.:
    *   node/100 (Supports an integer to default to node/%)
    *
-   * @return \Drupal\Core\Url
-   *   The Url object representing the parent entity.
+   * @return Url The Url object representing the parent entity
    */
   protected static function getUrlFromFilterInput($input) {
     if (is_numeric($input)) {

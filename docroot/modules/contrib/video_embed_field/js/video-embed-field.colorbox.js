@@ -3,10 +3,10 @@
  * The video_embed_field colorbox integration.
  */
 
-(function($, once) {
+(function($) {
   Drupal.behaviors.video_embed_field_colorbox = {
     attach: function (context, settings) {
-      $(once('video-embed-field-launch-modal', '.video-embed-field-launch-modal', context)).click(function(e) {
+      $('.video-embed-field-launch-modal', context).once().click(function(e) {
         // Allow the thumbnail that launches the modal to link to other places
         // such as video URL, so if the modal is sidestepped things degrade
         // gracefully.
@@ -15,4 +15,4 @@
       });
     }
   };
-})(jQuery, once);
+})(jQuery);

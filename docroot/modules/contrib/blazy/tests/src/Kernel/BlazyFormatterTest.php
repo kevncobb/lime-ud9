@@ -2,9 +2,9 @@
 
 namespace Drupal\Tests\blazy\Kernel;
 
-use Drupal\blazy\Blazy;
-// @todo use Drupal\Core\Render\Element;
 use Drupal\Core\Form\FormState;
+use Drupal\blazy\Media\BlazyMedia;
+use Drupal\blazy\BlazyDefault;
 use GuzzleHttp\Exception\GuzzleException;
 
 /**
@@ -23,9 +23,9 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
     parent::setUp();
 
     $data['fields'] = [
-      // 'field_video' => 'image',
-      'field_image_multiple' => 'image',
-      'field_id' => 'text',
+      'field_video' => 'image',
+      'field_image' => 'image',
+      'field_id'    => 'text',
     ];
 
     // Create contents.
@@ -73,30 +73,19 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
     // Verify it is not a theme_item_list() grid.
     $this->assertArrayNotHasKey('#build', $field);
 
-    $settings0 = $this->blazyManager->toHashtag($field[0]['#build']);
+    $settings0 = $field[0]['#build']['settings'];
+    $settings1 = $field[1]['#build']['settings'];
+
     $blazies0 = $settings0['blazies'];
-    $file0 = $item[0]->entity;
-    $tag0 = $blazies0->get('cache.metadata.tags');
-    $this->assertContains($file0->getCacheTags()[0], $tag0, 'First image cache tags is as expected');
-
-    /*
-    // @fixme empty $tag1 since 2.19, only on tests, not real life.
-    $settings1 = $this->blazyManager->toHashtag($field[1]['#build']);
     $blazies1 = $settings1['blazies'];
+    $file0 = $item[0]->entity;
     $file1 = $item[1]->entity;
-    $tag1 = $blazies1->get('cache.metadata.tags');
-    $this->assertContains($file1->getCacheTags()[0], $tag1, 'Second image cache
-    tags is as expected');
 
-    foreach (Element::children($field) as $key) {
-    $settings = $this->blazyManager->toHashtag($field[$key]['#build']);
-    $blazies = $settings['blazies']->reset($settings);
-    $file = $item[$key]->entity;
-    $tags = $blazies->get('cache.metadata.tags');
-    $this->assertContains($file->getCacheTags()[0], $tags, 'Image cache tags is
-    as expected');
-    }
-     */
+    $tag0 = [$blazies0->get('cache.file.tags')[0]];
+    $tag1 = [$blazies1->get('cache.file.tags')[0]];
+
+    $this->assertEquals($file0->getCacheTags(), $tag0, 'First image cache tags is as expected');
+    $this->assertEquals($file1->getCacheTags(), $tag1, 'Second image cache tags is as expected');
 
     $render = $this->blazyManager->renderer()->renderRoot($build);
     $this->assertNotEmpty($render);
@@ -125,14 +114,15 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
     $this->assertArrayHasKey('blazies', $formatter_settings);
 
     $blazies = $formatter_settings['blazies'];
-
     $this->assertArrayHasKey('field', $blazies->storage());
+
     $this->assertEquals($this->testPluginId, $blazies->get('field.plugin_id'));
 
     // 1. Tests formatter settings.
     $build = $this->display->build($this->entity);
 
-    $result = $this->entity->get($this->testFieldName)
+    $result = $this->entity
+      ->get($this->testFieldName)
       ->view(['type' => 'blazy']);
 
     $this->assertEquals('blazy', $result[0]['#theme']);
@@ -142,26 +132,33 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
     $this->assertEquals($this->testPluginId, $component['type']);
     $this->assertEquals($this->testPluginId, $build[$this->testFieldName]['#formatter']);
 
-    $format['#settings'] = array_merge($this->getFormatterSettings(), $formatter_settings);
+    $format['settings'] = array_merge($this->getFormatterSettings(), $formatter_settings);
 
-    $settings = &$format['#settings'];
-
-    $this->assertArrayHasKey('blazies', $settings);
-
+    $settings = &$format['settings'];
     $blazies = $settings['blazies'];
+    // @todo remove.
+    $blazies->set('is.blazy', TRUE)
+      ->set('lazy.id', 'blazy');
 
     // 2. Test theme_field(), no grid.
+    $settings['bundle']          = $this->bundle;
     $settings['grid']            = 0;
     $settings['background']      = TRUE;
     $settings['thumbnail_style'] = 'thumbnail';
     $settings['ratio']           = 'fluid';
     $settings['image_style']     = 'blazy_crop';
 
-    $blazies->set('is.blazy', TRUE)
-      ->set('lazy.id', 'blazy')
-      ->set('entity.bundle', $this->bundle)
-      ->set('is.vanilla', FALSE);
+    try {
+      $settings['vanilla'] = TRUE;
+      $this->blazyFormatter->buildSettings($format, $this->testItems);
+    }
+    catch (\PHPUnit_Framework_Exception $e) {
+    }
 
+    $this->assertEquals($this->testFieldName, $blazies->get('field.name'));
+
+    $settings['vanilla'] = FALSE;
+    // $this->blazyFormatter->buildSettings($format, $this->testItems);
     $this->blazyFormatter->preBuildElements($format, $this->testItems);
 
     // Blazy uses theme_field() output.
@@ -195,14 +192,13 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
   }
 
   /**
-   * Tests \Drupal\blazy\Media\BlazyMedia::view().
+   * Tests the Blazy formatter faked Media integration.
    *
    * @param mixed|string|bool $input_url
    *   Input URL, else empty.
    * @param bool $expected
    *   The expected output.
    *
-   * @covers ::view
    * @dataProvider providerTestBlazyMedia
    */
   public function testBlazyMedia($input_url, $expected) {
@@ -218,34 +214,36 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
       $entity = $this->entity;
 
       $settings = [
-        'view_mode'       => 'default',
+        'input_url'       => $input_url,
+        // 'source_field'    => $this->testFieldName,
+        // 'media_source'    => 'remote_video',
+        // 'view_mode'       => 'default',
+        'bundle'          => $this->bundle,
         'thumbnail_style' => 'thumbnail',
         'uri'             => $this->uri,
-      ] + Blazy::init();
+      ] + BlazyDefault::htmlSettings();
 
-      $blazies = $settings['blazies'];
+      $blazies = &$settings['blazies'];
       $info = [
-        'bundle'       => $this->bundle,
         'input_url'    => $input_url,
         'source_field' => $this->testFieldName,
         'source'       => 'remote_video',
         'view_mode'    => 'default',
       ];
 
-      $blazies->set('media', $info)
-        ->set('image.uri', $this->uri);
+      $blazies->set('media', $info);
 
       $build = $this->display->build($entity);
 
-      $data = [
-        '#entity' => $entity,
-        '#settings' => $settings,
-      ];
-
-      $render = $this->blazyMedia->view($data);
+      $render = BlazyMedia::build($entity, $settings);
 
       if ($expected && $render) {
         $this->assertNotEmpty($render);
+
+        $field[0] = $render;
+        $field['#settings'] = $settings;
+        $wrap = BlazyMedia::unfield($field);
+        $this->assertNotEmpty($wrap);
 
         $render = $this->blazyManager->renderer()->renderRoot($build[$this->testFieldName]);
         $this->assertStringContainsString('data-blazy', $render);
@@ -268,7 +266,7 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
   public function providerTestBlazyMedia() {
     return [
       ['', TRUE],
-      ['https://xyz123.com/x/123', FALSE],
+      ['http://xyz123.com/x/123', FALSE],
       ['user', TRUE],
     ];
   }

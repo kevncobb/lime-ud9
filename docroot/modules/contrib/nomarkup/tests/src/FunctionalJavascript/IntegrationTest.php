@@ -15,7 +15,7 @@ class IntegrationTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['node', 'field', 'field_ui', 'nomarkup'];
+  public static $modules = ['node', 'field', 'field_ui', 'nomarkup'];
 
   /**
    * An admin user.
@@ -34,7 +34,7 @@ class IntegrationTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'starterkit_theme';
+  protected $defaultTheme = 'stable';
 
   /**
    * {@inheritdoc}
@@ -55,38 +55,30 @@ class IntegrationTest extends WebDriverTestBase {
    * Test the basic settings.
    */
   public function testBasicSettings() {
-    $assert_session = $this->assertSession();
+    $session = $this->assertSession();
     $manage_display = '/admin/structure/types/manage/article/display';
     $this->drupalGet($manage_display);
 
     $this->submitForm([], 'body_settings_edit');
-    $this->submitForm(['fields[body][settings_edit_form][third_party_settings][nomarkup][enabled]' => TRUE], 'Save');
+    $session->assertWaitOnAjaxRequest();
+
+    $this->submitForm([
+      'fields[body][label]' => 'above',
+      'fields[body][settings_edit_form][third_party_settings][nomarkup][enabled]' => true,
+    ], 'Update');
+    $session->assertWaitOnAjaxRequest();
+
+    $this->submitForm([], 'Save');
 
     $this->drupalGet('/node/' . $this->node->id());
     try {
-      $assert_session->elementExists('css', '.field--name-body');
+      $session->elementExists('css', '.field--name-body');
       throw new \AssertionError('Field wrapper should be skipped.');
     }
     catch (ElementNotFoundException $exception) {
       $this->assertSame('Element matching css ".field--name-body" not found.', $exception->getMessage());
     }
-    $assert_session->pageTextContainsOnce('Body field value.');
-  }
-
-  /**
-   * Test the basic settings turned off.
-   */
-  public function testBasicSettingsOff() {
-    $assert_session = $this->assertSession();
-    $manage_display = '/admin/structure/types/manage/article/display';
-    $this->drupalGet($manage_display);
-
-    $this->submitForm([], 'body_settings_edit');
-    $this->submitForm(['fields[body][settings_edit_form][third_party_settings][nomarkup][enabled]' => FALSE], 'Save');
-
-    $this->drupalGet('/node/' . $this->node->id());
-    $assert_session->elementExists('css', '.field--name-body');
-    $assert_session->pageTextContainsOnce('Body field value.');
+    $session->pageTextContainsOnce('Body field value.');
   }
 
 }

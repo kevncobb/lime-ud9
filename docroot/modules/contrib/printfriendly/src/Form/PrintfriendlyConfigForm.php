@@ -97,7 +97,7 @@ class PrintfriendlyConfigForm extends ConfigFormBase {
       $default_print_icon = 'print-button.png';
     }
 
-    $img_path = \Drupal::service('extension.list.module')->getPath('printfriendly') . '/images';
+    $img_path = drupal_get_path('module', 'printfriendly') . '/images';
     foreach ($pf_btn_groups as $btn_group_name => $btn_group) {
 
       if ($btn_group_name != 'btn_group_custom') {
@@ -110,12 +110,12 @@ class PrintfriendlyConfigForm extends ConfigFormBase {
             $checked = TRUE;
           }
 
-          $image_full_path = '<img src="' . \Drupal::service('file_url_generator')->generateAbsoluteString($img_path . '/' . $btn_group_image) . '" />';
+          $image_full_path = '<img src="' . file_create_url($img_path . '/' . $btn_group_image) . '" />';
           $form['printfriendly_button_type'][$btn_group_name][$btn_group_image]['printfriendly_image'] = [
             '#type' => 'radio',
             '#title' => $image_full_path,
             '#return_value' => $btn_group_image,
-            '#attributes' => ['name' => 'printfriendly_image', 'checked' => $checked],
+            '#attributes' => ['name' => ['printfriendly_image'], 'checked' => $checked],
           ];
         }
       }
@@ -131,7 +131,7 @@ class PrintfriendlyConfigForm extends ConfigFormBase {
           '#return_value' => 'custom-button-img-url',
           '#description' => t('Enter the full URL to the image http://devt.drupalchamp.org/sites/default/files/logo.png'),
           '#prefix' => '<div class="pf-btn-group ' . $btn_group_name . ' clear">',
-          '#attributes' => ['name' => 'printfriendly_image', 'checked' => $checked],
+          '#attributes' => ['name' => ['printfriendly_image'], 'checked' => $checked],
         ];
 
         $form['printfriendly_button_type']['custom_button_img_url'] = [

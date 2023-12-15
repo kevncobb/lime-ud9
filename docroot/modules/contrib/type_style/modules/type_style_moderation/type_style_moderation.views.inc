@@ -1,8 +1,7 @@
 <?php
 
 /**
- * @file
- * Views hook implementations for the Type Style Moderation module.
+ * @file Views hook implementations for the Type Style Moderation module.
  */
 
 /**

@@ -144,7 +144,7 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
         throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
     }
 
-    public function __wakeup(): void
+    public function __wakeup()
     {
         throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
     }
@@ -201,9 +201,9 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
      */
     private static function select(ClientState $multi, float $timeout): int
     {
-        $timeout += hrtime(true) / 1E9;
+        $timeout += microtime(true);
         self::$delay = Loop::defer(static function () use ($timeout) {
-            if (0 < $timeout -= hrtime(true) / 1E9) {
+            if (0 < $timeout -= microtime(true)) {
                 self::$delay = Loop::delay(ceil(1000 * $timeout), Loop::stop(...));
             } else {
                 Loop::stop();

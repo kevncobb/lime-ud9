@@ -2,7 +2,6 @@
 
 namespace Drupal\blazy\Plugin\views\field;
 
-use Drupal\file\Entity\File;
 use Drupal\views\ResultRow;
 
 /**
@@ -17,23 +16,17 @@ class BlazyViewsFieldFile extends BlazyViewsFieldPluginBase {
    */
   public function render(ResultRow $values) {
     /** @var \Drupal\file\Entity\File $entity */
-    // @todo recheck relationship and remove this $entity = $values->_entity;
-    $entity = $this->getEntity($values);
+    $entity = $values->_entity;
 
-    if ($entity instanceof File) {
-      $settings = $this->mergedViewsSettings();
+    $settings = $this->mergedViewsSettings();
+    $settings['delta'] = $values->index;
 
-      $data['#entity']   = $entity;
-      $data['#settings'] = $settings;
-      $data['#delta']    = $values->index;
-      $data['fallback']  = $entity->getFilename();
+    $data['settings'] = $this->mergedSettings = $settings;
+    $data['entity'] = $entity;
+    $data['fallback'] = $entity->getFilename();
 
-      // Pass results to \Drupal\blazy\BlazyEntity.
-      // @todo phpstan bug only undestands the doc return types, not dynamic.
-      /* @phpstan-ignore-next-line */
-      return $this->blazyEntity->build($data);
-    }
-    return '';
+    // Pass results to \Drupal\blazy\BlazyEntity.
+    return $this->blazyEntity->build($data);
   }
 
   /**

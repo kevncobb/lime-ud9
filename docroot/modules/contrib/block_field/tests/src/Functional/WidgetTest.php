@@ -19,7 +19,7 @@ class WidgetTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = [
+  public static $modules = [
     'node',
     'user',
     'block',
@@ -39,7 +39,7 @@ class WidgetTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp(): void {
+  public function setUp() {
     parent::setUp();
 
     $this->drupalLogin($this->drupalCreateUser([

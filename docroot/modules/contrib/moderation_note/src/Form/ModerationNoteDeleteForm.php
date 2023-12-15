@@ -42,7 +42,7 @@ class ModerationNoteDeleteForm extends ContentEntityDeleteForm {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
 
-    /** @var \Drupal\moderation_note\ModerationNoteInterface $note */
+    /** @var \Drupal\moderation_note\Entity\ModerationNote $note */
     $note = $this->entity;
 
     // Wrap our form so that our submit callback can re-render the form.
@@ -51,7 +51,7 @@ class ModerationNoteDeleteForm extends ContentEntityDeleteForm {
 
     $form['#attributes']['class'][] = 'moderation-note-form';
     $form['#attributes']['class'][] = 'moderation-note-form-delete';
-    if ($note->hasParent()) {
+    if ($this->entity->hasParent()) {
       $form['#attributes']['class'][] = 'moderation-note-form-reply';
     }
 
@@ -130,7 +130,7 @@ class ModerationNoteDeleteForm extends ContentEntityDeleteForm {
    *   An AJAX response which removes the note.
    */
   public function submitFormCallback(array &$form, FormStateInterface $form_state) {
-    /** @var \Drupal\moderation_note\ModerationNoteInterface $note */
+    /** @var \Drupal\moderation_note\Entity\ModerationNote $note */
     $note = $this->entity;
 
     $selector = '[data-moderation-note-form-id="' . $note->id() . '"]';
@@ -177,7 +177,7 @@ class ModerationNoteDeleteForm extends ContentEntityDeleteForm {
     // Clear the Drupal messages, as this form uses AJAX to display its
     // results. Displaying a deletion message on the next page the user visits
     // is awkward.
-    $this->messenger()->deleteAll();
+    drupal_get_messages();
   }
 
 }

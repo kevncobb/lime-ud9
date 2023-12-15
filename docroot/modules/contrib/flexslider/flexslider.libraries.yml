@@ -16,7 +16,7 @@ flexslider:
 
 integration:
   js:
-    dist/js/flexslider.load.min.js: { minified: true }
+    assets/js/flexslider.load.js: {}
   css:
     theme:
       assets/css/flexslider_img.css: {}
@@ -24,5 +24,5 @@ integration:
     - core/jquery
     - core/drupal
     - core/drupalSettings
-    - core/once
+    - core/jquery.once
     - flexslider/flexslider

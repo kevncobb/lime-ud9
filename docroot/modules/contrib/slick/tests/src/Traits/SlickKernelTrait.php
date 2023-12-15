@@ -38,7 +38,7 @@ trait SlickKernelTrait {
   /**
    * The slick manager service.
    *
-   * @var \Drupal\slick\SlickSkinManagerInterface
+   * @var \Drupal\slick\Skin\SlickSkinManagerInterface
    */
   protected $slickSkinManager;
 

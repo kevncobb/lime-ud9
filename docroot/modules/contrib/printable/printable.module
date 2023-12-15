@@ -8,7 +8,7 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Template\Attribute;
-use Drupal\Core\Routing\RouteObjectInterface;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 
 // Register autoloading of vendor libraries.
@@ -73,7 +73,7 @@ function printable_permission() {
  * Implements hook_theme().
  */
 function printable_theme() {
-  $module_path = \Drupal::service('extension.list.module')->getPath('printable');
+  $module_path = drupal_get_path('module', 'printable');
   return [
     'printable_navigation' => [
       'variables' => ['printable_link' => NULL],
@@ -120,8 +120,7 @@ function template_preprocess_printable(array &$variables) {
   global $base_url;
 
   $config = \Drupal::config('printable.settings');
-  $resolver = \Drupal::service('extension.list.module');
-  $variables['base_url'] = $base_url . '/' . $resolver->getPath('printable');
+  $variables['base_url'] = $base_url . '/' . drupal_get_path('module', 'printable');
 
   $request = \Drupal::request();
   $title = '';
@@ -162,7 +161,7 @@ function template_preprocess_printable_footer(array &$variables) {
   $source_url = \Drupal::service('path.current')->getPath();
   $pos = strpos($source_url, "printable");
   $source_url = substr($source_url, 0, $pos - 1);
-  $source_url = $base_url . \Drupal::service('path_alias.manager')->getAliasByPath($source_url);
+  $source_url = $base_url . \Drupal::service('path.alias_manager')->getAliasByPath($source_url);
   $variables['source_url'] = $source_url;
   if (\Drupal::service('config.factory')->get('printable.settings')->get('list_attribute')) {
     $links = $variables['footer_content'];
@@ -195,8 +194,7 @@ function printable_entity_view_mode_info_alter(&$view_modes) {
 function printable_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
 
   $config = \Drupal::config('printable.settings');
-  $renderer = \Drupal::service('renderer');
-  $renderer->addCacheableDependency($build, $config);
+  \Drupal::service('renderer')->addCacheableDependency($build, $config);
   $printable_manager = \Drupal::service('printable.entity_manager');
   $link_builder = \Drupal::service('printable.link_builder');
   if ($printable_manager->isPrintableEntity($entity) && !empty($entity->id())) {
@@ -222,9 +220,9 @@ function printable_entity_view(array &$build, EntityInterface $entity, EntityVie
 
     // Add the build links to the entity being rendered.
     $build['printable_navigation'] = [
-      '#markup' => '<div class="node_view">' . $renderer->render($printable_navigation) . '</div>',
+      '#markup' => '<strong class="node_view">' . drupal_render($printable_navigation) . '</strong>',
       '#attached' => [
-        'library' => ['printable/entity-links'],
+        'library' => [ 'printable/entity-links' ],
       ],
       '#weight' => 100,
       '#cache' => [
@@ -256,10 +254,10 @@ function printable_preparing_content() {
  */
 function printable_preparing_pdf() {
   $match = \Drupal::routeMatch();
-  $routename = $match->getMasterRouteMatch()->getRouteName();
+  $route = $match->getRouteObject();
   return (
-    $routename &&
-    (substr($routename, 0, 21) == 'printable.show_format') &&
+    $route &&
+    ($route->getPath() == '/node/{entity}/printable/{printable_format}') &&
     ($match->getParameter('printable_format') == 'pdf')
   );
 }
@@ -272,12 +270,17 @@ function printable_preparing_pdf() {
  */
 function printable_file_url_alter(&$uri) {
   if (printable_preparing_pdf()) {
-    $service = \Drupal::service('stream_wrapper_manager');
-    $scheme = $service->getScheme($uri);
+    // Using the filesystem path makes images work across all libraries but
+    // won't work with paths that require Drupal foo. I'd prefer to use URLs
+    // but that doesn't work with all libraries :(.
+    global $base_path;
 
-    if ($service->isValidScheme($scheme)) {
-      $path = \Drupal::service('file_system')->realpath($scheme . '://');
-      $uri = ($path ? $path . '/' : '') . substr($uri, strlen($scheme) + 3);
+    $scheme = \Drupal::service('file_system')->uriScheme($uri);
+
+    // If the file uses the public scheme,
+    if ($scheme == 'public') {
+      $path = \Drupal::service('file_system')->realpath('public://');
+      $uri = $path . '/' . substr($uri, 9);
     }
     else {
       $base_url = \Drupal::request()->getSchemeAndHttpHost();
@@ -288,8 +291,6 @@ function printable_file_url_alter(&$uri) {
 
       $uri = DRUPAL_ROOT . '/' . $uri;
     }
-
-    $uri = 'printable://' . $uri;
   }
 }
 

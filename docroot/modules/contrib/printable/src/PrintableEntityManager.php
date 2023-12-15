@@ -2,8 +2,9 @@
 
 namespace Drupal\printable;
 
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
@@ -14,9 +15,9 @@ class PrintableEntityManager implements PrintableEntityManagerInterface {
   /**
    * The entity manager service.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
-  protected $entityTypeManager;
+  protected $entityManager;
 
   /**
    * The config factory service.
@@ -35,13 +36,13 @@ class PrintableEntityManager implements PrintableEntityManagerInterface {
   /**
    * Constructs a new PrintableEntityManager object.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager service.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The configuration factory service.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory) {
-    $this->entityTypeManager = $entity_type_manager;
+  public function __construct(EntityManagerInterface $entity_manager, ConfigFactoryInterface $config_factory) {
+    $this->entityManager = $entity_manager;
     $this->configFactory = $config_factory;
   }
 
@@ -80,7 +81,7 @@ class PrintableEntityManager implements PrintableEntityManagerInterface {
     // If the entities are yet to be populated, get the entity definitions from
     // the entity manager.
     if (empty($this->compatibleEntities)) {
-      foreach ($this->entityTypeManager->getDefinitions() as $entity_type => $entity_definition) {
+      foreach ($this->entityManager->getDefinitions() as $entity_type => $entity_definition) {
         // If this entity has a render controller, it has a printable version.
         if ($entity_definition->hasHandlerClass('view_builder')) {
           $this->compatibleEntities[$entity_type] = $entity_definition;

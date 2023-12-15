@@ -222,9 +222,6 @@ solr_configs:
               name: name
               VALUE: hu
             -
-              name: indexPath
-              VALUE: ./hu
-            -
               name: lookupImpl
               VALUE: AnalyzingInfixLookupFactory
             -

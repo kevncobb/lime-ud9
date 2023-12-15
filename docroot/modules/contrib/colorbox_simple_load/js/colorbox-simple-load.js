@@ -47,9 +47,9 @@
         return p;
       };
 
-      once('init-colorbox-load', '.colorbox-load', context).forEach(function(element) {
-        var params = $.urlParams($(element).attr('href'));
-        $(element).colorbox($.extend({}, settings.colorbox, params));
+      $('.colorbox-load', context).once('init-colorbox-load').each(function( index ) {
+        var params = $.urlParams($(this).attr('href'));
+        $(this).colorbox($.extend({}, settings.colorbox, params));
       });
     }
   };

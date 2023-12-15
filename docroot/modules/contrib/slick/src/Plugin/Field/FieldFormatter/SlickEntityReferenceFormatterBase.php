@@ -3,7 +3,7 @@
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
 use Drupal\blazy\Field\BlazyEntityReferenceBase;
-use Drupal\Component\Utility\Xss;
+use Drupal\blazy\Field\BlazyField;
 use Drupal\slick\SlickDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -20,41 +20,9 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
   /**
    * {@inheritdoc}
    */
-  protected static $namespace = 'slick';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $itemId = 'slide';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $itemPrefix = 'slide';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $captionId = 'caption';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $navId = 'thumb';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $fieldType = 'entity';
-
-  /**
-   * {@inheritdoc}
-   *
-   * @todo remove post blazy:2.17, no differences so far.
-   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
-    return static::injectServices($instance, $container, static::$fieldType);
+    return self::injectServices($instance, $container, 'entity');
   }
 
   /**
@@ -67,32 +35,24 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
   /**
    * {@inheritdoc}
    */
-  protected function withElementThumbnail(array &$build, array $element): void {
-    if (!$build['#asnavor']) {
-      return;
-    }
-
+  public function buildElementThumbnail(array &$build, $element, $entity, $delta) {
     // The settings in $element has updated metadata extracted from media.
-    $settings  = $this->formatter->toHashtag($element);
-    $entity    = $element['#entity'];
-    $delta     = $element['#delta'];
-    $item      = $this->formatter->toHashtag($element, 'item', NULL);
+    $settings  = $element['settings'];
+    $item_id   = 'slide';
     $view_mode = $settings['view_mode'] ?? '';
-    $_caption  = $settings['thumbnail_caption'] ?? NULL;
-    $captions  = [];
+    $caption   = $settings['thumbnail_caption'] ?? NULL;
 
-    if ($_caption) {
-      if ($item && $text = trim($item->{$_caption} ?? '')) {
-        $captions = ['#markup' => Xss::filterAdmin($text)];
-      }
-      else {
-        $captions = $this->viewField($entity, $_caption, $view_mode);
-      }
+    if (!empty($settings['nav'])) {
+      // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.
+      $element[$item_id] = empty($settings['thumbnail_style'])
+        ? [] : $this->formatter->getThumbnail($settings, $element['item']);
+
+      $element['caption'] = $caption
+        ? BlazyField::view($entity, $caption, $view_mode)
+        : [];
+
+      $build['thumb']['items'][$delta] = $element;
     }
-
-    // Thumbnail usages: asNavFor pagers, dot, arrows thumbnails.
-    $tn = $this->formatter->getThumbnail($settings, $item, $captions);
-    $build[static::$navId]['items'][$delta] = $tn;
   }
 
   /**
@@ -107,15 +67,6 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
       'thumb_positions' => TRUE,
       'nav'             => TRUE,
     ] + parent::getPluginScopes();
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @todo deprecated in 2.10 and is removed in slick:3.x.
-   */
-  protected function buildElementThumbnail(array &$build, array $element) {
-    $this->withElementThumbnail($build, $element);
   }
 
 }

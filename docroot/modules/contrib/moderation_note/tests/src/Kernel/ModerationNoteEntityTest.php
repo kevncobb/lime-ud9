@@ -20,12 +20,12 @@ class ModerationNoteEntityTest extends EntityKernelTestBase {
    *
    * @var array
    */
-  protected static $modules = ['moderation_note', 'node'];
+  public static $modules = ['moderation_note', 'node'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp(): void {
+  protected function setUp() {
     parent::setUp();
     $this->installEntitySchema('moderation_note');
     $this->installEntitySchema('node');
@@ -71,7 +71,7 @@ class ModerationNoteEntityTest extends EntityKernelTestBase {
     $note->save();
     $this->assertEquals($node->id(), $note->getModeratedEntity()->id(), 'A note can load its moderated entity correctly');
     $node->delete();
-    $this->assertNull(ModerationNote::load($note->id()), 'Notes are deleted when their moderated entity is deleted');
+    $this->assertFalse(ModerationNote::load($note->id()), 'Notes are deleted when their moderated entity is deleted');
   }
 
   /**

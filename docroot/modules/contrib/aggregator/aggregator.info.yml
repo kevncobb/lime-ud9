@@ -9,7 +9,7 @@ dependencies:
   - drupal:filter
   - drupal:options
 
-# Information added by Drupal.org packaging script on 2023-11-10
-version: '2.1.4'
+# Information added by Drupal.org packaging script on 2023-10-08
+version: '2.1.3'
 project: 'aggregator'
-datestamp: 1699583005
+datestamp: 1696798522

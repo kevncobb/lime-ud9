@@ -2,8 +2,6 @@
 
 namespace Drupal\workflow_buttons\Plugin\Field\FieldWidget;
 
-use Drupal\content_moderation\ModerationInformation;
-use Drupal\content_moderation\StateTransitionValidation;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
@@ -12,7 +10,8 @@ use Drupal\Core\Field\Plugin\Field\FieldWidget\OptionsSelectWidget;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\content_moderation\ModerationInformation;
+use Drupal\content_moderation\StateTransitionValidation;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -28,7 +27,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class WorkflowButtonsWidget extends OptionsSelectWidget implements ContainerFactoryPluginInterface {
 
-  use StringTranslationTrait;
   /**
    * Current user service.
    *
@@ -77,7 +75,7 @@ class WorkflowButtonsWidget extends OptionsSelectWidget implements ContainerFact
    * @param \Drupal\content_moderation\ModerationInformation $moderation_information
    *   Moderation information service.
    * @param \Drupal\content_moderation\StateTransitionValidation $validator
-   *   Moderation state transition validation service.
+   *   Moderation state transition validation service
    */
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, ModerationInformation $moderation_information, StateTransitionValidation $validator) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
@@ -132,7 +130,7 @@ class WorkflowButtonsWidget extends OptionsSelectWidget implements ContainerFact
    */
   public function settingsSummary() {
     $summary = [];
-    $summary[] = $this->t('Show current moderation state in meta: @value', ['@value' => $this->getSetting('show_current_state') ? 'Yes' : 'No']);
+    $summary[] = t('Show current moderation state in meta: @value', ['@value' => $this->getSetting('show_current_state')? 'Yes' : 'No']);
     return $summary;
   }
 
@@ -151,11 +149,10 @@ class WorkflowButtonsWidget extends OptionsSelectWidget implements ContainerFact
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+    /** @var ContentEntityInterface $entity */
     $entity = $items->getEntity();
 
     $workflow = $this->moderationInformation->getWorkflowForEntity($entity);
-    /** @var \Drupal\content_moderation\ContentModerationState $default */
     $default = $items->get($delta)->value ? $workflow->getTypePlugin()->getState($items->get($delta)->value) : $workflow->getTypePlugin()->getInitialState($entity);
 
     /** @var \Drupal\workflows\Transition[] $transitions */
@@ -172,7 +169,7 @@ class WorkflowButtonsWidget extends OptionsSelectWidget implements ContainerFact
         'transition_machine_name' => $transition->id(),
       ];
     }
-    $tempstore = \Drupal::service('tempstore.private')->get('workflow_buttons');
+    $tempstore = \Drupal::service('user.private_tempstore')->get('workflow_buttons');
     $form_id = $form_state->getBuildInfo()['form_id'];
     $tempstore->set($form_id . '_transition_data', $transition_data);
 
@@ -211,11 +208,6 @@ class WorkflowButtonsWidget extends OptionsSelectWidget implements ContainerFact
   public static function updateStatus($entity_type_id, ContentEntityInterface $entity, array $form, FormStateInterface $form_state) {
     $element = $form_state->getTriggeringElement();
     if (isset($element['#moderation_state'])) {
-      // Trigger hook_workflow_buttons_alter().
-      // Allow modules to alter workflow state before save. Useful when custom
-      // buttons have been added via hook_field_widget_WIDGET_TYPE_form_alter().
-      \Drupal::service('module_handler')->alter('workflow_buttons_state', $element['#moderation_state'], $entity, $form_state);
-
       $entity->moderation_state->value = $element['#moderation_state'];
     }
   }
@@ -225,7 +217,8 @@ class WorkflowButtonsWidget extends OptionsSelectWidget implements ContainerFact
    */
   public static function processActions($element, FormStateInterface $form_state, array &$form) {
     // This function is called twice for every time AJAX is used to add another
-    // entity reference, such as "Add another organization or location".
+    // entity reference, such as "Add another organization or location"
+
     // We'll steal most of the button configuration from the default submit
     // button. However, NodeForm also hides that button for admins (as it adds
     // its own, too), so we have to restore it.
@@ -236,12 +229,12 @@ class WorkflowButtonsWidget extends OptionsSelectWidget implements ContainerFact
     // property tells FAPI to cluster them all together into a single widget.
     $options = $element['#options'];
 
-    // We pass this as tempstore private data because we don't have easy access
-    // to $this->validator->getValidTransitions($entity, $this->currentUser);
-    // from our static method here, because $form_storage temporary data turns
-    // out to be unstable, at least until a form is actually saved (wiped out by
-    // AJAX requests), and this will be stable per-user per-content type anyway.
-    $tempstore = \Drupal::service('tempstore.private')->get('workflow_buttons');
+    // We pass this as private user data because we don't have easy access to
+    // $this->validator->getValidTransitions($entity, $this->currentUser); from
+    // our static method here, because $form_storage temporary data turns out to
+    // be unstable, at least until a form is actually saved (wiped out by AJAX
+    // requests), and this will be stable per-user per-content type anyway.
+    $tempstore = \Drupal::service('user.private_tempstore')->get('workflow_buttons');
     $form_id = $form_state->getBuildInfo()['form_id'];
     $transition_data = $tempstore->get($form_id . '_transition_data');
     if (!$transition_data) {
@@ -268,10 +261,10 @@ class WorkflowButtonsWidget extends OptionsSelectWidget implements ContainerFact
       }
 
       // Transition ID as a class.
-      $button['#attributes'] = ['class' => ["workflow-buttons-" . $transition_machine_name]];
+      $button['#attributes'] = ['class' => [$transition_machine_name]];
 
       // Only first button and any Publish button keep 'primary' button type.
-      // @todo Make this so it is not hardcoded on transition ID (machine name).
+      // @TODO Make this so it is not hardcoded on transition ID (machine name).
       if (($weight !== -100) && ($transition_machine_name !== 'publish')) {
         $button['#button_type'] = '';
       }
@@ -279,14 +272,8 @@ class WorkflowButtonsWidget extends OptionsSelectWidget implements ContainerFact
         // Hardcoding elements of the delete-to-Trash workflow here.
         $button['#button_type'] = 'danger';
         // This styles the delete button much like the default delete link, at
-        // least in Claro.
-        // See https://www.drupal.org/project/workflow_buttons/issues/3092099
-        $button['#attributes'] = [
-          'class' => [
-            'submit-trash',
-            'action-link--danger',
-          ],
-        ];
+        // least in Claro.  See https://www.drupal.org/project/workflow_buttons/issues/3092099
+        $button['#attributes'] = ['class' => ['submit-trash', 'action-link--danger']];
         $button['#prefix'] = '<span class="submit-trash action-link action-link--danger action-link--icon-trash"></span>';
         $button['#attached']['library'][] = 'workflow_buttons/delete-button';
 
@@ -311,42 +298,13 @@ class WorkflowButtonsWidget extends OptionsSelectWidget implements ContainerFact
 
     // Set a callback to transform the button selection back into a field
     // widget, so that it will get saved properly.
-    $form['#entity_builders']['update_moderation_state'] = [
-      get_called_class(),
-      'updateStatus',
-    ];
+    $form['#entity_builders']['update_moderation_state'] = [get_called_class(), 'updateStatus'];
 
-    // Add actions to just the bottom of the form or to both the top and the
-    // bottom. If using Gin Admin Theme, the buttons appear by default in the
-    // sticky header area, so no matter this module's settings the buttons
-    // should *not* be added to the top of the form.
-    if (isset($form['gin_actions'])) {
-      $form['gin_actions']['actions'] = $form['actions'];
-      unset($form['actions_top']);
-    }
     $config = \Drupal::config('workflow_buttons.settings');
-    if ($config->get('display.top_buttons', TRUE)) {
-      if (!isset($form['gin_actions'])) {
-        $form['actions_top'] = $form['actions'];
-        $form['actions_top']['#weight'] = -900;
-      }
-      else {
-        $form['actions_bottom'] = $form['actions'];
-        $form['actions_bottom']['#weight'] = 900;
-        if (isset($form['actions_bottom']['gin_sidebar_toggle'])) {
-          unset($form['actions_bottom']['gin_sidebar_toggle']);
-        }
-      }
-    }
-
-    // Only include one set of buttons if on a node view or revision route.
-    $routes_list = [
-      'entity.node.canonical',
-      'entity.node.revision',
-      'entity.node.latest_version',
-    ];
-    if (in_array(\Drupal::routeMatch()->getRouteName(), $routes_list)) {
-      unset($form['actions_top']);
+    if ($config->get('display.top_buttons', FALSE)) {
+      $actions = $form['actions'];
+      $actions['#weight'] = -900;
+      $form['actions_top'] = $actions;
     }
 
     // Show the current state in meta section if enabled.
@@ -360,6 +318,7 @@ class WorkflowButtonsWidget extends OptionsSelectWidget implements ContainerFact
         ],
       ];
     }
+
     return $element;
   }
 

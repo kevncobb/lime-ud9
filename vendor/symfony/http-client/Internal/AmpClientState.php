@@ -145,16 +145,15 @@ final class AmpClientState extends ClientState
         $options['crypto_method'] && $context = $context->withMinimumVersion($options['crypto_method']);
 
         $connector = $handleConnector = new class() implements Connector {
-            public DnsConnector $connector;
-            public string $uri;
-            /** @var resource|null */
+            public $connector;
+            public $uri;
             public $handle;
 
             public function connect(string $uri, ConnectContext $context = null, CancellationToken $token = null): Promise
             {
                 $result = $this->connector->connect($this->uri ?? $uri, $context, $token);
                 $result->onResolve(function ($e, $socket) {
-                    $this->handle = $socket?->getResource();
+                    $this->handle = null !== $socket ? $socket->getResource() : false;
                 });
 
                 return $result;

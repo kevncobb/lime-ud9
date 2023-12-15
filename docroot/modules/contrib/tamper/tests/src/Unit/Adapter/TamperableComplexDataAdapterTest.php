@@ -15,7 +15,7 @@ class TamperableComplexDataAdapterTest extends UnitTestCase {
   /**
    * Complex data object.
    *
-   * @var \Drupal\Core\TypedData\ComplexDataInterface|\PHPUnit\Framework\MockObject\MockObject
+   * @var \Drupal\Core\TypedData\ComplexDataInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $complexData;
 
@@ -29,7 +29,7 @@ class TamperableComplexDataAdapterTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp(): void {
+  protected function setUp() {
     $this->complexData = $this->createMock(ComplexDataInterface::class);
     $this->adapter = new TamperableComplexDataAdapter($this->complexData);
   }

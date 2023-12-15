@@ -35,7 +35,6 @@ class ImceTest extends KernelTestBase {
     'user',
     'system',
     'imce',
-    'ckeditor',
   ];
 
   /**

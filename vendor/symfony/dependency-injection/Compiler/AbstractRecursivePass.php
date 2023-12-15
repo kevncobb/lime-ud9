@@ -31,7 +31,6 @@ abstract class AbstractRecursivePass implements CompilerPassInterface
      */
     protected $container;
     protected $currentId;
-    protected bool $skipScalars = false;
 
     private bool $processExpressions = false;
     private ExpressionLanguage $expressionLanguage;
@@ -78,9 +77,6 @@ abstract class AbstractRecursivePass implements CompilerPassInterface
     {
         if (\is_array($value)) {
             foreach ($value as $k => $v) {
-                if ((!$v || \is_scalar($v)) && $this->skipScalars) {
-                    continue;
-                }
                 if ($isRoot) {
                     if ($v->hasTag('container.excluded')) {
                         continue;

@@ -2,12 +2,13 @@ name: Printable
 type: module
 description: 'Generates a printer-friendly version of Drupal content entities.'
 package: printable
-core_version_requirement: ^9.4 || ^10
+# core: 8.x
 configure: printable.configure
 dependencies:
-  - drupal:path_alias
+  - pdf_api:pdf_api
 
-# Information added by Drupal.org packaging script on 2023-08-28
-version: '3.0.2'
+# Information added by Drupal.org packaging script on 2019-06-15
+version: '8.x-1.1'
+core: '8.x'
 project: 'printable'
-datestamp: 1693234629
+datestamp: 1560571390

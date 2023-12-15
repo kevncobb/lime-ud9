@@ -14,12 +14,3 @@ event_log_track.settings:
     disable_db_logs:
       type: boolean
       label: 'Disable Logging to DB'
-    log_cli:
-      type: boolean
-      label: 'Log to CLI'
-    format:
-      type: string
-      label: 'Format'
-    output_type:
-      type: string
-      label: 'Output Type'

@@ -8,23 +8,16 @@ use JsonMachine\Exception\InvalidArgumentException;
 
 final class ValidJsonPointers
 {
-    /** @var string[] */
     private $jsonPointers = [];
 
-    /** @var bool */
     private $validated = false;
 
-    /**
-     * @param string[] $jsonPointers
-     */
     public function __construct(array $jsonPointers)
     {
         $this->jsonPointers = array_values($jsonPointers);
     }
 
     /**
-     * @return string[]
-     *
      * @throws InvalidArgumentException
      */
     public function toArray(): array
@@ -37,8 +30,6 @@ final class ValidJsonPointers
     }
 
     /**
-     * @return void
-     *
      * @throws InvalidArgumentException
      */
     private function validate()
@@ -49,8 +40,6 @@ final class ValidJsonPointers
     }
 
     /**
-     * @return void
-     *
      * @throws InvalidArgumentException
      */
     private function validateFormat()
@@ -65,8 +54,6 @@ final class ValidJsonPointers
     }
 
     /**
-     * @return void
-     *
      * @throws InvalidArgumentException
      */
     private function validateJsonPointersDoNotIntersect()
@@ -77,8 +64,8 @@ final class ValidJsonPointers
                     continue;
                 }
                 if ($jsonPointerA === $jsonPointerB
-                    || self::str_contains("$jsonPointerA/", "$jsonPointerB/")
-                    || self::str_contains("$jsonPointerA/", self::wildcardify("$jsonPointerB/"))
+                    || self::str_contains($jsonPointerA, $jsonPointerB)
+                    || self::str_contains($jsonPointerA, self::wildcardify($jsonPointerB))
                 ) {
                     throw new InvalidArgumentException(
                         sprintf(

@@ -405,8 +405,14 @@ exports.supportsLookbehind = function () {
     }
     return true;
 };
-exports.skipEmptyMatch = function (line, last, supportsUnicodeFlag) {
-    return supportsUnicodeFlag && line.codePointAt(last) > 0xffff ? 2 : 1;
+exports.supportsUnicodeFlag = function () {
+    try {
+        new RegExp('^.$', 'u');
+    }
+    catch (error) {
+        return false;
+    }
+    return true;
 };
 
 });
@@ -1475,7 +1481,7 @@ function parse(source,defaultNSMapCopy,entityMap,domBuilder,errorHandler){
 						errorHandler.warning('unclosed xml attribute');
 					}
 				}
-				appendElement(el,domBuilder,parseStack,errorHandler);
+				appendElement(el,domBuilder,parseStack);
 				
 				
 				if(el.uri === 'http://www.w3.org/1999/xhtml' && !el.closed){
@@ -1639,7 +1645,7 @@ function parseElementStartPart(source,start,el,entityReplacer,errorHandler){
 		p++;
 	}
 }
-function appendElement(el,domBuilder,parseStack,errorHandler){
+function appendElement(el,domBuilder,parseStack){
 	var tagName = el.tagName;
 	var localNSMap = null;
 	var currentNSMap = parseStack[parseStack.length-1].currentNSMap;
@@ -1690,9 +1696,6 @@ function appendElement(el,domBuilder,parseStack,errorHandler){
 		localName = el.localName = tagName;
 	}
 	var ns = el.uri = currentNSMap[prefix || ''];
-	if (prefix && !ns) {
-		errorHandler.error('unexpected namespace ' + prefix);
-	}
 	domBuilder.startElement(ns,localName,tagName,el);
 	if(el.closed){
 		domBuilder.endElement(ns,localName,tagName);

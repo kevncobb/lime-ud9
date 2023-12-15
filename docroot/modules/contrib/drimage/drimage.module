@@ -6,8 +6,6 @@
  */
 
 use \Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\drimage\Controller\ImageStyleListBuilder;
-use Drupal\drimage\Controller\ImageStyleWithPipelineListBuilder;
 
 /**
  * Implements hook_help().
@@ -38,28 +36,4 @@ function drimage_theme() {
       ],
     ],
   ];
-}
-
-/**
- * Implements hook_entity_type_alter().
- */
-function drimage_entity_type_alter(array &$entity_types): void {
-  if (isset($entity_types['imageapi_optimize_pipeline'])) {
-    $entity_types['image_style']->setListBuilderClass(ImageStyleWithPipelineListBuilder::class);
-  } else {
-    $entity_types['image_style']->setListBuilderClass(ImageStyleListBuilder::class);
-  }
-}
-
-/**
- * Implements hook_module_implements_alter().
- *
- * Moves drimage_entity_type_alter to the back, to override the imageapi_optimize override if present.
- */
-function drimage_module_implements_alter(array &$implementations, string $hook): void {
-  if ($hook == 'entity_type_alter') {
-    $group = $implementations['drimage'];
-    unset($implementations['drimage']);
-    $implementations['drimage'] = $group;
-  }
 }

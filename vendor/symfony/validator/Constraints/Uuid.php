@@ -97,16 +97,15 @@ class Uuid extends Constraint
      */
     public $versions = self::ALL_VERSIONS;
 
-    /** @var callable|null */
     public $normalizer;
 
     /**
-     * @param int[]|int|null $versions
+     * @param int[]|null $versions
      */
     public function __construct(
         array $options = null,
         string $message = null,
-        array|int $versions = null,
+        array $versions = null,
         bool $strict = null,
         callable $normalizer = null,
         array $groups = null,
@@ -115,7 +114,7 @@ class Uuid extends Constraint
         parent::__construct($options, $groups, $payload);
 
         $this->message = $message ?? $this->message;
-        $this->versions = (array) ($versions ?? $this->versions);
+        $this->versions = $versions ?? $this->versions;
         $this->strict = $strict ?? $this->strict;
         $this->normalizer = $normalizer ?? $this->normalizer;
 

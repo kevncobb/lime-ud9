@@ -70,7 +70,7 @@ class AddressPlainFormatterTest extends FormatterTestBase {
       // Simulate themeing of the address test entity.
       $variables['theme_hook_original'] = 'address_plain';
       $variables['view_mode'] = $view_mode;
-      $variables['address'] = $this->entity->{$this->fieldName}->get(0);
+      $variables['address'] = $this->entity->{$this->fieldName};
       $suggestions = \Drupal::moduleHandler()->invokeAll('theme_suggestions_address_plain', [$variables]);
 
       $expected_suggestions = [

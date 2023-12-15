@@ -40,8 +40,8 @@ class Rewrite extends TamperBase {
     ];
 
     $replace = [];
-    foreach ($this->sourceDefinition->getList() as $key => $label) {
-      $replace[] = '[' . $key . ']';
+    foreach ($this->sourceDefinition->getList() as $source) {
+      $replace[] = '[' . $source . ']';
     }
 
     $form['help'] = [
@@ -54,16 +54,6 @@ class Rewrite extends TamperBase {
     ];
 
     return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
-    parent::submitConfigurationForm($form, $form_state);
-    $this->setConfiguration([
-      self::SETTING_TEXT => $form_state->getValue(self::SETTING_TEXT),
-    ]);
   }
 
   /**

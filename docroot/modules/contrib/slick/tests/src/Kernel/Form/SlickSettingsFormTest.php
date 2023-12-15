@@ -6,7 +6,6 @@ use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\slick_ui\Form\SlickSettingsForm;
-use Drupal\Tests\slick\Traits\SlickKernelTrait;
 
 /**
  * Tests the Slick UI settings form.
@@ -16,8 +15,6 @@ use Drupal\Tests\slick\Traits\SlickKernelTrait;
  * @group slick
  */
 class SlickSettingsFormTest extends KernelTestBase {
-
-  use SlickKernelTrait;
 
   /**
    * The slick settings form object under test.
@@ -72,7 +69,7 @@ class SlickSettingsFormTest extends KernelTestBase {
     ]);
 
     $this->assertInstanceOf(FormInterface::class, $this->slickSettingsForm);
-    $this->assertTrue($this->slickManager->configFactory()->get('slick.settings')->get('slick_css'));
+    $this->assertTrue($this->slickManager->getConfigFactory()->get('slick.settings')->get('slick_css'));
 
     $id = $this->slickSettingsForm->getFormId();
     $this->assertEquals('slick_settings_form', $id);

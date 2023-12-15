@@ -196,9 +196,6 @@ solr_configs:
               name: name
               VALUE: ru
             -
-              name: indexPath
-              VALUE: ./ru
-            -
               name: lookupImpl
               VALUE: AnalyzingInfixLookupFactory
             -

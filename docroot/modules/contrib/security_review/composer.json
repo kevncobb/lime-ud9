@@ -36,7 +36,6 @@
         "source": "https://git.drupalcode.org/project/security_review"
     },
     "require": {
-        "drupal/core": "^9 || ^10",
-        "symfony/filesystem": "*"
+        "drupal/core": "^9 || ^10"
     }
 }

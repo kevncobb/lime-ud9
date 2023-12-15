@@ -7,7 +7,7 @@ use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\Core\TypedData\ListInterface;
 use Drupal\Core\TypedData\OptionsProviderInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
-use Drupal\typed_data\Context\ContextDefinition;
+use Drupal\rules\Context\ContextDefinition;
 use Drupal\typed_data\Form\SubformState;
 use Drupal\typed_data\Widget\FormWidgetBase;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -79,7 +79,7 @@ class SelectWidget extends FormWidgetBase {
    */
   public function flagViolations(TypedDataInterface $data, ConstraintViolationListInterface $violations, SubformStateInterface $formState) {
     foreach ($violations as $violation) {
-      /** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation */
+      /** @var ConstraintViolationInterface $violation */
       $formState->setErrorByName('value', $violation->getMessage());
     }
   }

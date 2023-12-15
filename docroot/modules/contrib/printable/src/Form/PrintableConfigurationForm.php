@@ -119,14 +119,9 @@ class PrintableConfigurationForm extends ConfigFormBase {
 
     // Provide option to turn off link extraction.
     $form['settings']['extract_links'] = [
-      '#type' => 'radios',
-      '#title' => $this->t('Link handling'),
-      '#description' => $this->t('Choose what happens with to any links in the content.'),
-      '#options' => [
-        'extract' => 'Extract (show the URL in brackets)',
-        'remove' => 'Remove (delete the "href=")',
-        'none' => 'Unchanged',
-      ],
+      '#type' => 'checkbox',
+      '#title' => $this->t('Extract Links'),
+      '#description' => $this->t('Extract any links in the content, e.g. "Some Link (http://drupal.org)'),
       '#default_value' => $this->config('printable.settings')
         ->get('extract_links'),
     ];

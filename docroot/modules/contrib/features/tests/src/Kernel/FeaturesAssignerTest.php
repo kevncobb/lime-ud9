@@ -13,14 +13,14 @@ class FeaturesAssignerTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'config'];
+  public static $modules = ['system', 'config'];
 
   protected $strictConfigSchema = FALSE;
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp(): void {
+  protected function setUp() {
     parent::setUp();
     // We need system.site in order to run $this->configImporter->import().
     $this->installConfig('system');

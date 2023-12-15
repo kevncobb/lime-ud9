@@ -204,7 +204,11 @@ abstract class AbstractBrowser
      */
     public function getCrawler(): Crawler
     {
-        return $this->crawler ?? throw new BadMethodCallException(sprintf('The "request()" method must be called before "%s()".', __METHOD__));
+        if (null === $this->crawler) {
+            throw new BadMethodCallException(sprintf('The "request()" method must be called before "%s()".', __METHOD__));
+        }
+
+        return $this->crawler;
     }
 
     /**
@@ -224,7 +228,11 @@ abstract class AbstractBrowser
      */
     public function getInternalResponse(): Response
     {
-        return $this->internalResponse ?? throw new BadMethodCallException(sprintf('The "request()" method must be called before "%s()".', __METHOD__));
+        if (null === $this->internalResponse) {
+            throw new BadMethodCallException(sprintf('The "request()" method must be called before "%s()".', __METHOD__));
+        }
+
+        return $this->internalResponse;
     }
 
     /**
@@ -237,7 +245,11 @@ abstract class AbstractBrowser
      */
     public function getResponse(): object
     {
-        return $this->response ?? throw new BadMethodCallException(sprintf('The "request()" method must be called before "%s()".', __METHOD__));
+        if (null === $this->response) {
+            throw new BadMethodCallException(sprintf('The "request()" method must be called before "%s()".', __METHOD__));
+        }
+
+        return $this->response;
     }
 
     /**
@@ -245,7 +257,11 @@ abstract class AbstractBrowser
      */
     public function getInternalRequest(): Request
     {
-        return $this->internalRequest ?? throw new BadMethodCallException(sprintf('The "request()" method must be called before "%s()".', __METHOD__));
+        if (null === $this->internalRequest) {
+            throw new BadMethodCallException(sprintf('The "request()" method must be called before "%s()".', __METHOD__));
+        }
+
+        return $this->internalRequest;
     }
 
     /**
@@ -258,38 +274,37 @@ abstract class AbstractBrowser
      */
     public function getRequest(): object
     {
-        return $this->request ?? throw new BadMethodCallException(sprintf('The "request()" method must be called before "%s()".', __METHOD__));
+        if (null === $this->request) {
+            throw new BadMethodCallException(sprintf('The "request()" method must be called before "%s()".', __METHOD__));
+        }
+
+        return $this->request;
     }
 
     /**
      * Clicks on a given link.
-     *
-     * @param array $serverParameters An array of server parameters
      */
-    public function click(Link $link/* , array $serverParameters = [] */): Crawler
+    public function click(Link $link): Crawler
     {
-        $serverParameters = 1 < \func_num_args() ? func_get_arg(1) : [];
-
         if ($link instanceof Form) {
-            return $this->submit($link, [], $serverParameters);
+            return $this->submit($link);
         }
 
-        return $this->request($link->getMethod(), $link->getUri(), [], [], $serverParameters);
+        return $this->request($link->getMethod(), $link->getUri());
     }
 
     /**
      * Clicks the first link (or clickable image) that contains the given text.
      *
-     * @param string $linkText         The text of the link or the alt attribute of the clickable image
-     * @param array  $serverParameters An array of server parameters
+     * @param string $linkText The text of the link or the alt attribute of the clickable image
      */
-    public function clickLink(string $linkText/* , array $serverParameters = [] */): Crawler
+    public function clickLink(string $linkText): Crawler
     {
-        $serverParameters = 1 < \func_num_args() ? func_get_arg(1) : [];
+        if (null === $this->crawler) {
+            throw new BadMethodCallException(sprintf('The "request()" method must be called before "%s()".', __METHOD__));
+        }
 
-        $crawler = $this->crawler ?? throw new BadMethodCallException(sprintf('The "request()" method must be called before "%s()".', __METHOD__));
-
-        return $this->click($crawler->selectLink($linkText)->link(), $serverParameters);
+        return $this->click($this->crawler->selectLink($linkText)->link());
     }
 
     /**
@@ -316,8 +331,11 @@ abstract class AbstractBrowser
      */
     public function submitForm(string $button, array $fieldValues = [], string $method = 'POST', array $serverParameters = []): Crawler
     {
-        $crawler = $this->crawler ?? throw new BadMethodCallException(sprintf('The "request()" method must be called before "%s()".', __METHOD__));
-        $buttonNode = $crawler->selectButton($button);
+        if (null === $this->crawler) {
+            throw new BadMethodCallException(sprintf('The "request()" method must be called before "%s()".', __METHOD__));
+        }
+
+        $buttonNode = $this->crawler->selectButton($button);
 
         if (0 === $buttonNode->count()) {
             throw new InvalidArgumentException(sprintf('There is no button with "%s" as its content, id, value or name.', $button));

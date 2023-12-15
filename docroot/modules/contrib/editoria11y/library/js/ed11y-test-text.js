@@ -37,28 +37,28 @@ class Ed11yTestText {
       let matchWasntEmoji = firstPrefix.match(prefixMatch);
       if (firstPrefix.length > 0 && firstPrefix !== activeMatch && (matchWasntEmoji || firstPrefix.match(emojiMatch))) {
         // We have a prefix and a possible hit; check next detected paragraph.
-        let secondP = Ed11y.elements.p[i + 1];
-        compareP: if (secondP) {
-          secondText = Ed11y.getText(secondP).substring(0, 2);
-          if (secondText === 'A') {
-            // A sentence. A nother sentence.
-            break compareP;
-          }
-          let secondPrefix = decrement(secondText);
-          if (matchWasntEmoji) {
-            // Check for repeats (*,*) or increments(a,b)
-            lastHitWasEmoji = false;
-            if (firstPrefix !== 'A ' && firstPrefix === secondPrefix) {
+        if (matchWasntEmoji) {
+          lastHitWasEmoji = false;
+          let secondP = Ed11y.elements.p[i + 1];
+          if (secondP) {
+            secondText = Ed11y.getText(secondP).substring(0, 2);
+            let secondPrefix = decrement(secondText);
+            if (firstPrefix === secondPrefix) {
+              // This will flag repeats (*,*) or increments(a,b)
               hit = true;
             }
-          } else if (!lastHitWasEmoji) {
-            // Check for two paragraphs in a row that start with emoji
+          }
+        } else if (!lastHitWasEmoji) {
+          // Match was Emoji, match any paragraph with another emoji
+          let secondP = Ed11y.elements.p[i + 1];
+          if (secondP) {
+            let secondPrefix = Ed11y.getText(secondP).substring(0, 2);
             if (secondPrefix.match(emojiMatch)) {
               hit = true;
             }
-            // It was an emoji match.
-            lastHitWasEmoji = hit;
           }
+          // It was an emoji match.
+          lastHitWasEmoji = hit;
         }
         if (!hit) {
           // Split p by carriage return if there was a firstPrefix and compare.
@@ -153,7 +153,7 @@ class Ed11yTestText {
       else {
         // Make sure all table headers are not empty.
         findTHeaders.forEach((th) => {
-          if (Ed11y.computeText(th).length < 1) {
+          if (Ed11y.getText(th).length < 1 && !Ed11y.computeTitle(th)) {
             Ed11y.results.push([th, 'tableEmptyHeaderCell', Ed11y.M.tableEmptyHeaderCell.tip(), 'afterbegin', false]);
           }
         });

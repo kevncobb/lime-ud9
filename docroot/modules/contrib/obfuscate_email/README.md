@@ -27,7 +27,7 @@ consists of three parts:
 
 **Notice**: There is no non-javascript fallback to this method!
 
-## How to use the template
+## How to use the template 
 
 Have a look into ``template/field--email.html.twig`` to have a fully working
 example. This template will be used when the module is enabled. Use the
@@ -52,8 +52,9 @@ Note: Use the `data-replace-inner` attribute to replace the complete inner text,
 or give it a string to only replace this very string.
 
 ## How to use the text filter
-
+ 
 In the backend go to `admin/config/content/formats`, e.g. Basic HTML, and under
 the section "Enabled filters" check the box "Obfuscate Email". So now every
 mailto-anchor written in the ckeditor will be preprocessed before rendering and
 substituted on the client side.
+

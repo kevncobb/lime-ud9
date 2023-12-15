@@ -852,8 +852,6 @@ class Utility {
     }
 
     if ($k) {
-      $k_without_fuzziness = $k;
-
       switch ($parse_mode_id) {
         case 'edismax':
           $query_parts[] = "({!edismax qf='" . implode(' ', $fields) . "'}" . $pre . implode(' ' . $pre, $k) . ')';
@@ -905,31 +903,25 @@ class Utility {
             if ($sloppiness && strpos($term_or_phrase, ' ') && strpos($term_or_phrase, '"') === 0) {
               $term_or_phrase .= $sloppiness;
             }
-            // Otherwise, just add fuzziness when if we really have a term with
-            // at least 3 characters.
-            elseif ($fuzziness && !strpos($term_or_phrase, ' ') && strpos($term_or_phrase, '"') !== 0 && mb_strlen($term_or_phrase) >= 3) {
+            // Otherwise, just add fuzziness when if we really have a term.
+            elseif ($fuzziness && !strpos($term_or_phrase, ' ') && strpos($term_or_phrase, '"') !== 0) {
               $term_or_phrase .= $fuzziness;
             }
             unset($term_or_phrase);
           }
 
           if (count($fields) > 0) {
-            foreach ($fields as $field) {
+            foreach ($fields as $f) {
+              $field = $f;
               $boost = '';
               // Split on operators:
               // - boost (^)
               // - fixed score (^=)
-              if ($split = preg_split('/([\^])/', $field, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE)) {
+              if ($split = preg_split('/([\^])/', $f, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE)) {
                 $field = array_shift($split);
                 $boost = implode('', $split);
               }
-              // Do not apply fuzziness to "fulltext string" fields.
-              if (preg_match('/^t[^_]*string/', $field)) {
-                $query_parts[] = $field . ':(' . $pre . implode(' ' . $pre, $k_without_fuzziness) . ')' . $boost;
-              }
-              else {
-                $query_parts[] = $field . ':(' . $pre . implode(' ' . $pre, $k) . ')' . $boost;
-              }
+              $query_parts[] = $field . ':(' . $pre . implode(' ' . $pre, $k) . ')' . $boost;
             }
           }
           else {

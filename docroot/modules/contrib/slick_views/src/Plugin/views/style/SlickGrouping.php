@@ -3,6 +3,7 @@
 namespace Drupal\slick_views\Plugin\views\style;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\blazy\Blazy;
 
 /**
  * Slick style plugin with grouping support.
@@ -83,7 +84,7 @@ class SlickGrouping extends SlickViewsBase {
 
     for ($i = 0; $i <= count($groupings); $i++) {
       foreach (['rendered', 'rendered_strip'] as $key) {
-        // $form['grouping'][$i][$key]['#field_suffix'] = '&nbsp;';
+        $form['grouping'][$i][$key]['#field_suffix'] = '&nbsp;';
         $form['grouping'][$i][$key]['#title_display'] = 'before';
       }
     }
@@ -106,9 +107,8 @@ class SlickGrouping extends SlickViewsBase {
     $tags     = ['span', 'a', 'em', 'strong', 'i', 'button'];
 
     if (!empty($grouping) && $tabs) {
-      $options = [];
       foreach ($sets as $set) {
-        $thumb = [];
+        $options = [];
         $options['nav'] = TRUE;
         $options['skin'] = '';
         $options['skin_thumbnail'] = $settings['skin_thumbnail'];
@@ -117,18 +117,18 @@ class SlickGrouping extends SlickViewsBase {
         $options['optionset_thumbnail'] = $settings['optionset_thumbnail'];
 
         $slide = [
-          '#settings' => $options,
-          static::$itemId => $set,
+          'settings' => $options,
+          'slide' => $set,
         ];
 
-        $thumb[static::$itemId]['#markup'] = empty($set['#title']) ? '' : strip_tags($set['#title'], '<span><a><em><strong><i><button>');
-        $thumb[static::$itemId]['#allowed_tags'] = $tags;
+        $thumb['slide']['#markup'] = empty($set['#title']) ? '' : strip_tags($set['#title'], '<span><a><em><strong><i><button>');
+        $thumb['slide']['#allowed_tags'] = $tags;
 
         $build['items'][] = $slide;
-        $build[static::$navId]['items'][] = $thumb;
+        $build['thumb']['items'][] = $thumb;
       }
 
-      $build['#settings'] = $options;
+      $build['settings'] = $options;
       $sets = $this->manager->build($build);
     }
 
@@ -146,7 +146,7 @@ class SlickGrouping extends SlickViewsBase {
     $plugin_id = $this->getPluginId();
     $grouping  = empty($settings['grouping']) ? [] : array_filter($settings['grouping']);
     $id        = $grouping ? "{$view_name}-{$view_mode}-{$level}" : "{$view_name}-{$view_mode}";
-    $id        = $this->manager->getHtmlId($plugin_id . '-views-' . $id, $settings['id'] ?? '');
+    $id        = Blazy::getHtmlId($plugin_id . '-views-' . $id, $settings['id']);
     $settings  = $this->buildSettings();
 
     // Prepare needed settings to work with.
@@ -156,11 +156,10 @@ class SlickGrouping extends SlickViewsBase {
     }
 
     $build = $this->buildElements($settings, $rows);
-
     // Extracts Blazy formatter settings if available.
     $this->checkBlazy($settings, $build, $rows);
 
-    $build['#settings'] = $settings;
+    $build['settings'] = $settings;
 
     return $this->manager->build($build);
   }
@@ -172,8 +171,7 @@ class SlickGrouping extends SlickViewsBase {
    */
   public function renderGroupingSets($sets) {
     $output = [];
-    $grouping = empty($this->options['grouping'])
-      ? [] : array_filter($this->options['grouping']);
+    $grouping = empty($this->options['grouping']) ? [] : array_filter($this->options['grouping']);
 
     foreach ($sets as $set) {
       $level = $set['level'] ?? 0;

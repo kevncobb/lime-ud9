@@ -1,8 +1,6 @@
 /**
- * @file
- * content_browser.view.js
+ * @file content_browser.view.js
  */
-
 (function ($, Drupal) {
 
   "use strict";
@@ -14,7 +12,7 @@
     attach: function (context) {
       $('body').addClass('content-browser-page').fadeIn();
 
-      $(once('bind-click-event', '.views-row')).click(function () {
+      $('.views-row').once('bind-click-event').click(function  () {
         var input = $(this).find('.views-field-entity-browser-select input');
         input.prop('checked', !input.prop('checked'));
         if (input.prop('checked')) {

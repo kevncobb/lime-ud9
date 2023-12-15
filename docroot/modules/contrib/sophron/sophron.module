@@ -1,11 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * @file
  * Sophron - MIME types management API.
  */
-
-declare(strict_types=1);
 
 use Drupal\Core\Routing\RouteMatchInterface;
 

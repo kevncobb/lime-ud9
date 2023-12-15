@@ -5,7 +5,7 @@ core_version_requirement: ^9 || ^10
 package: Logging
 configure: event_log_track.settings_form
 
-# Information added by Drupal.org packaging script on 2023-11-27
-version: '3.1.9'
+# Information added by Drupal.org packaging script on 2023-10-13
+version: '3.1.8'
 project: 'events_log_track'
-datestamp: 1701117936
+datestamp: 1697214293

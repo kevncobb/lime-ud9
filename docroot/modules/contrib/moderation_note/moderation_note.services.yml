@@ -1,6 +1,0 @@
-services:
-  moderation_note.menu_count:
-    class: Drupal\moderation_note\Service\MenuCountService
-    arguments:
-      - '@entity_type.manager'
-      - '@string_translation'

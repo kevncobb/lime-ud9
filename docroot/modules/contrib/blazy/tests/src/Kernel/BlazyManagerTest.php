@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\blazy\Kernel;
 
-use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyDefault;
 use Drupal\blazy\Theme\BlazyTheme;
 
@@ -52,21 +51,20 @@ class BlazyManagerTest extends BlazyKernelTestBase {
     $this->blazyManager->postSettings($settings);
 
     $blazies = $settings['blazies'];
-    $blazies->set('count', $this->maxItems)
-      ->set('entity.url', $url)
-      ->set('media.embed_url', $settings['embed_url'] ?? '')
+    $blazies->set('entity.url', $url);
+    $blazies->set('media.embed_url', $settings['embed_url'] ?? '');
     // $blazies->set('is.lightbox', ($settings['lightbox'] ?? FALSE));
-      ->set('media.type', $settings['type'] ?? '')
-      ->set('image.uri', $this->uri);
+    $blazies->set('media.type', $settings['type'] ?? '');
 
     $settings['count'] = $this->maxItems;
+    $settings['uri'] = $this->uri;
 
-    $build['#settings'] = array_merge($build['#settings'], $settings);
+    $build['settings'] = array_merge($build['settings'], $settings);
     $switch_css = str_replace('_', '-', $settings['media_switch']);
 
     $element = $this->doPreRenderImage($build);
 
-    $blazies = $build['#settings']['blazies'];
+    $blazies = $build['settings']['blazies'];
     if ($url && $blazies->get('switch') == 'content') {
       $this->assertEquals($blazies->get('entity.url'), $element['#url']);
       $this->assertArrayHasKey('#url', $element);
@@ -137,7 +135,6 @@ class BlazyManagerTest extends BlazyKernelTestBase {
    * @param bool $expected
    *   Whether the expected output is an image.
    *
-   * @covers \Drupal\blazy\Blazy::init
    * @covers \Drupal\blazy\Theme\BlazyTheme::blazy
    * @covers \Drupal\blazy\Media\BlazyImage::prepare
    * @covers \Drupal\blazy\BlazyDefault::entitySettings
@@ -149,42 +146,35 @@ class BlazyManagerTest extends BlazyKernelTestBase {
   public function testPreprocessBlazy(array $settings, $use_uri, $use_item, $iframe, $expected) {
     $variables = ['attributes' => []];
     $input_url = $settings['input_url'] ?? NULL;
-    $settings  = array_merge($this->getFormatterSettings(), $settings);
-    $settings += Blazy::init();
-    $blazies   = $settings['blazies'];
-    $id        = 'blazy';
+    $settings = array_merge($this->getFormatterSettings(), $settings);
+    $settings += BlazyDefault::itemSettings();
+    $blazies = $settings['blazies'];
+    $id = 'blazy';
 
     $blazies->set('item.id', $id)
       ->set('is.blazy', TRUE)
-      ->set('lazy.id', $id)
-      ->set('image.uri', $use_uri ? $this->uri : '');
+      ->set('lazy.id', $id);
 
     $settings['image_style']     = 'blazy_crop';
     $settings['thumbnail_style'] = 'thumbnail';
+    $settings['uri']             = $use_uri ? $this->uri : '';
 
     if ($input_url) {
       $settings = array_merge(BlazyDefault::entitySettings(), $settings);
     }
 
     $this->blazyManager->postSettings($settings);
-
     $blazies = $settings['blazies']->reset($settings);
-    $item    = $use_item ? $this->testItem : NULL;
+    $item = $use_item ? $this->testItem : NULL;
 
     if ($input_url) {
       $blazies->set('media.input_url', $input_url)
-        ->set('media.source', 'oembed:video')
-        ->set('media.bundle', 'remote_video')
-        ->set('type', 'video');
+        ->set('media.source', 'oembed:video');
 
-      $data = [
-        '#entity'   => $this->entity,
-        '#settings' => $settings,
-        '#item'     => $item,
-      ];
+      $data = ['item' => $item, 'settings' => $settings];
 
       $this->blazyOembed->build($data);
-      $settings = $data['#settings'];
+      $settings = $data['settings'];
     }
 
     $variables['element']['#item'] = $item;
@@ -192,7 +182,7 @@ class BlazyManagerTest extends BlazyKernelTestBase {
 
     BlazyTheme::blazy($variables);
 
-    $image  = $expected == TRUE ? !empty($variables['image']) : empty($variables['image']);
+    $image = $expected == TRUE ? !empty($variables['image']) : empty($variables['image']);
     $iframe = $iframe == TRUE ? !empty($variables['iframe']) : empty($variables['iframe']);
 
     $this->assertTrue($image);
@@ -237,10 +227,11 @@ class BlazyManagerTest extends BlazyKernelTestBase {
         'input_url' => 'https://www.youtube.com/watch?v=uny9kbh4iOEd',
         'media_switch' => 'media',
         'ratio' => 'fluid',
-        // 'width' => 640,
-        // 'height' => 360,
-        // 'bundle' => 'remote_video',
-        // 'type' => 'video',
+        'sizes' => '100w',
+        'width' => 640,
+        'height' => 360,
+        'bundle' => 'remote_video',
+        'type' => 'video',
       ],
       FALSE,
       TRUE,

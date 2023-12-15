@@ -27,7 +27,7 @@ class EventsTrackForm extends ConfigFormBase {
    */
   protected function getEditableConfigNames() {
     return [
-      'event_log_track.settings',
+      'event_log_track.adminsettings',
     ];
   }
 
@@ -35,7 +35,7 @@ class EventsTrackForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('event_log_track.settings');
+    $config = $this->config('event_log_track.adminsettings');
     $form['enable_log_deletion'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable log deletion'),
@@ -67,12 +67,6 @@ class EventsTrackForm extends ConfigFormBase {
       '#default_value' => $config->get('disable_db_logs') ?: FALSE,
     ];
 
-    $form['log_cli'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Log CLI'),
-      '#default_value' => $config->get('log_cli') ?: FALSE,
-    ];
-
     return parent::buildForm($form, $form_state);
   }
 
@@ -89,12 +83,11 @@ class EventsTrackForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
-    $this->config('event_log_track.settings')
+    $this->config('event_log_track.adminsettings')
       ->set('timespan_limit', $form_state->getValue('timespan_limit'))
       ->set('batch_size', $form_state->getValue('batch_size'))
       ->set('enable_log_deletion', $form_state->getValue('enable_log_deletion'))
       ->set('disable_db_logs', $form_state->getValue('disable_db_logs'))
-      ->set('log_cli', $form_state->getValue('log_cli'))
       ->save();
   }
 

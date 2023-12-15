@@ -2,38 +2,37 @@
 
 namespace Drupal\blazy\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\FieldItemListInterface;
+
 /**
- * Plugin implementation of the `Blazy File` or `Blazy Image`.
- *
- * Since 2.17, sub-modules can re-use this if similar to ::buildElements():
- * \Drupal\gridstack\Plugin\Field\FieldFormatter\GridStackFileFormatterBase
- * \Drupal\mason\Plugin\Field\FieldFormatter\MasonFileFormatterBase.
+ * Plugin implementation of the `Blazy File` or `Blazy Image` for Blazy only.
  *
  * @see \Drupal\blazy\Plugin\Field\FieldFormatter\BlazyFileFormatter
  * @see \Drupal\blazy\Plugin\Field\FieldFormatter\BlazyImageFormatter
  */
-class BlazyFormatterBlazy extends BlazyFileSvgFormatterBase {
+class BlazyFormatterBlazy extends BlazyFileFormatterBase {
 
   /**
    * {@inheritdoc}
    */
-  protected static $namespace = 'blazy';
+  public function viewElements(FieldItemListInterface $items, $langcode) {
+    $files = $this->getEntitiesToView($items, $langcode);
+
+    // Early opt-out if the field is empty.
+    if (empty($files)) {
+      return [];
+    }
+
+    return $this->commonViewElements($items, $langcode, $files);
+  }
 
   /**
    * {@inheritdoc}
    */
-  protected static $itemId = 'content';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $itemPrefix = 'blazy';
-
-  /**
-   * {@inheritdoc}
-   *
-   * @todo make it caption similar to sub-modules for easy 3.x migrations.
-   */
-  protected static $captionId = 'captions';
+  public function buildElements(array &$build, $files, $langcode) {
+    foreach ($this->getElements($build, $files) as $delta => $element) {
+      $build[] = $this->formatter->getBlazy($element, $delta);
+    }
+  }
 
 }

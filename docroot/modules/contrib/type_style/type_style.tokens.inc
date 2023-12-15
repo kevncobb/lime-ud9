@@ -1,8 +1,7 @@
 <?php
 
 /**
- * @file
- * Token hook implementations for the Type Style module.
+ * @file Token hook implementations for the Type Style module.
  */
 
 use Drupal\Core\Entity\EntityInterface;

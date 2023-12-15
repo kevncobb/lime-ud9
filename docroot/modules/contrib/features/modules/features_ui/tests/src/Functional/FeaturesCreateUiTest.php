@@ -45,7 +45,7 @@ class FeaturesCreateUiTest extends BrowserTestBase {
     $this->drupalPlaceBlock('local_actions_block');
     $this->drupalGet('admin/config/development/features');
     $this->clickLink('Create new feature');
-    $this->assertSession()->statusCodeEquals(200);
+    $this->assertResponse(200);
 
     $edit = [
       'name' => 'Test feature',
@@ -55,10 +55,10 @@ class FeaturesCreateUiTest extends BrowserTestBase {
       'system_simple[sources][selected][system.theme]' => TRUE,
       'system_simple[sources][selected][user.settings]' => TRUE,
     ];
-    $this->submitForm($edit, 'Download Archive');
+    $this->drupalPostForm(NULL, $edit, 'Download Archive');
 
-    $this->assertSession()->statusCodeEquals(200);
-    $archive = $this->getSession()->getPage()->getContent();
+    $this->assertResponse(200);
+    $archive = $this->getRawContent();
     $filename = tempnam($this->tempFilesDirectory, 'feature');
     file_put_contents($filename, $archive);
 
@@ -89,12 +89,12 @@ class FeaturesCreateUiTest extends BrowserTestBase {
     // Ensure that the features listing renders the right content.
     $this->drupalGet('admin/config/development/features');
     $tds = $this->xpath('//table[contains(@class, "features-listing")]/tbody/tr[td[3] = "' . $feature_name . '"]/td');
-    $this->assertSession()->linkExists('Test feature');
+    $this->assertLink('Test feature');
     $this->assertEquals($feature_name, $tds[2]->getText());
     $description_column = $tds[3]->getText();
     $this->assertTrue(strpos($description_column, 'system.theme') !== FALSE);
     $this->assertTrue(strpos($description_column, 'user.settings') !== FALSE);
-    $this->assertSession()->responseContains('Test description: <strong>giraffe</strong>');
+    $this->assertRaw('Test description: <strong>giraffe</strong>');
     $this->assertEquals('Uninstalled', $tds[5]->getText());
     $this->assertEquals('', $tds[6]->getText());
 
@@ -104,7 +104,7 @@ class FeaturesCreateUiTest extends BrowserTestBase {
       'system_simple[included][system.theme]' => FALSE,
       'user_role[sources][selected][authenticated]' => TRUE,
     ];
-    $this->submitForm($edit, 'Write');
+    $this->drupalPostForm(NULL, $edit, 'Write');
     $info_filename = $module_path . '/' . $feature_name . '.info.yml';
 
     $parsed_info = Yaml::decode(file_get_contents($info_filename));
@@ -124,8 +124,7 @@ class FeaturesCreateUiTest extends BrowserTestBase {
     // Install new feature module.
     $edit = [];
     $edit['modules[' . $feature_name . '][enable]'] = TRUE;
-    $this->drupalGet('admin/modules');
-    $this->submitForm($edit, 'Install');
+    $this->drupalPostForm('admin/modules', $edit, 'Install');
 
     // Check that the feature is listed as installed.
     $this->drupalGet('admin/config/development/features');
@@ -144,10 +143,9 @@ class FeaturesCreateUiTest extends BrowserTestBase {
 
     $tds = $this->xpath('//table[contains(@class, "features-listing")]/tbody/tr[td[3] = "' . $feature_name . '"]/td');
     $this->assertTrue(strpos($tds[6]->getText(), 'Changed') !== FALSE);
-    $this->drupalGet('admin/modules/uninstall');
 
     // Uninstall the module.
-    $this->submitForm(['uninstall[' . $feature_name . ']' => $feature_name], 'Uninstall');
+    $this->drupalPostForm('admin/modules/uninstall', ['uninstall[' . $feature_name . ']' => $feature_name], 'Uninstall');
     $this->submitForm([], 'Uninstall');
 
     $this->drupalGet('admin/config/development/features');
@@ -157,13 +155,12 @@ class FeaturesCreateUiTest extends BrowserTestBase {
 
     $this->clickLink('Changed');
     $this->drupalGet('admin/config/development/features/diff/' . $feature_name);
-    $this->assertSession()->responseContains('<td class="diff-context diff-deletedline">anonymous : <span class="diffchange">Giraffe</span></td>');
-    $this->assertSession()->responseContains('<td class="diff-context diff-addedline">anonymous : <span class="diffchange">Anonymous</span></td>');
+    $this->assertRaw('<td class="diff-context diff-deletedline">anonymous : <span class="diffchange">Giraffe</span></td>');
+    $this->assertRaw('<td class="diff-context diff-addedline">anonymous : <span class="diffchange">Anonymous</span></td>');
 
     $edit = [];
     $edit['modules[' . $feature_name . '][enable]'] = TRUE;
-    $this->drupalGet('admin/modules');
-    $this->submitForm($edit, 'Install');
+    $this->drupalPostForm('admin/modules', $edit, 'Install');
 
     $this->drupalGet('admin/config/development/features');
     $tds = $this->xpath('//table[contains(@class, "features-listing")]/tbody/tr[td[3] = "' . $feature_name . '"]/td');
@@ -183,7 +180,7 @@ class FeaturesCreateUiTest extends BrowserTestBase {
     $this->assertTrue(strpos($tds[6]->getText(), 'Changed') !== FALSE);
 
     $this->clickLink('Test feature');
-    $this->submitForm([], 'Write');
+    $this->drupalPostForm(NULL, [], 'Write');
 
     $this->drupalGet('admin/config/development/features');
     $tds = $this->xpath('//table[contains(@class, "features-listing")]/tbody/tr[td[3] = "' . $feature_name . '"]/td');

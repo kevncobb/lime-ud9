@@ -28,7 +28,7 @@ function feeds_tamper_make_machine($string) {
  *
  * @param string|FeedsImporter $importer
  *   The importer or importer id being tampered with.
- * @param string|object $instance
+ * @param string|stdClass $instance
  *   (optional) If set, the importer attached to $instance will be tried first.
  *   Defaults to NULL.
  *

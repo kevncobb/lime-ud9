@@ -6,37 +6,60 @@ use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\Core\TypedData\ListDataDefinition;
 use Drupal\Core\TypedData\MapDataDefinition;
+use Drupal\Core\TypedData\TypedDataTrait;
+use Drupal\Tests\BrowserTestBase;
+use Drupal\Tests\typed_data\Traits\BrowserTestHelpersTrait;
+use Drupal\typed_data\Util\StateTrait;
+use Drupal\typed_data\Widget\FormWidgetManagerTrait;
 
 /**
- * Tests operation of the 'select' TypedDataForm widget plugin.
+ * Class SelectWidgetTest.
  *
  * @group typed_data
  *
  * @coversDefaultClass \Drupal\typed_data\Plugin\TypedDataFormWidget\SelectWidget
  */
-class SelectWidgetTest extends FormWidgetBrowserTestBase {
+class SelectWidgetTest extends BrowserTestBase {
+
+  use BrowserTestHelpersTrait;
+  use FormWidgetManagerTrait;
+  use StateTrait;
+  use TypedDataTrait;
+
+  /**
+   * The tested form widget.
+   *
+   * @var \Drupal\typed_data\Widget\FormWidgetInterface
+   */
+  protected $widget;
+
+  /**
+   * Modules to enable.
+   *
+   * @var array
+   */
+  public static $modules = [
+    'typed_data',
+    'typed_data_widget_test',
+    'text',
+  ];
 
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['text'];
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp(): void {
+  public function setUp() {
     parent::setUp();
-    $this->createWidget('select');
+    $this->widget = $this->getFormWidgetManager()->createInstance('select');
   }
 
   /**
    * @covers ::isApplicable
    */
-  public function testIsApplicable(): void {
+  public function testIsApplicable() {
     $this->assertFalse($this->widget->isApplicable(DataDefinition::create('any')));
     $this->assertFalse($this->widget->isApplicable(DataDefinition::create('binary')));
     $this->assertFalse($this->widget->isApplicable(DataDefinition::create('boolean')));
-    $this->assertFalse($this->widget->isApplicable(DataDefinition::create('datetime_iso8601')));
+    $this->assertFalse($this->widget->isApplicable(DataDefinition::create('datetime_iso8601')));;
     $this->assertFalse($this->widget->isApplicable(DataDefinition::create('duration_iso8601')));
     $this->assertFalse($this->widget->isApplicable(DataDefinition::create('email')));
     $this->assertFalse($this->widget->isApplicable(DataDefinition::create('float')));
@@ -54,53 +77,52 @@ class SelectWidgetTest extends FormWidgetBrowserTestBase {
    * @covers ::form
    * @covers ::extractFormValues
    */
-  public function testFormEditing(): void {
+  public function testFormEditing() {
     $context_definition = ContextDefinition::create('filter_format')
       ->setLabel('Filter format')
       ->setDescription('Some example selection.');
-    $this->container->get('state')->set('typed_data_widgets.definition', $context_definition);
+    $this->getState()->set('typed_data_widgets.definition', $context_definition);
 
+    $this->drupalLogin($this->createUser([], NULL, TRUE));
     $path = 'admin/config/user-interface/typed-data-widgets/' . $this->widget->getPluginId();
     $this->drupalGet($path);
 
-    /** @var \Drupal\Tests\WebAssert $assert */
-    $assert = $this->assertSession();
-    $assert->elementTextContains('css', 'label[for=edit-data-value]', $context_definition->getLabel());
-    $assert->elementTextContains('css', 'div[id=edit-data-value--description]', $context_definition->getDescription());
-    $assert->fieldValueEquals('data[value]', $context_definition->getDefaultValue());
+    $this->assertSession()->elementTextContains('css', 'label[for=edit-data-value]', $context_definition->getLabel());
+    $this->assertSession()->elementTextContains('css', 'div[id=edit-data-value--description]', $context_definition->getDescription());
+    $this->assertSession()->fieldValueEquals('data[value]', $context_definition->getDefaultValue());
 
     $this->getSession()->getPage()->selectFieldOption('data[value]', 'plain_text');
     $this->pressButton('Submit');
 
     $this->drupalGet($path);
-    $assert->fieldValueEquals('data[value]', 'plain_text');
+    $this->assertSession()->fieldValueEquals('data[value]', 'plain_text');
   }
 
   /**
    * @covers ::form
    * @covers ::flagViolations
    */
-  public function testValidation(): void {
+  public function testValidation() {
     $context_definition = ContextDefinition::create('filter_format')
       ->setLabel('Filter format')
       ->setDescription('Some example selection.')
       ->setRequired(TRUE);
-    $this->container->get('state')->set('typed_data_widgets.definition', $context_definition);
+    $this->getState()->set('typed_data_widgets.definition', $context_definition);
 
+    $this->drupalLogin($this->createUser([], NULL, TRUE));
     $path = 'admin/config/user-interface/typed-data-widgets/' . $this->widget->getPluginId();
     $this->drupalGet($path);
 
     // Set the empty option and make sure it results in a violation.
     $this->fillField('data[value]', '');
     $this->pressButton('Submit');
-
-    /** @var \Drupal\Tests\WebAssert $assert */
-    $assert = $this->assertSession();
-    $assert->fieldExists('data[value]')->hasClass('error');
+    $this->assertSession()
+      ->fieldExists('data[value]')
+      ->hasClass('error');
 
     // Make sure the changes have not been saved also.
     $this->drupalGet($path);
-    $assert->fieldValueEquals('data[value]', $context_definition->getDefaultValue());
+    $this->assertSession()->fieldValueEquals('data[value]', $context_definition->getDefaultValue());
   }
 
 }

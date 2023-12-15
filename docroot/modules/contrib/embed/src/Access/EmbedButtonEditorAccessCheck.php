@@ -3,8 +3,8 @@
 namespace Drupal\embed\Access;
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\editor\EditorInterface;
 use Drupal\embed\EmbedButtonInterface;
@@ -78,7 +78,7 @@ class EmbedButtonEditorAccessCheck implements AccessInterface {
    *   currently only capable of detecting buttons used by CKEditor.
    */
   protected function checkButtonEditorAccess(EmbedButtonInterface $embed_button, EditorInterface $editor) {
-    if (!in_array($editor->getEditor(), ['ckeditor', 'ckeditor5'])) {
+    if (!in_array($editor->getEditor(), ['ckeditor', 'ckeditor5'], TRUE)) {
       throw new HttpException(500, 'Currently, only CKEditor is supported.');
     }
 

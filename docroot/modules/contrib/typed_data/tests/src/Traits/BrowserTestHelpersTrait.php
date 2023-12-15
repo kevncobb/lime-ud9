@@ -2,8 +2,6 @@
 
 namespace Drupal\Tests\typed_data\Traits;
 
-use Behat\Mink\Element\NodeElement;
-
 /**
  * Provides some helpers for BrowserTestBase.
  */
@@ -18,7 +16,7 @@ trait BrowserTestHelpersTrait {
    * @return \Behat\Mink\Element\NodeElement|null
    *   The link node element.
    */
-  public function findLink(string $locator): ?NodeElement {
+  public function findLink($locator) {
     return $this->getSession()->getPage()->findLink($locator);
   }
 
@@ -31,7 +29,7 @@ trait BrowserTestHelpersTrait {
    * @return \Behat\Mink\Element\NodeElement|null
    *   The input field element.
    */
-  public function findField(string $locator): ?NodeElement {
+  public function findField($locator) {
     return $this->getSession()->getPage()->findField($locator);
   }
 
@@ -44,7 +42,7 @@ trait BrowserTestHelpersTrait {
    * @return \Behat\Mink\Element\NodeElement|null
    *   The button node element.
    */
-  public function findButton(string $locator): ?NodeElement {
+  public function findButton($locator) {
     return $this->getSession()->getPage()->findButton($locator);
   }
 
@@ -56,7 +54,7 @@ trait BrowserTestHelpersTrait {
    *
    * @throws \Behat\Mink\Exception\ElementNotFoundException
    */
-  public function pressButton(string $locator): void {
+  public function pressButton($locator) {
     $this->getSession()->getPage()->pressButton($locator);
   }
 
@@ -72,7 +70,7 @@ trait BrowserTestHelpersTrait {
    *
    * @see \Behat\Mink\Element\NodeElement::setValue
    */
-  public function fillField(string $locator, string $value): void {
+  public function fillField($locator, $value) {
     $this->getSession()->getPage()->fillField($locator, $value);
   }
 

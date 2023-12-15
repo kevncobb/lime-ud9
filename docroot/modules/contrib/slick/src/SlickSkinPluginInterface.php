@@ -2,12 +2,10 @@
 
 namespace Drupal\slick;
 
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-
 /**
  * Provides an interface defining Slick skins.
  */
-interface SlickSkinPluginInterface extends ContainerFactoryPluginInterface {
+interface SlickSkinPluginInterface {
 
   /**
    * Returns the plugin label.

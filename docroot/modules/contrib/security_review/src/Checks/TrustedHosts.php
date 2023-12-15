@@ -16,6 +16,13 @@ class TrustedHosts extends Check {
   /**
    * {@inheritdoc}
    */
+  public function __construct() {
+    parent::__construct();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getNamespace() {
     return 'Security Review';
   }

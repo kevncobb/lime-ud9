@@ -15,8 +15,6 @@ namespace Symfony\Component\DependencyInjection;
  * ContainerAwareInterface should be implemented by classes that depends on a Container.
  *
  * @author Fabien Potencier <fabien@symfony.com>
- *
- * @deprecated since Symfony 6.4, use dependency injection instead
  */
 interface ContainerAwareInterface
 {

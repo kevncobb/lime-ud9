@@ -3,7 +3,6 @@
 namespace Drupal\printable\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\printable\PrintableLinkBuilderInterface;
@@ -46,13 +45,6 @@ class PrintableLinksBlock extends BlockBase implements ContainerFactoryPluginInt
   protected $dateFormatter;
 
   /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManager
-   */
-  protected $entityTypeManager;
-
-  /**
    * {@inheritdoc}
    *
    * @param array $configuration
@@ -67,15 +59,12 @@ class PrintableLinksBlock extends BlockBase implements ContainerFactoryPluginInt
    *   The printable link builder.
    * @param \Drupal\Core\Datetime\DateFormatter $dateFormatter
    *   Provides a service to handle various date related functionality.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *   The entity type manager service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $routematch, PrintableLinkBuilderInterface $link_builder, DateFormatter $dateFormatter, EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $routematch, PrintableLinkBuilderInterface $link_builder, DateFormatter $dateFormatter) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->routematch = $routematch;
     $this->linkBuilder = $link_builder;
     $this->dateFormatter = $dateFormatter;
-    $this->entityTypeManager = $entityTypeManager;
   }
 
   /**
@@ -88,18 +77,8 @@ class PrintableLinksBlock extends BlockBase implements ContainerFactoryPluginInt
       $plugin_definition,
       $container->get('current_route_match'),
       $container->get('printable.link_builder'),
-      $container->get('date.formatter'),
-      $container->get('entity_type.manager')
+      $container->get('date.formatter')
     );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function defaultConfiguration() {
-    return [
-      'max_age' => 180,
-    ];
   }
 
   /**
@@ -138,7 +117,7 @@ class PrintableLinksBlock extends BlockBase implements ContainerFactoryPluginInt
       '#type' => 'select',
       '#title' => $this->t('Maximum age'),
       '#description' => $this->t('The maximum time this block may be cached.'),
-      '#default_value' => $this->configuration['max_age'],
+      '#default_value' => $period[0],
       '#options' => $period,
     ];
     return $form;
@@ -147,37 +126,14 @@ class PrintableLinksBlock extends BlockBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
-  public function blockSubmit($form, FormStateInterface $form_state) {
-    $settings = $form_state->getValue('cache');
-    $this->configuration['max_age'] = $settings['max_age'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function build() {
     $entity_type = $this->getDerivativeId();
-    $route_match = $this->routematch->getMasterRouteMatch();
-    $route_entity = $route_match->getParameter($entity_type);
-    $entity_id = $route_entity ? $route_entity->id() : 'NULL';
-
-    $build = [
-      '#cache' => [
-        'contexts' => ['route'],
-        'tags' => [$entity_type . ':' . $entity_id],
-        'max-age' => $this->configuration['max_age'] ?: 0,
-      ],
-    ];
-
-    if ($route_entity) {
-      return $build + [
+    if ($this->routematch->getMasterRouteMatch()->getParameter($entity_type)) {
+      return [
         '#theme' => 'links__entity__printable',
         '#links' => $this->linkBuilder->buildLinks($this->routematch->getMasterRouteMatch()
           ->getParameter($entity_type)),
       ];
-    }
-    else {
-      return $build;
     }
   }
 

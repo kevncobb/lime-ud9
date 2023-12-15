@@ -1,6 +1,6 @@
 {
   "name": "drupal/varbase_bootstrap_paragraphs",
-  "description": "Varbase Bootstrap Paragraphs : A suite of Paragraph bundles to be used for Varbase distribution. Made with the Bootstrap framework, based on a fork of Bootstrap Paragraph module (bootstrap_paragraphs).",
+  "description": "Varbase Bootstrap Paragraphs : A suite of Paragraph bundles to be used for Varbase distribution. Made with the Boostrap framework, based on a fork of Bootstrap Paragraph module (bootstrap_paragraphs).",
   "type": "drupal-module",
   "homepage": "https://www.drupal.org/project/varbase_bootstrap_paragraphs",
   "license": "GPL-2.0-or-later",
@@ -27,22 +27,22 @@
     }
   },
   "require": {
-    "composer/installers": "~2",
-    "oomphinc/composer-installers-extender": "~2",
-    "cweagans/composer-patches": "~1",
-    "drupal/core": "~10",
-    "vardot/entity-definition-update-manager": "~1",
-    "vardot/module-installer-factory": "~1",
-    "drupal/varbase_media": "~10",
+    "composer/installers": "~2.0",
+    "oomphinc/composer-installers-extender": "~2.0",
+    "cweagans/composer-patches": "~1.0",
+    "drupal/core": "~10.1.0",
+    "vardot/entity-definition-update-manager": "~1.0",
+    "vardot/module-installer-factory": "~1.0",
+    "drupal/varbase_media": "~10.0",
     "drupal/paragraphs": "1.16.0",
     "drupal/paragraphs_previewer": "1.8.0",
-    "drupal/paragraphs_edit": "~2 || ~3",
-    "drupal/viewsreference": "~2",
-    "drupal/webform": "~6",
-    "drupal/field_group": "~3",
-    "drupal/advanced_text_formatter": "~3",
-    "drupal/maxlength": "~2",
-    "drupal/entity_usage": "~2"
+    "drupal/paragraphs_edit": "~2.0",
+    "drupal/viewsreference": "~2.0",
+    "drupal/webform": "~6.0",
+    "drupal/field_group": "~3.0",
+    "drupal/advanced_text_formatter": "~3.0",
+    "drupal/maxlength": "~2.0",
+    "drupal/entity_usage": "~2.0"
   },
   "extra": {
     "enable-patching": true,
@@ -52,9 +52,7 @@
         "Issue #2924774: Let Editors add/delete/clone paragraphs When [Editing a translation]":
         "https://www.drupal.org/files/issues/2018-06-03/2924774-29.patch",
         "Issue #3138609: Fixe Field group support broken":
-        "https://www.drupal.org/files/issues/2020-06-03/3138609-24.patch",
-        "Issue #3090200: Paragraph access check using incorrect revision of its parent, leading to issues editing and viewing paragraphs when content moderation is involved.":
-        "https://www.drupal.org/files/issues/2023-01-31/3084934-13_combine_3090200-22-update_0.patch"
+        "https://www.drupal.org/files/issues/2020-06-03/3138609-24.patch"
       },
       "drupal/paragraphs_previewer": {
         "Issue #2904917: Make paragraph previewer work with new UI/UX improvement patch":

@@ -2,6 +2,8 @@
 
 namespace Drupal\slick\Entity;
 
+use Drupal\blazy\Blazy;
+
 /**
  * Defines the Slick configuration entity.
  *
@@ -62,68 +64,42 @@ class Slick extends SlickBase implements SlickInterface {
   /**
    * {@inheritdoc}
    */
-  public function getBreakpoints(): int {
-    return $this->breakpoints ?? 0;
+  public function getSkin() {
+    return $this->skin;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getSkin(): string {
-    return $this->skin ?? '';
+  public function getBreakpoints() {
+    return $this->breakpoints;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getGroup(): string {
-    return $this->group ?? '';
+  public function getGroup() {
+    return $this->group;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function optimized(): bool {
-    return $this->optimized ?? FALSE;
+  public function optimized() {
+    return $this->optimized;
   }
 
   /**
-   * Defines the dependent options.
+   * Returns the Slick responsive settings.
    *
    * @return array
-   *   The dependent options.
+   *   The responsive options.
    */
-  public static function getDependentOptions(): array {
-    $down_arrow = ['downArrowTarget', 'downArrowOffset'];
-    return [
-      'arrows'     => ['arrowsPlacement', 'prevArrow', 'nextArrow', 'downArrow'] + $down_arrow,
-      'downArrow'  => $down_arrow,
-      'autoplay'   => [
-        'pauseOnHover',
-        'pauseOnDotsHover',
-        'pauseOnFocus',
-        'autoplaySpeed',
-        'useAutoplayToggleButton',
-        'pauseIcon',
-        'playIcon',
-      ],
-      'centerMode' => ['centerPadding'],
-      'dots'       => ['dotsClass', 'appendDots'],
-      'swipe'      => ['swipeToSlide'],
-      'useCSS'     => ['cssEase', 'cssEaseBezier', 'cssEaseOverride'],
-      'vertical'   => ['verticalSwiping'],
-    ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getResponsiveOptions(): array {
-    $options = [];
+  public function getResponsiveOptions() {
     if (empty($this->breakpoints)) {
-      return $options;
+      return FALSE;
     }
-
+    $options = [];
     if (isset($this->options['responsives']['responsive'])) {
       $responsives = $this->options['responsives'];
       if ($responsives['responsive']) {
@@ -141,35 +117,23 @@ class Slick extends SlickBase implements SlickInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * Sets the Slick responsive settings.
+   *
+   * @return $this
+   *   The class instance that this method is called on.
    */
-  public function setResponsiveSettings($values, $delta = 0, $key = 'settings'): self {
+  public function setResponsiveSettings($values, $delta = 0, $key = 'settings') {
     $this->options['responsives']['responsive'][$delta][$key] = $values;
     return $this;
   }
 
   /**
-   * {@inheritdoc}
+   * Strip out options containing default values so to have real clean JSON.
+   *
+   * @return array
+   *   The cleaned out settings.
    */
-  public function removeWastedDependentOptions(array &$js): void {
-    foreach (self::getDependentOptions() as $key => $option) {
-      if (isset($js[$key]) && empty($js[$key])) {
-        foreach ($option as $dependent) {
-          unset($js[$dependent]);
-        }
-      }
-    }
-
-    if (!empty($js['useCSS']) && !empty($js['cssEaseBezier'])) {
-      $js['cssEase'] = $js['cssEaseBezier'];
-    }
-    unset($js['cssEaseOverride'], $js['cssEaseBezier']);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function toJson(array $js): array {
+  public function removeDefaultValues(array $js) {
     $config   = [];
     $defaults = self::defaultSettings();
 
@@ -222,29 +186,94 @@ class Slick extends SlickBase implements SlickInterface {
   }
 
   /**
-   * Strip out options containing default values so to have real clean JSON.
-   *
-   * @return array
-   *   The cleaned out settings.
-   *
-   * @todo reprecated in 2.10, and is removed from 3.x. Use self::toJson()
-   *   instead.
+   * Removes wasted dependent options, even if not empty.
    */
-  public function removeDefaultValues(array $js): array {
-    return $this->toJson($js);
+  public function removeWastedDependentOptions(array &$js) {
+    foreach (self::getDependentOptions() as $key => $option) {
+      if (isset($js[$key]) && empty($js[$key])) {
+        foreach ($option as $dependent) {
+          unset($js[$dependent]);
+        }
+      }
+    }
+
+    if (!empty($js['useCSS']) && !empty($js['cssEaseBezier'])) {
+      $js['cssEase'] = $js['cssEaseBezier'];
+    }
+    unset($js['cssEaseOverride'], $js['cssEaseBezier']);
   }
 
   /**
-   * Deprecated in blazy:8.x-2.17.
+   * Defines the dependent options.
    *
-   * Since blazy:2.17, sliders lazyloads are deprecated to avoid complication.
-   *
-   * @deprecated in slick:8.x-2.10 and is removed from slick:3.0.0. Use
-   * none instead.
-   * @see https://www.drupal.org/node/3239708
+   * @return array
+   *   The dependent options.
    */
-  public function whichLazy(array &$settings): void {
-    // Do nothing.
+  public static function getDependentOptions() {
+    $down_arrow = ['downArrowTarget', 'downArrowOffset'];
+    return [
+      'arrows'     => ['arrowsPlacement', 'prevArrow', 'nextArrow', 'downArrow'] + $down_arrow,
+      'downArrow'  => $down_arrow,
+      'autoplay'   => [
+        'pauseOnHover',
+        'pauseOnDotsHover',
+        'pauseOnFocus',
+        'autoplaySpeed',
+        'useAutoplayToggleButton',
+        'pauseIcon',
+        'playIcon',
+      ],
+      'centerMode' => ['centerPadding'],
+      'dots'       => ['dotsClass', 'appendDots'],
+      'swipe'      => ['swipeToSlide'],
+      'useCSS'     => ['cssEase', 'cssEaseBezier', 'cssEaseOverride'],
+      'vertical'   => ['verticalSwiping'],
+    ];
+  }
+
+  /**
+   * Checks which lazyload to use.
+   */
+  public function whichLazy(array &$settings) {
+    $lazy = $this->getSetting('lazyLoad');
+
+    $settings['_lazy'] = TRUE;
+
+    // @todo remove check post Blazy 2.10 to follow up Blazy improvements:
+    // `Loading` priority, `No JavaScript: lazy`, etc.
+    if (method_exists(Blazy::class, 'which')) {
+      Blazy::which($settings, $lazy, 'lazy', 'lazy');
+    }
+    else {
+      // @todo remove these post Blazy 2.10.
+      $use_blazy = $lazy == 'blazy'
+        || !empty($settings['blazy'])
+        || !empty($settings['background'])
+        || !empty($settings['responsive_image_style']);
+
+      $lazy = $use_blazy ? 'blazy' : $lazy;
+
+      // Allows Blazy to take over for advanced features like Responsive image,
+      // CSS background, video, etc.
+      if (!$use_blazy && $lazy) {
+        $settings['lazy_class'] = $settings['lazy_attribute'] = 'lazy';
+      }
+
+      // Disable anything lazy-related settings if in preview mode.
+      $settings['blazy'] = $use_blazy;
+      $settings['lazy'] = empty($settings['is_preview']) ? $lazy : '';
+    }
+  }
+
+  /**
+   * If optionset does not exist, create one.
+   */
+  public static function verifyOptionset(array &$build, $name) {
+    if (empty($build['optionset'])) {
+      $build['optionset'] = self::loadWithFallback($name);
+    }
+    // Also returns it for convenient.
+    return $build['optionset'];
   }
 
 }

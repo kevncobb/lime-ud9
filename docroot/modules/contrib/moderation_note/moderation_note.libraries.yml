@@ -7,4 +7,4 @@ main:
       css/moderation_note.css: {}
   dependencies:
     - core/drupal.dialog.off_canvas
-    - core/once
+    - core/jquery.once

@@ -1,11 +1,6 @@
 CHANGELOG
 =========
 
-6.4
----
-
- * Add argument `$serverParameters` to `AbstractBrowser::click()` and `AbstractBrowser::clickLink()`
-
 6.3
 ---
 

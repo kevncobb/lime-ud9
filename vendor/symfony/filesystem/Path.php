@@ -42,9 +42,12 @@ final class Path
      *
      * @var array<string, string>
      */
-    private static array $buffer = [];
+    private static $buffer = [];
 
-    private static int $bufferSize = 0;
+    /**
+     * @var int
+     */
+    private static $bufferSize = 0;
 
     /**
      * Canonicalizes the given path.

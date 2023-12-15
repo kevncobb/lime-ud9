@@ -14,10 +14,9 @@ abstract class FeedsTamperBrowserTestBase extends FeedsBrowserTestBase {
    *
    * @var array
    */
-  protected static $modules = [
+  public static $modules = [
     'feeds',
     'feeds_tamper',
-    'feeds_tamper_test',
     'node',
     'user',
   ];
@@ -25,7 +24,7 @@ abstract class FeedsTamperBrowserTestBase extends FeedsBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp(): void {
+  protected function setUp() {
     parent::setUp();
 
     // Create an user with Feeds admin privileges.

@@ -238,7 +238,7 @@ abstract class BaseMappingsSettings {
       return [];
     }
 
-    return $element['mappings'] ?? [];
+    return $element['mappings'];
   }
 
   /**

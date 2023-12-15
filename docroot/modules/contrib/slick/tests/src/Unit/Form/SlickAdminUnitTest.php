@@ -2,8 +2,8 @@
 
 namespace Drupal\Tests\slick\Unit\Form;
 
-use Drupal\slick\Form\SlickAdmin;
 use Drupal\Tests\UnitTestCase;
+use Drupal\slick\Form\SlickAdmin;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -19,7 +19,7 @@ class SlickAdminUnitTest extends UnitTestCase {
    *
    * @var \Drupal\blazy\Form\BlazyAdminInterface
    */
-  protected $blazyAdmin;
+  protected $blazyAdminExtended;
 
   /**
    * The slick admin service.
@@ -41,7 +41,7 @@ class SlickAdminUnitTest extends UnitTestCase {
   protected function setUp(): void {
     parent::setUp();
 
-    $this->blazyAdmin = $this->createMock('\Drupal\blazy\Form\BlazyAdminInterface');
+    $this->blazyAdminExtended = $this->createMock('\Drupal\blazy\Dejavu\BlazyAdminExtended');
     $this->slickManager = $this->createMock('\Drupal\slick\SlickManagerInterface');
   }
 
@@ -56,7 +56,7 @@ class SlickAdminUnitTest extends UnitTestCase {
     $exception = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE;
 
     $map = [
-      ['blazy.admin.formatter', $exception, $this->blazyAdmin],
+      ['blazy.admin.extended', $exception, $this->blazyAdminExtended],
       ['slick.manager', $exception, $this->slickManager],
     ];
 
@@ -66,7 +66,8 @@ class SlickAdminUnitTest extends UnitTestCase {
 
     $slickAdmin = SlickAdmin::create($container);
     $this->assertInstanceOf(SlickAdmin::class, $slickAdmin);
-    $this->assertInstanceOf('\Drupal\blazy\Form\BlazyAdminInterface', $slickAdmin->blazyAdmin());
+
+    $this->assertInstanceOf('\Drupal\blazy\Dejavu\BlazyAdminExtended', $slickAdmin->blazyAdmin());
     $this->assertInstanceOf('\Drupal\slick\SlickManagerInterface', $slickAdmin->manager());
   }
 

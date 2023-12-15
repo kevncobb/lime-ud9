@@ -26,7 +26,7 @@
         }
     ],
     "support": {
-        "irc": "ircs://irc.libera.chat:6697/composer",
+        "irc": "irc://irc.freenode.org/composer",
         "issues": "https://github.com/composer/spdx-licenses/issues"
     },
     "require": {

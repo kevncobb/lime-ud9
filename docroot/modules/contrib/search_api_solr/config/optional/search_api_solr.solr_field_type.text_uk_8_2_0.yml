@@ -198,9 +198,6 @@ solr_configs:
               name: name
               VALUE: uk
             -
-              name: indexPath
-              VALUE: ./uk
-            -
               name: lookupImpl
               VALUE: AnalyzingInfixLookupFactory
             -

@@ -4,7 +4,7 @@ printable_entities:
   - user
 open_target_blank: TRUE
 css_include: ''
-extract_links: 'none'
+extract_links: ''
 save_pdf: FALSE
 pdf_tool: ''
 paper_size: 'A4'
@@ -20,4 +20,3 @@ printable_pdf_link_locations:
   - ''
 print_pdf_use_xvfb_run: FALSE
 path_to_xvfb_run: ''
-ignore_warnings: FALSE

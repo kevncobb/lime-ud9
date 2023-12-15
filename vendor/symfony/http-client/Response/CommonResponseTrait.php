@@ -30,9 +30,7 @@ trait CommonResponseTrait
      * @var callable|null A callback that tells whether we're waiting for response headers
      */
     private $initializer;
-    /** @var bool|\Closure|resource|null */
     private $shouldBuffer;
-    /** @var resource|null */
     private $content;
     private int $offset = 0;
     private ?array $jsonData = null;
@@ -124,9 +122,6 @@ trait CommonResponseTrait
         throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
     }
 
-    /**
-     * @return void
-     */
     public function __wakeup()
     {
         throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);

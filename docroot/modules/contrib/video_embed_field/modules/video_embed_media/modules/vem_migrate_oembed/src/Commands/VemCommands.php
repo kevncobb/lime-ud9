@@ -26,7 +26,7 @@ class VemCommands extends DrushCommands {
   protected $migrator;
 
   /**
-   * VemCommands constructor.
+   * SamplerCommands constructor.
    *
    * @param \Drupal\vem_migrate_oembed\VemMigrate $migrator
    *   The migrate service.
@@ -37,17 +37,14 @@ class VemCommands extends DrushCommands {
   }
 
   /**
-   * Migrates from VEF to core media.
+   * Migrates from video_embed_media to core media.
    *
-   * @usage drush vemmo
-   *   Migrates from VEF to core media.
+   * @throws \Drupal\Core\Entity\EntityStorageException
    *
    * @command vem:migrate_oembed
-   * @aliases vemmo
    */
   public function migrate() {
     $this->migrator->migrate();
-    $this->io()->success(\dt('Migration complete.'));
   }
 
 }

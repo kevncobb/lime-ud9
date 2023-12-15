@@ -18,11 +18,6 @@ class oEmbedUpdateTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'stark';
-
-  /**
-   * {@inheritdoc}
-   */
   protected static $modules = ['vem_migrate_oembed'];
 
   /**
@@ -31,18 +26,15 @@ class oEmbedUpdateTest extends BrowserTestBase {
   public function testOEmbedUpdate() {
 
     $mediaType = $this->createMediaType('video_embed_field');
-    $this->assertEquals($mediaType->getSource()->getPluginId(), 'video_embed_field');
+    $this->assertEqual($mediaType->getSource()->getPluginId(), 'video_embed_field');
 
     $sourceField = $mediaType->getSource()->getSourceFieldDefinition($mediaType);
-    $this->assertEquals($sourceField->getType(), 'video_embed_field');
+    $this->assertEqual($sourceField->getType(), 'video_embed_field');
 
-    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository */
-    $display_repository = $this->container->get('entity_display.repository');
-
-    $formDisplay = $display_repository->getFormDisplay('media', $mediaType->id());
+    $formDisplay = entity_get_form_display('media', $mediaType->id(), 'default');
     $formField = $formDisplay->getComponent($sourceField->getName());
 
-    $this->assertEquals($formField['type'], 'video_embed_field_textfield');
+    $this->assertEqual($formField['type'], 'video_embed_field_textfield');
 
     /** @var \Drupal\vem_migrate_oembed\VemMigrate $vemService */
     $vemService = \Drupal::service('vem_migrate_oembed.migrate');
@@ -50,15 +42,15 @@ class oEmbedUpdateTest extends BrowserTestBase {
 
     /** @var \Drupal\media\Entity\MediaType $mediaType */
     $mediaType = MediaType::load($mediaType->id());
-    $this->assertEquals($mediaType->getSource()->getPluginId(), 'oembed:video');
+    $this->assertEqual($mediaType->getSource()->getPluginId(), 'oembed:video');
 
     $sourceField = $mediaType->getSource()->getSourceFieldDefinition($mediaType);
-    $this->assertEquals($sourceField->getType(), 'string');
+    $this->assertEqual($sourceField->getType(), 'string');
 
-    $formDisplay = $display_repository->getFormDisplay('media', $mediaType->id());
+    $formDisplay = entity_get_form_display('media', $mediaType->id(), 'default');
     $formField = $formDisplay->getComponent($sourceField->getName());
 
-    $this->assertEquals($formField['type'], 'oembed_textfield');
+    $this->assertEqual($formField['type'], 'oembed_textfield');
   }
 
 }

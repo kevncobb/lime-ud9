@@ -2,14 +2,17 @@
 
 namespace Drupal\blazy\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\FieldItemListInterface;
+
 /**
  * Plugin for blazy media formatter.
  *
  * @FieldFormatter(
  *   id = "blazy_media",
- *   label = @Translation("Blazy Media"),
+ *   label = @Translation("Blazy"),
  *   field_types = {
  *     "entity_reference",
+ *     "entity_reference_revisions",
  *   }
  * )
  *
@@ -21,24 +24,16 @@ class BlazyMediaFormatter extends BlazyMediaFormatterBase {
   /**
    * {@inheritdoc}
    */
-  protected static $namespace = 'blazy';
+  public function viewElements(FieldItemListInterface $items, $langcode) {
+    $entities = $this->getEntitiesToView($items, $langcode);
 
-  /**
-   * {@inheritdoc}
-   */
-  protected static $itemId = 'content';
+    // Early opt-out if the field is empty.
+    if (empty($entities)) {
+      return [];
+    }
 
-  /**
-   * {@inheritdoc}
-   */
-  protected static $itemPrefix = 'blazy';
-
-  /**
-   * {@inheritdoc}
-   *
-   * @todo make it caption similar to sub-modules for easy 3.x migrations.
-   */
-  protected static $captionId = 'captions';
+    return $this->commonViewElements($items, $langcode, $entities);
+  }
 
   /**
    * {@inheritdoc}
@@ -47,9 +42,11 @@ class BlazyMediaFormatter extends BlazyMediaFormatterBase {
     $multiple = $this->isMultiple();
 
     return [
+      'fieldable_form'  => FALSE,
       'grid_form'       => $multiple,
       'layouts'         => [],
       'style'           => $multiple,
+      'thumbnail_style' => TRUE,
       'vanilla'         => FALSE,
     ] + parent::getPluginScopes();
   }

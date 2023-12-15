@@ -14,7 +14,7 @@ class BlockFieldSelectionTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['block', 'system', 'block_field', 'locale'];
+  public static $modules = ['block', 'system', 'block_field', 'locale'];
 
   /**
    * Returns a plugin instance from BlockFieldSelectionManager.
@@ -40,7 +40,12 @@ class BlockFieldSelectionTest extends KernelTestBase {
     // Create a plugin instance of 'categories'.
     $plugin = $this->setUpSelectionInstance('categories', ['categories' => ['core']]);
 
-    $translation_service = \Drupal::service('string_translation');
+    // Prophesize translations to force service properties.
+    $translation = $this->prophesize(TranslationInterface::class);
+    $translation->willImplement(\Serializable::class);
+    $translation->serialize()->willThrow(\Exception::class);
+    $translation_service = $translation->reveal();
+    $translation_service->_serviceId = 'string_translation';
     $plugin->setStringTranslation($translation_service);
 
     // Attempt to serialize and unserialize plugin.

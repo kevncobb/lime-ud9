@@ -22,12 +22,10 @@ use Symfony\Component\DependencyInjection\Exception\RuntimeException;
  */
 final class AttributeAutoconfigurationPass extends AbstractRecursivePass
 {
-    protected bool $skipScalars = true;
-
-    private array $classAttributeConfigurators = [];
-    private array $methodAttributeConfigurators = [];
-    private array $propertyAttributeConfigurators = [];
-    private array $parameterAttributeConfigurators = [];
+    private $classAttributeConfigurators = [];
+    private $methodAttributeConfigurators = [];
+    private $propertyAttributeConfigurators = [];
+    private $parameterAttributeConfigurators = [];
 
     public function process(ContainerBuilder $container): void
     {

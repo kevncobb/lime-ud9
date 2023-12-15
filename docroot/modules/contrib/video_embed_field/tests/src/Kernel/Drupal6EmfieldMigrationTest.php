@@ -21,7 +21,7 @@ class Drupal6EmfieldMigrationTest extends MigrateDrupal6TestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = [
+  public static $modules = [
     'video_embed_field',
   ];
 

@@ -14,7 +14,7 @@ class DecodingErrorTest extends TestCase
 {
     public function testGetMalformedJson()
     {
-        $decodingError = new DecodingError('"json\"', '');
+        $decodingError = new DecodingError('"json\"', null);
 
         $this->assertSame('"json\"', $decodingError->getMalformedJson());
     }

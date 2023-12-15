@@ -39,14 +39,13 @@ use Solarium\Core\Query\AbstractQuery;
 use Solarium\Core\Query\AbstractResponseParser as ResponseParserAbstract;
 use Solarium\Exception\InvalidArgumentException;
 use Solarium\Exception\RuntimeException;
+use Solarium\QueryType\Select\Query\Query;
 
 /**
  * Parse select component FacetSet result from the data.
  */
 class FacetSet extends ResponseParserAbstract implements ComponentParserInterface
 {
-    use NormalizeParsedJsonStatsTrait;
-
     /**
      * Parse result data into result objects.
      *
@@ -118,7 +117,7 @@ class FacetSet extends ResponseParserAbstract implements ComponentParserInterfac
                     $result = $this->facetRange($query, $facet, $data);
                     break;
                 case FacetSetInterface::FACET_PIVOT:
-                    $result = $this->facetPivot($query, $facet, $data);
+                    $result = $this->facetPivot($facet, $data);
                     break;
                 case FacetSetInterface::FACET_INTERVAL:
                     $result = $this->facetInterval($facet, $data);
@@ -245,7 +244,7 @@ class FacetSet extends ResponseParserAbstract implements ComponentParserInterfac
             return null;
         }
 
-        if ($query::WT_JSON === $query->getResponseWriter()) {
+        if ($query->getResponseWriter() === $query::WT_JSON) {
             $data['facet_counts']['facet_fields'][$key] = $this->convertToKeyValueArray(
                 $data['facet_counts']['facet_fields'][$key]
             );
@@ -301,7 +300,7 @@ class FacetSet extends ResponseParserAbstract implements ComponentParserInterfac
     /**
      * Add a facet result for a range facet.
      *
-     * @param AbstractQuery   $query
+     * @param Query           $query
      * @param QueryFacetRange $facet
      * @param array           $data
      *
@@ -344,7 +343,7 @@ class FacetSet extends ResponseParserAbstract implements ComponentParserInterfac
         $end = $data['end'] ?? null;
         $gap = $data['gap'] ?? null;
 
-        if ($query::WT_JSON === $query->getResponseWriter()) {
+        if ($query->getResponseWriter() === $query::WT_JSON) {
             $data['counts'] = $this->convertToKeyValueArray($data['counts']);
         }
 
@@ -372,13 +371,12 @@ class FacetSet extends ResponseParserAbstract implements ComponentParserInterfac
     /**
      * Add a facet result for a range facet.
      *
-     * @param AbstractQuery  $query
      * @param FacetInterface $facet
      * @param array          $data
      *
      * @return ResultFacetPivot|null
      */
-    protected function facetPivot(AbstractQuery $query, FacetInterface $facet, array $data): ?ResultFacetPivot
+    protected function facetPivot(FacetInterface $facet, array $data): ?ResultFacetPivot
     {
         $key = $facet->getKey();
 
@@ -389,7 +387,7 @@ class FacetSet extends ResponseParserAbstract implements ComponentParserInterfac
         $facetPivot = new ResultFacetPivot($data['facet_counts']['facet_pivot'][$key]);
 
         foreach ($facetPivot->getPivot() as $pivot) {
-            $this->pivotStats($query, $pivot);
+            $this->pivotStats($pivot);
         }
 
         return $facetPivot;
@@ -400,27 +398,20 @@ class FacetSet extends ResponseParserAbstract implements ComponentParserInterfac
      *
      * @param PivotItem $pivotItem
      */
-    protected function pivotStats(AbstractQuery $query, PivotItem $pivotItem): void
+    protected function pivotStats(PivotItem $pivotItem): void
     {
         foreach ($pivotItem->getPivot() as $pivot) {
-            $this->pivotStats($query, $pivot);
+            $this->pivotStats($pivot);
         }
 
         if (null !== $stats = $pivotItem->getStats()) {
             foreach ($stats->getResults() as $key => $result) {
-                if ('stats_fields' !== $key) {
+                if ($result instanceof Result || false === \is_array($result)) {
                     continue;
                 }
 
-                // remove unparsed results
-                $stats->removeResult($key);
-
                 foreach ($result as $field => $values) {
-                    if ($query::WT_JSON === $query->getResponseWriter()) {
-                        $values = $this->normalizeParsedJsonStats($values);
-                    }
-
-                    $stats->setResult($field, new Result($field, $values));
+                    $stats->setResult($key, new Result($field, $values));
                 }
             }
         }

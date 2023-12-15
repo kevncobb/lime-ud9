@@ -20,20 +20,23 @@ use Drupal\responsive_image\Plugin\Field\FieldFormatter\ResponsiveImageFormatter
  */
 class FlexsliderResponsiveFormatter extends ResponsiveImageFormatter {
   use FlexsliderFormatterTrait;
-  use FlexsliderImageFormatterTrait;
 
   /**
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return parent::defaultSettings() + self::getDefaultSettings() + self::getDefaultImageSettings();
+    return self::getDefaultSettings() + parent::defaultSettings();
   }
 
   /**
    * {@inheritdoc}
    */
   public function settingsSummary() {
-    return array_merge(parent::settingsSummary(), $this->buildSettingsSummary());
+    $summary = $this->buildSettingsSummary($this);
+
+    // Add the image settings summary and return.
+    return array_merge($summary, parent::settingsSummary());
+
   }
 
   /**
@@ -60,8 +63,11 @@ class FlexsliderResponsiveFormatter extends ResponsiveImageFormatter {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
+
     $images = parent::viewElements($items, $langcode);
+
     return $this->viewImages($images, $this->getSettings());
+
   }
 
   /**
@@ -80,7 +86,8 @@ class FlexsliderResponsiveFormatter extends ResponsiveImageFormatter {
    * {@inheritdoc}
    */
   public function calculateDependencies() {
-    return parent::calculateDependencies() + $this->getOptionsetDependencies();
+    $dependencies = parent::calculateDependencies();
+    return $dependencies + $this->getOptionsetDependencies($this);
   }
 
   /**
@@ -88,7 +95,8 @@ class FlexsliderResponsiveFormatter extends ResponsiveImageFormatter {
    */
   public function onDependencyRemoval(array $dependencies) {
     $changed = parent::onDependencyRemoval($dependencies);
-    if ($this->optionsetDependenciesDeleted($dependencies)) {
+
+    if ($this->optionsetDependenciesDeleted($this, $dependencies)) {
       $changed = TRUE;
     }
     return $changed;

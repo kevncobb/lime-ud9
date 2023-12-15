@@ -38,7 +38,7 @@ class EventLogTrackApi {
    *   The database connection.
    */
   public function __construct(ConfigFactoryInterface $config_factory, Connection $database) {
-    $this->config = $config_factory->get('event_log_track.settings');
+    $this->config = $config_factory->get('event_log_track.adminsettings');
     $this->database = $database;
   }
 

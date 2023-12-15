@@ -77,7 +77,7 @@ class Field extends ResponseParserAbstract implements ResponseParserInterface
         foreach ($data as $fieldKey => $fieldData) {
             $types = [];
             foreach ($fieldData as $typeKey => $typeData) {
-                if ($query::WT_JSON === $query->getResponseWriter()) {
+                if ($query->getResponseWriter() === $query::WT_JSON) {
                     // fix for extra level for key fields
                     if (1 === \count($typeData)) {
                         $typeData = current($typeData);

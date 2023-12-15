@@ -2,28 +2,21 @@
 
 namespace Drupal\printable\Tests;
 
-use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Tests\BrowserTestBase;
+use Drupal\simpletest\WebTestBase;
 
 /**
  * Tests the printable module functionality.
  *
  * @group printable
  */
-class PrintableFormTest extends BrowserTestBase {
+class PrintableFormTest extends WebTestBase {
 
-  use StringTranslationTrait;
   /**
    * Modules to install.
    *
    * @var array
    */
-  protected static $modules = ['printable', 'node'];
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $defaultTheme = 'stark';
+  public static $modules = ['printable'];
 
   /**
    * A simple user with 'administer printable' permission.
@@ -35,7 +28,7 @@ class PrintableFormTest extends BrowserTestBase {
   /**
    * Perform any initial set up tasks that run before every test method.
    */
-  public function setUp(): void {
+  public function setUp() {
     parent::setUp();
     $this->user = $this->drupalCreateUser(['administer printable']);
     $this->drupalLogin($this->user);
@@ -47,17 +40,17 @@ class PrintableFormTest extends BrowserTestBase {
   public function testPrintFormWorks() {
     $this->drupalLogin($this->user);
     $this->drupalGet('admin/config/user-interface/printable/print');
-    $this->assertSession()->statusCodeEquals(200);
+    $this->assertResponse(200);
 
     $config = $this->config('printable.settings');
-    $this->assertSession()->fieldValueEquals('print_html_sendtoprinter', $config->get('printable.send_to_printer'));
+    $this->assertFieldByName('print_html_sendtoprinter', $config->get('printable.send_to_printer'), 'The field was found with the correct value.');
 
-    $this->submitForm([
+    $this->drupalPostForm(NULL, [
       'print_html_sendtoprinter' => 1,
-    ], $this->t('Submit'));
+    ], t('Submit'));
     $this->drupalGet('admin/config/user-interface/printable/print');
-    $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->fieldValueEquals('print_html_sendtoprinter', 1);
+    $this->assertResponse(200);
+    $this->assertFieldByName('print_html_sendtoprinter', 1, 'The field was found with the correct value.');
   }
 
 }

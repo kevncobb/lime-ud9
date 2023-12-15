@@ -1,9 +1,17 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\pdf_api\Plugin\TcpdfGenerator.
+ */
+
 namespace Drupal\pdf_api\Plugin\PdfGenerator;
 
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\pdf_api\Plugin\PdfGeneratorBase;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\pdf_api\Annotation\PdfGenerator;
+use Drupal\Core\Annotation\Translation;
+use \TCPDF;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -12,9 +20,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @PdfGenerator(
  *   id = "tcpdf",
  *   module = "pdf_api",
- *   title = @Translation("tcpdf"),
- *   description = @Translation("PDF generator using the TCPDF generator."),
- *   required_class = "TCPDF"
+ *   title = @Translation("TCPDF"),
+ *   description = @Translation("PDF generator using the TCPDF generator.")
  * )
  */
 class TcpdfGenerator extends PdfGeneratorBase implements ContainerFactoryPluginInterface {
@@ -29,10 +36,10 @@ class TcpdfGenerator extends PdfGeneratorBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, TCPDF $generator) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->generator = new \TCPDF();
+    $this->generator = $generator;
   }
 
   /**
@@ -42,7 +49,8 @@ class TcpdfGenerator extends PdfGeneratorBase implements ContainerFactoryPluginI
     return new static(
       $configuration,
       $plugin_id,
-      $plugin_definition
+      $plugin_definition,
+      $container->get('tcpdf')
     );
   }
 

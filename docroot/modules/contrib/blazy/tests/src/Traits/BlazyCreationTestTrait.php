@@ -2,17 +2,17 @@
 
 namespace Drupal\Tests\blazy\Traits;
 
-use Drupal\blazy\Blazy;
-use Drupal\Core\Entity\Entity\EntityViewDisplay;
-use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\node\Entity\NodeType;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\image\Plugin\Field\FieldType\ImageItem;
-use Drupal\node\Entity\NodeType;
+use Drupal\blazy\Media\BlazyFile;
 
 /**
  * A Trait common for Blazy tests.
@@ -40,10 +40,10 @@ trait BlazyCreationTestTrait {
    *   The formatter display instance.
    */
   protected function setUpFormatterDisplay($bundle = '', array $data = []) {
-    $settings   = $data['settings'] ?? [];
     $view_mode  = empty($data['view_mode']) ? 'default' : $data['view_mode'];
     $plugin_id  = empty($data['plugin_id']) ? $this->testPluginId : $data['plugin_id'];
     $field_name = empty($data['field_name']) ? $this->testFieldName : $data['field_name'];
+    $settings   = empty($data['settings']) ? [] : $data['settings'];
     $display_id = $this->entityType . '.' . $bundle . '.' . $view_mode;
     $storage    = $this->blazyManager->getStorage('entity_view_display');
     $display    = $storage->load($display_id);
@@ -233,11 +233,7 @@ trait BlazyCreationTestTrait {
       if (!empty($settings['extra_text'])) {
         $text .= $settings['extra_text'];
       }
-
-      /* @phpstan-ignore-next-line */
-      if ($body = $node->get('body')) {
-        $body->setValue(['value' => $text, 'format' => 'full_html']);
-      }
+      $node->get('body')->setValue(['value' => $text, 'format' => 'full_html']);
     }
 
     if (!empty($this->testFieldName)) {
@@ -262,10 +258,7 @@ trait BlazyCreationTestTrait {
         $max = $multiple ? $this->maxItems : 2;
         if (isset($node->{$field_name})) {
           // @see \Drupal\Core\Field\FieldItemListInterface::generateSampleItems
-          /* @phpstan-ignore-next-line */
-          if ($field = $node->get($field_name)) {
-            $field->generateSampleItems($max);
-          }
+          $node->get($field_name)->generateSampleItems($max);
         }
       }
     }
@@ -371,7 +364,6 @@ trait BlazyCreationTestTrait {
    */
   protected function buildEntityReferenceRenderArray(array $referenced_entities, $type = '', array $settings = []) {
     $type = empty($type) ? $this->entityPluginId : $type;
-    /* @phpstan-ignore-next-line */
     $items = $this->referencingEntity->get($this->entityFieldName);
 
     // Assign the referenced entities.
@@ -483,7 +475,6 @@ trait BlazyCreationTestTrait {
    * Set up dummy image.
    */
   protected function setUpRealImage() {
-    /* @phpstan-ignore-next-line */
     $this->uri = $this->getImagePath();
     $item = $this->dummyItem;
 
@@ -491,9 +482,8 @@ trait BlazyCreationTestTrait {
       $item = $this->testItems[0];
 
       if ($item instanceof ImageItem) {
-        /* @phpstan-ignore-next-line */
         $this->uri = ($entity = $item->entity) && empty($item->uri) ? $entity->getFileUri() : $item->uri;
-        $this->url = Blazy::transformRelative($this->uri);
+        $this->url = BlazyFile::transformRelative($this->uri);
       }
     }
 
@@ -501,14 +491,14 @@ trait BlazyCreationTestTrait {
       $source = $this->root . '/core/misc/druplicon.png';
       $uri = 'public://test.png';
       $this->fileSystem->copy($source, $uri, FileSystemInterface::EXISTS_REPLACE);
-      $this->url = Blazy::createUrl($uri);
+      $this->url = BlazyFile::createUrl($uri);
     }
 
     $this->testItem = $this->image = $item;
 
     $this->data = [
-      '#settings' => $this->getFormatterSettings(),
-      '#item'     => $item,
+      'settings' => $this->getFormatterSettings(),
+      'item'     => $item,
     ];
   }
 
@@ -518,11 +508,11 @@ trait BlazyCreationTestTrait {
   protected function getImagePath($is_dir = FALSE) {
     $path            = $this->root . '/sites/default/files/simpletest/' . $this->testPluginId;
     $item            = $this->createDummyImage();
-    $this->dummyUrl  = Blazy::transformRelative($this->dummyUri);
+    $this->dummyUrl  = BlazyFile::transformRelative($this->dummyUri);
     $this->dummyItem = $item;
     $this->dummyData = [
-      '#settings' => $this->getFormatterSettings(),
-      '#item' => $item,
+      'settings' => $this->getFormatterSettings(),
+      'item'     => $item,
     ];
 
     return $is_dir ? $path : $this->dummyUri;

@@ -57,9 +57,6 @@ class DrupalAutoloader
 
     public function register(Container $container): void
     {
-        /**
-         * @var array{drupal_root: string, bleedingEdge: array{checkDeprecatedHooksInApiFiles: bool}} $drupalParams
-         */
         $drupalParams = $container->getParameter('drupal');
         $drupalRoot = realpath($drupalParams['drupal_root']);
         $finder = new DrupalFinder();
@@ -68,7 +65,7 @@ class DrupalAutoloader
         $drupalRoot = $finder->getDrupalRoot();
         $drupalVendorRoot = $finder->getVendorDir();
         if (! (bool) $drupalRoot || ! (bool) $drupalVendorRoot) {
-            throw new \RuntimeException("Unable to detect Drupal at {$drupalParams['drupal_root']}");
+            throw new \RuntimeException("Unable to detect Drupal at $drupalRoot");
         }
 
         $this->drupalRoot = $drupalRoot;
@@ -97,7 +94,6 @@ class DrupalAutoloader
         $this->addThemeNamespaces();
         $this->registerPs4Namespaces($this->namespaces);
         $this->loadLegacyIncludes();
-        $checkDeprecatedHooksInApiFiles =  $drupalParams['bleedingEdge']['checkDeprecatedHooksInApiFiles'];
 
         foreach ($this->moduleData as $extension) {
             $this->loadExtension($extension);
@@ -114,10 +110,6 @@ class DrupalAutoloader
             // Add .post_update.php
             if (file_exists($module_dir . '/' . $module_name . '.post_update.php')) {
                 $this->loadAndCatchErrors($module_dir . '/' . $module_name . '.post_update.php');
-            }
-            // Add .api.php
-            if ($checkDeprecatedHooksInApiFiles && file_exists($module_dir . '/' . $module_name . '.api.php')) {
-                $this->loadAndCatchErrors($module_dir . '/' . $module_name . '.api.php');
             }
             // Add misc .inc that are magically allowed via hook_hook_info.
             $magic_hook_info_includes = [

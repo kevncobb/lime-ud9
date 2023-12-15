@@ -9,6 +9,6 @@ return array(
     $vendorDir . '/disqus/disqus-php',
     $vendorDir . '/pear/archive_tar',
     $vendorDir . '/pear/console_getopt',
-    $vendorDir . '/pear/pear_exception',
     $vendorDir . '/pear/pear-core-minimal/src',
+    $vendorDir . '/pear/pear_exception',
 );

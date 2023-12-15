@@ -43,7 +43,7 @@ class Spellcheck extends ResponseParserAbstract implements ComponentParserInterf
                 \count($data['spellcheck']['suggestions']) > 0
             ) {
                 $spellcheckResults = $data['spellcheck']['suggestions'];
-                if ($query && $query::WT_JSON === $query->getResponseWriter()) {
+                if ($query && $query->getResponseWriter() === $query::WT_JSON) {
                     $spellcheckResults = $this->convertToKeyValueArray($spellcheckResults);
                 }
 
@@ -111,7 +111,7 @@ class Spellcheck extends ResponseParserAbstract implements ComponentParserInterf
                 $collations[] = new Collation($value, null, []);
             }
         } else {
-            if ($queryObject && $queryObject::WT_JSON === $queryObject->getResponseWriter()) {
+            if ($queryObject && $queryObject->getResponseWriter() === $queryObject::WT_JSON) {
                 if (\is_array(current($values))) {
                     foreach ($values as $key => $value) {
                         if (\array_key_exists('collationQuery', $value)) {
@@ -150,7 +150,7 @@ class Spellcheck extends ResponseParserAbstract implements ComponentParserInterf
 
                 $corrections = [];
                 if (null !== $correctionResult) {
-                    if ($queryObject && $queryObject::WT_JSON === $queryObject->getResponseWriter()) {
+                    if ($queryObject && $queryObject->getResponseWriter() === $queryObject::WT_JSON) {
                         $correctionResult = $this->convertToKeyValueArray($correctionResult);
                     }
 

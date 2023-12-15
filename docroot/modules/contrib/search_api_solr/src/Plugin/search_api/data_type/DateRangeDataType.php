@@ -11,7 +11,7 @@ use Drupal\search_api\Plugin\search_api\data_type\DateDataType;
  *   id = "solr_date_range",
  *   label = @Translation("Date range"),
  *   description = @Translation("Date field that contains date ranges."),
- *   fallback_type = "date",
+ *   fallback = "date",
  *   prefix = "dr"
  * )
  */

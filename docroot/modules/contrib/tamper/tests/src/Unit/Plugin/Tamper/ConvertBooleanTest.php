@@ -21,6 +21,7 @@ class ConvertBooleanTest extends TamperPluginTestBase {
       ConvertBoolean::SETTING_FALSE_VALUE => 'B',
       ConvertBoolean::SETTING_MATCH_CASE => FALSE,
       ConvertBoolean::SETTING_NO_MATCH => 'No match',
+      ConvertBoolean::SETTING_OTHER_TEXT => '',
     ];
     return new ConvertBoolean($config, 'convert_boolean', [], $this->getMockSourceDefinition());
   }
@@ -29,12 +30,12 @@ class ConvertBooleanTest extends TamperPluginTestBase {
    * Test convert to boolean basic functionality.
    */
   public function testConvertBooleanBasicFunctionality() {
-    $this->assertSame(TRUE, $this->plugin->tamper('A'));
-    $this->assertSame(TRUE, $this->plugin->tamper('a'));
-    $this->assertSame(FALSE, $this->plugin->tamper('B'));
-    $this->assertSame(FALSE, $this->plugin->tamper('b'));
-    $this->assertSame('No match', $this->plugin->tamper('c'));
-    $this->assertSame('No match', $this->plugin->tamper('C'));
+    $this->assertEquals(TRUE, $this->plugin->tamper('A'));
+    $this->assertEquals(TRUE, $this->plugin->tamper('a'));
+    $this->assertEquals(FALSE, $this->plugin->tamper('B'));
+    $this->assertEquals(FALSE, $this->plugin->tamper('b'));
+    $this->assertEquals('No match', $this->plugin->tamper('c'));
+    $this->assertEquals('No match', $this->plugin->tamper('C'));
   }
 
   /**
@@ -46,14 +47,15 @@ class ConvertBooleanTest extends TamperPluginTestBase {
       ConvertBoolean::SETTING_FALSE_VALUE => 'B',
       ConvertBoolean::SETTING_MATCH_CASE => FALSE,
       ConvertBoolean::SETTING_NO_MATCH => 'pass',
+      ConvertBoolean::SETTING_OTHER_TEXT => '',
     ];
     $plugin = new ConvertBoolean($config, 'convert_boolean', [], $this->getMockSourceDefinition());
-    $this->assertSame(TRUE, $plugin->tamper('A'));
-    $this->assertSame(TRUE, $plugin->tamper('a'));
-    $this->assertSame(FALSE, $plugin->tamper('B'));
-    $this->assertSame(FALSE, $plugin->tamper('b'));
-    $this->assertSame('c', $plugin->tamper('c'));
-    $this->assertSame('C', $plugin->tamper('C'));
+    $this->assertEquals(TRUE, $plugin->tamper('A'));
+    $this->assertEquals(TRUE, $plugin->tamper('a'));
+    $this->assertEquals(FALSE, $plugin->tamper('B'));
+    $this->assertEquals(FALSE, $plugin->tamper('b'));
+    $this->assertEquals('c', $plugin->tamper('c'));
+    $this->assertEquals('C', $plugin->tamper('C'));
   }
 
   /**
@@ -65,12 +67,13 @@ class ConvertBooleanTest extends TamperPluginTestBase {
       ConvertBoolean::SETTING_FALSE_VALUE => 'B',
       ConvertBoolean::SETTING_MATCH_CASE => TRUE,
       ConvertBoolean::SETTING_NO_MATCH => 'No match',
+      ConvertBoolean::SETTING_OTHER_TEXT => '',
     ];
     $plugin = new ConvertBoolean($config, 'convert_boolean', [], $this->getMockSourceDefinition());
-    $this->assertSame(TRUE, $plugin->tamper('A'));
-    $this->assertNotSame(TRUE, $plugin->tamper('a'));
-    $this->assertSame(FALSE, $plugin->tamper('B'));
-    $this->assertNotSame(FALSE, $plugin->tamper('b'));
+    $this->assertEquals(TRUE, $plugin->tamper('A'));
+    $this->assertNotEquals(TRUE, $plugin->tamper('a'));
+    $this->assertEquals(FALSE, $plugin->tamper('B'));
+    $this->assertNotEquals(FALSE, $plugin->tamper('b'));
   }
 
   /**
@@ -82,14 +85,15 @@ class ConvertBooleanTest extends TamperPluginTestBase {
       ConvertBoolean::SETTING_FALSE_VALUE => 'B',
       ConvertBoolean::SETTING_MATCH_CASE => TRUE,
       ConvertBoolean::SETTING_NO_MATCH => NULL,
+      ConvertBoolean::SETTING_OTHER_TEXT => '',
     ];
     $plugin = new ConvertBoolean($config, 'convert_boolean', [], $this->getMockSourceDefinition());
-    $this->assertSame(TRUE, $plugin->tamper('A'));
-    $this->assertSame(NULL, $plugin->tamper('a'));
-    $this->assertSame(FALSE, $plugin->tamper('B'));
-    $this->assertSame(NULL, $plugin->tamper('b'));
-    $this->assertSame(NULL, $plugin->tamper('c'));
-    $this->assertSame(NULL, $plugin->tamper('C'));
+    $this->assertEquals(TRUE, $plugin->tamper('A'));
+    $this->assertEquals(NULL, $plugin->tamper('a'));
+    $this->assertEquals(FALSE, $plugin->tamper('B'));
+    $this->assertEquals(NULL, $plugin->tamper('b'));
+    $this->assertEquals(NULL, $plugin->tamper('c'));
+    $this->assertEquals(NULL, $plugin->tamper('C'));
   }
 
   /**
@@ -101,9 +105,10 @@ class ConvertBooleanTest extends TamperPluginTestBase {
       ConvertBoolean::SETTING_FALSE_VALUE => 'B',
       ConvertBoolean::SETTING_MATCH_CASE => TRUE,
       ConvertBoolean::SETTING_NO_MATCH => 'other text',
+      ConvertBoolean::SETTING_OTHER_TEXT => 'other text',
     ];
     $plugin = new ConvertBoolean($config, 'convert_boolean', [], $this->getMockSourceDefinition());
-    $this->assertSame('other text', $plugin->tamper('a'));
+    $this->assertEquals('other text', $plugin->tamper('a'));
   }
 
 }

@@ -86,26 +86,22 @@ final class TestLogger extends AbstractLogger
         $this->records[]                          = $record;
     }
 
-    public function hasRecords(string|int|null $level = null): bool
+    public function hasRecords(string|int $level): bool
     {
-        if ($level === null) {
-            return \count($this->records) !== 0;
-        }
-
         return isset($this->recordsByLevel[$level]);
     }
 
     /**
      * @param string|array<string, mixed> $record
      */
-    public function hasRecord(string|array $record, string|int|null $level = null): bool
+    public function hasRecord(string|array $record, string|int $level): bool
     {
         if (\is_string($record)) {
             $record = ['message' => $record];
         }
 
         return $this->hasRecordThatPasses(static function (array $rec) use ($record) {
-            if ((string) $rec['message'] !== (string) $record['message']) {
+            if ($rec['message'] !== $record['message']) {
                 return false;
             }
 
@@ -113,30 +109,30 @@ final class TestLogger extends AbstractLogger
         }, $level);
     }
 
-    public function hasRecordThatContains(string $message, string|int|null $level = null): bool
+    public function hasRecordThatContains(string $message, string|int $level): bool
     {
         return $this->hasRecordThatPasses(static function (array $rec) use ($message) {
-            return \str_contains((string) $rec['message'], $message);
+            return \str_contains($rec['message'], $message);
         }, $level);
     }
 
-    public function hasRecordThatMatches(string $regex, string|int|null $level = null): bool
+    public function hasRecordThatMatches(string $regex, string|int $level): bool
     {
         return $this->hasRecordThatPasses(static function ($rec) use ($regex) {
-            return \preg_match($regex, (string) $rec['message']) > 0;
+            return \preg_match($regex, $rec['message']) > 0;
         }, $level);
     }
 
     /**
      * @param callable(array<string, mixed>, int): bool $predicate
      */
-    public function hasRecordThatPasses(callable $predicate, string|int|null $level = null): bool
+    public function hasRecordThatPasses(callable $predicate, string|int $level): bool
     {
-        if (! $this->hasRecords($level)) {
+        if (! isset($this->recordsByLevel[$level])) {
             return false;
         }
 
-        foreach ($level === null ? $this->records : $this->recordsByLevel[$level] as $i => $rec) {
+        foreach ($this->recordsByLevel[$level] as $i => $rec) {
             if (\call_user_func($predicate, $rec, $i)) {
                 return true;
             }

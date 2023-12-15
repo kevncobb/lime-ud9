@@ -3,12 +3,14 @@
 namespace Drupal\slick;
 
 use Drupal\Core\Plugin\PluginBase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Provides base class for all slick skins.
  */
 abstract class SlickSkinPluginBase extends PluginBase implements SlickSkinPluginInterface {
+
+  use StringTranslationTrait;
 
   /**
    * The slick main/thumbnail skin definitions.
@@ -32,28 +34,14 @@ abstract class SlickSkinPluginBase extends PluginBase implements SlickSkinPlugin
   protected $dots;
 
   /**
-   * The manager service.
-   *
-   * @var \Drupal\slick\SlickManagerInterface
-   */
-  protected $manager;
-
-  /**
    * {@inheritdoc}
    */
-  public static function create(
-    ContainerInterface $container,
-    array $configuration,
-    $plugin_id,
-    $plugin_definition
-  ) {
-    $instance = new static($configuration, $plugin_id, $plugin_definition);
-    $instance->manager = $container->get('slick.manager');
-    $instance->skins = $instance->setSkins();
-    $instance->arrows = $instance->setArrows();
-    $instance->dots = $instance->setDots();
+  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    return $instance;
+    $this->skins = $this->setSkins();
+    $this->arrows = $this->setArrows();
+    $this->dots = $this->setDots();
   }
 
   /**
@@ -82,15 +70,6 @@ abstract class SlickSkinPluginBase extends PluginBase implements SlickSkinPlugin
    */
   public function dots() {
     return $this->dots;
-  }
-
-  /**
-   * Alias for BlazyInterface::getPath().
-   *
-   * @todo add type hint after sub-modules: ?string
-   */
-  protected function getPath($type, $name) {
-    return $this->manager->getPath($type, $name, TRUE);
   }
 
   /**

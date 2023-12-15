@@ -11,8 +11,11 @@
 
 namespace Symfony\Component\DependencyInjection\Attribute;
 
+use Symfony\Component\DependencyInjection\Argument\ServiceLocatorArgument;
+use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
+
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
-class TaggedLocator extends AutowireLocator
+class TaggedLocator extends Autowire
 {
     public function __construct(
         public string $tag,
@@ -22,6 +25,6 @@ class TaggedLocator extends AutowireLocator
         public string|array $exclude = [],
         public bool $excludeSelf = true,
     ) {
-        parent::__construct($tag, $indexAttribute, $defaultIndexMethod, $defaultPriorityMethod, $exclude, $excludeSelf);
+        parent::__construct(new ServiceLocatorArgument(new TaggedIteratorArgument($tag, $indexAttribute, $defaultIndexMethod, true, $defaultPriorityMethod, (array) $exclude, $excludeSelf)));
     }
 }

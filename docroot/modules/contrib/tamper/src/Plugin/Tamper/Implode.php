@@ -59,11 +59,8 @@ class Implode extends TamperBase {
    * {@inheritdoc}
    */
   public function tamper($data, TamperableItemInterface $item = NULL) {
-    if (!is_array($data) && !is_string($data)) {
-      throw new TamperException('Input should be an array or a string.');
-    }
-    if (is_string($data)) {
-      return $data;
+    if (!is_array($data)) {
+      throw new TamperException('Input should be an array.');
     }
     $glue = str_replace(['%s', '%t', '%n'], [' ', "\t", "\n"], $this->getSetting(self::SETTING_GLUE));
     return implode($glue, $data);

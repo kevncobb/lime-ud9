@@ -130,9 +130,6 @@ class File extends Constraint
         }
     }
 
-    /**
-     * @return void
-     */
     public function __set(string $option, mixed $value)
     {
         if ('maxSize' === $option) {

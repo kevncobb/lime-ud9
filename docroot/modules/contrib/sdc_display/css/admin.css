@@ -7,7 +7,8 @@
   padding-bottom: 0;
 }
 [data-drupal-selector="edit-sdc-display-mappings-dynamic"] .form-radios,
-[data-drupal-selector="edit-sdc-display-mappings-dynamic"] .form-checkboxes {
+[data-drupal-selector="edit-sdc-display-mappings-dynamic"] .form-checkboxes
+{
   display: flex;
 }
 [data-drupal-selector="edit-sdc-display-mappings-dynamic"] .form-radios .form-type--radio,

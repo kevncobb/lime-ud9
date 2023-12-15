@@ -1,3 +1,0 @@
-services:
-  puphpeteer:
-    class: NigelCunningham\Puphpeteer\Puppeteer

@@ -3,11 +3,11 @@
 namespace Drupal\address;
 
 use CommerceGuys\Addressing\AddressFormat\AddressField;
-use CommerceGuys\Addressing\AddressFormat\AddressFormat;
 use CommerceGuys\Addressing\AddressFormat\AdministrativeAreaType;
 use CommerceGuys\Addressing\AddressFormat\DependentLocalityType;
 use CommerceGuys\Addressing\AddressFormat\LocalityType;
 use CommerceGuys\Addressing\AddressFormat\PostalCodeType;
+use CommerceGuys\Addressing\AddressFormat\AddressFormat;
 
 /**
  * Provides translated labels for the library enums.
@@ -63,8 +63,7 @@ class LabelHelper {
       AddressField::FAMILY_NAME => t('Last name', [], ['context' => 'Address label']),
       AddressField::ORGANIZATION => t('Organization', [], ['context' => 'Address label']),
       AddressField::ADDRESS_LINE1 => t('Street address', [], ['context' => 'Address label']),
-      // The address line 2 and 3 labels are
-      // usually shown only to screen-reader users.
+      // The address line 2 and 3 labels are usually shown only to screen-reader users.
       AddressField::ADDRESS_LINE2 => t('Street address line 2', [], ['context' => 'Address label']),
       AddressField::ADDRESS_LINE3 => t('Street address line 3', [], ['context' => 'Address label']),
       AddressField::POSTAL_CODE => self::getPostalCodeLabel($postal_code_type),

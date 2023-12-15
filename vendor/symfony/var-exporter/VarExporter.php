@@ -82,7 +82,7 @@ final class VarExporter
         ksort($states);
 
         $wakeups = [null];
-        foreach ($states as $v) {
+        foreach ($states as $k => $v) {
             if (\is_array($v)) {
                 $wakeups[-$v[0]] = $v[1];
             } else {

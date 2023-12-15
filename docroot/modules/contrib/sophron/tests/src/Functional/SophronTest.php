@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Drupal\Tests\sophron\Functional;
 
@@ -76,35 +74,32 @@ class SophronTest extends BrowserTestBase {
     }
     $this->assertSession()->fieldExists('map_commands');
     $edit = [
-      'map_commands' => '- {method: addTypeExtensionMapping, arguments: [foo/bar, quxqux]}',
+      'map_commands' => '- [addTypeExtensionMapping, [foo/bar, quxqux]]',
     ];
     $this->submitForm($edit, 'Save configuration');
 
     // Mapping errors: wrongly typed commands.
     $edit = [
-      'map_commands' => "- {foo: aaa}\n- {method: addTypeExtensionMapping, arguments: [a/c, bbbb]}\n- bar: [bbb, ccc]\n",
+      'map_commands' => "- aaa\n- [addTypeExtensionMapping, [a/c, bbbb]]\n- [bbb, ccc]\n",
     ];
     $this->submitForm($edit, 'Save configuration');
     $this->assertSession()->responseContains('The items at line(s) 1, 3 are wrongly typed.');
 
     // Mapping errors: YAML syntax.
     $edit = [
-      'map_commands' => "- {method: aaa}\n{method: bbb}\n",
+      'map_commands' => "- aaa\nbbb\n",
     ];
     $this->submitForm($edit, 'Save configuration');
     $this->assertSession()->responseContains('YAML syntax error');
 
     // Mapping errors: invalid method.
     $edit = [
-      'map_commands' => '- {method: aaa, arguments: [paramA, paramB]}',
+      'map_commands' => '- [aaa, [paramA, paramB]]',
     ];
     $this->submitForm($edit, 'Save configuration');
     $this->assertSession()->responseContains('Mapping errors');
     $this->assertEquals([
-      [
-        'method' => 'aaa',
-        'arguments' => ['paramA', 'paramB'],
-      ],
+      ['aaa', ['paramA', 'paramB']],
     ], \Drupal::configFactory()->get('sophron.settings')->get('map_commands'));
   }
 

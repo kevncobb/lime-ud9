@@ -1,12 +1,21 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\pdf_api\Plugin\WkhtmltopdfGenerator.
+ */
+
 namespace Drupal\pdf_api\Plugin\PdfGenerator;
 
-use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Component\Render\FormattableMarkup;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\pdf_api\Plugin\PdfGeneratorBase;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\pdf_api\Annotation\PdfGenerator;
+use Drupal\Core\Annotation\Translation;
 use mikehaertl\wkhtmlto\Pdf;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 
 /**
  * A PDF generator plugin for the WKHTMLTOPDF library.
@@ -14,9 +23,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @PdfGenerator(
  *   id = "wkhtmltopdf",
  *   module = "pdf_api",
- *   title = @Translation("wkhtmltoPDF"),
- *   description = @Translation("PDF generator using the WKHTMLTOPDF binary."),
- *   required_class = "mikehaertl\wkhtmlto\Pdf"
+ *   title = @Translation("WKHTMLTOPDF"),
+ *   description = @Translation("PDF generator using the WKHTMLTOPDF binary.")
  * )
  */
 class WkhtmltopdfGenerator extends PdfGeneratorBase implements ContainerFactoryPluginInterface {
@@ -31,17 +39,17 @@ class WkhtmltopdfGenerator extends PdfGeneratorBase implements ContainerFactoryP
   /**
    * Instance of the messenger class.
    *
-   * @var \Drupal\Core\Messenger
+   * @var \Drupal\Core\Messenger;
    */
   protected $messenger;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, MessengerInterface $messenger) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, Pdf $generator, MessengerInterface $messenger) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->generator = new Pdf();
+    $this->generator = $generator;
     $this->messenger = $messenger;
   }
 
@@ -53,6 +61,7 @@ class WkhtmltopdfGenerator extends PdfGeneratorBase implements ContainerFactoryP
       $configuration,
       $plugin_id,
       $plugin_definition,
+      $container->get('wkhtmltopdf'),
       $container->get('messenger')
     );
   }
@@ -64,7 +73,7 @@ class WkhtmltopdfGenerator extends PdfGeneratorBase implements ContainerFactoryP
    *   Path to binary file.
    */
   public function configBinary($path_to_binary) {
-    $this->setOptions(['binary' => $path_to_binary]);
+    $this->setOptions(array('binary' => $path_to_binary));
   }
 
   /**
@@ -75,8 +84,10 @@ class WkhtmltopdfGenerator extends PdfGeneratorBase implements ContainerFactoryP
     $this->addPage($pdf_content);
     $this->setPageSize($paper_size);
     $this->setPageOrientation($paper_orientation);
-    $this->setHeader($header_content);
-    $this->setFooter($footer_content);
+    // Uncomment below line when need to add header and footer to page,
+    // also make changes in the templates too.
+    // $this->setHeader($header_content);
+    // $this->setFooter($footer_content);
   }
 
   /**
@@ -90,14 +101,14 @@ class WkhtmltopdfGenerator extends PdfGeneratorBase implements ContainerFactoryP
    * {@inheritdoc}
    */
   public function setHeader($text) {
-    $this->setOptions(['header-right' => $text]);
+    $this->setOptions(array('header-right' => $text));
   }
 
   /**
    * {@inheritdoc}
    */
   public function setPageOrientation($orientation = PdfGeneratorInterface::PORTRAIT) {
-    $this->setOptions(['orientation' => $orientation]);
+    $this->setOptions(array('orientation' => $orientation));
   }
 
   /**
@@ -105,7 +116,7 @@ class WkhtmltopdfGenerator extends PdfGeneratorBase implements ContainerFactoryP
    */
   public function setPageSize($page_size) {
     if ($this->isValidPageSize($page_size)) {
-      $this->setOptions(['page-size' => $page_size]);
+      $this->setOptions(array('page-size' => $page_size));
     }
   }
 
@@ -120,7 +131,7 @@ class WkhtmltopdfGenerator extends PdfGeneratorBase implements ContainerFactoryP
    * {@inheritdoc}
    */
   public function setFooter($text) {
-    $this->setOptions(['footer-center' => $text]);
+    $this->setOptions(array('footer-center' => $text));
   }
 
   /**
@@ -136,7 +147,7 @@ class WkhtmltopdfGenerator extends PdfGeneratorBase implements ContainerFactoryP
    */
   public function send() {
     $this->preGenerate();
-    $this->generator->send($this->generator->getPdfFilename(), TRUE);
+    $this->generator->send($this->generator->getPdfFilename(), true);
   }
 
   /**
@@ -145,7 +156,7 @@ class WkhtmltopdfGenerator extends PdfGeneratorBase implements ContainerFactoryP
   public function stream($filelocation) {
     $this->preGenerate();
     $this->generator->saveAs($filelocation);
-    $this->generator->send($filelocation, FALSE);
+    $this->generator->send($filelocation, false);
   }
 
   /**

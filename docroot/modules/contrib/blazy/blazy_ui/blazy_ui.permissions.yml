@@ -1,4 +1,2 @@
 administer blazy:
   title: 'Administer the Blazy module'
-  # Minor housekeeping till xchecks. Consider helping frontend vurns for now.
-  restrict access: true

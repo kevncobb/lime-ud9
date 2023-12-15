@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\pdf_api\Annotation\PdfGenerator.
+ */
+
 namespace Drupal\pdf_api\Annotation;
 
 use Drupal\Component\Annotation\Plugin;
@@ -30,18 +35,18 @@ class PdfGenerator extends Plugin {
    *
    * This is used as an administrative summary of what the generator does.
    *
-   * @var \Drupal\Core\Annotation\Translation
-   *
    * @ingroup plugin_translatable
+   *
+   * @var \Drupal\Core\Annotation\Translation
    */
   public $title;
 
   /**
    * Additional administrative information about the generator's behavior.
    *
-   * @var \Drupal\Core\Annotation\Translation optional
-   *
    * @ingroup plugin_translatable
+   *
+   * @var \Drupal\Core\Annotation\Translation (optional)
    */
   public $description = '';
 

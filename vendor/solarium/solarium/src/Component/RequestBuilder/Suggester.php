@@ -18,7 +18,7 @@ use Solarium\Core\ConfigurableInterface;
 class Suggester implements ComponentRequestBuilderInterface
 {
     /**
-     * Add request settings for Suggester.
+     * Add request settings for Spellcheck.
      *
      * @param \Solarium\Component\SuggesterInterface $component
      * @param Request                                $request

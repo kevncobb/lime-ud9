@@ -21,7 +21,7 @@ class Drupal7MigrationTest extends MigrateDrupal7TestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = [
+  public static $modules = [
     'video_embed_field',
     'comment',
     'datetime',
@@ -44,7 +44,7 @@ class Drupal7MigrationTest extends MigrateDrupal7TestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp(): void {
+  protected function setUp() {
     parent::setUp();
 
     $this->installEntitySchema('node');

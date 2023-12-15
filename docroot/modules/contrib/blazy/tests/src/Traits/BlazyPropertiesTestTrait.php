@@ -89,6 +89,13 @@ trait BlazyPropertiesTestTrait {
    *
    * @var \Drupal\blazy\Form\BlazyAdminInterface
    */
+  protected $blazyAdminExtended;
+
+  /**
+   * The blazy admin service.
+   *
+   * @var \Drupal\blazy\Form\BlazyAdminInterface
+   */
   protected $blazyAdmin;
 
   /**
@@ -97,15 +104,6 @@ trait BlazyPropertiesTestTrait {
    * @var \Drupal\blazy\Form\BlazyAdminFormatter
    */
   protected $blazyAdminFormatter;
-
-  /**
-   * The blazy admin service.
-   *
-   * @var \Drupal\blazy\Form\BlazyAdminInterface
-   *
-   * @todo remove for $blazyAdminFormatter post blazy:2.17 after sub-modules.
-   */
-  protected $blazyAdminExtended;
 
   /**
    * The blazy formatter service.
@@ -127,13 +125,6 @@ trait BlazyPropertiesTestTrait {
    * @var \Drupal\blazy\BlazyEntity
    */
   protected $blazyEntity;
-
-  /**
-   * The blazy media service.
-   *
-   * @var \Drupal\blazy\Media\BlazyMedia
-   */
-  protected $blazyMedia;
 
   /**
    * The entity manager.

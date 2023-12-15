@@ -22,7 +22,7 @@ use Symfony\Component\Filesystem\Exception\IOException;
  */
 class Filesystem
 {
-    private static ?string $lastError = null;
+    private static $lastError;
 
     /**
      * Copies a file.
@@ -749,7 +749,7 @@ class Filesystem
         self::assertFunctionExists($func);
 
         self::$lastError = null;
-        set_error_handler(self::handleError(...));
+        set_error_handler(__CLASS__.'::handleError');
         try {
             return $func(...$args);
         } finally {

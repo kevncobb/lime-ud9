@@ -25,7 +25,7 @@ class ContentBrowserPreview extends FieldPluginBase {
    */
   protected $entityTypeManager;
 
-  /**
+    /**
    * The entity display repository.
    *
    * @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface
@@ -33,15 +33,9 @@ class ContentBrowserPreview extends FieldPluginBase {
   protected $entityDisplayRepository;
 
   /**
-   * The constructor.
+   * {@inheritdoc}
    *
-   * @param array $configuration
-   *   The configuration.
-   * @param mixed $plugin_id
-   *   The plugin id.
-   * @param mixed $plugin_definition
-   *   The plugin definition.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_type_manager
    *   The entity type manager.
    * @param \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entity_display_repository
    *   The entity display repository.

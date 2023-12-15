@@ -20,20 +20,23 @@ use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
  */
 class FlexsliderFormatter extends ImageFormatter {
   use FlexsliderFormatterTrait;
-  use FlexsliderImageFormatterTrait;
 
   /**
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return parent::defaultSettings() + self::getDefaultSettings() + self::getDefaultImageSettings();
+    return self::getDefaultSettings() + parent::defaultSettings();
   }
 
   /**
    * {@inheritdoc}
    */
   public function settingsSummary() {
-    return array_merge(parent::settingsSummary(), $this->buildSettingsSummary());
+    $summary = $this->buildSettingsSummary($this);
+
+    // Add the image settings summary and return.
+    return array_merge($summary, parent::settingsSummary());
+
   }
 
   /**
@@ -41,7 +44,7 @@ class FlexsliderFormatter extends ImageFormatter {
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     // Add the optionset setting.
-    $element = $this->buildSettingsForm();
+    $element = $this->buildSettingsForm($this);
 
     // Add the image settings.
     $element = array_merge($element, parent::settingsForm($form, $form_state));
@@ -60,9 +63,11 @@ class FlexsliderFormatter extends ImageFormatter {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
+
     $images = parent::viewElements($items, $langcode);
     $elements[] = $this->viewImages($images, $this->getSettings());
     return $elements;
+
   }
 
   /**
@@ -77,7 +82,8 @@ class FlexsliderFormatter extends ImageFormatter {
    * {@inheritdoc}
    */
   public function calculateDependencies() {
-    return parent::calculateDependencies() + $this->getOptionsetDependencies();
+    $dependencies = parent::calculateDependencies();
+    return $dependencies + $this->getOptionsetDependencies($this);
   }
 
   /**
@@ -85,7 +91,8 @@ class FlexsliderFormatter extends ImageFormatter {
    */
   public function onDependencyRemoval(array $dependencies) {
     $changed = parent::onDependencyRemoval($dependencies);
-    if ($this->optionsetDependenciesDeleted($dependencies)) {
+
+    if ($this->optionsetDependenciesDeleted($this, $dependencies)) {
       $changed = TRUE;
     }
     return $changed;

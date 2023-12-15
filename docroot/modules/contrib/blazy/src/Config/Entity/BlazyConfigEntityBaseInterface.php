@@ -29,90 +29,60 @@ interface BlazyConfigEntityBaseInterface extends ConfigEntityInterface {
   public function getOptions($group = NULL, $property = NULL);
 
   /**
-   * Sets the array of settings.
-   *
-   * @param array $options
-   *   The array of options to merge.
-   * @param bool $merged
-   *   Whether to merge, or replace.
-   *
-   * @return $this
-   *   The class instance that this method is called on.
-   */
-  public function setOptions(array $options, $merged = TRUE): self;
-
-  /**
-   * Returns the value of an option group.
-   *
-   * @param string $group
-   *   The group name: settings, icon, etc.
-   *
-   * @return mixed
-   *   The option value merged with defaults.
-   */
-  public function getOption($group);
-
-  /**
-   * Sets the value of an option.
-   *
-   * @param string $name
-   *   The option name: settings, etc.
-   * @param array|bool|int|string|null $value
-   *   The option value.
-   *
-   * @return $this
-   *   The class is being called.
-   */
-  public function setOption($name, $value): self;
-
-  /**
    * Returns the array of settings.
    *
    * @param bool $ansich
-   *   Whether to return the settings as is, normally without defaults.
+   *   Whether to return the settings as is.
    *
    * @return array
    *   The array of settings.
    */
-  public function getSettings($ansich = FALSE): array;
+  public function getSettings($ansich = FALSE);
 
   /**
    * Sets the array of settings.
    *
-   * @param array $values
-   *   The new array of setting values.
-   * @param bool $merged
-   *   Whether to merge with default values.
+   * @param array $settings
+   *   The new array of settings.
    *
    * @return $this
    *   The class instance that this method is called on.
    */
-  public function setSettings(array $values, $merged = TRUE): self;
+  public function setSettings(array $settings = []);
 
   /**
    * Returns the value of a setting.
    *
-   * @param string $name
+   * @param string $setting_name
    *   The setting name.
-   * @param bool|int|string|null $default
-   *   The default value.
    *
    * @return mixed
    *   The setting value.
    */
-  public function getSetting($name, $default = NULL);
+  public function getSetting($setting_name);
 
   /**
    * Sets the value of a setting.
    *
-   * @param string $name
+   * @param string $setting_name
    *   The setting name.
-   * @param bool|int|string|null $value
+   * @param string $value
    *   The setting value.
    *
    * @return $this
    *   The class instance that this method is called on.
    */
-  public function setSetting($name, $value): self;
+  public function setSetting($setting_name, $value);
+
+  /**
+   * Returns available default options under group 'settings'.
+   *
+   * @param string $group
+   *   The name of group: settings, responsives.
+   *
+   * @return array
+   *   The default settings under options.
+   */
+  public static function defaultSettings($group = 'settings');
 
 }

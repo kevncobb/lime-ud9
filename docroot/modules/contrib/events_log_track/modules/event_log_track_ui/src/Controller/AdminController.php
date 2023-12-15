@@ -23,7 +23,7 @@ class AdminController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('form_builder')
+            $container->get('form_builder')
     );
   }
 

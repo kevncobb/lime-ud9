@@ -7,13 +7,16 @@
 
 
 ### QUICK PERFORMANCE TIPS
-* Slick lazyloads are **deprecated in 2.10**, use Blazy for anything instead.
+* Use lazyLoad **ondemand / anticipated** for tons of images, not
+  **progressive**. Unless within an ajaxified lightbox.
+* Use lazyload **Blazy** for carousels below the fold to delay loading them.
 * Tick **Optimized** option on the top right of Slick optionset edit page.
 * Use image style with regular sizes containing effect **crop** in the name.
   This way all images will inherit dimensions calculated once.
 * Disable core library **slick-theme.css** as it contains font **slick** which
   may not be in use when using own icon font at:
   **/admin/config/media/slick/ui**
+* Use Blazy multi-serving images, Responsive image, or Picture, accordingly.
 * Uninstall Slick UI at production.
 * Enable Drupal cache, and CSS/ JS assets aggregation.
 
@@ -111,7 +114,7 @@ Be sure to clear cache since skins are permanently cached!
 * **Grid**
 
   Only reasonable if you have considerable amount of slides.
-  Uses the Foundation 5.5 b-grid, and disabled if you choose your own skin
+  Uses the Foundation 5.5 block-grid, and disabled if you choose your own skin
   not named Grid. Otherwise overrides skin Grid accordingly.
 
   **Requires:**
@@ -166,7 +169,7 @@ To create Slick grid or multiple rows carousel, there are 3 options:
    + `slidesToShow, Rows and slidesPerRow = 1`
 
 The first 2 are supported by core library using pure JS approach.
-The last is the Module feature using pure `CSS Foundation` b-grid.
+The last is the Module feature using pure `CSS Foundation` block-grid.
 
 **The key is:**
 
@@ -186,8 +189,7 @@ Note, non-BEM classes are added by JS.
 </div>
 ```
 
-`asNavFor` should target `slick-initialized` ID attributes. This is taken care
-of by the module if using the provided formatters, or Views styles.
+`asNavFor` should target `slick-initialized` class/ID attributes.
 
 
 ### CURRENT DEVELOPMENT STATUS

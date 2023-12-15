@@ -2,15 +2,13 @@
 
 namespace Drupal\printable\Plugin;
 
-use Drupal\Component\Plugin\ConfigurableInterface;
-use Drupal\Component\Plugin\DependentPluginInterface;
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 
 /**
  * Defines an interface for printable format plugins.
  */
-interface PrintableFormatInterface extends ConfigurableInterface, DependentPluginInterface, PluginFormInterface {
+interface PrintableFormatInterface extends ConfigurablePluginInterface, PluginFormInterface {
 
   /**
    * Returns the administrative label for this format plugin.
@@ -37,35 +35,11 @@ interface PrintableFormatInterface extends ConfigurableInterface, DependentPlugi
   public function setContent(array $content);
 
   /**
-   * Get a string representing the output of the generation process.
-   *
-   * @return string
-   *   The output of this printable format (HTML or a file location).
-   */
-  public function getOutput();
-
-  /**
    * Returns the response object for this format plugin.
    *
    * @return \Symfony\Component\HttpFoundation\Response
    *   The response object.
    */
   public function getResponse();
-
-  /**
-   * Get the entity we are rendering.
-   *
-   * @return \Drupal\Core\Entity\EntityInterface
-   *   The entity being rendered.
-   */
-  public function getEntity();
-
-  /**
-   * Set the entity we are rendering.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity being rendered.
-   */
-  public function setEntity(EntityInterface $entity);
 
 }

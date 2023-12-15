@@ -2,14 +2,14 @@
 
 namespace Drupal\search_api_solr\Event;
 
-use Drupal\search_api\IndexInterface;
+use Drupal\Component\EventDispatcher\Event;
 use Drupal\search_api\Item\ItemInterface;
 use Solarium\Core\Query\DocumentInterface;
 
 /**
  * Search API Solr event base class.
  */
-abstract class AbstractSearchApiItemSolariumDocumentEvent extends AbstractIndexAwareEvent {
+abstract class AbstractSearchApiItemSolariumDocumentEvent extends Event {
 
   /**
    * The search_api query.
@@ -33,8 +33,7 @@ abstract class AbstractSearchApiItemSolariumDocumentEvent extends AbstractIndexA
    * @param \Solarium\Core\Query\DocumentInterface $solarium_document
    *   The solarium document.
    */
-  public function __construct(ItemInterface $search_api_item, DocumentInterface $solarium_document, IndexInterface $index) {
-    parent::__construct($index);
+  public function __construct(ItemInterface $search_api_item, DocumentInterface $solarium_document) {
     $this->searchApiItem = $search_api_item;
     $this->solariumDocument = $solarium_document;
   }

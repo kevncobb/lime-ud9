@@ -2,7 +2,6 @@
 
 namespace Drupal\blazy\Plugin\views\field;
 
-use Drupal\media\Entity\Media;
 use Drupal\views\ResultRow;
 
 /**
@@ -16,35 +15,18 @@ class BlazyViewsFieldMedia extends BlazyViewsFieldPluginBase {
    * {@inheritdoc}
    */
   public function render(ResultRow $values) {
-    /** @var \Drupal\media\Entity\Media $entity */
-    // @todo recheck relationship and remove this $entity = $values->_entity;
-    $entity = $this->getEntity($values);
+    /** @var \Drupal\media_entity\Entity\Media $media */
+    $media = $values->_entity;
 
-    if ($entity instanceof Media) {
-      $options['defer'] = TRUE;
-      $settings = $this->mergedViewsSettings($options);
+    $settings = $this->mergedViewsSettings();
+    $settings['delta'] = $values->index;
 
-      // Due to minimal settings, assumed core fields are in use.
-      $settings['image'] = 'field_media_image';
-      $data['#entity']   = $entity;
-      $data['#settings'] = $settings;
-      $data['#delta']    = $values->index;
+    $data['settings'] = $this->mergedSettings = $settings;
+    $data['entity'] = $media;
+    $data['fallback'] = $media->label();
 
-      // Populate media metadata earlier for their relevant libraries.
-      // Need field.target_bundles, since this views field has none.
-      // @todo remove once formatters and views fields are synced downstream.
-      $this->blazyMedia->prepare($data);
-
-      // Be sure after item setup.
-      $this->blazyManager->preSettings($data['#settings']);
-      $data['fallback'] = $entity->label();
-
-      // Pass results to \Drupal\blazy\BlazyEntity.
-      // @todo phpstan bug only undestands the doc return types, not dynamic.
-      /* @phpstan-ignore-next-line */
-      return $this->blazyEntity->build($data);
-    }
-    return '';
+    // Pass results to \Drupal\blazy\BlazyEntity.
+    return $this->blazyEntity->build($data);
   }
 
   /**

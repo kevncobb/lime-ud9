@@ -7,7 +7,7 @@ dependencies:
   - cl_editorial:cl_editorial
   - cl_editorial:sdc_tags
 
-# Information added by Drupal.org packaging script on 2023-11-23
-version: '1.0.0-beta3'
+# Information added by Drupal.org packaging script on 2023-09-26
+version: '1.0.0-beta1'
 project: 'sdc_display'
-datestamp: 1700759678
+datestamp: 1695713668

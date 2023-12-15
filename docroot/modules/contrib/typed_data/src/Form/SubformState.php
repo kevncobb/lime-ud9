@@ -2,16 +2,12 @@
 
 namespace Drupal\typed_data\Form;
 
+use Drupal\Core\Form\SubformState as CoreSubformState;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Form\SubformState as CoreSubformState;
 
 /**
- * Stores information about the state of a subform.
- *
- * Extends the core SubformState class to provide two new methods.
- *
- * @see \Drupal\Core\Form\SubformState
+ * Class SubformState.
  */
 class SubformState extends CoreSubformState {
 

@@ -5,7 +5,7 @@ namespace Drupal\cl_server\Cache;
 use Drupal\cl_server\Util;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheBackendInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Drupal\Core\Http\RequestStack;
 
 /**
  * Defines a stub cache implementation.
@@ -48,15 +48,13 @@ class SkippableBackend implements CacheBackendInterface {
    *
    * @param \Drupal\Core\Cache\CacheBackendInterface $backend
    *   The back-end.
-   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
+   * @param \Drupal\Core\Http\RequestStack
    *   The request stack.
-   * @param bool $development_mode
-   *   Indicates if CL Server is in development mode.
    */
-  public function __construct(CacheBackendInterface $backend, RequestStack $request_stack, bool $development_mode) {
+  public function __construct(CacheBackendInterface $backend, RequestStack $request_stack) {
     $this->backend = $backend;
     $request = $request_stack->getCurrentRequest();
-    $this->skipCache = $development_mode && $request && Util::isRenderController($request);
+    $this->skipCache = $request && Util::isRenderController($request);
   }
 
   /**

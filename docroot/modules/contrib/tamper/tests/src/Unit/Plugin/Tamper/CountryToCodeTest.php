@@ -30,7 +30,7 @@ class CountryToCodeTest extends TamperPluginTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp(): void {
+  protected function setUp() {
     // Mock up Country Manager.
     $this->countryManagerMock = $this->createMock(CountryManagerInterface::class);
     $this->countryManagerMock->expects($this->any())

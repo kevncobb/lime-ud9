@@ -29,7 +29,9 @@ class PrintableFormatConfigureTabsTest extends UnitTestCase {
    * @covers PrintableFormatConfigureTabs::GetDerivativeDefinitions
    */
   public function testGetDerivativeDefinitions() {
-    $printable_format_manager = $this->createMock('Drupal\printable\PrintableFormatPluginManager');
+    $printable_format_manager = $this->getMockBuilder('Drupal\printable\PrintableFormatPluginManager')
+      ->disableOriginalConstructor()
+      ->getMock();
     $printable_format_manager->expects($this->once())
       ->method('getDefinitions')
       ->will($this->returnValue([
@@ -45,10 +47,12 @@ class PrintableFormatConfigureTabsTest extends UnitTestCase {
     $expected = [
       'foo' => [
         'title' => 'Foo',
+        'route_parameters' => ['printable_format' => 'foo'],
         'route_name' => 'printable.format_configure_foo',
       ],
       'bar' => [
         'title' => 'Bar',
+        'route_parameters' => ['printable_format' => 'bar'],
         'route_name' => 'printable.format_configure_bar',
       ],
     ];

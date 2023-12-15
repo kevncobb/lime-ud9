@@ -1,0 +1,24 @@
+diff --git a/moderation_note.module b/moderation_note.module
+index cb1d2aa..979cfaa 100644
+--- a/moderation_note.module
++++ b/moderation_note.module
+@@ -142,9 +142,6 @@ function moderation_note_preprocess_field(&$variables) {
+   $element = $variables['element'];
+   /** @var \Drupal\Core\Entity\EntityInterface $entity */
+   $entity = $element['#object'];
+-  /** @var \Drupal\Core\Field\FieldItemList $field_list */
+-  $field_list = $element['#items'];
+-  $field_definition = $field_list->getFieldDefinition();
+ 
+   if (!_moderation_note_access($entity)) {
+     return;
+@@ -152,7 +149,8 @@ function moderation_note_preprocess_field(&$variables) {
+ 
+   // Check the field type - we only support text fields at this time.
+   $supported_types = ['string', 'text', 'text_long', 'text_with_summary'];
+-  if (!in_array($field_definition->getType(), $supported_types, TRUE)) {
++  $field_type = $variables['field_type'] ? $variables['field_type'] : NULL;
++  if (!in_array($field_type, $supported_types, TRUE)) {
+     return;
+   }
+ 

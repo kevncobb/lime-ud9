@@ -2,9 +2,10 @@
 
 namespace Drupal\blazy\Plugin\Field\FieldFormatter;
 
-use Drupal\blazy\BlazyDefault;
-use Drupal\blazy\Field\BlazyEntitySvgBase;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\blazy\BlazyDefault;
+use Drupal\blazy\Field\BlazyEntityMediaBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base class for blazy-related media ER formatters.
@@ -12,15 +13,23 @@ use Drupal\Core\Field\FieldDefinitionInterface;
  * @see \Drupal\blazy\Plugin\Field\FieldFormatter\BlazyMediaFormatter
  * @see \Drupal\gridstack\Plugin\Field\FieldFormatter\GridStackMediaFormatter
  */
-abstract class BlazyMediaFormatterBase extends BlazyEntitySvgBase {
+abstract class BlazyMediaFormatterBase extends BlazyEntityMediaBase {
+
+  use BlazyFormatterTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    return self::injectServices($instance, $container, 'entity');
+  }
 
   /**
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return BlazyDefault::extendedSettings()
-      + BlazyDefault::gridSettings()
-      + parent::defaultSettings();
+    return BlazyDefault::extendedSettings() + BlazyDefault::gridSettings();
   }
 
   /**

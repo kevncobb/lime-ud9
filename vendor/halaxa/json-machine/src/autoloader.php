@@ -19,10 +19,7 @@ namespace JsonMachine;
  */
 class Autoloading
 {
-    /**
-     * @return void
-     */
-    static public function autoloader(string $class)
+    static public function autoloader($class)
     {
         $prefix = 'JsonMachine\\';
         $baseDir = __DIR__.DIRECTORY_SEPARATOR;

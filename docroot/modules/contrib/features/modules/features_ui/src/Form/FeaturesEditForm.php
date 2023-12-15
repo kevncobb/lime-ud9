@@ -152,10 +152,7 @@ class FeaturesEditForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $featurename = '') {
-    if ($this->getRequest()->hasSession()) {
-      $session = $this->getRequest()->getSession();
-    }
-
+    $session = $this->getRequest()->getSession();
     $trigger = $form_state->getTriggeringElement();
     if (isset($trigger['#name']) && $trigger['#name'] == 'package') {
       // Save current bundle name for later ajax callback.

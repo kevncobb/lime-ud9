@@ -33,7 +33,8 @@ class ConvertBoolean extends TamperBase {
     $config[self::SETTING_TRUTH_VALUE] = 'true';
     $config[self::SETTING_FALSE_VALUE] = 'false';
     $config[self::SETTING_MATCH_CASE] = FALSE;
-    $config[self::SETTING_NO_MATCH] = FALSE;
+    $config[self::SETTING_NO_MATCH] = 'false';
+    $config[self::SETTING_OTHER_TEXT] = '';
 
     return $config;
   }
@@ -63,36 +64,10 @@ class ConvertBoolean extends TamperBase {
       '#description' => $this->t('Match the case.'),
     ];
 
-    // If no match setting.
-    $no_match = $this->getSetting(self::SETTING_NO_MATCH);
-    $other_text = '';
-    switch (TRUE) {
-      case $no_match === TRUE:
-        $default = 'true';
-        break;
-
-      case $no_match === FALSE:
-        $default = 'false';
-        break;
-
-      case $no_match === NULL:
-        $default = 'null';
-        break;
-
-      case $no_match === 'pass':
-        $default = 'pass';
-        break;
-
-      default:
-        $other_text = $no_match;
-        $default = 'other';
-        break;
-    }
-
     $form[self::SETTING_NO_MATCH] = [
       '#type' => 'radios',
       '#title' => $this->t('If no match'),
-      '#default_value' => $default,
+      '#default_value' => $this->getSetting(self::SETTING_NO_MATCH),
       '#options' => [
         'true' => $this->t('True'),
         'false' => $this->t('False'),
@@ -106,7 +81,7 @@ class ConvertBoolean extends TamperBase {
     $form[self::SETTING_OTHER_TEXT] = [
       '#type' => 'textfield',
       '#title' => $this->t('Other text'),
-      '#default_value' => $other_text,
+      '#default_value' => $this->getSetting(self::SETTING_OTHER_TEXT),
       '#states' => [
         'visible' => [
           'input[name="plugin_configuration[no_match_value]"]' => ['value' => 'other'],
@@ -122,33 +97,29 @@ class ConvertBoolean extends TamperBase {
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     parent::submitConfigurationForm($form, $form_state);
-
-    $config = [
+    $this->setConfiguration([
       self::SETTING_TRUTH_VALUE => $form_state->getValue(self::SETTING_TRUTH_VALUE),
       self::SETTING_FALSE_VALUE => $form_state->getValue(self::SETTING_FALSE_VALUE),
-      self::SETTING_MATCH_CASE => $form_state->getValue(self::SETTING_MATCH_CASE),
       self::SETTING_NO_MATCH => $form_state->getValue(self::SETTING_NO_MATCH),
-    ];
+    ]);
 
-    switch ($config[self::SETTING_NO_MATCH]) {
+    switch ($form_state->getValue(self::SETTING_NO_MATCH)) {
       case 'true':
-        $config[self::SETTING_NO_MATCH] = TRUE;
+        $this->setConfiguration([self::SETTING_NO_MATCH => TRUE]);
         break;
 
       case 'false':
-        $config[self::SETTING_NO_MATCH] = FALSE;
+        $this->setConfiguration([self::SETTING_NO_MATCH => FALSE]);
         break;
 
       case 'null':
-        $config[self::SETTING_NO_MATCH] = NULL;
+        $this->setConfiguration([self::SETTING_NO_MATCH => NULL]);
         break;
 
       case 'other':
-        $config[self::SETTING_NO_MATCH] = $form_state->getValue(self::SETTING_OTHER_TEXT);
+        $this->setConfiguration([self::SETTING_NO_MATCH => $form_state->getValue(self::SETTING_OTHER_TEXT)]);
         break;
     }
-
-    $this->setConfiguration($config);
   }
 
   /**

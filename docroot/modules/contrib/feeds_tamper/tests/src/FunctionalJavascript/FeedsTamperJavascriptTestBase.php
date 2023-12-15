@@ -25,7 +25,7 @@ abstract class FeedsTamperJavascriptTestBase extends FeedsJavascriptTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp(): void {
+  protected function setUp() {
     parent::setUp();
 
     $this->drupalLogout();
@@ -53,7 +53,7 @@ abstract class FeedsTamperJavascriptTestBase extends FeedsJavascriptTestBase {
       $errors = [];
       foreach ($logs as $log_entry) {
         // Format the error message.
-        $log_entry->variables = unserialize($log_entry->variables, ['allowed_classes' => FALSE]);
+        $log_entry->variables = unserialize($log_entry->variables);
         $errors[] = strtr($log_entry->message, $log_entry->variables);
       }
       $message = implode("\n", $errors);

@@ -130,7 +130,7 @@ class ParagraphCloneForm extends ContentEntityForm {
     $selection_settings = [];
     $bundle = $form_state->getValue(['paragraphs_edit', 'bundle'], NULL);
     if (!empty($bundle)) {
-      $selection_settings['target_bundles'] = [$bundle => $bundle];
+      $selection_settings['target_bundles'] = [$bundle];
     }
 
     if (!$entity_type) {
@@ -193,16 +193,7 @@ class ParagraphCloneForm extends ContentEntityForm {
           $field_definition = $field_definitions_bundle[$entity_type_id][$bundle][$field];
 
           // Check if field accepts paragraphs of this bundle.
-          $handler_settings = $field_definition->getSetting('handler_settings');
-          $target_bundles = $handler_settings['target_bundles'] ?? '';;
-          $target_bundles_options = array_keys($handler_settings['target_bundles_drag_drop'] ?? []);
-
-          if (empty($target_bundles)) {
-            $target_bundles = $target_bundles_options;
-          } elseif (!empty($handler_settings['negate'])) {
-            $target_bundles = array_diff($target_bundles_options, $target_bundles);
-          }
-
+          $target_bundles = $field_definition->getSetting('handler_settings')['target_bundles'];
           if (
             !empty($target_bundles) &&
             in_array($paragraph_type, $target_bundles)
@@ -213,7 +204,6 @@ class ParagraphCloneForm extends ContentEntityForm {
         }
       }
     }
-
     return $destinations;
   }
 

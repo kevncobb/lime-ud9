@@ -4,7 +4,6 @@ namespace Drupal\Tests\features\Unit;
 
 use Drupal\features\Entity\FeaturesBundle;
 use Drupal\Tests\UnitTestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * @coversDefaultClass Drupal\features\Entity\FeaturesBundle
@@ -12,12 +11,10 @@ use Prophecy\PhpUnit\ProphecyTrait;
  */
 class FeaturesBundleTest extends UnitTestCase {
 
-  use ProphecyTrait;
-
   /**
    * {@inheritDoc}
    */
-  public function setUp(): void {
+  public function setUp() {
     parent::setUp();
 
     // Mock an assigner.
@@ -57,33 +54,33 @@ class FeaturesBundleTest extends UnitTestCase {
     ], 'features_bundle');
 
     // Get assignments and attributes.
-    $this->assertEquals(
-      ['foo' => 'foo'],
+    $this->assertArrayEquals(
       $bundle->getEnabledAssignments(),
+      ['foo' => 'foo'],
       'Can get enabled assignments'
     );
-    $this->assertEquals(
-      ['foo' => 0, 'bar' => 1],
+    $this->assertArrayEquals(
       $bundle->getAssignmentWeights(),
+      ['foo' => 0, 'bar' => 1],
       'Can get assignment weights'
     );
-    $this->assertEquals(
-      $settings['foo'],
+    $this->assertArrayEquals(
       $bundle->getAssignmentSettings('foo'),
+      $settings['foo'],
       'Can get assignment settings'
     );
-    $this->assertEquals(
-      $settings,
+    $this->assertArrayEquals(
       $bundle->getAssignmentSettings(),
+      $settings,
       'Can get all assignment settings'
     );
 
     // Change settings.
     $settings['foo']['my_setting'] = 97;
     $bundle->setAssignmentSettings('foo', $settings['foo']);
-    $this->assertEquals(
-      $settings['foo'],
+    $this->assertArrayEquals(
       $bundle->getAssignmentSettings('foo'),
+      $settings['foo'],
       'Can change assignment settings'
     );
 
@@ -91,28 +88,28 @@ class FeaturesBundleTest extends UnitTestCase {
     $settings['foo']['weight'] = 1;
     $settings['bar']['weight'] = 0;
     $bundle->setAssignmentWeights(['foo' => 1, 'bar' => 0]);
-    $this->assertEquals(
-      ['foo' => 1, 'bar' => 0],
+    $this->assertArrayEquals(
       $bundle->getAssignmentWeights(),
+      ['foo' => 1, 'bar' => 0],
       'Can change assignment weights'
     );
-    $this->assertEquals(
-      $settings,
+    $this->assertArrayEquals(
       $bundle->getAssignmentSettings(),
+      $settings,
       'Weight changes are reflected in settings'
     );
 
     // Enable existing assignment.
     $settings['bar']['enabled'] = TRUE;
     $bundle->setEnabledAssignments(['foo', 'bar']);
-    $this->assertEquals(
-      ['foo' => 'foo', 'bar' => 'bar'],
+    $this->assertArrayEquals(
       $bundle->getEnabledAssignments(),
+      ['foo' => 'foo', 'bar' => 'bar'],
       'Can enable assignment'
     );
-    $this->assertEquals(
-      $settings,
+    $this->assertArrayEquals(
       $bundle->getAssignmentSettings(),
+      $settings,
       'Enabled assignment status is reflected in settings'
     );
 
@@ -120,14 +117,14 @@ class FeaturesBundleTest extends UnitTestCase {
     $settings['foo']['enabled'] = FALSE;
     $settings['bar']['enabled'] = FALSE;
     $bundle->setEnabledAssignments([]);
-    $this->assertEquals(
-      [],
+    $this->assertArrayEquals(
       $bundle->getEnabledAssignments(),
+      [],
       'Can disable assignments'
     );
-    $this->assertEquals(
-      $settings,
+    $this->assertArrayEquals(
       $bundle->getAssignmentSettings(),
+      $settings,
       'Disabled assignment status is reflected in settings'
     );
 
@@ -135,15 +132,15 @@ class FeaturesBundleTest extends UnitTestCase {
     $settings['foo']['enabled'] = TRUE;
     $settings['iggy'] = ['enabled' => TRUE, 'weight' => 0, 'new_setting' => 3];
     $bundle->setEnabledAssignments(['foo', 'iggy']);
-    $this->assertEquals(
-      ['foo' => 'foo', 'iggy' => 'iggy'],
+    $this->assertArrayEquals(
       $bundle->getEnabledAssignments(),
+      ['foo' => 'foo', 'iggy' => 'iggy'],
       'Can enable new assignment'
     );
     $bundle->setAssignmentSettings('iggy', $settings['iggy']);
-    $this->assertEquals(
-      $settings,
+    $this->assertArrayEquals(
       $bundle->getAssignmentSettings(),
+      $settings,
       'New enabled assignment status is reflected in settings'
     );
 

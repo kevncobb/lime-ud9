@@ -15,10 +15,10 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FormatterInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Utility\Error;
 use Drupal\layout_builder\LayoutBuilderEnabledInterface;
 use Drupal\sdc\ComponentPluginManager;
@@ -26,7 +26,7 @@ use Drupal\sdc\Exception\ComponentNotFoundException;
 use Drupal\sdc\Plugin\Component;
 use Drupal\sdc_display\Form\FieldFormatterMappingsSettings;
 use Drupal\sdc_display\Form\ViewModeMappingsSettings;
-use Drupal\sdc_display\Util;
+use Drupal\sdc_display\Util as DisplayUtil;
 use SchemaForms\FormGeneratorInterface;
 
 /**
@@ -173,7 +173,7 @@ function sdc_display_preprocess_field(&$variables) {
   $mapped_on = EditorialUtil::isPropOrSlot($component, $input_name);
 
   foreach ($variables['items'] ?? [] as $delta => $item) {
-    $field_is_empty = Util::fieldIsEmpty(
+    $field_is_empty = DisplayUtil::fieldIsEmpty(
       $variables['element']['#items'] ?? NULL,
       $delta
     );
@@ -284,32 +284,60 @@ function sdc_display_entity_view_alter(array &$build, EntityInterface $entity, E
     return;
   }
   $mappings = $display->getThirdPartySetting('sdc_display', 'mappings') ?? [];
-  $renderer = \Drupal::service('renderer');
-  assert($renderer instanceof RendererInterface);
-
   // Iterate over all the component props and slots and populate their values
   // based o the dynamic mappings, falling back to the static mappings.
-  $prop_values = Util::computePropValues(
-    array_keys($component->metadata->schema['properties'] ?? []),
-    $mappings['static']['props'] ?? [],
-    $mappings['dynamic']['props'] ?? [],
-    $build,
-    $entity,
-    \Drupal::service('renderer'),
-  );
-  $slot_values = Util::computeSlotValues(
-    array_keys($component->metadata->slots),
-    $mappings['static']['slots'] ?? [],
-    $mappings['dynamic']['slots'] ?? [],
-    $build,
-    $entity,
-  );
+  $prop_names = array_keys($component->metadata->schema['properties'] ?? []);
+  $prop_values = [];
+  foreach ($prop_names as $prop_name) {
+    $field_name = $mappings['dynamic']['props'][$prop_name] ?? '';
+    $skip_static_mapping =
+      !empty($field_name)
+      && $entity instanceof FieldableEntityInterface
+      && $entity->hasField($field_name)
+      && !$entity->get($field_name)->isEmpty();
+    if ($skip_static_mapping) {
+      $prop_values[$prop_name] = $build[$field_name] ?? [];
+      continue;
+    }
+    $fixed_value = $mappings['static']['props'][$prop_name] ?? '';
+    if (!empty($fixed_value)) {
+      $prop_values[$prop_name] = $fixed_value;
+    }
+  }
+  $slot_names = array_keys($component->metadata->slots);
+  $slot_values = [];
+  foreach ($slot_names as $slot_name) {
+    $field_names = array_keys(array_filter($mappings['dynamic']['slots'][$slot_name] ?? []));
+    if (!empty($field_names)) {
+      $slot_values[$slot_name] = array_map(
+        static fn(string $field_name) => $build[$field_name],
+        $field_names
+      );
+      // If, at least, one of the fields has data, then that's our slot value.
+      $some_data = array_reduce(
+        $field_names,
+        static fn (bool $carry, string $field_name) => $carry || !$entity->get($field_name)->isEmpty(),
+        FALSE,
+      );
+      if ($some_data) {
+        continue;
+      }
+    }
+    $fixed_value = $mappings['static']['slots'][$slot_name] ?? [];
+    if (!empty($fixed_value['value'])) {
+      $slot_values[$slot_name] = [[
+        '#type' => 'processed_text',
+        '#text' => $fixed_value['value'],
+        '#format' => $fixed_value['format'] ?? 'plain_text',
+      ]];
+    }
+  }
   $entity_type = $entity->getEntityTypeId();
   $build = [
     '#cache' => $build['#cache'],
     '#entity_type' => $entity_type,
     '#' . $entity_type => $build['#' . $entity_type],
-    '#contextual_links' => $build['#contextual_links'] ?? [],
+    '#contextual_links' => $build['#contextual_links'],
     'component' => [
       '#type' => 'component',
       '#component' => $component_id,
@@ -318,4 +346,3 @@ function sdc_display_entity_view_alter(array &$build, EntityInterface $entity, E
     ],
   ];
 }
-

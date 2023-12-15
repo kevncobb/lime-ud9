@@ -34,7 +34,7 @@ class GroupListerTest extends BrowserTestBase {
    */
   public function testGroupLister() {
     // Check that the basic functions of module block_visibility_groups_admin.
-    $this->assertEquals(TRUE, TRUE, 'Test Unit Generated via App Console.');
+    $this->assertEqual(TRUE, TRUE, 'Test Unit Generated via App Console.');
   }
 
 }

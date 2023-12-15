@@ -184,13 +184,6 @@
   };
 
   /**
-   * Sets the item path.
-   */
-  Item.setPath = function (path) {
-    this.path = path;
-  };
-
-  /**
    * Returns item uri.
    */
   Item.getUri = function () {
@@ -205,16 +198,10 @@
    * Uncached parameter allows unique urls per size+date which is useful to display resized/cropped images
    */
   Item.getUrl = function (absolute, uncached) {
-    // Allow urls set by plugins on server side.
-    var url = this.url;
-    if (!url) {
-      var rootUrl = imce.getConf('root_url');
-      if (rootUrl) {
-        var path = encodeURIComponent(this.getPath()).replace(/%2F/g, '/');
-        url = imce.joinPaths(rootUrl, path);
-      }
-    }
-    if (url) {
+    var rootUrl;
+    var url = '';
+    if (rootUrl = imce.getConf('root_url')) {
+      url = imce.joinPaths(rootUrl, encodeURIComponent(this.getPath()).replace(/%2F/g, '/'));
       if (absolute && url.charAt(0) === '/' && url.charAt(1) !== '/') {
         url = location.protocol + '//' + location.host + url;
       }
@@ -222,7 +209,7 @@
         url += (url.indexOf('?') === -1 ? '?' : '&') + ('s' + this.size) + ('d' + this.date);
       }
     }
-    return url || '';
+    return url;
   };
 
   /**
@@ -318,7 +305,7 @@
    * Triggers property change handlers.
    */
   Item.triggerPropertyChange = function (prop, oldval) {
-    var method = 'on' + prop.charAt(0).toUpperCase() + prop.substring(1) + 'Change';
+    var method = 'on' + prop.charAt(0).toUpperCase() + prop.substr(1) + 'Change';
     if (this[method]) {
       this[method](oldval);
       if (this === imce.previewingItem) {

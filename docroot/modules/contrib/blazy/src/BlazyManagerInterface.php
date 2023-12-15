@@ -3,9 +3,10 @@
 namespace Drupal\blazy;
 
 /**
- * Defines re-usable media-related methods specific for blazy plugins.
+ * Defines re-usable services and functions for blazy plugins.
  *
- * Sub-modules should implement/ extend BlazyManagerBaseInterface, not
+ * @todo move some non-media methods into BlazyInterface at 3.x, or before.
+ * @todo sub-modules should implement BlazyManagerBaseInterface, not
  * BlazyManagerInterface to have their own unique render methods.
  */
 interface BlazyManagerInterface extends BlazyManagerBaseInterface {
@@ -15,13 +16,13 @@ interface BlazyManagerInterface extends BlazyManagerBaseInterface {
    *
    * @param array $build
    *   The array containing: item, content, settings, or optional captions.
+   * @param int $delta
+   *   The optional delta.
    *
    * @return array
    *   The alterable and renderable array of enforced content, or theme_blazy().
-   *
-   * @todo remove/ unify ImageItem, or fake one, as plain array at 3.x.
    */
-  public function getBlazy(array $build): array;
+  public function getBlazy(array $build, $delta = -1): array;
 
   /**
    * Builds the Blazy image as a structured array ready for ::renderer().
@@ -33,20 +34,6 @@ interface BlazyManagerInterface extends BlazyManagerBaseInterface {
    *   The renderable array of pre-rendered element.
    */
   public function preRenderBlazy(array $element): array;
-
-  /**
-   * Returns the contents using theme_field(), or theme_item_list().
-   *
-   * Blazy outputs can be formatted using either flat list via theme_field(), or
-   * a grid of Field items or Views rows via theme_item_list().
-   *
-   * @param array $build
-   *   The array containing: settings, children elements, or optional items.
-   *
-   * @return array
-   *   The alterable and renderable array of contents.
-   */
-  public function build(array $build): array;
 
   /**
    * Builds the Blazy outputs as a structured array ready for ::renderer().
@@ -63,7 +50,7 @@ interface BlazyManagerInterface extends BlazyManagerBaseInterface {
    * Returns drupalSettings for IO.
    *
    * @param array $attach
-   *   The settings which determine what library to attach, empty for defaults.
+   *   The settings which determine what library to attach.
    *
    * @return object
    *   The supported IO drupalSettings.

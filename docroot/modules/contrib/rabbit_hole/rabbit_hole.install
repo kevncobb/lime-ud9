@@ -261,7 +261,7 @@ function rabbit_hole_update_8106(&$sandbox) {
             'bundle_default',
           ];
           // Configuration exists only in "page_redirect" contrib action.
-          if (!empty($action) && $action === 'page_redirect') {
+          if ($action === 'page_redirect') {
             $redirect_fields = [
               'rh_redirect' => 'redirect',
               'rh_redirect_response' => 'redirect_code',
@@ -276,7 +276,7 @@ function rabbit_hole_update_8106(&$sandbox) {
             }
           }
           // If action is custom one, then we're loading defined fields.
-          elseif (!empty($action) && !in_array($action, $known_actions, TRUE)) {
+          elseif (!in_array($action, $known_actions, TRUE)) {
             $fields = [];
             \Drupal::service('plugin.manager.rabbit_hole_behavior_plugin')
               ->createInstance($action)

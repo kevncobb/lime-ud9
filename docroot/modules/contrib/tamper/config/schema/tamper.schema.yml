@@ -20,18 +20,11 @@ tamper.convert_boolean:
       type: boolean
       label: 'Match case'
     no_match_value:
-      type: ignore
+      type: string
       label: 'If no match'
-      nullable: true
-
-tamper.copy:
-  mapping:
-    to_from:
+    other_text:
       type: string
-      label: 'To or from'
-    copy_source:
-      type: string
-      label: 'Source'
+      label: 'Other text'
 
 tamper.url_decode:
   mapping:
@@ -62,7 +55,6 @@ tamper.explode:
     limit:
       type: integer
       label: 'Limit'
-      nullable: true
 
 tamper.find_replace:
   mapping:
@@ -72,26 +64,6 @@ tamper.find_replace:
     replace:
       type: string
       label: 'Text to replace'
-    case_sensitive:
-      type: boolean
-      label: 'Case sensitive'
-    word_boundaries:
-      type: boolean
-      label: 'Respect word boundaries'
-    whole:
-      type: boolean
-      label: 'Match whole word/phrase'
-
-tamper.find_replace_multiline:
-  mapping:
-    find_replace:
-      type: sequence
-      label: 'Text to find and the replacements'
-      sequence:
-        type: string
-    separator:
-      type: string
-      label: 'Search/replacement value separator'
     case_sensitive:
       type: boolean
       label: 'Case sensitive'
@@ -113,7 +85,6 @@ tamper.find_replace_regex:
     limit:
       type: integer
       label: 'Limit number of replacements'
-      nullable: true
 
 tamper.hash:
   mapping:
@@ -168,6 +139,9 @@ tamper.math:
     value:
       type: float
       label: 'Value'
+    log:
+      type: boolean
+      label: 'Log'
 
 tamper.number_format:
   mapping:
@@ -208,14 +182,8 @@ tamper.str_pad:
       type: string
       label: 'Pad string'
     pad_type:
-      type: integer
-      label: 'Pad type'
-
-tamper.str_pos:
-  mapping:
-    substring:
       type: string
-      label: 'String to search for position'
+      label: 'Pad type'
 
 tamper.strip_tags:
   mapping:

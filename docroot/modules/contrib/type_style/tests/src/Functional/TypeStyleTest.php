@@ -16,12 +16,7 @@ class TypeStyleTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['type_style', 'node'];
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $defaultTheme = 'stark';
+  public static $modules = ['type_style', 'node'];
 
   /**
    * Tests that the Type Style module works as expected.
@@ -42,8 +37,7 @@ class TypeStyleTest extends BrowserTestBase {
       'type_style[color]' => '#ffffff',
       'type_style[icon]' => 'my-icon',
     ];
-    $this->drupalGet('/admin/structure/types/manage/article');
-    $this->submitForm($edit, t('Save content type'));
+    $this->drupalPostForm('/admin/structure/types/manage/article', $edit, t('Save content type'));
     // Ensure that the configuration form contains the correct settings.
     $this->drupalGet('/admin/structure/types/manage/article');
     $this->assertSession()->pageTextContains('Style settings');

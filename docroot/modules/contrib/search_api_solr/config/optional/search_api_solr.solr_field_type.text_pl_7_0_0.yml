@@ -236,9 +236,6 @@ solr_configs:
               name: name
               VALUE: pl
             -
-              name: indexPath
-              VALUE: ./pl
-            -
               name: lookupImpl
               VALUE: AnalyzingInfixLookupFactory
             -

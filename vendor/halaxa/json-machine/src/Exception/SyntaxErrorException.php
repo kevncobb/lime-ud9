@@ -6,7 +6,7 @@ namespace JsonMachine\Exception;
 
 class SyntaxErrorException extends JsonMachineException
 {
-    public function __construct(string $message, int $position)
+    public function __construct($message, $position)
     {
         parent::__construct($message." At position $position.");
     }

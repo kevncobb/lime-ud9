@@ -2,21 +2,49 @@
 
 namespace Drupal\moderation_note\Controller;
 
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\AppendCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Url;
+use Drupal\moderation_note\Entity\ModerationNote;
 use Drupal\moderation_note\ModerationNoteInterface;
 use Drupal\user\UserInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Endpoints for the Moderation Note module.
  */
 class ModerationNoteController extends ControllerBase {
+
+  /**
+   * The QueryFactory service.
+   *
+   * @var \Drupal\Core\Entity\Query\QueryFactory
+   */
+  protected $queryFactory;
+
+  /**
+   * Constructs a ModerationNoteController.
+   *
+   * @param \Drupal\Core\Entity\Query\QueryFactory $query_factory
+   *   The QueryFactory service.
+   */
+  public function __construct(QueryFactory $query_factory) {
+    $this->queryFactory = $query_factory;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity.query')
+    );
+  }
 
   /**
    * Returns the form for a new Moderation Note.
@@ -34,7 +62,6 @@ class ModerationNoteController extends ControllerBase {
    *   A render array representing the form.
    */
   public function createNote(EntityInterface $entity, $field_name, $langcode, $view_mode_id) {
-    $note_storage = $this->entityTypeManager()->getStorage('moderation_note');
     $values = [
       'entity_type' => $entity->getEntityTypeId(),
       'entity_id' => $entity->id(),
@@ -42,22 +69,11 @@ class ModerationNoteController extends ControllerBase {
       'entity_langcode' => $langcode,
       'entity_view_mode_id' => $view_mode_id,
     ];
-    $moderation_note = $note_storage->create($values);
+    $moderation_note = ModerationNote::create($values);
     $form = $this->entityFormBuilder()->getForm($moderation_note, 'create');
     $form['#attributes']['data-moderation-note-new-form'] = TRUE;
 
     return $form;
-  }
-
-  /**
-   * Checks route access to create moderation note.
-   */
-  public function createNoteAccess(EntityInterface $entity, $field_name, $langcode, $view_mode_id) {
-    $account = $this->currentUser();
-
-    return AccessResult::allowedIf(_moderation_note_on_entity($entity, $account))
-      ->orIf(AccessResult::allowedIfHasPermission($account, 'administer moderation notes'))
-      ->cachePerPermissions()->cachePerUser()->addCacheableDependency($entity);
   }
 
   /**
@@ -101,9 +117,8 @@ class ModerationNoteController extends ControllerBase {
     $replies = $moderation_note->getChildren();
     $build[] = $view_builder->viewMultiple($replies);
 
-    if ($moderation_note->access('reply') && $moderation_note->isPublished()) {
-      $note_storage = $this->entityTypeManager()->getStorage('moderation_note');
-      $new_note = $note_storage->create([
+    if ($moderation_note->access('create') && $moderation_note->isPublished()) {
+      $new_note = ModerationNote::create([
         'parent' => $moderation_note,
         'entity_type' => $moderation_note->getModeratedEntityTypeId(),
         'entity_id' => $moderation_note->getModeratedEntityId(),
@@ -131,11 +146,8 @@ class ModerationNoteController extends ControllerBase {
    */
   public function listNotes(EntityInterface $entity) {
     $build = [];
-    $storage = $this->entityTypeManager()->getStorage('moderation_note');
-    $query = $storage
-      ->getQuery();
-    $ids = $query
-      ->accessCheck(FALSE)
+
+    $ids = $this->queryFactory->get('moderation_note')
       ->condition('entity_type', $entity->getEntityTypeId())
       ->condition('entity_id', $entity->id())
       ->condition('entity_langcode', $this->languageManager()->getCurrentLanguage()->getId())
@@ -151,7 +163,7 @@ class ModerationNoteController extends ControllerBase {
     }
     else {
       $view_builder = $this->entityTypeManager()->getViewBuilder('moderation_note');
-      $notes = $storage->loadMultiple($ids);
+      $notes = $this->entityTypeManager()->getStorage('moderation_note')->loadMultiple($ids);
       $build[] = $view_builder->viewMultiple($notes, 'preview');
     }
 
@@ -169,22 +181,20 @@ class ModerationNoteController extends ControllerBase {
    */
   public function listAssignedNotes(UserInterface $user) {
     $build = [];
-    $storage = $this->entityTypeManager()->getStorage('moderation_note');
-    $query = $storage->getQuery();
-    $ids = $query
-      ->accessCheck(FALSE)
+
+    $ids = $this->queryFactory->get('moderation_note')
       ->condition('assignee', $user->id())
       ->condition('published', 1)
       ->execute();
 
     if (empty($ids)) {
       $build[] = [
-        '#markup' => $this->t('<p>There are no assigned notes for this user.</p>'),
+        '#markup' => $this->t('<p>There are no assigned notes for this user.<p>'),
       ];
     }
     else {
       $view_builder = $this->entityTypeManager()->getViewBuilder('moderation_note');
-      $notes = $storage->loadMultiple($ids);
+      $notes = $this->entityTypeManager()->getStorage('moderation_note')->loadMultiple($ids);
       $build[] = $view_builder->viewMultiple($notes, 'preview');
     }
 
@@ -255,9 +265,8 @@ class ModerationNoteController extends ControllerBase {
    *   A response containing the deletion form.
    */
   public function replyToNote(ModerationNoteInterface $moderation_note) {
-    $note_storage = $this->entityTypeManager()->getStorage('moderation_note');
     $response = new AjaxResponse();
-    $new_note = $note_storage->create([
+    $new_note = ModerationNote::create([
       'parent' => $moderation_note,
       'entity_type' => $moderation_note->getModeratedEntityTypeId(),
       'entity_id' => $moderation_note->getModeratedEntityId(),

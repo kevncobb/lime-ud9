@@ -3,7 +3,7 @@ description: Remove the markup of fields
 core_version_requirement: ^9 || ^10
 type: module
 
-# Information added by Drupal.org packaging script on 2023-11-22
-version: '1.0.4'
+# Information added by Drupal.org packaging script on 2023-08-04
+version: '1.0.3'
 project: 'nomarkup'
-datestamp: 1700672519
+datestamp: 1691123478

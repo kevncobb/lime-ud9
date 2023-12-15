@@ -46,7 +46,7 @@ class FeedsSubscriberTest extends FeedsTamperTestCase {
   /**
    * {@inheritdoc}
    */
-  public function setUp(): void {
+  public function setUp() {
     parent::setUp();
 
     // Create parse event.

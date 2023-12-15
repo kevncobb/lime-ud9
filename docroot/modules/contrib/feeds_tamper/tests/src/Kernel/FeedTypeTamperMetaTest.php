@@ -23,7 +23,7 @@ class FeedTypeTamperMetaTest extends FeedsTamperKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp(): void {
+  public function setUp() {
     parent::setUp();
 
     $container = \Drupal::getContainer();

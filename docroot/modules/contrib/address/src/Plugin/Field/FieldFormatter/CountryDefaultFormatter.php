@@ -3,9 +3,9 @@
 namespace Drupal\address\Plugin\Field\FieldFormatter;
 
 use CommerceGuys\Addressing\Country\CountryRepositoryInterface;
+use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;

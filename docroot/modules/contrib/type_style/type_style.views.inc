@@ -1,8 +1,7 @@
 <?php
 
 /**
- * @file
- * Views hook implementations for the Type Style module.
+ * @file Views hook implementations for the Type Style module.
  */
 
 use Drupal\Core\Config\Entity\ConfigEntityType;

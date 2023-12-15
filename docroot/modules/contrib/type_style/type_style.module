@@ -1,8 +1,7 @@
 <?php
 
 /**
- * @file
- * Hook implementations for the Type Style module.
+ * @file Hook implementations for the Type Style module.
  */
 
 use Drupal\Core\Form\FormStateInterface;

@@ -92,8 +92,7 @@ class GroupEvaluator implements GroupEvaluatorInterface {
           $have_1_testable_condition = TRUE;
         }
         catch (ContextException $e) {
-          // If the condition is negated, shouldn't refuse so quickly.
-          if ($logic == 'and' && !$condition->isNegated()) {
+          if ($logic == 'and') {
             // Logic is all and found condition with contextException.
             return FALSE;
           }

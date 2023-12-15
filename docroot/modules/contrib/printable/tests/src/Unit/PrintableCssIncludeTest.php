@@ -33,18 +33,18 @@ class PrintableCssIncludeTest extends UnitTestCase {
   public function testGetCssIncludePath($include, $expected) {
     $config = $this->getConfigFactoryStub(['printable.settings' => ['css_include' => $include]]);
 
-    $map = [
-      ['bartik', 'core/themes/bartik'],
-      ['foobar', ''],
-      ['', ''],
+    $theme_info = [
+      'bartik' => new \stdClass(),
     ];
     $theme_info['bartik']->uri = 'core/themes/bartik/bartik.info.yml';
-    $theme_handler = $this->createMock('Drupal\Core\Extension\ThemeHandlerInterface');
+    $theme_handler = $this->getMockBuilder('Drupal\Core\Extension\ThemeHandlerInterface')
+      ->disableOriginalConstructor()
+      ->getMock();
     $theme_handler->expects($this->any())
       ->method('listInfo')
       ->will($this->returnValue($theme_info));
 
-    $css_include = new PrintableCssInclude($config, $themeExtensionList);
+    $css_include = new PrintableCssInclude($config, $theme_handler);
 
     $this->assertEquals($expected, $css_include->getCssIncludePath());
   }

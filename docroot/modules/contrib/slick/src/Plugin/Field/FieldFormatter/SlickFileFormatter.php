@@ -3,69 +3,54 @@
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\slick\SlickDefault;
+use Drupal\blazy\Dejavu\BlazyVideoTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Plugin implementation of the 'Slick File' to get image/ SVG from files.
+ * Plugin implementation of the 'Slick File' formatter to get ME within images.
  *
- * This was previously for deprecated VEF, since 2.10 re-purposed for SVG, WIP!
+ * This is not 'Slick Media', instead a simple mix of image and optional video.
  *
- * @FieldFormatter(
- *   id = "slick_file",
- *   label = @Translation("Slick File/SVG"),
- *   field_types = {
- *     "entity_reference",
- *     "file",
- *     "image",
- *     "svg_image_field",
- *   }
- * )
- *
- * @todo remove `image` at 3.x, unless dedicated for SVG (forms and displays).
+ * @todo TBD; deprecate for core Media and remove post/ prior to 3.x release.
+ * @todo deprecated in blazy:8.x-2.0 and is removed from blazy:8.x-3.0. Use
+ *   \Drupal\slick\Plugin\Field\FieldFormatter\SlickMediaFormatter instead.
  */
 class SlickFileFormatter extends SlickFileFormatterBase {
 
-  /**
-   * {@inheritdoc}
-   */
-  protected static $fieldType = 'entity';
+  // @todo remove post blazy:2.x.
+  use BlazyVideoTrait;
 
   /**
    * {@inheritdoc}
    */
-  protected static $useOembed = TRUE;
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    return self::injectServices($instance, $container, 'entity');
+  }
 
   /**
    * {@inheritdoc}
    */
-  protected static $useSvg = TRUE;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function defaultSettings() {
-    return SlickDefault::svgSettings() + parent::defaultSettings();
+  public function buildElement(array &$build, $entity) {
+    $this->blazyOembed->build($build, $entity);
   }
 
   /**
    * {@inheritdoc}
    */
   public function buildSettings() {
-    return ['blazy' => TRUE] + parent::buildSettings();
+    return ['blazy' => TRUE] + parent::getSettings();
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getPluginScopes(): array {
-    // @todo use $this->getEntityScopes() post blazy:2.17.
+  public function getScopedFormElements() {
     return [
-      'fieldable_form'   => TRUE,
-      'multimedia'       => TRUE,
-      'no_loading'       => TRUE,
-      'no_preload'       => TRUE,
-      'responsive_image' => FALSE,
-    ] + parent::getPluginScopes();
+      'fieldable_form' => TRUE,
+      'multimedia'     => TRUE,
+      'view_mode'      => $this->viewMode,
+    ] + $this->getCommonScopedFormElements() + parent::getScopedFormElements();
   }
 
   /**
@@ -74,15 +59,6 @@ class SlickFileFormatter extends SlickFileFormatterBase {
   public static function isApplicable(FieldDefinitionInterface $field_definition) {
     $storage = $field_definition->getFieldStorageDefinition();
     return $storage->isMultiple() && $storage->getSetting('target_type') === 'file';
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @todo remove post blazy:2.17.
-   */
-  public function buildElement(array &$element, $entity) {
-    $this->blazyOembed->build($element);
   }
 
 }

@@ -3,37 +3,28 @@
  * JavaScript behaviors for admin pages.
  */
 
-(function ($, Drupal) {
-  Drupal.behaviors.auto_entitylabel_admin = {
-    attach(context) {
-      let option = $('input[name=node_type_page_status]:checked', '#edit-node-type-page-status', context).val();
+(function ($) {
+  $(document).ready(function () {
 
-      this.checkPatternLabel(option);
-
-      $('#edit-node-type-page-status input', context).on('change', () => {
-        option = $('input[name=node_type_page_status]:checked', '#edit-node-type-page-status', context).val();
-        this.checkPatternLabel(option);
-      });
-    },
-
-    /**
-     * Set or unset disabled, read-only attrs on pattern label based on option.
-     *
-     * @param {string} option
-     *   The controlling option value. If option === '0', then the element with
-     *   class .pattern-label is given the disabled and readonly attributes;
-     *   otherwise, the disabled and readonly attributes are removed.
-     */
-    checkPatternLabel(option) {
-      let patternLabel = $('.pattern-label');
+    function checkPatternLabel(option) {
       if (option === '0') {
-        patternLabel.attr('disabled', 'disabled');
-        patternLabel.attr('readonly', 'readonly');
+        $('.pattern-label').attr("disabled", "disabled");
+        $('.pattern-label').attr("readonly", "readonly");
       }
       else {
-        patternLabel.removeAttr('disabled');
-        patternLabel.removeAttr('readonly');
+        $('.pattern-label').removeAttr("disabled");
+        $('.pattern-label').removeAttr("readonly");
       }
-    },
-  };
-}(jQuery, Drupal));
+    }
+
+    var option = $('input[name=node_type_page_status]:checked', '#edit-node-type-page-status').val();
+
+    checkPatternLabel(option);
+
+    $('#edit-node-type-page-status input').on('change', function () {
+      option = $('input[name=node_type_page_status]:checked', '#edit-node-type-page-status').val();
+      checkPatternLabel(option);
+    });
+
+  });
+})(jQuery);

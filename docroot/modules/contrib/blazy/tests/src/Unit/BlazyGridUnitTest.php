@@ -2,10 +2,10 @@
 
 namespace Drupal\Tests\blazy\Unit;
 
-use Drupal\blazy\Blazy;
-use Drupal\blazy\Theme\Grid;
-use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
 use Drupal\Tests\UnitTestCase;
+use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
+use Drupal\blazy\BlazyDefault;
+use Drupal\blazy\Theme\Grid;
 
 /**
  * @coversDefaultClass \Drupal\blazy\Theme\Grid
@@ -22,11 +22,14 @@ class BlazyGridUnitTest extends UnitTestCase {
    * @covers ::build
    */
   public function testBuild() {
-    $settings                = Blazy::init();
-    $settings['grid']        = '4';
-    $settings['grid_medium'] = '3';
-    $settings['grid_small']  = '2';
-    $settings['style']       = 'grid';
+    $settings                 = BlazyDefault::htmlSettings();
+    $settings['grid']         = '4';
+    $settings['grid_medium']  = '3';
+    $settings['grid_small']   = '2';
+    $settings['image_style']  = 'blazy_crop';
+    $settings['media_switch'] = 'media';
+    $settings['style']        = 'grid';
+    $settings['type']         = 'image';
 
     $items = [];
     foreach (range(1, 3) as $key) {

@@ -4,8 +4,3 @@ services:
     arguments: [ '@stream_wrapper_manager' ]
     tags:
       - { name: path_processor_inbound, priority: 299 }
-
-  Drupal\drimage\EventSubscriber\DrimageStageFileProxySubscriber:
-    decorates: stage_file_proxy.proxy_subscriber
-    public: false
-    arguments: ['@.inner' , '@path_processor_manager', '@http_kernel', '@image.factory', '@file_url_generator']

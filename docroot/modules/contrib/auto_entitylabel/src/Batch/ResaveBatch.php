@@ -2,7 +2,10 @@
 
 namespace Drupal\auto_entitylabel\Batch;
 
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\comment\Entity\Comment;
+use Drupal\media\Entity\Media;
+use Drupal\node\Entity\Node;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Processes entities in chunks to re-save their labels.
@@ -12,25 +15,37 @@ use Drupal\Core\Entity\EntityInterface;
 class ResaveBatch {
 
   /**
-   * {@inheritdoc}
+   * {@inheritdoc }
    */
   public static function batchOperation(array $chunk, array $bundle, array &$context) {
-
-    $entity_manager = \Drupal::service('entity_type.manager');
-
     foreach ($chunk as $id) {
-      $entity = $entity_manager->getStorage($bundle[0])->load($id);
-      if (!empty($entity) && $entity instanceof EntityInterface) {
-        $entity->save();
-      }
+      $entity = '';
+      switch ($bundle[0]) {
+        case 'node':
+          $entity = Node::load($id);
+          break;
 
+        case 'taxonomy_term':
+          $entity = Term::load($id);
+          break;
+
+        case 'media':
+          $entity = Media::load($id);
+          break;
+
+        case 'comment':
+          $entity = Comment::load($id);
+          break;
+
+      }
+      $entity->save();
       $context['results'][] = $id;
     }
 
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritdoc }
    */
   public static function batchFinished($success, array $results, array $operations) {
     $messenger = \Drupal::messenger();

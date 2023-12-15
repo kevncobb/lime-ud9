@@ -15,19 +15,21 @@ class BundleTest extends MediaFunctionalTestBase {
   use AdminUserTrait;
 
   /**
-   * {@inheritdoc}
-   */
-  protected $defaultTheme = 'stark';
-
-  /**
    * Modules to install.
    *
    * @var array
    */
-  protected static $modules = [
+  public static $modules = [
     'video_embed_field',
     'video_embed_media',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp() {
+    parent::setUp();
+  }
 
   /**
    * Test the dialog form.
@@ -36,7 +38,7 @@ class BundleTest extends MediaFunctionalTestBase {
     $this->drupalLogin($this->adminUser);
 
     // Create bundle and modify form display.
-    $media_type = $this->createMediaType('video_embed_field', ['id' => 'video_bundle']);
+    $media_type = $this->createMediaType('video_embed_field', ['bundle' => 'video_bundle']);
     $source = $media_type->getSource();
     $source_field = $source->getSourceFieldDefinition($media_type);
     if ($source_field->isDisplayConfigurable('form')) {
@@ -63,7 +65,7 @@ class BundleTest extends MediaFunctionalTestBase {
       'field_media_video_embed_field[0][value]' => 'https://www.youtube.com/watch?v=XgYu7-DQjDQ',
     ], 'Save');
     // We should see the video thumbnail on the media page.
-    $this->assertStringContainsString('video_thumbnails/XgYu7-DQjDQ.jpg', $this->getSession()->getPage()->getHtml());
+    $this->assertContains('video_thumbnails/XgYu7-DQjDQ.jpg', $this->getSession()->getPage()->getHtml());
   }
 
 }

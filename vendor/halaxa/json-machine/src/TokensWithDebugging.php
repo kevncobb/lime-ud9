@@ -4,25 +4,17 @@ declare(strict_types=1);
 
 namespace JsonMachine;
 
-/**
- * @implements \IteratorAggregate<int, string>
- */
 class TokensWithDebugging implements \IteratorAggregate, PositionAware
 {
-    /** @var iterable<int, string> */
+    /** @var iterable */
     private $jsonChunks;
 
-    /** @var int */
     private $position = 0;
-
-    /** @var int */
     private $line = 1;
-
-    /** @var int */
     private $column = 0;
 
     /**
-     * @param iterable<int, string> $jsonChunks
+     * @param iterable<string> $jsonChunks
      */
     public function __construct($jsonChunks)
     {
@@ -61,7 +53,6 @@ class TokensWithDebugging implements \IteratorAggregate, PositionAware
         foreach ($this->jsonChunks as $bytes) {
             $bytesLength = strlen($bytes);
             for ($i = 0; $i < $bytesLength; ++$i) {
-                /** @var string $byte */
                 $byte = $bytes[$i];
                 if ($inString) {
                     if ($byte == '"' && ! $escaping) {

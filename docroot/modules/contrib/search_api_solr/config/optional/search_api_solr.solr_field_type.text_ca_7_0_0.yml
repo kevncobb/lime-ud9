@@ -220,9 +220,6 @@ solr_configs:
               name: name
               VALUE: ca
             -
-              name: indexPath
-              VALUE: ./ca
-            -
               name: lookupImpl
               VALUE: AnalyzingInfixLookupFactory
             -

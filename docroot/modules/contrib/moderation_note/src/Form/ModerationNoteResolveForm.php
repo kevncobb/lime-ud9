@@ -2,65 +2,19 @@
 
 namespace Drupal\moderation_note\Form;
 
-use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseDialogCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\ContentEntityConfirmFormBase;
-use Drupal\Core\Entity\EntityRepositoryInterface;
-use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\moderation_note\Ajax\AddModerationNoteCommand;
 use Drupal\moderation_note\Ajax\RemoveModerationNoteCommand;
-use Drupal\moderation_note\ModerationNoteMenuCountInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a form for resolving a moderation note.
  */
 class ModerationNoteResolveForm extends ContentEntityConfirmFormBase {
-
-  /**
-   * The moderation note menu count service.
-   *
-   * @var \Drupal\moderation_note\ModerationNoteMenuCountInterface
-   */
-  protected $menu;
-
-  /**
-   * Constructs a new ModerationNoteResolveForm object.
-   *
-   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
-   *   The entity repository service.
-   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
-   *   The entity type bundle info service.
-   * @param \Drupal\Component\Datetime\TimeInterface $time
-   *   The time service.
-   * @param \Drupal\moderation_note\ModerationNoteMenuCountInterface $menu
-   *   The moderation note menu count service.
-   */
-  public function __construct(
-    EntityRepositoryInterface $entity_repository,
-    EntityTypeBundleInfoInterface $entity_type_bundle_info,
-    TimeInterface $time,
-    ModerationNoteMenuCountInterface $menu
-    ) {
-    parent::__construct($entity_repository, $entity_type_bundle_info, $time);
-    $this->menu = $menu;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('entity.repository'),
-      $container->get('entity_type.bundle.info'),
-      $container->get('datetime.time'),
-      $container->get('moderation_note.menu_count')
-    );
-  }
 
   /**
    * {@inheritdoc}
@@ -73,11 +27,8 @@ class ModerationNoteResolveForm extends ContentEntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getDescription() {
-    /** @var \Drupal\moderation_note\ModerationNoteInterface $note */
-    $note = $this->entity;
-
     return $this->t('<p>Are you sure you want to @action this note?</p>', [
-      '@action' => $note->isPublished() ? 'resolve' : 're-open',
+      '@action' => $this->entity->isPublished() ? 'resolve' : 're-open',
     ]);
   }
 
@@ -95,7 +46,7 @@ class ModerationNoteResolveForm extends ContentEntityConfirmFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
 
-    /** @var \Drupal\moderation_note\ModerationNoteInterface $note */
+    /** @var \Drupal\moderation_note\Entity\ModerationNote $note */
     $note = $this->entity;
 
     // Wrap our form so that our submit callback can re-render the form.
@@ -104,7 +55,7 @@ class ModerationNoteResolveForm extends ContentEntityConfirmFormBase {
 
     $form['#attributes']['class'][] = 'moderation-note-form';
     $form['#attributes']['class'][] = 'moderation-note-form-resolve';
-    if ($note->hasParent()) {
+    if ($this->entity->hasParent()) {
       $form['#attributes']['class'][] = 'moderation-note-form-reply';
     }
 
@@ -115,13 +66,10 @@ class ModerationNoteResolveForm extends ContentEntityConfirmFormBase {
    * {@inheritdoc}
    */
   protected function actions(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\moderation_note\ModerationNoteInterface $note */
-    $note = $this->entity;
-
     return [
       'submit' => [
         '#type' => 'submit',
-        '#value' => $note->isPublished() ? $this->t('Resolve') : $this->t('Re-open'),
+        '#value' => $this->entity->isPublished() ? $this->t('Resolve') : $this->t('Re-open'),
         '#ajax' => [
           'callback' => '::submitFormCallback',
           'method' => 'replace',
@@ -186,7 +134,7 @@ class ModerationNoteResolveForm extends ContentEntityConfirmFormBase {
    *   An AJAX response which removes or adds the note.
    */
   public function submitFormCallback(array &$form, FormStateInterface $form_state) {
-    /** @var \Drupal\moderation_note\ModerationNoteInterface $note */
+    /** @var \Drupal\moderation_note\Entity\ModerationNote $note */
     $note = $this->entity;
 
     $selector = '[data-moderation-note-form-id="' . $note->id() . '"]';
@@ -224,21 +172,6 @@ class ModerationNoteResolveForm extends ContentEntityConfirmFormBase {
       $command = new CloseDialogCommand('#drupal-off-canvas');
     }
     $response->addCommand($command);
-
-    $entity = $note->getModeratedEntity();
-    $entity_type = $entity->getEntityTypeId();
-    $entity_id = $entity->id();
-    $tab_selector = '.use-ajax.tabs__link.js-tabs-link[data-drupal-link-system-path="moderation-note/list/' . $entity_type . '/' . $entity_id . '"]';
-    $link = $this->menu->contentLink($entity_type, $entity_id);
-    $command = new ReplaceCommand($tab_selector, $link);
-
-    $response->addCommand($command);
-    if ($this->currentUser()->id() == ($note->getAssignee() ? $note->getAssignee()->id() : 0)) {
-      $link = $this->menu->assignedTo($this->currentUser()->id());
-      $command = new ReplaceCommand('.toolbar-menu.moderation-note', $link);
-      $response->addCommand($command);
-    }
-
     return $response;
   }
 
@@ -248,34 +181,24 @@ class ModerationNoteResolveForm extends ContentEntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
-    /** @var \Drupal\moderation_note\ModerationNoteInterface $note */
+    /** @var \Drupal\moderation_note\Entity\ModerationNote $note */
     $note = $this->entity;
 
     // Toggle publishing status of the note and its children.
     /** @var \Drupal\moderation_note\ModerationNoteInterface $child */
     foreach ($note->getChildren() as $child) {
-      if ($note->isPublished()) {
-        $child->setUnpublished();
-      }
-      else {
-        $child->setPublished();
-      }
+      $child->setPublished(!$note->isPublished());
       $child->setValidationRequired(FALSE);
       $child->save();
     }
-    if ($note->isPublished()) {
-      $note->setUnpublished();
-    }
-    else {
-      $note->setPublished();
-    }
+    $note->setPublished(!$note->isPublished());
     $note->setValidationRequired(FALSE);
     $note->save();
 
     // Clear the Drupal messages, as this form uses AJAX to display its
     // results. Displaying a deletion message on the next page the user visits
     // is awkward.
-    $this->messenger()->deleteAll();
+    drupal_get_messages();
   }
 
 }

@@ -17,12 +17,7 @@ class LazyLoadFormatterTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'stark';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
+  public static $modules = [
     'node',
     'video_embed_field',
     'video_embed_field_mock_provider',
@@ -31,7 +26,7 @@ class LazyLoadFormatterTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp(): void {
+  protected function setUp() {
     parent::setUp();
     $this->setupEntityDisplays();
   }

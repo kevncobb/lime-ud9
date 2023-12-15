@@ -45,7 +45,7 @@ class FindReplaceTest extends TamperPluginTestBase {
   }
 
   /**
-   * Test the plugin as case sensitive.
+   * Test the plugin as case sensitve.
    */
   public function testSingleValueCaseSensitive() {
     $config = [
@@ -59,22 +59,6 @@ class FindReplaceTest extends TamperPluginTestBase {
     $this->assertEquals('The dog went to the park.', $plugin->tamper('The cat went to the park.'));
     $this->assertEquals('The Cat went to the park.', $plugin->tamper('The Cat went to the park.'));
     $this->assertEquals('The dogwent to the park.', $plugin->tamper('The catwent to the park.'));
-  }
-
-  /**
-   * Test the plugin with a single numeric value.
-   */
-  public function testNumericValue() {
-    $config = [
-      FindReplace::SETTING_FIND => '6',
-      FindReplace::SETTING_REPLACE => '8',
-      FindReplace::SETTING_CASE_SENSITIVE => FALSE,
-      FindReplace::SETTING_WORD_BOUNDARIES => FALSE,
-      FindReplace::SETTING_WHOLE => FALSE,
-    ];
-    $plugin = new FindReplace($config, 'find_replace', [], $this->getMockSourceDefinition());
-    $this->assertEquals('8', $plugin->tamper(6));
-    $this->assertEquals('7', $plugin->tamper(7));
   }
 
   /**
@@ -117,7 +101,7 @@ class FindReplaceTest extends TamperPluginTestBase {
   public function testMultipleValues() {
     $plugin = new FindReplace([], 'find_replace', [], $this->getMockSourceDefinition());
     $this->expectException(TamperException::class);
-    $this->expectExceptionMessage('Input should be a string or numeric.');
+    $this->expectExceptionMessage('Input should be a string.');
     $plugin->tamper(['foo', 'bar', 'baz']);
   }
 

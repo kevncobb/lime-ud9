@@ -53,13 +53,6 @@ abstract class AbstractSolrEntity extends ConfigEntityBase implements SolrConfig
   protected $text_files;
 
   /**
-   * Indicates if a concrete feature is disabled on a server.
-   *
-   * @var bool
-   */
-  protected $disabledOnServer = FALSE;
-
-  /**
    * {@inheritdoc}
    */
   abstract public function getName(): string;
@@ -275,20 +268,6 @@ abstract class AbstractSolrEntity extends ConfigEntityBase implements SolrConfig
    */
   public function isRecommended(): bool {
     return $this->recommended;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setDisabledOnServer(bool $disabled_on_server): void {
-    $this->disabledOnServer = $disabled_on_server;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isDisabledOnServer(): bool {
-    return $this->disabledOnServer;
   }
 
 }

@@ -41,7 +41,7 @@ function setupContainer(element, getValue) {
         var height = getCSSProperty(element, container, 'height') || (element.clientHeight + "px");
         style += 'height:' + height + ';width:' + width + ';';
         style += 'display:inline-block;';
-        container.style.cssText = style;
+        container.setAttribute('style', style);
     };
     event.addListener(window, 'resize', resizeEvent);
     resizeEvent();

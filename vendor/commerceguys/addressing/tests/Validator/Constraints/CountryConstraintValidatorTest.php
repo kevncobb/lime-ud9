@@ -12,6 +12,12 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 final class CountryConstraintValidatorTest extends ConstraintValidatorTestCase
 {
     /**
+     * @var CountryConstraint
+     */
+    protected $constraint;
+
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp(): void

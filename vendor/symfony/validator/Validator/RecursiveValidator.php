@@ -11,7 +11,6 @@
 
 namespace Symfony\Component\Validator\Validator;
 
-use Psr\Container\ContainerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
@@ -33,20 +32,18 @@ class RecursiveValidator implements ValidatorInterface
     protected $metadataFactory;
     protected $validatorFactory;
     protected $objectInitializers;
-    protected ?ContainerInterface $groupProviderLocator;
 
     /**
      * Creates a new validator.
      *
      * @param ObjectInitializerInterface[] $objectInitializers The object initializers
      */
-    public function __construct(ExecutionContextFactoryInterface $contextFactory, MetadataFactoryInterface $metadataFactory, ConstraintValidatorFactoryInterface $validatorFactory, array $objectInitializers = [], ContainerInterface $groupProviderLocator = null)
+    public function __construct(ExecutionContextFactoryInterface $contextFactory, MetadataFactoryInterface $metadataFactory, ConstraintValidatorFactoryInterface $validatorFactory, array $objectInitializers = [])
     {
         $this->contextFactory = $contextFactory;
         $this->metadataFactory = $metadataFactory;
         $this->validatorFactory = $validatorFactory;
         $this->objectInitializers = $objectInitializers;
-        $this->groupProviderLocator = $groupProviderLocator;
     }
 
     public function startContext(mixed $root = null): ContextualValidatorInterface
@@ -55,8 +52,7 @@ class RecursiveValidator implements ValidatorInterface
             $this->contextFactory->createContext($this, $root),
             $this->metadataFactory,
             $this->validatorFactory,
-            $this->objectInitializers,
-            $this->groupProviderLocator,
+            $this->objectInitializers
         );
     }
 
@@ -66,8 +62,7 @@ class RecursiveValidator implements ValidatorInterface
             $context,
             $this->metadataFactory,
             $this->validatorFactory,
-            $this->objectInitializers,
-            $this->groupProviderLocator,
+            $this->objectInitializers
         );
     }
 

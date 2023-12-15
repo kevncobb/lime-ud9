@@ -84,7 +84,6 @@ class Ip extends Constraint
 
     public $message = 'This is not a valid IP address.';
 
-    /** @var callable|null */
     public $normalizer;
 
     public function __construct(

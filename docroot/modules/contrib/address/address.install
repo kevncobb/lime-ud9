@@ -5,8 +5,11 @@
  * Requirements and update functions for the address module.
  */
 
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
+use Drupal\Core\Entity\Sql\SqlContentEntityStorageException;
 use Drupal\Core\Utility\UpdateException;
+use Drupal\field\Entity\FieldConfig;
 
 /**
  * Implements hook_requirements().
@@ -24,6 +27,7 @@ function address_requirements($phase) {
 
   return $requirements;
 }
+
 
 /**
  * Add the address_line3 field.

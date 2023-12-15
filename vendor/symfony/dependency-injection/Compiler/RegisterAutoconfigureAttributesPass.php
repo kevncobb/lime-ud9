@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
  */
 final class RegisterAutoconfigureAttributesPass implements CompilerPassInterface
 {
-    private static \Closure $registerForAutoconfiguration;
+    private static $registerForAutoconfiguration;
 
     public function process(ContainerBuilder $container): void
     {
@@ -49,7 +49,7 @@ final class RegisterAutoconfigureAttributesPass implements CompilerPassInterface
 
     private static function registerForAutoconfiguration(ContainerBuilder $container, \ReflectionClass $class, \ReflectionAttribute $attribute): void
     {
-        if (isset(self::$registerForAutoconfiguration)) {
+        if (self::$registerForAutoconfiguration) {
             (self::$registerForAutoconfiguration)($container, $class, $attribute);
 
             return;

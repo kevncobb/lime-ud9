@@ -2,11 +2,10 @@
 
 namespace Drupal\features;
 
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Config\ExtensionInstallStorage;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Extension\ExtensionDiscovery;
-use Drupal\Core\Extension\ExtensionPathResolver;
-use Drupal\Core\Site\Settings;
 
 /**
  * Storage to access configuration and schema in installed extensions.
@@ -21,13 +20,6 @@ use Drupal\Core\Site\Settings;
 class FeaturesInstallStorage extends ExtensionInstallStorage {
 
   /**
-   * Instance of the extension path resolver service.
-   *
-   * @var \Drupal\Core\Extension\ExtensionPathResolver
-   */
-  protected ExtensionPathResolver $extensionPathResolver;
-
-  /**
    * Overrides \Drupal\Core\Config\ExtensionInstallStorage::__construct().
    *
    * Sets includeProfile to FALSE.
@@ -35,8 +27,6 @@ class FeaturesInstallStorage extends ExtensionInstallStorage {
    * @param \Drupal\Core\Config\StorageInterface $config_storage
    *   The active configuration store where the list of enabled modules and
    *   themes is stored.
-   * @param \Drupal\Core\Extension\ExtensionPathResolver $extension_path_resolver
-   *   Instance of the extension path resolver service.
    * @param string $directory
    *   The directory to scan in each extension to scan for files. Defaults to
    *   'config/install'. This parameter will be mandatory in Drupal 9.0.0.
@@ -51,8 +41,7 @@ class FeaturesInstallStorage extends ExtensionInstallStorage {
    *   (optional) The current installation profile. This parameter will be
    *   mandatory in Drupal 9.0.0.
    */
-  public function __construct(StorageInterface $config_storage, ExtensionPathResolver $extension_path_resolver, $directory = self::CONFIG_INSTALL_DIRECTORY, $collection = StorageInterface::DEFAULT_COLLECTION, $include_profile = TRUE, $profile = NULL) {
-    $this->extensionPathResolver = $extension_path_resolver;
+  public function __construct(StorageInterface $config_storage, $directory = self::CONFIG_INSTALL_DIRECTORY, $collection = StorageInterface::DEFAULT_COLLECTION, $include_profile = TRUE, $profile = NULL) {
     // @todo: determine if we should be setting $include_profile to FALSE.
     parent::__construct($config_storage, $directory, $collection, FALSE, $profile);
   }
@@ -124,7 +113,7 @@ class FeaturesInstallStorage extends ExtensionInstallStorage {
           // file location so we can use drupal_get_path() on the active profile
           // during the module scan.
           // @todo Remove as part of https://www.drupal.org/node/2186491
-          $this->extensionPathResolver->getPathname('profile', $profile);
+          drupal_get_filename('profile', $profile, $profile_list[$profile]->getPathname());
         }
         // CHANGED START: Put Features modules first in list returned.
         // to allow features to override config provided by other extensions.

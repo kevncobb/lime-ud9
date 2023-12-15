@@ -2,9 +2,7 @@
 
 namespace Drupal\Tests\video_embed_field\Kernel;
 
-use Drupal\colorbox\ColorboxAttachment;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
-use Drupal\Core\File\FileSystemInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase as CoreKernelTestBase;
@@ -33,8 +31,7 @@ abstract class KernelTestBase extends CoreKernelTestBase {
    *
    * @var array
    */
-  protected static $modules = [
-    'colorbox',
+  public static $modules = [
     'user',
     'system',
     'field',
@@ -48,7 +45,7 @@ abstract class KernelTestBase extends CoreKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp(): void {
+  protected function setUp() {
     parent::setUp();
 
     $this->installEntitySchema($this->entityTypeId);
@@ -72,11 +69,14 @@ abstract class KernelTestBase extends CoreKernelTestBase {
       'bundle' => $this->entityTypeId,
     ])->save();
 
+    // Fake colorbox being enabled for the purposes of testing.
+    $this->container->get('module_handler')->addModule('colorbox', NULL);
+
     // Use a HTTP mock which won't attempt to download anything.
     $this->container->set('http_client', new MockHttpClient());
 
     // Shim in a service required from the colorbox module.
-    $colorbox_mock = $this->createMock(ColorboxAttachment::class);
+    $colorbox_mock = $this->getMockBuilder('ColorboxAttachment')->setMethods(['attach'])->getMock();
     $this->container->set('colorbox.attachment', $colorbox_mock);
   }
 

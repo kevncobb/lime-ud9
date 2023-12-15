@@ -53,12 +53,7 @@ class BlazyEntityTest extends BlazyKernelTestBase {
       $entity = $this->testItem;
     }
 
-    $data = [
-      '#entity' => $entity,
-      '#settings' => [],
-      'fallback' => $fallback,
-    ];
-    $result = $this->blazyEntity->view($data);
+    $result = $this->blazyEntity->view($entity, [], $fallback);
     $this->assertSame($expected, !empty($result), $message);
   }
 

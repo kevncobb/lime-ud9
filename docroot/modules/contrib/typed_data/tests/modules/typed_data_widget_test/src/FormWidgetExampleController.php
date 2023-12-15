@@ -7,9 +7,10 @@ use Drupal\Core\Url;
 use Drupal\typed_data\Widget\FormWidgetManagerTrait;
 
 /**
- * Demonstrates the programmatic use of TypedDataFormWidgets.
+ * Class FormWidgetExampleController.
  */
 class FormWidgetExampleController extends ControllerBase {
+
   use FormWidgetManagerTrait;
 
   /**

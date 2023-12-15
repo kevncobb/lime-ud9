@@ -25,7 +25,6 @@ class ImceProfileListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $imce_profile) {
-    /** @var \Drupal\imce\Entity\ImceProfile $imce_profile */
     $row['label'] = $imce_profile->label();
     $row['description'] = $imce_profile->get('description');
     return $row + parent::buildRow($imce_profile);

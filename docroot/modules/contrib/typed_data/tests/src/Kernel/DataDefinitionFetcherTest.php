@@ -2,15 +2,13 @@
 
 namespace Drupal\Tests\typed_data\Kernel;
 
-use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\typed_data\Exception\InvalidArgumentException;
 
 /**
- * Tests that data fetcher definition fetching functions work correctly.
- *
  * @coversDefaultClass \Drupal\typed_data\DataFetcher
  *
  * @group typed_data
@@ -39,18 +37,17 @@ class DataDefinitionFetcherTest extends KernelTestBase {
   protected $nodeDefinition;
 
   /**
-   * {@inheritdoc}
+   * Modules to enable.
+   *
+   * @var array
    */
-  protected static $modules = ['typed_data', 'system', 'node', 'field', 'user'];
+  public static $modules = ['typed_data', 'system', 'node', 'field', 'user'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp(): void {
+  public function setUp() {
     parent::setUp();
-
-    $this->installEntitySchema('node');
-
     $this->dataFetcher = $this->container->get('typed_data.data_fetcher');
     $this->typedDataManager = $this->container->get('typed_data_manager');
 
@@ -83,7 +80,7 @@ class DataDefinitionFetcherTest extends KernelTestBase {
   /**
    * @covers ::fetchDefinitionByPropertyPath
    */
-  public function testFetchingByBasicPropertyPath(): void {
+  public function testFetchingByBasicPropertyPath() {
     $target_definition = $this->nodeDefinition
       ->getPropertyDefinition('title')
       ->getItemDefinition()
@@ -100,7 +97,7 @@ class DataDefinitionFetcherTest extends KernelTestBase {
   /**
    * @covers ::fetchDefinitionBySubPaths
    */
-  public function testFetchingByBasicSubPath(): void {
+  public function testFetchingByBasicSubPath() {
     $target_definition = $this->nodeDefinition
       ->getPropertyDefinition('title')
       ->getItemDefinition()
@@ -117,7 +114,7 @@ class DataDefinitionFetcherTest extends KernelTestBase {
   /**
    * @covers ::fetchDefinitionByPropertyPath
    */
-  public function testFetchingEntityReference(): void {
+  public function testFetchingEntityReference() {
     $target_definition = $this->nodeDefinition
       ->getPropertyDefinition('uid')
       ->getItemDefinition()
@@ -134,7 +131,7 @@ class DataDefinitionFetcherTest extends KernelTestBase {
   /**
    * @covers ::fetchDefinitionByPropertyPath
    */
-  public function testFetchingAcrossReferences(): void {
+  public function testFetchingAcrossReferences() {
     $target_definition = $this->nodeDefinition
       ->getPropertyDefinition('uid')
       ->getItemDefinition()
@@ -155,7 +152,7 @@ class DataDefinitionFetcherTest extends KernelTestBase {
   /**
    * @covers ::fetchDefinitionByPropertyPath
    */
-  public function testFetchingAtValidPositions(): void {
+  public function testFetchingAtValidPositions() {
     $target_definition = $this->nodeDefinition
       ->getPropertyDefinition('field_integer')
       ->getItemDefinition()
@@ -179,9 +176,8 @@ class DataDefinitionFetcherTest extends KernelTestBase {
   /**
    * @covers ::fetchDefinitionByPropertyPath
    */
-  public function testFetchingInvalidProperty(): void {
-    $this->expectException(InvalidArgumentException::class);
-    $this->expectExceptionMessage("Unable to apply data selector 'field_invalid.0.value' at 'field_invalid'");
+  public function testFetchingInvalidProperty() {
+    $this->setExpectedException(InvalidArgumentException::class, "Unable to apply data selector 'field_invalid.0.value' at 'field_invalid'");
     // This should trigger an exception.
     $this->dataFetcher->fetchDefinitionByPropertyPath(
       $this->nodeDefinition,
@@ -192,7 +188,7 @@ class DataDefinitionFetcherTest extends KernelTestBase {
   /**
    * @covers ::fetchDefinitionByPropertyPath
    */
-  public function testFetchingField(): void {
+  public function testFetchingField() {
     $target_definition = $this->nodeDefinition
       ->getPropertyDefinition('field_integer');
 
@@ -207,7 +203,7 @@ class DataDefinitionFetcherTest extends KernelTestBase {
   /**
    * @covers ::fetchDefinitionByPropertyPath
    */
-  public function testFetchingReferenceField(): void {
+  public function testFetchingReferenceField() {
     $target_definition = $this->nodeDefinition
       ->getPropertyDefinition('uid');
 
@@ -222,9 +218,8 @@ class DataDefinitionFetcherTest extends KernelTestBase {
   /**
    * @covers ::fetchDefinitionByPropertyPath
    */
-  public function testFetchingNonComplexType(): void {
-    $this->expectException(InvalidArgumentException::class);
-    $this->expectExceptionMessage("The data selector 'field_integer.0.value.not_existing' cannot be applied because the parent property 'value' is not a list or a complex structure");
+  public function testFetchingNonComplexType() {
+    $this->setExpectedException(InvalidArgumentException::class, "The data selector 'field_integer.0.value.not_existing' cannot be applied because the parent property 'value' is not a list or a complex structure");
     // This should trigger an exception.
     $this->dataFetcher->fetchDefinitionByPropertyPath(
       $this->nodeDefinition,
@@ -235,9 +230,8 @@ class DataDefinitionFetcherTest extends KernelTestBase {
   /**
    * @covers ::fetchDefinitionByPropertyPath
    */
-  public function testFetchingFromPrimitive(): void {
-    $this->expectException(InvalidArgumentException::class);
-    $this->expectExceptionMessage("The data selector 'unknown_property' cannot be applied because the definition of type 'string' is not a list or a complex structure");
+  public function testFetchingFromPrimitive() {
+    $this->setExpectedException(InvalidArgumentException::class, "The data selector 'unknown_property' cannot be applied because the definition of type 'string' is not a list or a complex structure");
     $definition = $this->nodeDefinition
       ->getPropertyDefinition('title')
       ->getItemDefinition()
@@ -253,9 +247,8 @@ class DataDefinitionFetcherTest extends KernelTestBase {
   /**
    * @covers ::fetchDefinitionByPropertyPath
    */
-  public function testFetchingAtInvalidPosition(): void {
-    $this->expectException(InvalidArgumentException::class);
-    $this->expectExceptionMessage("The data selector 'unknown_property' cannot be applied because the definition of type 'integer' is not a list or a complex structure");
+  public function testFetchingAtInvalidPosition() {
+    $this->setExpectedException(InvalidArgumentException::class, "The data selector 'unknown_property' cannot be applied because the definition of type 'integer' is not a list or a complex structure");
     $list_definition = $this->typedDataManager->createListDataDefinition('integer');
 
     // This should trigger an exception.

@@ -62,13 +62,6 @@ class SvgImageWidget extends FileWidget {
   protected $imageStyleStorage;
 
   /**
-   * The image factory service.
-   *
-   * @var \Drupal\Core\Image\ImageFactory
-   */
-  protected $imageFactory;
-
-  /**
    * {@inheritdoc}
    */
   public function __construct($pluginId, $pluginDefinition, FieldDefinitionInterface $fieldDefinition, array $settings, array $thirdPartySettings, ContainerInterface $container) {
@@ -79,7 +72,6 @@ class SvgImageWidget extends FileWidget {
     $this->renderer = $container->get('renderer');
     $this->entityTypeManager = $container->get('entity_type.manager');
     $this->imageStyleStorage = $this->entityTypeManager->getStorage('image_style');
-    $this->imageFactory = $container->get('image.factory');
   }
 
   /**
@@ -190,10 +182,8 @@ class SvgImageWidget extends FileWidget {
     }
 
     // If not using custom extension validation, ensure this is an image.
-    $supportedExtensions = $this->imageFactory->getSupportedExtensions();
-    $supportedExtensions[] = 'svg';
-    $extensions = $element['#upload_validators']['file_validate_extensions'][0] ?? implode(' ', $supportedExtensions);
-
+    $supportedExtensions = ['png', 'gif', 'jpg', 'jpeg', 'svg'];
+    $extensions = isset($element['#upload_validators']['file_validate_extensions'][0]) ? $element['#upload_validators']['file_validate_extensions'][0] : implode(' ', $supportedExtensions);
     $extensions = array_intersect(explode(' ', $extensions), $supportedExtensions);
     $element['#upload_validators']['file_validate_extensions'][0] = implode(' ', $extensions);
 
@@ -323,8 +313,19 @@ class SvgImageWidget extends FileWidget {
   public static function validateRequiredFields($element, FormStateInterface $formState) {
     // Only do validation if the function is triggered from other places than
     // the image process form.
-    $triggering_element = $formState->getTriggeringElement();
-    if (!empty($triggering_element['#submit']) && in_array('file_managed_file_submit', $triggering_element['#submit'], TRUE)) {
+    $triggeringElement = $formState->getTriggeringElement();
+    if (empty($triggeringElement['#submit']) || !in_array('file_managed_file_submit', $triggeringElement['#submit'])) {
+      // If the image is not there, we do not check for empty values.
+      $parents = $element['#parents'];
+      $field = array_pop($parents);
+      $imageField = NestedArray::getValue($formState->getUserInput(), $parents);
+      // We check for the array key, so that it can be NULL (like if the user
+      // submits the form without using the "upload" button).
+      if (!array_key_exists($field, $imageField)) {
+        return;
+      }
+    }
+    else {
       $formState->setLimitValidationErrors([]);
     }
   }

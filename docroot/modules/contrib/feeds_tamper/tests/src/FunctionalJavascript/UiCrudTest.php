@@ -33,7 +33,7 @@ class UiCrudTest extends FeedsTamperJavascriptTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp(): void {
+  protected function setUp() {
     parent::setUp();
 
     // Add body field.

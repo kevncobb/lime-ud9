@@ -7,8 +7,6 @@ use Drupal\blazy\Form\BlazyDeleteFormBase as FormBase;
 /**
  * Builds the form to delete an optionset.
  *
- * @deprecated in blazy:8.x-2.15 and is removed from blazy:8.x-3.0. Use
- *   Drupal\blazy\Form\BlazyDeleteFormBase instead.
- * @see https://www.drupal.org/node/3367304
+ * @todo deprecated at 2.15, use Drupal\blazy\Form\BlazyDeleteFormBase instead.
  */
 abstract class BlazyDeleteFormBase extends FormBase {}

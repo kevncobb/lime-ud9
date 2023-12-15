@@ -38,10 +38,10 @@ class SlickViews extends SlickViewsBase {
     foreach ($this->renderGrouping($this->view->result, $settings['grouping']) as $rows) {
       $build = $this->buildElements($settings, $rows);
 
-      // Supports lightbox gallery if using Blazy formatter.
+      // Extracts Blazy formatter settings if available.
       $this->checkBlazy($settings, $build, $rows);
 
-      $build['#settings'] = $settings;
+      $build['settings'] = $settings;
 
       $elements = $this->manager->build($build);
       unset($build);

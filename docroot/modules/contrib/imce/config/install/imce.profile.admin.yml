@@ -3,7 +3,6 @@ id: admin
 label: 'Admin profile'
 description: 'Configuration for site administrators'
 conf:
-  usertab: false
   extensions: '*'
   maxsize: 0
   quota: 0
@@ -13,7 +12,6 @@ conf:
   thumbnail_style: ''
   thumbnail_grid_style: false
   ignore_usage: false
-  url_alter: false
   folders:
     -
       path: '.'

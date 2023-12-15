@@ -177,15 +177,4 @@ class AggregatorRenderingTest extends AggregatorTestBase {
     $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'aggregator_item_view');
   }
 
-  /**
-   * Tests that HTML entities in item titles are rendered correctly.
-   */
-  public function testHtmlEntitiesSample() {
-    $feed = $this->createFeed($this->getHtmlEntitiesSample());
-    $feed->refreshItems();
-    $this->drupalGet('aggregator/sources/' . $feed->id());
-    $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->responseContains("Quote&quot; Amp&amp;");
-  }
-
 }

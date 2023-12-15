@@ -32,15 +32,11 @@ class UnoptimizedAssetResolver implements AssetResolverInterface {
    *
    * @param \Drupal\Core\Asset\AssetResolverInterface $resolver
    *   The actual resolver.
-   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
-   *   The request stack.
-   * @param bool $development_mode
-   *   Indicates if CL Server is in development mode.
    */
-  public function __construct(AssetResolverInterface $resolver, RequestStack $request_stack, bool $development_mode) {
+  public function __construct(AssetResolverInterface $resolver, RequestStack $request_stack) {
     $this->resolver = $resolver;
     $request = $request_stack->getCurrentRequest();
-    $this->skipOptimization = $development_mode && $request && Util::isRenderController($request);
+    $this->skipOptimization = $request && Util::isRenderController($request);
   }
 
   /**

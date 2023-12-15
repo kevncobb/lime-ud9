@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\moderation_note\Functional;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Test\AssertMailTrait;
 use Drupal\moderation_note\Entity\ModerationNote;
 use Drupal\node\Entity\Node;
@@ -23,17 +22,12 @@ class ModerationNoteMailTest extends BrowserTestBase {
    *
    * @var array
    */
-  protected static $modules = ['moderation_note', 'node'];
+  public static $modules = ['moderation_note', 'node'];
 
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'stark';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp(): void {
+  protected function setUp() {
     parent::setUp();
     $type = NodeType::create([
       'type' => 'article',
@@ -117,25 +111,6 @@ class ModerationNoteMailTest extends BrowserTestBase {
     $this->assertMailPattern('body', 'Really too much cat content here');
     // Make sure no extra mail was sent.
     $this->assertCount(5, $this->getMails());
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @todo Remove in https://www.drupal.org/project/drupal/issues/3082859
-   */
-  protected function assertMailPattern($field_name, $regex, $message = '', $group = 'Other') {
-    $mails = $this->getMails();
-    $mail = end($mails);
-    $regex_found = preg_match("/$regex/", $mail[$field_name]);
-    if (!$message) {
-      $message = new FormattableMarkup('Expected text found in @field of email message: "@expected".', [
-        '@field' => $field_name,
-        '@expected' => $regex,
-      ]);
-    }
-
-    $this->assertEquals($regex_found, 1, $message);
   }
 
 }

@@ -1,11 +1,17 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\pdf_api\Plugin\DompdfGenerator.
+ */
+
 namespace Drupal\pdf_api\Plugin\PdfGenerator;
 
-use Dompdf\Dompdf;
-use Dompdf\Options;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\pdf_api\Plugin\PdfGeneratorBase;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\pdf_api\Annotation\PdfGenerator;
+use Drupal\Core\Annotation\Translation;
+use Dompdf\Dompdf;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 // Disable DOMPDF's internal autoloader if you are using Composer.
@@ -17,9 +23,8 @@ define('DOMPDF_ENABLE_AUTOLOAD', FALSE);
  * @PdfGenerator(
  *   id = "dompdf",
  *   module = "pdf_api",
- *   title = @Translation("dompdf"),
- *   description = @Translation("PDF generator using the DOMPDF generator."),
- *   required_class = "Dompdf\Dompdf",
+ *   title = @Translation("DOMPDF"),
+ *   description = @Translation("PDF generator using the DOMPDF generator.")
  * )
  */
 class DompdfGenerator extends PdfGeneratorBase implements ContainerFactoryPluginInterface {
@@ -34,14 +39,10 @@ class DompdfGenerator extends PdfGeneratorBase implements ContainerFactoryPlugin
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, DOMPDF $generator) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->generator = new Dompdf();
-    $options = new Options([
-      'isRemoteEnabled' => TRUE,
-    ]);
-    $this->generator->setOptions($options);
+    $this->generator = $generator;
   }
 
   /**
@@ -52,6 +53,7 @@ class DompdfGenerator extends PdfGeneratorBase implements ContainerFactoryPlugin
       $configuration,
       $plugin_id,
       $plugin_definition,
+      $container->get('dompdf')
     );
   }
 
@@ -75,32 +77,23 @@ class DompdfGenerator extends PdfGeneratorBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   public function setHeader($text) {
-    if (!$text) {
-      return;
-    }
-
     $canvas = $this->generator->get_canvas();
-    $canvas->page_text(72, 18, $text, "", 11, [0, 0, 0]);
+    $canvas->page_text(72, 18, "Header: {PAGE_COUNT}", "", 11, array(0, 0, 0));
   }
 
   /**
    * {@inheritdoc}
    */
   public function addPage($html) {
-    $this->generator->loadHtml($html);
+    $this->generator->load_html($html);
     $this->generator->render();
-    if (is_array($GLOBALS['_dompdf_warnings'])) {
-      foreach ($GLOBALS['_dompdf_warnings'] as $warning) {
-        \Drupal::logger('pdf api')->warning($warning);
-      }
-    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function setPageOrientation($orientation = PdfGeneratorInterface::PORTRAIT) {
-    $this->generator->setPaper("", $orientation);
+    $this->generator->set_paper("", $orientation);
   }
 
   /**
@@ -108,7 +101,7 @@ class DompdfGenerator extends PdfGeneratorBase implements ContainerFactoryPlugin
    */
   public function setPageSize($page_size) {
     if ($this->isValidPageSize($page_size)) {
-      $this->generator->setPaper($page_size);
+      $this->generator->set_paper($page_size);
     }
   }
 
@@ -118,6 +111,7 @@ class DompdfGenerator extends PdfGeneratorBase implements ContainerFactoryPlugin
   public function setFooter($text) {
     // @todo see issue over here: https://github.com/dompdf/dompdf/issues/571
   }
+
 
   /**
    * {@inheritdoc}
@@ -131,7 +125,7 @@ class DompdfGenerator extends PdfGeneratorBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   public function send() {
-    $this->generator->stream("pdf", ['Attachment' => 0]);
+    $this->generator->stream("pdf", array('Attachment' => 0));
   }
 
   /**

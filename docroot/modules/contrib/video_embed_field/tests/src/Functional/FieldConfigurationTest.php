@@ -17,12 +17,7 @@ class FieldConfigurationTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'stark';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
+  public static $modules = [
     'field_ui',
     'node',
     'video_embed_field',

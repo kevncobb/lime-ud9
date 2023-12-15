@@ -2,10 +2,10 @@
 
 namespace Drupal\printable\LinkExtractor;
 
-use Drupal\Core\Render\MetadataBubblingUrlGenerator;
-use Drupal\Core\Url;
-use Drupal\path_alias\AliasManager;
 use wa72\htmlpagedom\HtmlPageCrawler;
+use Drupal\Core\Url;
+use Drupal\Core\Render\MetadataBubblingUrlGenerator;
+use Drupal\Core\Path\AliasManager;
 
 /**
  * Link extractor.
@@ -29,17 +29,17 @@ class InlineLinkExtractor implements LinkExtractorInterface {
   /**
    * The alias manager service.
    *
-   * @var \Drupal\path_alias\AliasManager
+   * @var \Drupal\Core\Path\AliasManager
    */
-  protected $aliasManager;
+  protected $aliasMnager;
 
   /**
    * Constructs a new InlineLinkExtractor object.
    */
-  public function __construct(HtmlPageCrawler $crawler, MetadataBubblingUrlGenerator $urlGenerator, AliasManager $aliasManager) {
+  public function __construct(HtmlPageCrawler $crawler, MetadataBubblingUrlGenerator $urlGenerator, AliasManager $aliasMnager) {
     $this->crawler = $crawler;
     $this->urlGenerator = $urlGenerator;
-    $this->aliasManager = $aliasManager;
+    $this->aliasMnager = $aliasMnager;
   }
 
   /**
@@ -81,16 +81,10 @@ class InlineLinkExtractor implements LinkExtractorInterface {
 
       $href = $anchor->attr('href');
       try {
-        $this->links[] = $base_url . $this->aliasManager->getAliasByPath($href);
+        $this->links[] = $base_url . $this->aliasMnager->getAliasByPath($href);
       }
       catch (\Exception $e) {
-        try {
-          $this->links[] = $this->urlFromHref($href)->toString();
-        }
-        catch (\InvalidArgumentException $e) {
-          // Document contains invalid URI (eg <a href="javascript:foo()">)
-          // & we're not going to add that to printed output.
-        }
+        $this->links[] = $this->urlFromHref($href)->toString();
       }
     });
     $this->crawler->remove();

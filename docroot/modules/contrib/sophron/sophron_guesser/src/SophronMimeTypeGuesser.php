@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Drupal\sophron_guesser;
 
@@ -23,10 +21,9 @@ class SophronMimeTypeGuesser implements MimeTypeGuesserInterface {
    *   The file system service.
    */
   public function __construct(
-    protected readonly MimeMapManagerInterface $mimeMapManager,
-    protected readonly FileSystemInterface $fileSystem,
-  ) {
-  }
+    protected MimeMapManagerInterface $mimeMapManager,
+    protected FileSystemInterface $fileSystem
+  ) {}
 
   /**
    * {@inheritdoc}
@@ -43,12 +40,13 @@ class SophronMimeTypeGuesser implements MimeTypeGuesserInterface {
     // 'awesome.image.jpeg'.
     while ($additional_part = array_pop($file_parts)) {
       $extension = strtolower($additional_part . ($extension ? '.' . $extension : ''));
-      $mime_map_extension = $this->mimeMapManager->getExtension($extension);
-      try {
-        return $mime_map_extension->getDefaultType();
-      }
-      catch (MappingException $e) {
-        continue;
+      if ($mime_map_extension = $this->mimeMapManager->getExtension($extension)) {
+        try {
+          return $mime_map_extension->getDefaultType();
+        }
+        catch (MappingException $e) {
+          return 'application/octet-stream';
+        }
       }
     }
 

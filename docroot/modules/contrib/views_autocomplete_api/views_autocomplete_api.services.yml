@@ -1,0 +1,13 @@
+services:
+  views_autocomplete_api.converter:
+    class: Drupal\views_autocomplete_api\ParamConverter\ViewsConverter
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: paramconverter }
+  views_autocomplete_api.manager:
+    class: Drupal\views_autocomplete_api\Service\ViewsAutocompleteApiManager
+    arguments:
+      - '@views.executable'
+      - '@current_user'
+      - '@renderer'
+      - '@config.factory'

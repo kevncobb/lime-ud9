@@ -58,7 +58,7 @@ class ImceFolderTest extends KernelTestBasePlugin {
   /**
    * Test inherited method ImceFolder::fm().
    */
-  public function testFm() {
+  public function testFM() {
     $this->assertInstanceOf(ImceFM::class, $this->imceFolder->fm());
   }
 

@@ -18,12 +18,7 @@ class FormatterConfigurationTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'stark';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
+  public static $modules = [
     'video_embed_field',
     'node',
     'field_ui',
@@ -40,7 +35,7 @@ class FormatterConfigurationTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp(): void {
+  protected function setUp() {
     parent::setUp();
     $this->drupalLogin($this->createAdminUser());
     $this->setupEntityDisplays();

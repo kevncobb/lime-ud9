@@ -2,35 +2,19 @@
 
 namespace Drupal\blazy\Plugin\views\style;
 
-use Drupal\blazy\BlazyDefault;
-use Drupal\blazy\internals\Internals;
-use Drupal\blazy\Views\BlazyStyleVanilla;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\views\Plugin\views\style\StylePluginBase;
+use Drupal\blazy\BlazyManager;
+use Drupal\blazy\BlazyDefault;
+use Drupal\blazy\Views\BlazyStyleBaseTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides Blazy Grid style plugin.
+ * Blazy style plugin.
  */
-class BlazyViews extends BlazyStyleVanilla implements BlazyViewsInterface {
+class BlazyViews extends StylePluginBase implements BlazyViewsInterface {
 
-  /**
-   * {@inheritdoc}
-   */
-  protected static $namespace = 'blazy';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $itemId = 'content';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $itemPrefix = 'blazy';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $captionId = 'captions';
+  use BlazyStyleBaseTrait;
 
   /**
    * {@inheritdoc}
@@ -43,10 +27,25 @@ class BlazyViews extends BlazyStyleVanilla implements BlazyViewsInterface {
   protected $usesGrouping = FALSE;
 
   /**
+   * Constructs a BlazyManager object.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, BlazyManager $blazy_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->blazyManager = $blazy_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('blazy.manager'));
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function admin() {
-    return Internals::service('blazy.admin');
+    return \Drupal::service('blazy.admin');
   }
 
   /**
@@ -54,20 +53,22 @@ class BlazyViews extends BlazyStyleVanilla implements BlazyViewsInterface {
    */
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     $definition = [
-      'plugin_id'      => $this->getPluginId(),
-      'namespace'      => 'blazy',
-      'grid_form'      => TRUE,
-      'grid_required'  => TRUE,
-      'grid_simple'    => TRUE,
-      'no_image_style' => TRUE,
-      'opening_class'  => 'form--views',
-      'settings'       => $this->options,
-      'style'          => TRUE,
-      '_views'         => TRUE,
+      'namespace'     => 'blazy',
+      'grid_form'     => TRUE,
+      'grid_required' => TRUE,
+      'settings'      => $this->options,
+      'style'         => TRUE,
+      'opening_class' => 'form--views',
+      '_views'        => TRUE,
     ];
 
     // Build the form.
-    $this->admin()->gridOnlyForm($form, $definition);
+    $this->admin()->openingForm($form, $definition);
+    $this->admin()->gridForm($form, $definition);
+    $this->admin()->finalizeForm($form, $definition);
+
+    // Blazy doesn't need complex grid with multiple groups.
+    unset($form['layout'], $form['preserve_keys'], $form['visible_items']);
   }
 
   /**
@@ -75,28 +76,30 @@ class BlazyViews extends BlazyStyleVanilla implements BlazyViewsInterface {
    */
   public function render() {
     $settings = $this->buildSettings();
-    $blazies  = $settings['blazies'];
-    $view     = $this->view;
+    $blazies = $settings['blazies'];
 
-    $blazies->set('is.grid', TRUE);
+    $blazies->set('namespace', 'blazy')
+      ->set('item.id', 'content')
+      ->set('is.grid', TRUE);
 
     $elements = [];
-    foreach ($this->renderGrouping($view->result, $settings['grouping']) as $rows) {
+    foreach ($this->renderGrouping($this->view->result, $settings['grouping']) as $rows) {
       $items = [];
       foreach ($rows as $index => $row) {
-        $view->row_index = $index;
+        $this->view->row_index = $index;
 
-        $items[$index] = $view->rowPlugin->render($row);
+        $items[$index] = $this->view->rowPlugin->render($row);
       }
 
-      // Supports lightbox gallery if using Blazy formatter.
-      $build = ['items' => $items];
-      $this->checkBlazy($settings, $build, $rows);
+      // Supports Blazy multi-breakpoint images if using Blazy formatter.
+      if ($data = $this->getFirstImage($rows[0] ?? NULL)) {
+        $blazies->set('first.data', $data);
+      }
 
-      $build['#settings'] = $settings;
-      $elements = $this->manager->build($build);
+      $build = ['items' => $items, 'settings' => $settings];
+      $elements = $this->blazyManager->build($build);
 
-      unset($view->row_index, $items);
+      unset($this->view->row_index, $items);
     }
 
     return $elements;
